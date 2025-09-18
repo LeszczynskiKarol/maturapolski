@@ -48,8 +48,13 @@ export async function authRoutes(fastify: FastifyInstance) {
   fastify.post("/refresh", async (request, reply) => {
     try {
       const { refreshToken } = request.body as { refreshToken: string };
-      const result = await authService.refreshToken(refreshToken);
-      return reply.send(result);
+
+      if (!refreshToken) {
+        return reply.code(401).send({ error: "Refresh token required" });
+      }
+
+      const tokens = await authService.refreshToken(refreshToken);
+      return reply.send(tokens);
     } catch (error) {
       return reply.code(401).send({ error: "Invalid refresh token" });
     }

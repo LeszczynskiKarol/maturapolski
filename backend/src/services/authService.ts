@@ -1,125 +1,160 @@
 // backend/src/services/authService.ts
-
+import { prisma } from "../lib/prisma";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { prisma } from "../lib/prisma";
-import { redis } from "../lib/redis";
-import { UserRole } from "@prisma/client";
 
 export class AuthService {
-  private readonly JWT_SECRET = process.env.JWT_SECRET!;
-  private readonly REFRESH_SECRET = process.env.REFRESH_SECRET!;
+  private readonly JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
+  private readonly JWT_REFRESH_SECRET =
+    process.env.JWT_REFRESH_SECRET || "refresh-secret";
 
   async register(data: {
     email: string;
     password: string;
     firstName: string;
     lastName: string;
-    role?: UserRole;
   }) {
+    // Sprawdź czy użytkownik już istnieje
+    const existingUser = await prisma.user.findUnique({
+      where: { email: data.email },
+    });
+
+    if (existingUser) {
+      throw new Error("User already exists");
+    }
+
+    // Hash hasła
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
+    // Utwórz użytkownika
     const user = await prisma.user.create({
       data: {
-        ...data,
+        email: data.email,
         password: hashedPassword,
-        role: data.role || "STUDENT",
-        profile: {
-          create: {
-            studyStreak: 0,
-            totalPoints: 0,
-            averageScore: 0,
-          },
-        },
+        firstName: data.firstName,
+        lastName: data.lastName,
+        role: "STUDENT", // Domyślna rola
       },
-      include: {
-        profile: true,
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
       },
     });
 
-    const tokens = this.generateTokens(user.id, user.role);
-    await this.saveRefreshToken(user.id, tokens.refreshToken);
+    // Generuj tokeny
+    const token = this.generateToken(user);
+    const refreshToken = this.generateRefreshToken(user);
 
     return {
-      user: this.sanitizeUser(user),
-      ...tokens,
+      user,
+      token,
+      refreshToken,
     };
   }
 
   async login(email: string, password: string) {
+    // Znajdź użytkownika
     const user = await prisma.user.findUnique({
       where: { email },
-      include: { profile: true },
     });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user) {
       throw new Error("Invalid credentials");
     }
 
-    const tokens = this.generateTokens(user.id, user.role);
-    await this.saveRefreshToken(user.id, tokens.refreshToken);
+    // Sprawdź hasło
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      throw new Error("Invalid credentials");
+    }
 
+    // Generuj tokeny
+    const token = this.generateToken(user);
+    const refreshToken = this.generateRefreshToken(user);
+
+    // Zapisz refresh token w bazie
     await prisma.user.update({
       where: { id: user.id },
-      data: { lastLogin: new Date() },
+      data: { refreshToken },
     });
 
+    // WAŻNE: Zwróć dane w tym samym formacie
     return {
-      user: this.sanitizeUser(user),
-      ...tokens,
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+      },
+      token, // To jest access token
+      refreshToken,
     };
   }
 
   async refreshToken(refreshToken: string) {
     try {
-      const decoded = jwt.verify(refreshToken, this.REFRESH_SECRET) as {
-        userId: string;
-      };
+      // Weryfikuj refresh token
+      const decoded = jwt.verify(refreshToken, this.JWT_REFRESH_SECRET) as any;
 
-      const storedToken = await redis.get(`refresh:${decoded.userId}`);
-      if (storedToken !== refreshToken) {
-        throw new Error("Invalid refresh token");
-      }
-
+      // Znajdź użytkownika
       const user = await prisma.user.findUnique({
         where: { id: decoded.userId },
       });
 
-      if (!user) {
-        throw new Error("User not found");
+      if (!user || user.refreshToken !== refreshToken) {
+        throw new Error("Invalid refresh token");
       }
 
-      const tokens = this.generateTokens(user.id, user.role);
-      await this.saveRefreshToken(user.id, tokens.refreshToken);
+      // Generuj nowe tokeny
+      const newToken = this.generateToken(user);
+      const newRefreshToken = this.generateRefreshToken(user);
 
-      return tokens;
+      // Zaktualizuj refresh token
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { refreshToken: newRefreshToken },
+      });
+
+      return {
+        token: newToken,
+        refreshToken: newRefreshToken,
+      };
     } catch (error) {
       throw new Error("Invalid refresh token");
     }
   }
 
   async logout(userId: string) {
-    await redis.del(`refresh:${userId}`);
-  }
-
-  private generateTokens(userId: string, role: UserRole) {
-    const accessToken = jwt.sign({ userId, role }, this.JWT_SECRET, {
-      expiresIn: "15m",
+    await prisma.user.update({
+      where: { id: userId },
+      data: { refreshToken: null },
     });
-
-    const refreshToken = jwt.sign({ userId }, this.REFRESH_SECRET, {
-      expiresIn: "7d",
-    });
-
-    return { accessToken, refreshToken };
   }
 
-  private async saveRefreshToken(userId: string, token: string) {
-    await redis.setex(`refresh:${userId}`, 7 * 24 * 60 * 60, token);
+  private generateToken(user: any) {
+    return jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+      },
+      this.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
   }
 
-  private sanitizeUser(user: any) {
-    const { password, ...sanitized } = user;
-    return sanitized;
+  private generateRefreshToken(user: any) {
+    return jwt.sign(
+      {
+        userId: user.id,
+        type: "refresh",
+      },
+      this.JWT_REFRESH_SECRET,
+      { expiresIn: "7d" }
+    );
   }
 }

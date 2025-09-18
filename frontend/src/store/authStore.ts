@@ -1,7 +1,7 @@
 // frontend/src/store/authStore.ts
 
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface User {
   id: string;
@@ -18,50 +18,69 @@ interface AuthState {
   isAuthenticated: boolean;
 
   setUser: (user: User) => void;
-  setTokens: (tokens: { accessToken: string; refreshToken: string }) => void;
+  setTokens: (tokens: { token: string; refreshToken: string }) => void;
+  setAuth: (data: { user: User; token: string; refreshToken: string }) => void;
   logout: () => void;
 }
-
-const getUserFromStorage = () => {
-  try {
-    const stored = localStorage.getItem("auth-storage");
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      return parsed.state?.user || null;
-    }
-  } catch {
-    return null;
-  }
-  return null;
-};
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
-      user: getUserFromStorage(),
+      user: null,
       token: null,
       refreshToken: null,
-      isAuthenticated: !!getUserFromStorage(),
+      isAuthenticated: false,
 
-      setUser: (user) => set({ user, isAuthenticated: true }),
+      setUser: (user) => {
+        console.log("Setting user:", user);
+        set({ user, isAuthenticated: true });
+      },
 
-      setTokens: (tokens) =>
+      setTokens: (tokens) => {
+        console.log("Setting tokens:", tokens);
         set({
-          token: tokens.accessToken,
+          token: tokens.token,
           refreshToken: tokens.refreshToken,
           isAuthenticated: true,
-        }),
+        });
+      },
 
-      logout: () =>
+      // Nowa metoda - ustaw wszystko na raz
+      setAuth: (data) => {
+        console.log("Setting complete auth data:", data);
+        set({
+          user: data.user,
+          token: data.token,
+          refreshToken: data.refreshToken,
+          isAuthenticated: true,
+        });
+      },
+
+      logout: () => {
+        console.log("Logging out...");
+        // Najpierw wyczyść stan
         set({
           user: null,
           token: null,
           refreshToken: null,
           isAuthenticated: false,
-        }),
+        });
+        // Potem wyczyść localStorage
+        localStorage.removeItem("auth-storage");
+      },
     }),
     {
       name: "auth-storage",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        user: state.user,
+        token: state.token,
+        refreshToken: state.refreshToken,
+        isAuthenticated: state.isAuthenticated,
+      }),
+      onRehydrateStorage: () => (state) => {
+        console.log("Rehydrated auth state:", state);
+      },
     }
   )
 );

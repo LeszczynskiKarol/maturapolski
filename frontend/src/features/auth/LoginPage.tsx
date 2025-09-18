@@ -1,45 +1,63 @@
 // frontend/src/features/auth/LoginPage.tsx
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "../../services/api";
 import { useAuthStore } from "../../store/authStore";
 import { AuthLayout } from "../../components/AuthLayout";
 import toast from "react-hot-toast";
-import { Mail, Lock, ArrowRight } from "lucide-react";
+import { Mail, Lock, ArrowRight, Loader } from "lucide-react";
+
+interface LoginFormData {
+  email: string;
+  password: string;
+}
 
 export const LoginPage: React.FC = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<LoginFormData>();
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const setUser = useAuthStore((state) => state.setUser);
-  const setTokens = useAuthStore((state) => state.setTokens);
+  const { setAuth } = useAuthStore();
 
-  // frontend/src/features/auth/LoginPage.tsx
-  // Zmień funkcję onSubmit:
-
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
     try {
       const response = await api.post("/api/auth/login", data);
-      setUser(response.data.user);
-      setTokens({
-        accessToken: response.data.token, // WAŻNE: backend zwraca 'token', nie 'accessToken'
-        refreshToken: response.data.refreshToken,
-      });
-      toast.success("Zalogowano pomyślnie!");
 
-      // DODAJ sprawdzanie roli:
-      if (response.data.user.role === "ADMIN") {
-        navigate("/admin");
+      console.log("Login response:", response.data); // DEBUG
+
+      // Użyj nowej metody setAuth która ustawi wszystko na raz
+      if (response.data.user && response.data.token) {
+        setAuth({
+          user: response.data.user,
+          token: response.data.token,
+          refreshToken: response.data.refreshToken || "",
+        });
+
+        toast.success("Zalogowano pomyślnie!");
+
+        // Przekieruj w zależności od roli
+        setTimeout(() => {
+          if (response.data.user.role === "ADMIN") {
+            navigate("/admin");
+          } else {
+            navigate("/dashboard");
+          }
+        }, 100);
       } else {
-        navigate("/dashboard");
+        console.error("Incomplete response:", response.data);
+        toast.error("Błąd logowania - brakujące dane");
       }
     } catch (error: any) {
+      console.error("Login error:", error);
       toast.error(error.response?.data?.error || "Błąd logowania");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -68,11 +86,12 @@ export const LoginPage: React.FC = () => {
                   type="email"
                   className="w-full pl-10 pr-3 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   placeholder="jan.kowalski@example.com"
+                  disabled={isLoading}
                 />
               </div>
               {errors.email && (
                 <p className="text-red-500 text-xs mt-1">
-                  {errors.email.message as string}
+                  {errors.email.message}
                 </p>
               )}
             </div>
@@ -86,11 +105,12 @@ export const LoginPage: React.FC = () => {
                   type="password"
                   className="w-full pl-10 pr-3 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   placeholder="••••••••"
+                  disabled={isLoading}
                 />
               </div>
               {errors.password && (
                 <p className="text-red-500 text-xs mt-1">
-                  {errors.password.message as string}
+                  {errors.password.message}
                 </p>
               )}
             </div>
@@ -110,10 +130,20 @@ export const LoginPage: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium flex items-center justify-center gap-2"
+              disabled={isLoading}
+              className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Zaloguj się
-              <ArrowRight className="w-4 h-4" />
+              {isLoading ? (
+                <>
+                  <Loader className="w-4 h-4 animate-spin" />
+                  Logowanie...
+                </>
+              ) : (
+                <>
+                  Zaloguj się
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
           </form>
 
@@ -127,7 +157,10 @@ export const LoginPage: React.FC = () => {
               </div>
             </div>
 
-            <button className="mt-4 w-full py-3 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-2">
+            <button
+              className="mt-4 w-full py-3 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-2"
+              disabled={isLoading}
+            >
               <img
                 src="https://www.google.com/favicon.ico"
                 alt="Google"

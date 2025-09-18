@@ -12,36 +12,61 @@ export const api = axios.create({
   timeout: 30000, // 30 second timeout for AI assessment
 });
 
-api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token;
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// Request interceptor - dodaje token do każdego request
+api.interceptors.request.use(
+  (config) => {
+    const token = useAuthStore.getState().token;
 
+    // Debug logging
+    console.log("API Request:", {
+      url: config.url,
+      token: token ? `Bearer ${token.substring(0, 10)}...` : "No token",
+      authState: useAuthStore.getState().isAuthenticated,
+    });
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => {
+    console.error("Request interceptor error:", error);
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor - obsługuje błędy autoryzacji
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Debug logging dla sukcesu
+    console.log("API Response success:", {
+      url: response.config.url,
+      status: response.status,
+    });
+    return response;
+  },
   async (error) => {
+    console.error("API Response error:", {
+      url: error.config?.url,
+      status: error.response?.status,
+      message: error.response?.data?.error || error.message,
+    });
+
+    // Jeśli otrzymamy 401, to znaczy że token jest nieprawidłowy
     if (error.response?.status === 401) {
-      // Refresh token logic
-      const refreshToken = useAuthStore.getState().refreshToken;
-      if (refreshToken) {
-        try {
-          const { data } = await axios.post(`${API_URL}/auth/refresh`, {
-            refreshToken,
-          });
-          useAuthStore.getState().setTokens(data);
-          return api.request(error.config);
-        } catch {
-          useAuthStore.getState().logout();
-          window.location.href = "/login";
-        }
-      } else {
+      const currentPath = window.location.pathname;
+
+      // Nie przekierowuj jeśli jesteśmy już na stronie logowania
+      if (currentPath !== "/login" && currentPath !== "/register") {
+        console.log(
+          "401 Unauthorized - clearing auth and redirecting to login"
+        );
         useAuthStore.getState().logout();
         window.location.href = "/login";
       }
     }
+
     return Promise.reject(error);
   }
 );

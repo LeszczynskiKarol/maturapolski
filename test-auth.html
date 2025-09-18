@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Auth Flow</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      button {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 10px;
+      }
+      button:hover {
+        background: #2563eb;
+      }
+      .success {
+        color: green;
+        font-weight: bold;
+      }
+      .error {
+        color: red;
+        font-weight: bold;
+      }
+      .debug {
+        background: #f0f0f0;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 10px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        font-size: 12px;
+      }
+      input {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🔐 Test Auth Flow</h1>
+
+    <div class="card">
+      <h2>1. Test połączenia z backendem</h2>
+      <button onclick="testConnection()">Test Connection</button>
+      <div id="connectionResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>2. Test logowania</h2>
+      <input
+        type="email"
+        id="email"
+        placeholder="Email"
+        value="admin@matura-polski.pl"
+      />
+      <input
+        type="password"
+        id="password"
+        placeholder="Password"
+        value="Admin123!"
+      />
+      <button onclick="testLogin()">Test Login</button>
+      <div id="loginResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>3. Test zapisu w localStorage</h2>
+      <button onclick="testStorage()">Test Storage</button>
+      <button onclick="clearStorage()">Clear Storage</button>
+      <div id="storageResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>4. Test autoryzowanego requestu</h2>
+      <button onclick="testAuthRequest()">Test Auth Request</button>
+      <div id="authResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>5. Stan autoryzacji</h2>
+      <button onclick="checkAuthState()">Check Auth State</button>
+      <div id="stateResult"></div>
+    </div>
+
+    <script>
+      const API_URL = "http://localhost:4000";
+      let authToken = null;
+
+      async function testConnection() {
+        const result = document.getElementById("connectionResult");
+        try {
+          const response = await fetch(`${API_URL}/health`);
+          if (response.ok) {
+            result.innerHTML =
+              '<span class="success">✅ Backend działa!</span>';
+          } else {
+            result.innerHTML =
+              '<span class="error">❌ Backend odpowiada, ale zwraca błąd: ' +
+              response.status +
+              "</span>";
+          }
+        } catch (error) {
+          result.innerHTML =
+            '<span class="error">❌ Nie można połączyć z backendem: ' +
+            error.message +
+            "</span>";
+        }
+      }
+
+      async function testLogin() {
+        const result = document.getElementById("loginResult");
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        try {
+          const response = await fetch(`${API_URL}/api/auth/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            authToken = data.token;
+
+            result.innerHTML = `
+                        <span class="success">✅ Zalogowano!</span>
+                        <div class="debug">
+Response data:
+${JSON.stringify(data, null, 2)}
+
+Token: ${data.token ? "✅ OTRZYMANO" : "❌ BRAK"}
+RefreshToken: ${data.refreshToken ? "✅ OTRZYMANO" : "❌ BRAK"}
+User: ${data.user ? "✅ OTRZYMANO" : "❌ BRAK"}
+                        </div>
+                    `;
+
+            // Zapisz do localStorage jak robi to Zustand
+            const authStorage = {
+              state: {
+                user: data.user,
+                token: data.token,
+                refreshToken: data.refreshToken,
+                isAuthenticated: true,
+              },
+              version: 0,
+            };
+            localStorage.setItem("auth-storage", JSON.stringify(authStorage));
+          } else {
+            result.innerHTML = `<span class="error">❌ Błąd logowania: ${
+              data.error || "Nieznany błąd"
+            }</span>`;
+          }
+        } catch (error) {
+          result.innerHTML = `<span class="error">❌ Błąd: ${error.message}</span>`;
+        }
+      }
+
+      function testStorage() {
+        const result = document.getElementById("storageResult");
+        const stored = localStorage.getItem("auth-storage");
+
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          result.innerHTML = `
+                    <span class="success">✅ Dane w localStorage:</span>
+                    <div class="debug">${JSON.stringify(parsed, null, 2)}</div>
+                `;
+        } else {
+          result.innerHTML =
+            '<span class="error">❌ Brak danych w localStorage</span>';
+        }
+      }
+
+      function clearStorage() {
+        localStorage.clear();
+        authToken = null;
+        document.getElementById("storageResult").innerHTML =
+          '<span class="success">✅ Storage wyczyszczony</span>';
+      }
+
+      async function testAuthRequest() {
+        const result = document.getElementById("authResult");
+
+        // Pobierz token z localStorage
+        const stored = localStorage.getItem("auth-storage");
+        let token = authToken;
+
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          token = parsed.state?.token || authToken;
+        }
+
+        if (!token) {
+          result.innerHTML =
+            '<span class="error">❌ Brak tokena - najpierw się zaloguj</span>';
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `${API_URL}/api/admin/exercises?limit=1`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            result.innerHTML = `
+                        <span class="success">✅ Request autoryzowany działa!</span>
+                        <div class="debug">Status: ${response.status}
+Otrzymano danych: ${JSON.stringify(data).substring(0, 200)}...</div>
+                    `;
+          } else {
+            const error = await response.text();
+            result.innerHTML = `
+                        <span class="error">❌ Błąd autoryzacji: ${response.status}</span>
+                        <div class="debug">${error}</div>
+                    `;
+          }
+        } catch (error) {
+          result.innerHTML = `<span class="error">❌ Błąd: ${error.message}</span>`;
+        }
+      }
+
+      function checkAuthState() {
+        const result = document.getElementById("stateResult");
+        const stored = localStorage.getItem("auth-storage");
+
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          const state = parsed.state;
+
+          result.innerHTML = `
+                    <div>
+                        <strong>Stan autoryzacji:</strong><br>
+                        Authenticated: ${
+                          state?.isAuthenticated ? "✅" : "❌"
+                        }<br>
+                        User: ${state?.user?.email || "none"}<br>
+                        Role: ${state?.user?.role || "none"}<br>
+                        Token: ${
+                          state?.token
+                            ? `✅ ${state.token.substring(0, 20)}...`
+                            : "❌ BRAK"
+                        }<br>
+                        RefreshToken: ${
+                          state?.refreshToken ? "✅ Present" : "❌ BRAK"
+                        }
+                    </div>
+                    <div class="debug">
+Full state:
+${JSON.stringify(parsed, null, 2)}
+                    </div>
+                `;
+        } else {
+          result.innerHTML =
+            '<span class="error">❌ Brak stanu autoryzacji</span>';
+        }
+      }
+    </script>
+  </body>
+</html>
