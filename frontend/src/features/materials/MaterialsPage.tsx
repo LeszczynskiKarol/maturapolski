@@ -14,6 +14,8 @@ import {
   TrendingUp,
   Star,
 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { materialsService } from "../../services/materialsService";
 
 // Types
 interface Material {
@@ -121,104 +123,121 @@ export default function MaterialsPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedEpoch, setSelectedEpoch] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [materials, setMaterials] = useState<Material[]>(mockMaterials);
+  const [materials, setMaterials] = useState<Material[]>([]);
   const [loading, setLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [pagination, setPagination] = useState<PaginationData>({
     page: 1,
     limit: 20,
-    total: 60,
-    pages: 3,
+    total: 0,
+    pages: 0,
   });
 
-  // Fetch materials - w prawdziwej aplikacji wywołaj API
   useEffect(() => {
-    // Symulacja ładowania
+    loadMaterials();
+  }, [selectedCategory, selectedEpoch, searchQuery, pagination.page]);
+
+  const loadMaterials = async () => {
     setLoading(true);
-    setTimeout(() => {
-      let filtered = [...mockMaterials];
+    try {
+      const params: any = {
+        page: pagination.page,
+        limit: pagination.limit,
+      };
 
       if (selectedCategory !== "all") {
-        filtered = filtered.filter((m) => m.category === selectedCategory);
+        params.category = selectedCategory;
       }
-
       if (selectedEpoch !== "all") {
-        filtered = filtered.filter((m) => m.epoch === selectedEpoch);
+        params.epoch = selectedEpoch;
       }
-
       if (searchQuery) {
-        filtered = filtered.filter(
-          (m) =>
-            m.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            m.summary.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+        params.search = searchQuery;
       }
 
-      setMaterials(filtered);
+      const response = await materialsService.getMaterials(params);
+      console.log("Materials response:", response); // Debug
+
+      setMaterials(response.materials || []);
+      setPagination(
+        response.pagination || {
+          page: 1,
+          limit: 20,
+          total: 0,
+          pages: 0,
+        }
+      );
+    } catch (error) {
+      console.error("Error loading materials:", error);
+      setMaterials([]);
+    } finally {
       setLoading(false);
-    }, 500);
-  }, [selectedCategory, selectedEpoch, searchQuery]);
+    }
+  };
 
   const MaterialCard = ({ material }: { material: Material }) => (
-    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 cursor-pointer border border-gray-100">
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
-            {material.isPremium && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-amber-500 to-yellow-600 text-white text-xs rounded-full font-medium">
-                <Lock className="w-3 h-3" />
-                Premium
-              </span>
-            )}
-            {material.epoch && (
-              <span className="text-xs text-gray-500 font-medium">
-                {EPOCHS.find((e) => e.value === material.epoch)?.label}
-              </span>
-            )}
+    <Link to={`/materialy/${material.slug}`} className="block">
+      <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 cursor-pointer border border-gray-100 h-full">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              {material.isPremium && (
+                <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-amber-500 to-yellow-600 text-white text-xs rounded-full font-medium">
+                  <Lock className="w-3 h-3" />
+                  Premium
+                </span>
+              )}
+              {material.epoch && (
+                <span className="text-xs text-gray-500 font-medium">
+                  {EPOCHS.find((e) => e.value === material.epoch)?.label}
+                </span>
+              )}
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors">
+              {material.title}
+            </h3>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors">
-            {material.title}
-          </h3>
         </div>
-      </div>
 
-      <p className="text-gray-600 text-sm line-clamp-2 mb-4">
-        {material.summary}
-      </p>
+        <p className="text-gray-600 text-sm line-clamp-2 mb-4">
+          {material.summary}
+        </p>
 
-      {material.work && (
-        <div className="text-sm text-gray-500 mb-3">
-          <span className="font-medium">{material.work.author}</span> -{" "}
-          {material.work.title}
-        </div>
-      )}
+        {material.work && (
+          <div className="text-sm text-gray-500 mb-3">
+            <span className="font-medium">{material.work.author}</span> -{" "}
+            {material.work.title}
+          </div>
+        )}
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4 text-sm text-gray-500">
-          {material.readingTime && (
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4 text-sm text-gray-500">
+            {material.readingTime && (
+              <span className="flex items-center gap-1">
+                <Clock className="w-4 h-4" />
+                {material.readingTime} min
+              </span>
+            )}
             <span className="flex items-center gap-1">
-              <Clock className="w-4 h-4" />
-              {material.readingTime} min
+              <Eye className="w-4 h-4" />
+              {material.views || 0}
             </span>
-          )}
-          <span className="flex items-center gap-1">
-            <Eye className="w-4 h-4" />
-            {material.views.toLocaleString()}
-          </span>
-        </div>
+          </div>
 
-        <div className="flex items-center gap-2">
-          {material.tags.slice(0, 2).map((tag) => (
-            <span
-              key={tag}
-              className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded"
-            >
-              {tag}
-            </span>
-          ))}
+          <div className="flex items-center gap-2">
+            {material.tags &&
+              material.tags.slice(0, 2).map((tag) => (
+                <span
+                  key={tag}
+                  className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded"
+                >
+                  {tag}
+                </span>
+              ))}
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 
   return (

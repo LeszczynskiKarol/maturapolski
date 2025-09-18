@@ -32,7 +32,7 @@ export class MaterialService {
     if (epoch) where.epoch = epoch;
     if (workId) where.workId = workId;
     if (type) where.type = type;
-    if (!isPremium) where.isPremium = false; // Dla niezalogowanych - tylko darmowe
+    if (!isPremium) where.isPremium = false;
 
     if (search) {
       where.OR = [
@@ -282,15 +282,30 @@ export class MaterialService {
 
   // Admin methods
   async createMaterial(data: any) {
-    // Generuj slug z tytułu
     const slug = this.generateSlug(data.title);
 
+    // Upewnij się że wszystkie pola są przekazywane
+    const materialData = {
+      title: data.title,
+      slug,
+      type: data.type,
+      category: data.category,
+      content: data.content,
+      summary: data.summary || "",
+      epoch: data.epoch || null,
+      workId: data.workId || null,
+      tags: data.tags || [],
+      difficulty: data.difficulty || 1,
+      readingTime: data.readingTime || null,
+      isPremium: data.isPremium || false,
+      isPublished: data.isPublished || false,
+      metaTitle: data.metaTitle || null,
+      metaDescription: data.metaDescription || null,
+      publishedAt: data.isPublished ? new Date() : null,
+    };
+
     return prisma.material.create({
-      data: {
-        ...data,
-        slug,
-        publishedAt: data.isPublished ? new Date() : null,
-      },
+      data: materialData,
     });
   }
 
