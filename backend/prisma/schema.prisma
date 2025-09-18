@@ -27,6 +27,7 @@ model User {
   weeklyProgress WeeklyProgress[]
   studyGoals    StudyGoal[]
   dailyProgress DailyProgress[]
+  materialProgress UserMaterialProgress[]  // DODAJ TĘ LINIĘ!
 }
 
 model UserProfile {
@@ -202,6 +203,224 @@ model DailyProgress {
   
   @@unique([userId, date])
   @@index([userId])
+}
+
+model LiteraryWork {
+  id            String    @id @default(cuid())
+  title         String
+  author        String
+  epoch         LiteraryEpoch
+  genre         String
+  year          Int?
+  isRequired    Boolean   @default(false) // lektura obowiązkowa
+  
+  summary       String?   @db.Text // streszczenie
+  themes        String[]  // motywy
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  chapters      Chapter[]
+  characters    Character[]
+  quotes        Quote[]
+  analyses      Analysis[]
+  materials     Material[]
+}
+
+model Chapter {
+  id            String    @id @default(cuid())
+  workId        String
+  work          LiteraryWork @relation(fields: [workId], references: [id])
+  
+  number        Int
+  title         String
+  summary       String    @db.Text
+  keyEvents     String[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@unique([workId, number])
+}
+
+model Character {
+  id            String    @id @default(cuid())
+  workId        String
+  work          LiteraryWork @relation(fields: [workId], references: [id])
+  
+  name          String
+  description   String    @db.Text
+  role          String    // główny, drugoplanowy, epizodyczny
+  traits        String[]
+  evolution     String?   @db.Text
+  quotes        String[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Quote {
+  id            String    @id @default(cuid())
+  workId        String
+  work          LiteraryWork @relation(fields: [workId], references: [id])
+  
+  text          String    @db.Text
+  context       String?
+  character     String?
+  chapter       Int?
+  significance  String?   @db.Text
+  tags          String[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Analysis {
+  id            String    @id @default(cuid())
+  workId        String
+  work          LiteraryWork @relation(fields: [workId], references: [id])
+  
+  title         String
+  type          AnalysisType
+  content       String    @db.Text
+  author        String?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Material {
+  id            String    @id @default(cuid())
+  title         String
+  slug          String    @unique
+  type          MaterialType
+  category      MaterialCategory
+  
+  content       Json      // Rich text content
+  summary       String?
+  
+  epoch         LiteraryEpoch?
+  workId        String?
+  work          LiteraryWork? @relation(fields: [workId], references: [id])
+  
+  tags          String[]
+  difficulty    Int       @default(1)
+  readingTime   Int?      // w minutach
+  
+  isPremium     Boolean   @default(false)
+  isPublished   Boolean   @default(true)
+  views         Int       @default(0)
+  
+  author        String?
+  metaTitle     String?
+  metaDescription String?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  publishedAt   DateTime?
+  
+  userProgress  UserMaterialProgress[]  // DODAJ TĘ LINIĘ!
+  
+  @@index([slug])
+  @@index([category, epoch])
+  @@index([isPublished, isPremium])
+}
+
+model EpochInfo {
+  id            String    @id @default(cuid())
+  epoch         LiteraryEpoch @unique
+  name          String
+  namePolish    String
+  period        String    // np. "1450-1600"
+  
+  characteristics String[] // cechy epoki
+  philosophy    String    @db.Text
+  artStyle      String    @db.Text
+  mainGenres    String[]
+  keyAuthors    String[]
+  keyWorks      String[]
+  
+  historicalContext String @db.Text
+  timeline      Json      // wydarzenia w formie JSON
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model LiteraryTerm {
+  id            String    @id @default(cuid())
+  term          String    @unique
+  category      String    // środki stylistyczne, gatunki, etc.
+  definition    String    @db.Text
+  examples      String[]
+  relatedTerms  String[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([category])
+}
+
+model EssayTemplate {
+  id            String    @id @default(cuid())
+  title         String
+  type          String    // rozprawka, interpretacja, etc.
+  structure     Json      // struktura w JSON
+  tips          String[]
+  examples      String[]  @db.Text
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model UserMaterialProgress {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])  // DODAJ TĘ LINIĘ!
+  materialId    String
+  material      Material  @relation(fields: [materialId], references: [id])  // DODAJ TĘ LINIĘ!
+  
+  completed     Boolean   @default(false)
+  progress      Int       @default(0) // 0-100%
+  lastAccessed  DateTime  @default(now())
+  notes         String?   @db.Text
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@unique([userId, materialId])
+  @@index([userId])
+}
+
+enum MaterialType {
+  EPOCH_OVERVIEW
+  WORK_ANALYSIS
+  CHARACTER_ANALYSIS
+  THEME_ANALYSIS
+  WRITING_GUIDE
+  THEORY
+  SUMMARY
+  INTERPRETATION
+  CONTEXT
+  BIOGRAPHY
+}
+
+enum MaterialCategory {
+  EPOCHS
+  LITERATURE
+  THEORY
+  WRITING
+  EXAM_PREP
+  QUICK_REVIEW
+}
+
+enum AnalysisType {
+  THEMES
+  SYMBOLS
+  STYLE
+  INTERPRETATION
+  CONTEXT
+  COMPARISON
 }
 
 enum UserRole {

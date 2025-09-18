@@ -27,6 +27,13 @@ import { LeaderboardPage } from "./features/gamification/LeaderboardPage";
 
 // Admin
 import { AdminDashboard } from "./features/admin/AdminDashboard";
+import ExerciseManager from "./features/admin/ExerciseManager";
+import { UserManager } from "./features/admin/UserManager";
+import AdminMaterialsEditor from "./features/admin/AdminMaterialsEditor";
+
+// Materials
+import MaterialsPage from "./features/materials/MaterialsPage";
+import { MaterialDetailPage } from "./features/materials/MaterialDetailPage";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +42,21 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
+};
+
+const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
+  if (user?.role !== "ADMIN") {
+    return <Navigate to="/dashboard" />;
+  }
+
+  return <>{children}</>;
 };
 
 export const App: React.FC = () => {
@@ -49,17 +71,45 @@ export const App: React.FC = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
-          {/* Admin routes - BEZ Layout */}
+          {/* Public Materials routes */}
+          <Route path="/materialy" element={<MaterialsPage />} />
+          <Route path="/materialy/:slug" element={<MaterialDetailPage />} />
+
+          {/* Admin routes - BEZ zagnieżdżania */}
           <Route
-            path="/admin/*"
+            path="/admin"
             element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminDashboard />
-              </ProtectedRoute>
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/exercises"
+            element={
+              <AdminRoute>
+                <ExerciseManager />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <AdminRoute>
+                <UserManager />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/materials"
+            element={
+              <AdminRoute>
+                <AdminMaterialsEditor />
+              </AdminRoute>
             }
           />
 
-          {/* Dashboard redirect based on role */}
+          {/* Dashboard redirect */}
           <Route
             path="/dashboard"
             element={
@@ -73,7 +123,7 @@ export const App: React.FC = () => {
             }
           />
 
-          {/* Protected routes with layout */}
+          {/* Student routes with layout */}
           <Route element={<Layout />}>
             <Route
               path="/exercises"
@@ -124,6 +174,9 @@ export const App: React.FC = () => {
               }
             />
           </Route>
+
+          {/* Catch all */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <Toaster position="top-right" />
       </BrowserRouter>

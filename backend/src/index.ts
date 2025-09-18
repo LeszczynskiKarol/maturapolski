@@ -3,6 +3,7 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import jwt from "@fastify/jwt";
+import { materialsRoutes } from "./routes/materials.routes";
 import { initializeAI } from "./ai/aiService";
 import { adminRoutes } from "./routes/admin.routes";
 import { initializeQueue } from "./services/queueService";
@@ -48,9 +49,6 @@ fastify.get("/health", async (request, reply) => {
   };
 });
 
-// USUŃ MOCK ENDPOINT - TO BLOKUJE PRAWDZIWE LOGOWANIE!
-// NIE MA JUŻ /auth/login MOCK!
-
 // Register API routes
 console.log("Registering routes...");
 
@@ -77,6 +75,10 @@ console.log("✓ Exercise routes registered at /api/exercises/*");
 // Learning routes
 fastify.register(learningRoutes, { prefix: "/api/learning" });
 console.log("✓ Learning routes registered at /api/learning/*");
+
+// Trasy publiczne
+fastify.register(materialsRoutes, { prefix: "/api/materials" });
+console.log("✓ Materials routes registered at /api/materials/*");
 
 // Error handler
 fastify.setErrorHandler(async (error, request, reply) => {
