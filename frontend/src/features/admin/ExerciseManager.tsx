@@ -114,10 +114,10 @@ const ExerciseManager: React.FC = () => {
   const loadExercises = async (): Promise<void> => {
     setIsLoading(true);
     try {
-      const response = await api.get("/api/admin/exercises");
-      console.log("API Response:", response.data); // Debug
+      // Pobierz WSZYSTKIE zadania zwiększając limit
+      const response = await api.get("/api/admin/exercises?limit=1000");
+      console.log("API Response:", response.data);
 
-      // API zwraca obiekt z exercises i pagination
       if (response.data.exercises) {
         setExercises(response.data.exercises);
       } else if (Array.isArray(response.data)) {
@@ -589,15 +589,26 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
     }
 
     try {
-      const response = exercise?.id
-        ? await api.put(`/api/admin/exercises/${exercise.id}`, formData)
-        : await api.post("/api/admin/exercises", formData);
+      // Przygotuj dane do wysłania - usuń puste epoch
+      const dataToSend = {
+        ...formData,
+        epoch: formData.epoch || undefined, // Zamień pusty string na undefined
+        content: formData.content || {},
+        metadata: formData.metadata || {},
+      };
 
-      // Backend zwraca sam obiekt exercise
+      // Usuń undefined values
+      if (!dataToSend.epoch) delete dataToSend.epoch;
+      if (!dataToSend.correctAnswer) delete dataToSend.correctAnswer;
+
+      const response = exercise?.id
+        ? await api.put(`/api/admin/exercises/${exercise.id}`, dataToSend)
+        : await api.post("/api/admin/exercises", dataToSend);
+
       onSave(response.data);
     } catch (error) {
       console.error("Error saving exercise:", error);
-      // Możesz dodać toast z błędem
+      // Dodaj toast z błędem
     }
   };
 

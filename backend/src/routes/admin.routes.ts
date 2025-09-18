@@ -14,19 +14,25 @@ const ExerciseSchema = z.object({
   ]),
   category: z.enum(["LANGUAGE_USE", "HISTORICAL_LITERARY", "WRITING"]),
   epoch: z
-    .enum([
-      "ANTIQUITY",
-      "MIDDLE_AGES",
-      "RENAISSANCE",
-      "BAROQUE",
-      "ENLIGHTENMENT",
-      "ROMANTICISM",
-      "POSITIVISM",
-      "YOUNG_POLAND",
-      "INTERWAR",
-      "CONTEMPORARY",
+    .union([
+      z.enum([
+        "ANTIQUITY",
+        "MIDDLE_AGES",
+        "RENAISSANCE",
+        "BAROQUE",
+        "ENLIGHTENMENT",
+        "ROMANTICISM",
+        "POSITIVISM",
+        "YOUNG_POLAND",
+        "INTERWAR",
+        "CONTEMPORARY",
+      ]),
+      z.literal(""), // DODAJ to - akceptuj pusty string
+      z.undefined(),
     ])
-    .optional(),
+    .optional()
+    .transform((val) => (val === "" ? undefined : val)), // Transformuj pusty string na undefined
+
   difficulty: z.number().min(1).max(5),
   points: z.number().min(1).max(35),
   question: z.string().min(10),
