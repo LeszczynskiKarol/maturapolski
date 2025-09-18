@@ -22,13 +22,26 @@ interface AuthState {
   logout: () => void;
 }
 
+const getUserFromStorage = () => {
+  try {
+    const stored = localStorage.getItem("auth-storage");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return parsed.state?.user || null;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+};
+
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
-      user: null,
+    (set, get) => ({
+      user: getUserFromStorage(),
       token: null,
       refreshToken: null,
-      isAuthenticated: false,
+      isAuthenticated: !!getUserFromStorage(),
 
       setUser: (user) => set({ user, isAuthenticated: true }),
 

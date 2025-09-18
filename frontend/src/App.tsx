@@ -38,6 +38,8 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
 };
 
 export const App: React.FC = () => {
+  const user = useAuthStore((state) => state.user);
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
@@ -47,7 +49,7 @@ export const App: React.FC = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
-          {/* Admin route - BEZ Layout */}
+          {/* Admin routes - BEZ Layout */}
           <Route
             path="/admin/*"
             element={
@@ -57,8 +59,71 @@ export const App: React.FC = () => {
             }
           />
 
+          {/* Dashboard redirect based on role */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                {user?.role === "ADMIN" ? (
+                  <Navigate to="/admin" replace />
+                ) : (
+                  <StudentDashboard />
+                )}
+              </ProtectedRoute>
+            }
+          />
+
           {/* Protected routes with layout */}
-          <Route element={<Layout />}>{/* reszta tras */}</Route>
+          <Route element={<Layout />}>
+            <Route
+              path="/exercises"
+              element={
+                <ProtectedRoute>
+                  <ExerciseList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/exercises/:id"
+              element={
+                <ProtectedRoute>
+                  <ExerciseSolver />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/progress"
+              element={
+                <ProtectedRoute>
+                  <ProgressTracker />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/exam"
+              element={
+                <ProtectedRoute>
+                  <ExamSimulator />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/learn"
+              element={
+                <ProtectedRoute>
+                  <LearningSession />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/leaderboard"
+              element={
+                <ProtectedRoute>
+                  <LeaderboardPage />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
         </Routes>
         <Toaster position="top-right" />
       </BrowserRouter>

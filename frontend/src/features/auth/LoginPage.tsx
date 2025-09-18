@@ -19,13 +19,25 @@ export const LoginPage: React.FC = () => {
   const setUser = useAuthStore((state) => state.setUser);
   const setTokens = useAuthStore((state) => state.setTokens);
 
+  // frontend/src/features/auth/LoginPage.tsx
+  // Zmień funkcję onSubmit:
+
   const onSubmit = async (data: any) => {
     try {
       const response = await api.post("/api/auth/login", data);
       setUser(response.data.user);
-      setTokens(response.data);
+      setTokens({
+        accessToken: response.data.token, // WAŻNE: backend zwraca 'token', nie 'accessToken'
+        refreshToken: response.data.refreshToken,
+      });
       toast.success("Zalogowano pomyślnie!");
-      navigate("/dashboard");
+
+      // DODAJ sprawdzanie roli:
+      if (response.data.user.role === "ADMIN") {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Błąd logowania");
     }
@@ -142,7 +154,7 @@ export const LoginPage: React.FC = () => {
             Dane testowe:
           </p>
           <p className="text-xs text-blue-700">
-            Admin: leszczu123@wp.pl / Admin123!
+            Admin: admin@matura-polski.pl / Admin123!
           </p>
           <p className="text-xs text-blue-700">
             Student: student@example.com / Student123!
