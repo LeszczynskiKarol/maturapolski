@@ -26,7 +26,7 @@ import { ExamSimulator } from "./features/exams/ExamSimulator";
 import { LeaderboardPage } from "./features/gamification/LeaderboardPage";
 
 // Admin
-import { AdminPanel } from "./features/admin/AdminPanel";
+import { AdminDashboard } from "./features/admin/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -47,73 +47,18 @@ export const App: React.FC = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
+          {/* Admin route - BEZ Layout */}
+          <Route
+            path="/admin/*"
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+
           {/* Protected routes with layout */}
-          <Route element={<Layout />}>
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <StudentDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/exercises"
-              element={
-                <ProtectedRoute>
-                  <ExerciseList />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/exercises/:id"
-              element={
-                <ProtectedRoute>
-                  <ExerciseSolver />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/progress"
-              element={
-                <ProtectedRoute>
-                  <ProgressTracker />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/exam"
-              element={
-                <ProtectedRoute>
-                  <ExamSimulator />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/learn"
-              element={
-                <ProtectedRoute>
-                  <LearningSession />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/leaderboard"
-              element={
-                <ProtectedRoute>
-                  <LeaderboardPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute>
-                  <AdminPanel />
-                </ProtectedRoute>
-              }
-            />
-          </Route>
+          <Route element={<Layout />}>{/* reszta tras */}</Route>
         </Routes>
         <Toaster position="top-right" />
       </BrowserRouter>

@@ -10,7 +10,7 @@ import {
   Calendar,
   Award,
 } from "lucide-react";
-import { ExerciseManager } from "./ExerciseManager";
+import ExerciseManager from "./ExerciseManager";
 import { UserManager } from "./UserManager";
 import { Analytics } from "./Analytics";
 import { ContentEditor } from "./ContentEditor";

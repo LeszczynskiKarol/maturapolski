@@ -4,8 +4,9 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import jwt from "@fastify/jwt";
 import { initializeAI } from "./ai/aiService";
+import { adminRoutes } from "./routes/admin.routes";
 import { initializeQueue } from "./services/queueService";
-import { authRoutes } from "./routes/auth.routes"; // DODAJ TO!
+import { authRoutes } from "./routes/auth.routes";
 import { exerciseRoutes } from "./routes/exercise.routes";
 import { studentRoutes } from "./routes/student.routes";
 import { learningRoutes } from "./routes/learning.routes";
@@ -56,6 +57,10 @@ console.log("Registering routes...");
 // AUTH ROUTES - MUSZĄ BYĆ PIERWSZE!
 fastify.register(authRoutes, { prefix: "/api/auth" });
 console.log("✓ Auth routes registered at /api/auth/*");
+
+// admin routes
+fastify.register(adminRoutes, { prefix: "/api/admin" });
+console.log("✓ Admin routes registered at /api/admin/*");
 
 // Student routes
 fastify.register(studentRoutes, { prefix: "/api/student" });
