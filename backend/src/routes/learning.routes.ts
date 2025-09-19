@@ -7,6 +7,10 @@ import { SpacedRepetitionService } from "../services/spacedRepetitionService";
 const sessionSkippedExercises = new Map<string, Set<string>>();
 const spacedRepetition = new SpacedRepetitionService();
 
+// Przechowuj ostatnie pokazane zadania dla każdego użytkownika
+const userRecentExercises = new Map<string, string[]>();
+const MAX_RECENT_MEMORY = 20; // Pamiętaj ostatnie 20 zadań
+
 export async function learningRoutes(fastify: FastifyInstance) {
   // Middleware - verify JWT
   fastify.addHook("onRequest", async (request, reply) => {
@@ -22,12 +26,16 @@ export async function learningRoutes(fastify: FastifyInstance) {
       const userId = (request.user as any).userId;
       const { excludeId } = request.query as { excludeId?: string };
 
-      // Inicjalizuj set pominiętych zadań dla użytkownika jeśli nie istnieje
+      // Inicjalizuj struktury dla użytkownika
       if (!sessionSkippedExercises.has(userId)) {
         sessionSkippedExercises.set(userId, new Set());
       }
+      if (!userRecentExercises.has(userId)) {
+        userRecentExercises.set(userId, []);
+      }
 
       const skippedInSession = sessionSkippedExercises.get(userId)!;
+      const recentExercises = userRecentExercises.get(userId)!;
 
       // Jeśli przekazano ID do wykluczenia (pominięte zadanie), dodaj do setu
       if (excludeId) {
@@ -37,14 +45,17 @@ export async function learningRoutes(fastify: FastifyInstance) {
         );
       }
 
-      // KROK 1: Pobierz zadania z ostatnich 7 dni + pominięte w tej sesji
+      // KROK 1: Pobierz różne okresy dla lepszej randomizacji
+      const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
       const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
 
+      // Pobierz ostatnie odpowiedzi z różnych okresów
       const recentSubmissions = await prisma.submission.findMany({
         where: {
           userId,
           createdAt: {
-            gte: sevenDaysAgo,
+            gte: threeDaysAgo, // Tylko z ostatnich 3 dni dla krótkiego okresu
           },
         },
         select: {
@@ -54,85 +65,236 @@ export async function learningRoutes(fastify: FastifyInstance) {
         },
       });
 
-      // Lista ID zadań do wykluczenia (z ostatnich 7 dni + pominięte w sesji)
-      const excludedExerciseIds = [
+      // Lista zadań do wykluczenia (ostatnie 3 dni + pominięte + ostatnie 20 pokazanych)
+      const excludedExerciseIds = new Set([
         ...recentSubmissions.map((s) => s.exerciseId),
-        ...Array.from(skippedInSession), // Dodaj pominięte w tej sesji
-      ];
+        ...Array.from(skippedInSession),
+        ...recentExercises, // Dodaj ostatnie pokazane
+      ]);
 
       console.log(
-        `Excluding ${excludedExerciseIds.length} exercises (${recentSubmissions.length} from last 7 days, ${skippedInSession.size} skipped in session)`
+        `Excluding ${excludedExerciseIds.size} exercises for user ${userId}`
       );
 
-      // KROK 2: Znajdź zadania których użytkownik NIGDY nie robił i nie pominął
-      const neverDoneExercise = await prisma.exercise.findFirst({
-        where: {
-          id: {
-            notIn: excludedExerciseIds, // Wyklucz także pominięte
+      // KROK 2: Strategia wyboru z randomizacją
+      const random = Math.random();
+      let selectedExercise = null;
+
+      // 30% szans - Zadania do powtórki (spaced repetition)
+      if (random < 0.3) {
+        const dueForReview = await prisma.spacedRepetition.findMany({
+          where: {
+            userId,
+            nextReview: { lte: new Date() },
+            exerciseId: { notIn: Array.from(excludedExerciseIds) },
           },
-          NOT: {
-            submissions: {
-              some: { userId },
+          orderBy: { nextReview: "asc" },
+          take: 5, // Pobierz 5 kandydatów
+        });
+
+        if (dueForReview.length > 0) {
+          // Wybierz losowo z top 5 zadań do powtórki
+          const randomIndex = Math.floor(Math.random() * dueForReview.length);
+          selectedExercise = await prisma.exercise.findUnique({
+            where: { id: dueForReview[randomIndex].exerciseId },
+          });
+        }
+      }
+
+      // 40% szans - Nowe zadania (nigdy nie rozwiązane)
+      if (!selectedExercise && random < 0.7) {
+        // Pobierz wszystkie nierozwiązane zadania
+        const neverDoneExercises = await prisma.exercise.findMany({
+          where: {
+            id: { notIn: Array.from(excludedExerciseIds) },
+            NOT: {
+              submissions: {
+                some: { userId },
+              },
             },
           },
-        },
-        orderBy: [{ difficulty: "asc" }, { createdAt: "desc" }],
-      });
-
-      if (neverDoneExercise) {
-        console.log(`Found new exercise: ${neverDoneExercise.id}`);
-        return reply.send(neverDoneExercise);
-      }
-
-      // KROK 3: Znajdź stare zadania (spoza 7 dni i niepominięte)
-      const anyOldExercise = await prisma.exercise.findFirst({
-        where: {
-          id: {
-            notIn: excludedExerciseIds,
+          select: {
+            id: true,
+            difficulty: true,
+            category: true,
+            createdAt: true,
           },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
+        });
 
-      if (anyOldExercise) {
-        console.log(`Found old exercise: ${anyOldExercise.id}`);
-        return reply.send(anyOldExercise);
+        if (neverDoneExercises.length > 0) {
+          // Grupuj po poziomie trudności
+          const byDifficulty: Record<number, string[]> = {};
+          neverDoneExercises.forEach((ex) => {
+            if (!byDifficulty[ex.difficulty]) {
+              byDifficulty[ex.difficulty] = [];
+            }
+            byDifficulty[ex.difficulty].push(ex.id);
+          });
+
+          // Wybierz poziom trudności (preferuj niższe)
+          const difficulties = Object.keys(byDifficulty).map(Number).sort();
+          let targetDifficulty = difficulties[0];
+
+          // 70% szans na łatwe, 20% średnie, 10% trudne
+          const diffRandom = Math.random();
+          if (diffRandom < 0.7 && difficulties[0]) {
+            targetDifficulty = difficulties[0];
+          } else if (diffRandom < 0.9 && difficulties[1]) {
+            targetDifficulty = difficulties[1];
+          } else if (difficulties[2]) {
+            targetDifficulty = difficulties[2];
+          }
+
+          // Wybierz losowe zadanie z tego poziomu
+          const candidateIds = byDifficulty[targetDifficulty];
+          const randomId =
+            candidateIds[Math.floor(Math.random() * candidateIds.length)];
+
+          selectedExercise = await prisma.exercise.findUnique({
+            where: { id: randomId },
+          });
+        }
       }
 
-      // KROK 4: Jeśli wszystko pominięte/zrobione, wyczyść listę pominiętych i zacznij od nowa
-      console.log("All exercises done or skipped - clearing skip list");
-      skippedInSession.clear();
+      // 30% szans - Zadania ze słabych kategorii
+      if (!selectedExercise) {
+        // Analiza słabych kategorii użytkownika
+        const weakCategoriesRaw = await prisma.$queryRaw<any[]>`
+          SELECT 
+            e.category,
+            AVG(CAST(s.score AS FLOAT)) as avg_score,
+            COUNT(*)::int as attempts
+          FROM "Submission" s
+          JOIN "Exercise" e ON s."exerciseId" = e.id
+          WHERE s."userId" = ${userId} 
+            AND s.score IS NOT NULL
+            AND s."createdAt" > ${fourteenDaysAgo}
+          GROUP BY e.category
+          HAVING AVG(CAST(s.score AS FLOAT)) < 70
+          ORDER BY AVG(CAST(s.score AS FLOAT)) ASC
+        `;
 
-      // Spróbuj znaleźć jakiekolwiek zadanie
-      const anyExercise = await prisma.exercise.findFirst({
-        where: {
-          id: {
-            notIn: recentSubmissions.map((s) => s.exerciseId), // Wyklucz tylko te z ostatnich 7 dni
+        if (weakCategoriesRaw.length > 0) {
+          // Wybierz losową słabą kategorię
+          const randomCategory =
+            weakCategoriesRaw[
+              Math.floor(Math.random() * Math.min(3, weakCategoriesRaw.length))
+            ];
+
+          const weakExercises = await prisma.exercise.findMany({
+            where: {
+              category: randomCategory.category,
+              id: { notIn: Array.from(excludedExerciseIds) },
+            },
+            take: 10, // Pobierz 10 kandydatów
+          });
+
+          if (weakExercises.length > 0) {
+            // Wybierz losowe zadanie
+            selectedExercise =
+              weakExercises[Math.floor(Math.random() * weakExercises.length)];
+          }
+        }
+      }
+
+      // KROK 3: Fallback - stare zadania (sprzed 7 dni)
+      if (!selectedExercise) {
+        const oldSubmissions = await prisma.submission.findMany({
+          where: {
+            userId,
+            createdAt: { lt: sevenDaysAgo },
+            score: { lt: 100 }, // Tylko te które nie były perfekcyjne
           },
-        },
-        orderBy: { createdAt: "desc" },
-      });
+          select: {
+            exerciseId: true,
+            score: true,
+          },
+          orderBy: { score: "asc" }, // Najpierw najsłabsze
+          take: 20,
+        });
 
-      if (anyExercise) {
-        return reply.send(anyExercise);
+        if (oldSubmissions.length > 0) {
+          // Shuffle i wybierz
+          const shuffled = oldSubmissions
+            .filter((s) => !excludedExerciseIds.has(s.exerciseId))
+            .sort(() => Math.random() - 0.5);
+
+          if (shuffled.length > 0) {
+            selectedExercise = await prisma.exercise.findUnique({
+              where: { id: shuffled[0].exerciseId },
+            });
+          }
+        }
       }
 
-      // Ostateczność - losowe
-      const count = await prisma.exercise.count();
-      const skip = Math.floor(Math.random() * count);
-      const randomExercise = await prisma.exercise.findFirst({
-        skip,
-        take: 1,
-      });
+      // KROK 4: Ostateczny fallback - losowe zadanie
+      if (!selectedExercise) {
+        // Pobierz wszystkie dostępne zadania
+        const allAvailable = await prisma.exercise.findMany({
+          where: {
+            id: { notIn: Array.from(excludedExerciseIds) },
+          },
+          select: { id: true },
+        });
 
-      console.log(`Last resort - random exercise: ${randomExercise?.id}`);
-      return reply.send(randomExercise);
+        if (allAvailable.length > 0) {
+          const randomIndex = Math.floor(Math.random() * allAvailable.length);
+          selectedExercise = await prisma.exercise.findUnique({
+            where: { id: allAvailable[randomIndex].id },
+          });
+        } else {
+          // Absolutnie ostatnia opcja - wyczyść pamięć i zacznij od nowa
+          console.log(
+            "No exercises available - clearing memory and restarting"
+          );
+          skippedInSession.clear();
+          recentExercises.length = 0;
+
+          // Wybierz całkowicie losowe zadanie
+          const count = await prisma.exercise.count();
+          const skip = Math.floor(Math.random() * count);
+          selectedExercise = await prisma.exercise.findFirst({
+            skip,
+            take: 1,
+          });
+        }
+      }
+
+      // Zapisz pokazane zadanie w pamięci
+      if (selectedExercise) {
+        recentExercises.push(selectedExercise.id);
+        // Ogranicz pamięć do ostatnich MAX_RECENT_MEMORY zadań
+        if (recentExercises.length > MAX_RECENT_MEMORY) {
+          recentExercises.shift();
+        }
+
+        console.log(
+          `Selected exercise ${
+            selectedExercise.id
+          } for user ${userId} (strategy: random=${random.toFixed(2)})`
+        );
+      }
+
+      return reply.send(selectedExercise);
     } catch (error) {
       console.error("Error getting next exercise:", error);
       return reply.code(500).send({ error: "Failed to get next exercise" });
     }
+  });
+
+  // Clear session data (wywoływane przy rozpoczęciu nowej sesji)
+  fastify.post("/session/start", async (request, reply) => {
+    const userId = (request.user as any).userId;
+
+    // Wyczyść pominięte zadania
+    if (sessionSkippedExercises.has(userId)) {
+      sessionSkippedExercises.get(userId)!.clear();
+    }
+
+    // NIE czyść pamięci ostatnich zadań - zachowaj ciągłość między sesjami
+
+    console.log(`Started new learning session for user ${userId}`);
+    return reply.send({ success: true });
   });
 
   // Get learning stats - NAPRAWIONY BigInt problem
@@ -216,6 +378,17 @@ export async function learningRoutes(fastify: FastifyInstance) {
         },
       });
 
+      // Update spaced repetition data for completed exercises
+      if (stats.completedExercises) {
+        for (const exerciseData of stats.completedExercises) {
+          await spacedRepetition.updateRepetitionData(
+            userId,
+            exerciseData.id,
+            exerciseData.score
+          );
+        }
+      }
+
       // Create achievement if milestone reached
       if (stats.streak >= 10) {
         await createNotification(
@@ -253,8 +426,8 @@ export async function learningRoutes(fastify: FastifyInstance) {
     const userId = (request.user as any).userId;
     if (sessionSkippedExercises.has(userId)) {
       sessionSkippedExercises.get(userId)!.clear();
-      console.log(`Cleared skipped exercises for user ${userId}`);
     }
+    console.log(`Cleared skipped exercises for user ${userId}`);
     return reply.send({ success: true });
   });
 

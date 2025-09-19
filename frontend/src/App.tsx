@@ -109,22 +109,21 @@ export const App: React.FC = () => {
             }
           />
 
-          {/* Dashboard redirect */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                {user?.role === "ADMIN" ? (
-                  <Navigate to="/admin" replace />
-                ) : (
-                  <StudentDashboard />
-                )}
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Student routes with layout */}
+          {/* Student routes with layout - WSZYSTKIE TRASY STUDENCKIE W LAYOUT */}
           <Route element={<Layout />}>
+            {/* Dashboard - TERAZ TEŻ W LAYOUT! */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  {user?.role === "ADMIN" ? (
+                    <Navigate to="/admin" replace />
+                  ) : (
+                    <StudentDashboard />
+                  )}
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/exercises"
               element={

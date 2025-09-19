@@ -1,3 +1,4 @@
+// backend/src/services/queueService.ts
 import { Queue, Worker } from "bullmq";
 import { redis } from "../lib/redis";
 
