@@ -9,7 +9,10 @@ const spacedRepetition = new SpacedRepetitionService();
 
 // Przechowuj ostatnie pokazane zadania dla każdego użytkownika
 const userRecentExercises = new Map<string, string[]>();
-const MAX_RECENT_MEMORY = 20; // Pamiętaj ostatnie 20 zadań
+const MAX_RECENT_MEMORY = 20;
+
+// Przechowuj filtry sesji dla każdego użytkownika
+const userSessionFilters = new Map<string, any>();
 
 export async function learningRoutes(fastify: FastifyInstance) {
   // Middleware - verify JWT
@@ -21,10 +24,37 @@ export async function learningRoutes(fastify: FastifyInstance) {
     }
   });
 
+  // Set session filters
+  fastify.post("/session/filters", async (request, reply) => {
+    const userId = (request.user as any).userId;
+    const filters = request.body as {
+      type?: string;
+      category?: string;
+      epoch?: string;
+      difficulty?: number[];
+      points?: { min: number; max: number };
+    };
+
+    userSessionFilters.set(userId, filters);
+    console.log(`Set filters for user ${userId}:`, filters);
+
+    return reply.send({ success: true, filters });
+  });
+
+  // Get current filters
+  fastify.get("/session/filters", async (request, reply) => {
+    const userId = (request.user as any).userId;
+    const filters = userSessionFilters.get(userId) || {};
+    return reply.send(filters);
+  });
+
   fastify.get("/next", async (request, reply) => {
     try {
       const userId = (request.user as any).userId;
       const { excludeId } = request.query as { excludeId?: string };
+
+      // Pobierz filtry użytkownika
+      const filters = userSessionFilters.get(userId) || {};
 
       // Inicjalizuj struktury dla użytkownika
       if (!sessionSkippedExercises.has(userId)) {
@@ -45,7 +75,39 @@ export async function learningRoutes(fastify: FastifyInstance) {
         );
       }
 
-      // KROK 1: Pobierz różne okresy dla lepszej randomizacji
+      // KROK 1: Zbuduj warunki WHERE na podstawie filtrów
+      const baseWhere: any = {
+        id: { notIn: [...Array.from(skippedInSession), ...recentExercises] },
+      };
+
+      // Dodaj filtry
+      if (filters.type) {
+        baseWhere.type = filters.type;
+      }
+
+      if (filters.category) {
+        baseWhere.category = filters.category;
+
+        // Jeśli wybrano HISTORICAL_LITERARY i epokę, dodaj filtr epoki
+        if (filters.category === "HISTORICAL_LITERARY" && filters.epoch) {
+          baseWhere.epoch = filters.epoch;
+        }
+      }
+
+      if (filters.difficulty && filters.difficulty.length > 0) {
+        baseWhere.difficulty = { in: filters.difficulty };
+      }
+
+      if (filters.points) {
+        baseWhere.points = {
+          gte: filters.points.min,
+          lte: filters.points.max,
+        };
+      }
+
+      console.log(`Filters for user ${userId}:`, baseWhere);
+
+      // KROK 2: Pobierz różne okresy dla lepszej randomizacji
       const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
       const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
       const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
@@ -55,7 +117,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
         where: {
           userId,
           createdAt: {
-            gte: threeDaysAgo, // Tylko z ostatnich 3 dni dla krótkiego okresu
+            gte: threeDaysAgo,
           },
         },
         select: {
@@ -65,18 +127,11 @@ export async function learningRoutes(fastify: FastifyInstance) {
         },
       });
 
-      // Lista zadań do wykluczenia (ostatnie 3 dni + pominięte + ostatnie 20 pokazanych)
-      const excludedExerciseIds = new Set([
-        ...recentSubmissions.map((s) => s.exerciseId),
-        ...Array.from(skippedInSession),
-        ...recentExercises, // Dodaj ostatnie pokazane
-      ]);
+      // Dodaj ostatnie rozwiązania do wykluczonych
+      const excludedFromRecent = recentSubmissions.map((s) => s.exerciseId);
+      baseWhere.id.notIn = [...baseWhere.id.notIn, ...excludedFromRecent];
 
-      console.log(
-        `Excluding ${excludedExerciseIds.size} exercises for user ${userId}`
-      );
-
-      // KROK 2: Strategia wyboru z randomizacją
+      // KROK 3: Strategia wyboru z randomizacją
       const random = Math.random();
       let selectedExercise = null;
 
@@ -86,27 +141,47 @@ export async function learningRoutes(fastify: FastifyInstance) {
           where: {
             userId,
             nextReview: { lte: new Date() },
-            exerciseId: { notIn: Array.from(excludedExerciseIds) },
+            exerciseId: { notIn: baseWhere.id.notIn },
+            exercise: baseWhere.category
+              ? { category: baseWhere.category }
+              : {},
           },
           orderBy: { nextReview: "asc" },
-          take: 5, // Pobierz 5 kandydatów
+          take: 5,
+          include: { exercise: true },
         });
 
         if (dueForReview.length > 0) {
-          // Wybierz losowo z top 5 zadań do powtórki
-          const randomIndex = Math.floor(Math.random() * dueForReview.length);
-          selectedExercise = await prisma.exercise.findUnique({
-            where: { id: dueForReview[randomIndex].exerciseId },
+          // Sprawdź czy spełniają filtry
+          const filtered = dueForReview.filter((rep) => {
+            const ex = rep.exercise;
+            if (filters.type && ex.type !== filters.type) return false;
+            if (
+              filters.difficulty &&
+              !filters.difficulty.includes(ex.difficulty)
+            )
+              return false;
+            if (
+              filters.points &&
+              (ex.points < filters.points.min || ex.points > filters.points.max)
+            )
+              return false;
+            if (filters.epoch && ex.epoch !== filters.epoch) return false;
+            return true;
           });
+
+          if (filtered.length > 0) {
+            const randomIndex = Math.floor(Math.random() * filtered.length);
+            selectedExercise = filtered[randomIndex].exercise;
+          }
         }
       }
 
       // 40% szans - Nowe zadania (nigdy nie rozwiązane)
       if (!selectedExercise && random < 0.7) {
-        // Pobierz wszystkie nierozwiązane zadania
         const neverDoneExercises = await prisma.exercise.findMany({
           where: {
-            id: { notIn: Array.from(excludedExerciseIds) },
+            ...baseWhere,
             NOT: {
               submissions: {
                 some: { userId },
@@ -117,106 +192,147 @@ export async function learningRoutes(fastify: FastifyInstance) {
             id: true,
             difficulty: true,
             category: true,
+            epoch: true,
+            type: true,
+            points: true,
+            question: true,
+            content: true,
+            correctAnswer: true,
+            tags: true,
+            metadata: true,
             createdAt: true,
           },
         });
 
         if (neverDoneExercises.length > 0) {
-          // Grupuj po poziomie trudności
-          const byDifficulty: Record<number, string[]> = {};
-          neverDoneExercises.forEach((ex) => {
-            if (!byDifficulty[ex.difficulty]) {
-              byDifficulty[ex.difficulty] = [];
+          // Jeśli nie ma filtra trudności, preferuj łatwiejsze
+          if (!filters.difficulty || filters.difficulty.length === 0) {
+            // Grupuj po poziomie trudności
+            const byDifficulty: Record<number, any[]> = {};
+            neverDoneExercises.forEach((ex) => {
+              if (!byDifficulty[ex.difficulty]) {
+                byDifficulty[ex.difficulty] = [];
+              }
+              byDifficulty[ex.difficulty].push(ex);
+            });
+
+            // Wybierz poziom trudności (preferuj niższe)
+            const difficulties = Object.keys(byDifficulty).map(Number).sort();
+            let targetDifficulty = difficulties[0];
+
+            const diffRandom = Math.random();
+            if (diffRandom < 0.7 && difficulties[0]) {
+              targetDifficulty = difficulties[0];
+            } else if (diffRandom < 0.9 && difficulties[1]) {
+              targetDifficulty = difficulties[1];
+            } else if (difficulties[2]) {
+              targetDifficulty = difficulties[2];
             }
-            byDifficulty[ex.difficulty].push(ex.id);
-          });
 
-          // Wybierz poziom trudności (preferuj niższe)
-          const difficulties = Object.keys(byDifficulty).map(Number).sort();
-          let targetDifficulty = difficulties[0];
-
-          // 70% szans na łatwe, 20% średnie, 10% trudne
-          const diffRandom = Math.random();
-          if (diffRandom < 0.7 && difficulties[0]) {
-            targetDifficulty = difficulties[0];
-          } else if (diffRandom < 0.9 && difficulties[1]) {
-            targetDifficulty = difficulties[1];
-          } else if (difficulties[2]) {
-            targetDifficulty = difficulties[2];
+            // Wybierz losowe zadanie z tego poziomu
+            const candidates =
+              byDifficulty[targetDifficulty] || neverDoneExercises;
+            selectedExercise =
+              candidates[Math.floor(Math.random() * candidates.length)];
+          } else {
+            // Jeśli są filtry, wybierz losowo z przefiltrowanych
+            selectedExercise =
+              neverDoneExercises[
+                Math.floor(Math.random() * neverDoneExercises.length)
+              ];
           }
-
-          // Wybierz losowe zadanie z tego poziomu
-          const candidateIds = byDifficulty[targetDifficulty];
-          const randomId =
-            candidateIds[Math.floor(Math.random() * candidateIds.length)];
-
-          selectedExercise = await prisma.exercise.findUnique({
-            where: { id: randomId },
-          });
         }
       }
 
-      // 30% szans - Zadania ze słabych kategorii
+      // 30% szans - Zadania ze słabych kategorii (z uwzględnieniem filtrów)
       if (!selectedExercise) {
         // Analiza słabych kategorii użytkownika
-        const weakCategoriesRaw = await prisma.$queryRaw<any[]>`
+        const weakWhere = filters.category
+          ? `AND e.category = '${filters.category}'`
+          : "";
+        const epochWhere = filters.epoch
+          ? `AND e.epoch = '${filters.epoch}'`
+          : "";
+
+        const weakCategoriesRaw = await prisma.$queryRawUnsafe<any[]>(
+          `
           SELECT 
             e.category,
+            ${filters.epoch ? "e.epoch," : ""}
             AVG(CAST(s.score AS FLOAT)) as avg_score,
             COUNT(*)::int as attempts
           FROM "Submission" s
           JOIN "Exercise" e ON s."exerciseId" = e.id
-          WHERE s."userId" = ${userId} 
+          WHERE s."userId" = $1
             AND s.score IS NOT NULL
-            AND s."createdAt" > ${fourteenDaysAgo}
-          GROUP BY e.category
+            AND s."createdAt" > $2
+            ${weakWhere}
+            ${epochWhere}
+          GROUP BY e.category ${filters.epoch ? ", e.epoch" : ""}
           HAVING AVG(CAST(s.score AS FLOAT)) < 70
           ORDER BY AVG(CAST(s.score AS FLOAT)) ASC
-        `;
+          LIMIT 3
+        `,
+          userId,
+          fourteenDaysAgo
+        );
 
         if (weakCategoriesRaw.length > 0) {
           // Wybierz losową słabą kategorię
           const randomCategory =
             weakCategoriesRaw[
-              Math.floor(Math.random() * Math.min(3, weakCategoriesRaw.length))
+              Math.floor(Math.random() * weakCategoriesRaw.length)
             ];
 
           const weakExercises = await prisma.exercise.findMany({
             where: {
+              ...baseWhere,
               category: randomCategory.category,
-              id: { notIn: Array.from(excludedExerciseIds) },
+              ...(randomCategory.epoch && { epoch: randomCategory.epoch }),
             },
-            take: 10, // Pobierz 10 kandydatów
+            take: 10,
           });
 
           if (weakExercises.length > 0) {
-            // Wybierz losowe zadanie
             selectedExercise =
               weakExercises[Math.floor(Math.random() * weakExercises.length)];
           }
         }
       }
 
-      // KROK 3: Fallback - stare zadania (sprzed 7 dni)
+      // KROK 4: Fallback - stare zadania (sprzed 7 dni) z filtrami
       if (!selectedExercise) {
         const oldSubmissions = await prisma.submission.findMany({
           where: {
             userId,
             createdAt: { lt: sevenDaysAgo },
-            score: { lt: 100 }, // Tylko te które nie były perfekcyjne
+            score: { lt: 100 },
+            exercise: {
+              ...(filters.type && { type: filters.type }),
+              ...(filters.category && { category: filters.category }),
+              ...(filters.epoch && { epoch: filters.epoch }),
+              ...(filters.difficulty && {
+                difficulty: { in: filters.difficulty },
+              }),
+              ...(filters.points && {
+                points: {
+                  gte: filters.points.min,
+                  lte: filters.points.max,
+                },
+              }),
+            },
           },
           select: {
             exerciseId: true,
             score: true,
           },
-          orderBy: { score: "asc" }, // Najpierw najsłabsze
+          orderBy: { score: "asc" },
           take: 20,
         });
 
         if (oldSubmissions.length > 0) {
-          // Shuffle i wybierz
           const shuffled = oldSubmissions
-            .filter((s) => !excludedExerciseIds.has(s.exerciseId))
+            .filter((s) => !baseWhere.id.notIn.includes(s.exerciseId))
             .sort(() => Math.random() - 0.5);
 
           if (shuffled.length > 0) {
@@ -227,12 +343,24 @@ export async function learningRoutes(fastify: FastifyInstance) {
         }
       }
 
-      // KROK 4: Ostateczny fallback - losowe zadanie
+      // KROK 5: Ostateczny fallback - dowolne zadanie z filtrami
       if (!selectedExercise) {
-        // Pobierz wszystkie dostępne zadania
+        // Pobierz wszystkie dostępne zadania z filtrami
         const allAvailable = await prisma.exercise.findMany({
           where: {
-            id: { notIn: Array.from(excludedExerciseIds) },
+            ...(filters.type && { type: filters.type }),
+            ...(filters.category && { category: filters.category }),
+            ...(filters.epoch && { epoch: filters.epoch }),
+            ...(filters.difficulty && {
+              difficulty: { in: filters.difficulty },
+            }),
+            ...(filters.points && {
+              points: {
+                gte: filters.points.min,
+                lte: filters.points.max,
+              },
+            }),
+            id: { notIn: baseWhere.id.notIn },
           },
           select: { id: true },
         });
@@ -245,33 +373,48 @@ export async function learningRoutes(fastify: FastifyInstance) {
         } else {
           // Absolutnie ostatnia opcja - wyczyść pamięć i zacznij od nowa
           console.log(
-            "No exercises available - clearing memory and restarting"
+            "No exercises available with current filters - clearing memory"
           );
           skippedInSession.clear();
           recentExercises.length = 0;
 
-          // Wybierz całkowicie losowe zadanie
-          const count = await prisma.exercise.count();
-          const skip = Math.floor(Math.random() * count);
-          selectedExercise = await prisma.exercise.findFirst({
-            skip,
-            take: 1,
+          // Spróbuj jeszcze raz bez wykluczeń
+          const anyExercise = await prisma.exercise.findFirst({
+            where: {
+              ...(filters.type && { type: filters.type }),
+              ...(filters.category && { category: filters.category }),
+              ...(filters.epoch && { epoch: filters.epoch }),
+              ...(filters.difficulty && {
+                difficulty: { in: filters.difficulty },
+              }),
+              ...(filters.points && {
+                points: {
+                  gte: filters.points.min,
+                  lte: filters.points.max,
+                },
+              }),
+            },
           });
+
+          if (anyExercise) {
+            selectedExercise = anyExercise;
+          }
         }
       }
 
       // Zapisz pokazane zadanie w pamięci
       if (selectedExercise) {
         recentExercises.push(selectedExercise.id);
-        // Ogranicz pamięć do ostatnich MAX_RECENT_MEMORY zadań
         if (recentExercises.length > MAX_RECENT_MEMORY) {
           recentExercises.shift();
         }
 
         console.log(
-          `Selected exercise ${
-            selectedExercise.id
-          } for user ${userId} (strategy: random=${random.toFixed(2)})`
+          `Selected exercise ${selectedExercise.id} for user ${userId} with filters`
+        );
+      } else {
+        console.log(
+          `No exercise found for user ${userId} with current filters`
         );
       }
 
@@ -297,7 +440,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
     return reply.send({ success: true });
   });
 
-  // Get learning stats - NAPRAWIONY BigInt problem
+  // Get learning stats
   fastify.get("/stats", async (request, reply) => {
     try {
       const userId = (request.user as any).userId;
@@ -318,7 +461,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
         (s) => (s.score || 0) > 0
       ).length;
 
-      // Recent sessions - NAPRAWIONE: Konwersja BigInt na Number
+      // Recent sessions
       const recentSessionsRaw = await prisma.$queryRaw<any[]>`
         SELECT 
           DATE(s."createdAt") as date,
@@ -334,16 +477,14 @@ export async function learningRoutes(fastify: FastifyInstance) {
         LIMIT 7
       `;
 
-      // Convert BigInt to Number and format data
       const recentSessions = recentSessionsRaw.map((session) => ({
         date: new Date(session.date).toISOString().split("T")[0],
         completed: Number(session.completed),
         correctRate: Math.round(Number(session.correctRate || 0)),
         points: Number(session.points),
-        duration: Math.round(Number(session.duration_seconds || 0) / 60), // Convert to minutes
+        duration: Math.round(Number(session.duration_seconds || 0) / 60),
       }));
 
-      // User profile
       const profile = await prisma.userProfile.findUnique({
         where: { userId },
       });
@@ -368,6 +509,9 @@ export async function learningRoutes(fastify: FastifyInstance) {
     try {
       const userId = (request.user as any).userId;
       const { stats } = request.body as any;
+
+      // Clear session filters
+      userSessionFilters.delete(userId);
 
       // Update user profile
       const updatedProfile = await prisma.userProfile.update({
@@ -431,7 +575,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
     return reply.send({ success: true });
   });
 
-  // Get user progress - NAPRAWIONE BigInt problem
+  // Get user progress
   fastify.get("/progress", async (request, reply) => {
     try {
       const userId = (request.user as any).userId;
@@ -450,7 +594,6 @@ export async function learningRoutes(fastify: FastifyInstance) {
         ORDER BY e.category
       `;
 
-      // Convert BigInt to Number
       const categoryProgress = categoryProgressRaw.map((cat) => ({
         category: cat.category,
         total_exercises: Number(cat.total_exercises),
@@ -472,7 +615,6 @@ export async function learningRoutes(fastify: FastifyInstance) {
         ORDER BY date DESC
       `;
 
-      // Convert BigInt to Number
       const recentActivity = recentActivityRaw.map((activity) => ({
         date: new Date(activity.date).toISOString().split("T")[0],
         exercises_completed: Number(activity.exercises_completed),
@@ -486,6 +628,88 @@ export async function learningRoutes(fastify: FastifyInstance) {
     } catch (error) {
       console.error("Error getting progress:", error);
       return reply.code(500).send({ error: "Failed to get progress" });
+    }
+  });
+  fastify.post("/count-available", async (request, reply) => {
+    try {
+      const userId = (request.user as any).userId;
+      const filters = request.body as {
+        type?: string;
+        category?: string;
+        epoch?: string;
+        difficulty?: number[];
+        points?: { min: number; max: number };
+      };
+
+      // Buduj warunki WHERE na podstawie filtrów
+      const where: any = {};
+
+      if (filters.type) {
+        where.type = filters.type;
+      }
+
+      if (filters.category) {
+        where.category = filters.category;
+
+        if (filters.category === "HISTORICAL_LITERARY" && filters.epoch) {
+          where.epoch = filters.epoch;
+        }
+      }
+
+      if (filters.difficulty && filters.difficulty.length > 0) {
+        where.difficulty = { in: filters.difficulty };
+      }
+
+      if (filters.points) {
+        where.points = {
+          gte: filters.points.min,
+          lte: filters.points.max,
+        };
+      }
+
+      // Pobierz pominięte w tej sesji (jeśli są)
+      const skippedInSession = sessionSkippedExercises.get(userId) || new Set();
+      const recentExercises = userRecentExercises.get(userId) || [];
+
+      // Pobierz ostatnie odpowiedzi z ostatnich 3 dni
+      const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+      const recentSubmissions = await prisma.submission.findMany({
+        where: {
+          userId,
+          createdAt: {
+            gte: threeDaysAgo,
+          },
+        },
+        select: {
+          exerciseId: true,
+        },
+      });
+
+      const excludedFromRecent = recentSubmissions.map((s) => s.exerciseId);
+
+      // Dodaj wykluczenia
+      const allExcluded = [
+        ...Array.from(skippedInSession),
+        ...recentExercises,
+        ...excludedFromRecent,
+      ];
+
+      if (allExcluded.length > 0) {
+        where.id = { notIn: allExcluded };
+      }
+
+      // Policz dostępne ćwiczenia
+      const count = await prisma.exercise.count({ where });
+
+      console.log(
+        `User ${userId} has ${count} available exercises with filters:`,
+        filters
+      );
+
+      return reply.send({ count });
+    } catch (error) {
+      console.error("Error counting available exercises:", error);
+      return reply.code(500).send({ error: "Failed to count exercises" });
     }
   });
 }

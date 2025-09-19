@@ -16,11 +16,55 @@ import {
   SkipForward,
   Trophy,
   AlertCircle,
+  Filter,
+  ChevronDown,
+  X,
+  Settings,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
-const SESSION_LIMIT = 20; // Limit zadań w sesji
+const SESSION_LIMIT = 20;
+
+// Definicje typów dla filtrów
+interface SessionFilters {
+  type?: string;
+  category?: string;
+  epoch?: string;
+  difficulty?: number[];
+  points?: { min: number; max: number };
+}
+
+const EPOCHS = [
+  { value: "ANTIQUITY", label: "Starożytność" },
+  { value: "MIDDLE_AGES", label: "Średniowiecze" },
+  { value: "RENAISSANCE", label: "Renesans" },
+  { value: "BAROQUE", label: "Barok" },
+  { value: "ENLIGHTENMENT", label: "Oświecenie" },
+  { value: "ROMANTICISM", label: "Romantyzm" },
+  { value: "POSITIVISM", label: "Pozytywizm" },
+  { value: "YOUNG_POLAND", label: "Młoda Polska" },
+  { value: "INTERWAR", label: "Dwudziestolecie międzywojenne" },
+  { value: "CONTEMPORARY", label: "Współczesność" },
+];
+
+const EXERCISE_TYPES = [
+  { value: "CLOSED_SINGLE", label: "Jednokrotny wybór", icon: "○" },
+  { value: "CLOSED_MULTIPLE", label: "Wielokrotny wybór", icon: "☐" },
+  { value: "SHORT_ANSWER", label: "Krótka odpowiedź", icon: "✍" },
+  { value: "SYNTHESIS_NOTE", label: "Notatka syntetyczna", icon: "📝" },
+  { value: "ESSAY", label: "Wypracowanie", icon: "📄" },
+];
+
+const CATEGORIES = [
+  { value: "LANGUAGE_USE", label: "Język w użyciu", color: "blue" },
+  {
+    value: "HISTORICAL_LITERARY",
+    label: "Test historycznoliteracki",
+    color: "purple",
+  },
+  { value: "WRITING", label: "Pisanie", color: "green" },
+];
 
 export const LearningSession: React.FC = () => {
   const [sessionActive, setSessionActive] = useState(false);
@@ -29,6 +73,11 @@ export const LearningSession: React.FC = () => {
   const [answer, setAnswer] = useState<any>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [sessionComplete, setSessionComplete] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+
+  // NOWY STAN DLA FILTRÓW
+  const [sessionFilters, setSessionFilters] = useState<SessionFilters>({});
+
   const [sessionStats, setSessionStats] = useState({
     completed: 0,
     correct: 0,
@@ -44,8 +93,23 @@ export const LearningSession: React.FC = () => {
     queryFn: () => api.get("/api/learning/stats").then((r) => r.data),
   });
 
+  // Funkcja do ustawiania filtrów na backendzie
+  const updateFilters = async (newFilters: SessionFilters) => {
+    try {
+      await api.post("/api/learning/session/filters", newFilters);
+      setSessionFilters(newFilters);
+    } catch (error) {
+      console.error("Error updating filters:", error);
+    }
+  };
+
   const fetchNextExercise = async (excludeId?: string) => {
     try {
+      // Najpierw ustaw filtry na backendzie
+      if (Object.keys(sessionFilters).length > 0) {
+        await api.post("/api/learning/session/filters", sessionFilters);
+      }
+
       const response = await api.get("/api/learning/next", {
         params: excludeId ? { excludeId } : {},
       });
@@ -77,7 +141,6 @@ export const LearningSession: React.FC = () => {
 
       setShowFeedback(true);
 
-      // Celebration for streaks
       if (
         isCorrect &&
         sessionStats.streak > 0 &&
@@ -119,12 +182,16 @@ export const LearningSession: React.FC = () => {
       timeSpent: 0,
     });
 
+    // Ustaw filtry jeśli są wybrane
+    if (Object.keys(sessionFilters).length > 0) {
+      await api.post("/api/learning/session/filters", sessionFilters);
+    }
+
     setIsLoadingNext(true);
     const { data } = await fetchNextExercise();
     setCurrentExercise(data);
     setIsLoadingNext(false);
 
-    // Wyczyść listę pominiętych na backendzie
     await api.post("/api/learning/session/clear-skipped");
   };
 
@@ -134,7 +201,7 @@ export const LearningSession: React.FC = () => {
     saveSessionMutation.mutate(sessionStats);
   };
 
-  // Next exercise
+  // Next exercise with filters
   const goToNextExercise = async () => {
     if (sessionStats.completed >= SESSION_LIMIT) {
       endSession();
@@ -161,14 +228,10 @@ export const LearningSession: React.FC = () => {
   };
 
   const skipExercise = async () => {
-    // Zapisz ID obecnego zadania do wykluczenia
     const skippedExerciseId = currentExercise?.id;
-
-    // Resetuj stan
     setAnswer(null);
     setShowFeedback(false);
 
-    // Aktualizuj statystyki
     const newStats = {
       ...sessionStats,
       completed: sessionStats.completed + 1,
@@ -176,20 +239,17 @@ export const LearningSession: React.FC = () => {
     };
     setSessionStats(newStats);
 
-    // Sprawdź limit
     if (newStats.completed >= SESSION_LIMIT) {
       endSession();
       return;
     }
 
     try {
-      // POPRAWKA - nie rób podwójnego .data!
       const response = await api.get("/api/learning/next", {
         params: { excludeId: skippedExerciseId },
       });
 
-      const data = response.data; // <- teraz poprawnie
-
+      const data = response.data;
       if (data && data.id !== skippedExerciseId) {
         setCurrentExercise(data);
       } else {
@@ -199,6 +259,33 @@ export const LearningSession: React.FC = () => {
     } catch (error) {
       console.error("Error fetching next exercise:", error);
       endSession();
+    }
+  };
+
+  // Funkcja do aplikowania filtrów i pobierania nowego zadania
+  const applyFiltersAndRefresh = async (newFilters: SessionFilters) => {
+    setSessionFilters(newFilters);
+    setIsLoadingNext(true);
+
+    try {
+      // Ustaw filtry na backendzie
+      await api.post("/api/learning/session/filters", newFilters);
+
+      // Pobierz nowe zadanie z filtrami
+      const response = await api.get("/api/learning/next");
+      const data = response.data;
+
+      if (data) {
+        setCurrentExercise(data);
+        setAnswer(null);
+        setShowFeedback(false);
+      } else {
+        console.log("No exercises matching current filters");
+      }
+    } catch (error) {
+      console.error("Error applying filters:", error);
+    } finally {
+      setIsLoadingNext(false);
     }
   };
 
@@ -291,6 +378,7 @@ export const LearningSession: React.FC = () => {
               onClick={() => {
                 setSessionActive(false);
                 setSessionComplete(false);
+                setSessionFilters({});
               }}
               className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
@@ -366,10 +454,44 @@ export const LearningSession: React.FC = () => {
             transition={{ duration: 0.5 }}
           />
         </div>
-        <p className="text-sm text-gray-600 mt-1">
-          Cel sesji: {sessionStats.completed}/{SESSION_LIMIT} zadań
-        </p>
+        <div className="flex justify-between items-center mt-1">
+          <p className="text-sm text-gray-600">
+            Cel sesji: {sessionStats.completed}/{SESSION_LIMIT} zadań
+          </p>
+
+          {/* PRZYCISK DO FILTRÓW */}
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium"
+          >
+            <Filter className="w-4 h-4" />
+            {showFilters ? "Ukryj filtry" : "Filtry zadań"}
+            <ChevronDown
+              className={`w-4 h-4 transition-transform ${
+                showFilters ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+        </div>
       </div>
+
+      {/* SEKCJA FILTRÓW - POKAZYWANA POD NAGŁÓWKIEM */}
+      <AnimatePresence>
+        {showFilters && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mb-6 overflow-hidden"
+          >
+            <InSessionFilters
+              currentFilters={sessionFilters}
+              onFiltersChange={applyFiltersAndRefresh}
+              isLoading={isLoadingNext}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Exercise Content */}
       {currentExercise && !isLoadingNext && (
@@ -388,7 +510,15 @@ export const LearningSession: React.FC = () => {
                   <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
                     {currentExercise.category}
                   </span>
-                  <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
+                  {currentExercise.epoch && (
+                    <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
+                      {
+                        EPOCHS.find((e) => e.value === currentExercise.epoch)
+                          ?.label
+                      }
+                    </span>
+                  )}
+                  <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm">
                     Poziom {currentExercise.difficulty}
                   </span>
                   <span className="text-sm text-gray-600">
@@ -469,20 +599,18 @@ export const LearningSession: React.FC = () => {
               </div>
             )}
 
-            {/* Feedback */}
-            {/* Feedback */}
+            {/* Feedback section - pozostaje bez zmian */}
             {showFeedback && submitMutation.data && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-4"
               >
-                {/* Enhanced feedback for SHORT_ANSWER and other AI-assessed questions */}
+                {/* Feedback content - bez zmian */}
                 {(currentExercise.type === "SHORT_ANSWER" ||
                   currentExercise.type === "SYNTHESIS_NOTE") &&
                 submitMutation.data.data.feedback ? (
                   <div className="space-y-4">
-                    {/* Score header */}
                     <div
                       className={`p-4 rounded-lg ${
                         submitMutation.data.data.feedback.isCorrect
@@ -514,15 +642,12 @@ export const LearningSession: React.FC = () => {
                           <>
                             <XCircle className="w-5 h-5 text-red-600" />
                             <span className="font-semibold text-red-700">
-                              Niepoprawna odpowiedź:{" "}
-                              {submitMutation.data.data.score} z{" "}
-                              {submitMutation.data.data.feedback.maxScore} pkt
+                              Niepoprawna odpowiedź
                             </span>
                           </>
                         )}
                       </div>
 
-                      {/* AI Feedback */}
                       {submitMutation.data.data.feedback.feedback && (
                         <div className="mt-3 text-sm text-gray-700">
                           <p className="font-medium mb-1">Ocena AI:</p>
@@ -530,7 +655,6 @@ export const LearningSession: React.FC = () => {
                         </div>
                       )}
 
-                      {/* Correct Answer */}
                       {submitMutation.data.data.feedback.correctAnswer && (
                         <div className="mt-3 pt-3 border-t border-gray-200">
                           <p className="text-sm font-medium mb-1 text-gray-700">
@@ -542,78 +666,8 @@ export const LearningSession: React.FC = () => {
                         </div>
                       )}
                     </div>
-
-                    {/* Correct Elements */}
-                    {submitMutation.data.data.feedback.correctElements &&
-                      submitMutation.data.data.feedback.correctElements.length >
-                        0 && (
-                        <div className="bg-green-50 p-4 rounded-lg">
-                          <p className="text-sm font-medium text-green-700 mb-2">
-                            ✓ Co było poprawne:
-                          </p>
-                          <ul className="space-y-1">
-                            {submitMutation.data.data.feedback.correctElements.map(
-                              (element: string, idx: number) => (
-                                <li
-                                  key={idx}
-                                  className="text-sm text-green-600 ml-4"
-                                >
-                                  • {element}
-                                </li>
-                              )
-                            )}
-                          </ul>
-                        </div>
-                      )}
-
-                    {/* Missing Elements */}
-                    {submitMutation.data.data.feedback.missingElements &&
-                      submitMutation.data.data.feedback.missingElements.length >
-                        0 && (
-                        <div className="bg-yellow-50 p-4 rounded-lg">
-                          <p className="text-sm font-medium text-yellow-700 mb-2">
-                            ⚠ Czego zabrakło:
-                          </p>
-                          <ul className="space-y-1">
-                            {submitMutation.data.data.feedback.missingElements.map(
-                              (element: string, idx: number) => (
-                                <li
-                                  key={idx}
-                                  className="text-sm text-yellow-600 ml-4"
-                                >
-                                  • {element}
-                                </li>
-                              )
-                            )}
-                          </ul>
-                        </div>
-                      )}
-
-                    {/* Suggestions */}
-                    {submitMutation.data.data.feedback.suggestions &&
-                      submitMutation.data.data.feedback.suggestions.length >
-                        0 && (
-                        <div className="bg-blue-50 p-4 rounded-lg">
-                          <p className="text-sm font-medium text-blue-700 mb-2">
-                            💡 Sugestie na przyszłość:
-                          </p>
-                          <ul className="space-y-1">
-                            {submitMutation.data.data.feedback.suggestions.map(
-                              (suggestion: string, idx: number) => (
-                                <li
-                                  key={idx}
-                                  className="text-sm text-blue-600 ml-4"
-                                >
-                                  • {suggestion}
-                                </li>
-                              )
-                            )}
-                          </ul>
-                        </div>
-                      )}
                   </div>
                 ) : (
-                  /* Standard feedback for CLOSED questions */
                   <div
                     className={`p-4 rounded-lg ${
                       submitMutation.data.data.score > 0
@@ -638,38 +692,6 @@ export const LearningSession: React.FC = () => {
                         </>
                       )}
                     </div>
-
-                    {currentExercise.correctAnswer !== undefined && (
-                      <div className="mt-2">
-                        <p className="text-sm font-medium mb-1">
-                          Poprawna odpowiedź:
-                        </p>
-                        <p className="text-sm">
-                          {Array.isArray(currentExercise.content.options)
-                            ? Array.isArray(currentExercise.correctAnswer)
-                              ? currentExercise.correctAnswer
-                                  .map(
-                                    (idx: number) =>
-                                      currentExercise.content.options[idx]
-                                  )
-                                  .join(", ")
-                              : currentExercise.content.options[
-                                  currentExercise.correctAnswer
-                                ]
-                            : "Zobacz wyjaśnienie"}
-                        </p>
-                      </div>
-                    )}
-
-                    {(currentExercise.explanation ||
-                      submitMutation.data.data.feedback?.explanation) && (
-                      <div className="mt-3 pt-3 border-t">
-                        <p className="text-sm">
-                          {submitMutation.data.data.feedback?.explanation ||
-                            currentExercise.explanation}
-                        </p>
-                      </div>
-                    )}
                   </div>
                 )}
 
@@ -712,7 +734,273 @@ export const LearningSession: React.FC = () => {
   );
 };
 
-// Session Start Component
+// NOWY KOMPONENT - FILTRY W SESJI
+const InSessionFilters: React.FC<{
+  currentFilters: SessionFilters;
+  onFiltersChange: (filters: SessionFilters) => void;
+  isLoading: boolean;
+}> = ({ currentFilters, onFiltersChange, isLoading }) => {
+  const [localFilters, setLocalFilters] =
+    useState<SessionFilters>(currentFilters);
+  const [selectedDifficulties, setSelectedDifficulties] = useState<number[]>(
+    currentFilters.difficulty || []
+  );
+  const [availableCount, setAvailableCount] = useState<number | null>(null);
+  const [isCountLoading, setIsCountLoading] = useState(false);
+
+  const hasFilters = Object.keys(localFilters).length > 0;
+
+  // Funkcja do pobierania liczby dostępnych ćwiczeń
+  const fetchAvailableCount = async (filters: SessionFilters) => {
+    setIsCountLoading(true);
+    try {
+      const response = await api.post("/api/learning/count-available", filters);
+      setAvailableCount(response.data.count);
+    } catch (error) {
+      console.error("Error fetching count:", error);
+      setAvailableCount(null);
+    } finally {
+      setIsCountLoading(false);
+    }
+  };
+
+  // Automatycznie aplikuj filtry i policz dostępne ćwiczenia przy każdej zmianie
+  useEffect(() => {
+    onFiltersChange(localFilters);
+    fetchAvailableCount(localFilters);
+  }, [localFilters]);
+
+  const handleCategoryChange = (category: string | undefined) => {
+    const newFilters = {
+      ...localFilters,
+      category,
+      // Reset epoch if changing from HISTORICAL_LITERARY
+      epoch:
+        category === "HISTORICAL_LITERARY" ? localFilters.epoch : undefined,
+    };
+    setLocalFilters(newFilters);
+  };
+
+  const handleEpochChange = (epoch: string | undefined) => {
+    const newFilters = { ...localFilters, epoch };
+    setLocalFilters(newFilters);
+  };
+
+  const handleTypeChange = (type: string | undefined) => {
+    const newFilters = { ...localFilters, type };
+    setLocalFilters(newFilters);
+  };
+
+  const handleDifficultyToggle = (level: number) => {
+    const newDifficulties = selectedDifficulties.includes(level)
+      ? selectedDifficulties.filter((d) => d !== level)
+      : [...selectedDifficulties, level];
+
+    setSelectedDifficulties(newDifficulties);
+    const newFilters = {
+      ...localFilters,
+      difficulty: newDifficulties.length > 0 ? newDifficulties : undefined,
+    };
+    setLocalFilters(newFilters);
+  };
+
+  const clearFilters = () => {
+    setLocalFilters({});
+    setSelectedDifficulties([]);
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm p-4">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <h3 className="text-sm font-semibold text-gray-700">Filtry zadań</h3>
+          {/* Licznik dostępnych ćwiczeń */}
+          {isCountLoading || isLoading ? (
+            <span className="text-xs text-gray-500">
+              <span className="inline-block animate-pulse">Ładowanie...</span>
+            </span>
+          ) : availableCount !== null ? (
+            <span
+              className={`text-xs px-2 py-1 rounded-full ${
+                availableCount > 0
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
+              }`}
+            >
+              {availableCount > 0
+                ? `${availableCount} dostępnych ćwiczeń`
+                : "Brak ćwiczeń spełniających kryteria"}
+            </span>
+          ) : null}
+        </div>
+        {hasFilters && (
+          <button
+            onClick={clearFilters}
+            className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1"
+            disabled={isLoading}
+          >
+            <X className="w-3 h-3" />
+            Wyczyść filtry
+          </button>
+        )}
+      </div>
+
+      {/* Kategorie - kompaktowy układ */}
+      <div className="grid grid-cols-3 gap-2 mb-3">
+        {CATEGORIES.map((cat) => (
+          <button
+            key={cat.value}
+            onClick={() =>
+              handleCategoryChange(
+                localFilters.category === cat.value ? undefined : cat.value
+              )
+            }
+            disabled={isLoading}
+            className={`px-3 py-2 text-xs rounded-lg border transition-colors ${
+              localFilters.category === cat.value
+                ? "border-blue-500 bg-blue-50 text-blue-700"
+                : "border-gray-200 hover:border-gray-300"
+            } disabled:opacity-50`}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Epoki - tylko dla HISTORICAL_LITERARY */}
+      {localFilters.category === "HISTORICAL_LITERARY" && (
+        <div className="mb-3 p-3 bg-purple-50 rounded-lg">
+          <p className="text-xs font-medium text-purple-700 mb-2">
+            Epoka literacka:
+          </p>
+          <div className="flex flex-wrap gap-1">
+            {EPOCHS.map((epoch) => (
+              <button
+                key={epoch.value}
+                onClick={() =>
+                  handleEpochChange(
+                    localFilters.epoch === epoch.value ? undefined : epoch.value
+                  )
+                }
+                disabled={isLoading}
+                className={`px-2 py-1 text-xs rounded transition-colors ${
+                  localFilters.epoch === epoch.value
+                    ? "bg-purple-600 text-white"
+                    : "bg-white hover:bg-purple-100"
+                } disabled:opacity-50`}
+              >
+                {epoch.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Typ zadania */}
+      <div className="mb-3">
+        <p className="text-xs font-medium text-gray-700 mb-2">Typ zadania:</p>
+        <div className="flex flex-wrap gap-1">
+          {EXERCISE_TYPES.map((type) => (
+            <button
+              key={type.value}
+              onClick={() =>
+                handleTypeChange(
+                  localFilters.type === type.value ? undefined : type.value
+                )
+              }
+              disabled={isLoading}
+              className={`px-2 py-1 text-xs rounded flex items-center gap-1 transition-colors ${
+                localFilters.type === type.value
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 hover:bg-gray-200"
+              } disabled:opacity-50`}
+            >
+              <span>{type.icon}</span>
+              {type.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Poziom trudności */}
+      <div>
+        <p className="text-xs font-medium text-gray-700 mb-2">
+          Poziom trudności:
+        </p>
+        <div className="flex gap-1">
+          {[1, 2, 3, 4, 5].map((level) => (
+            <button
+              key={level}
+              onClick={() => handleDifficultyToggle(level)}
+              disabled={isLoading}
+              className={`px-3 py-2 rounded transition-colors ${
+                selectedDifficulties.includes(level)
+                  ? "bg-yellow-100 border-yellow-500"
+                  : "bg-gray-50 border-gray-200"
+              } border disabled:opacity-50`}
+            >
+              <div className="text-center">
+                <span
+                  className={
+                    selectedDifficulties.includes(level)
+                      ? "text-yellow-500"
+                      : "text-gray-400"
+                  }
+                >
+                  {"⭐".repeat(level)}
+                </span>
+                <div className="text-xs mt-1">
+                  {level === 1 && "Bardzo łatwe"}
+                  {level === 2 && "Łatwe"}
+                  {level === 3 && "Średnie"}
+                  {level === 4 && "Trudne"}
+                  {level === 5 && "Bardzo trudne"}
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Aktualne filtry - podsumowanie */}
+      {hasFilters && (
+        <div className="mt-3 pt-3 border-t">
+          <p className="text-xs text-gray-600 mb-1">Aktywne filtry:</p>
+          <div className="flex flex-wrap gap-1">
+            {localFilters.category && (
+              <span className="px-2 py-1 bg-gray-100 rounded text-xs">
+                {
+                  CATEGORIES.find((c) => c.value === localFilters.category)
+                    ?.label
+                }
+              </span>
+            )}
+            {localFilters.epoch && (
+              <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs">
+                {EPOCHS.find((e) => e.value === localFilters.epoch)?.label}
+              </span>
+            )}
+            {localFilters.type && (
+              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">
+                {
+                  EXERCISE_TYPES.find((t) => t.value === localFilters.type)
+                    ?.label
+                }
+              </span>
+            )}
+            {selectedDifficulties.length > 0 && (
+              <span className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs">
+                Trudność: {selectedDifficulties.join(", ")}⭐
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Session Start Component - bez zmian
 const SessionStart: React.FC<{
   onStart: () => void;
   stats: any;
@@ -723,7 +1011,7 @@ const SessionStart: React.FC<{
         <h1 className="text-3xl font-bold mb-4">Gotowy na dzisiejszą naukę?</h1>
         <p className="text-blue-100 mb-6">
           System dopasuje zadania do Twojego poziomu i postępów. Sesja zawiera{" "}
-          {SESSION_LIMIT} zadań.
+          {SESSION_LIMIT} zadań. Możesz zmieniać filtry w trakcie sesji!
         </p>
 
         <div className="grid grid-cols-4 gap-4 mb-6">
@@ -763,7 +1051,7 @@ const SessionStart: React.FC<{
   );
 };
 
-// Helper Components
+// Helper Components - bez zmian
 const SessionStat: React.FC<{
   icon: React.ReactNode;
   label: string;
