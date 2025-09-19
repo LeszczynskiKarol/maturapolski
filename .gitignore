@@ -1,6 +1,10 @@
 # Dependencies
 node_modules/
 */node_modules/
+package-lock.json
+
+start-app.ps1
+stop-app.ps1
 
 # Environment variables
 .env
@@ -40,12 +44,14 @@ prisma/migrations/dev/
 frontend/.vite/
 frontend/dist/
 frontend/node_modules/
+frontend/package-lock.json
 
 # Backend specific
 backend/dist/
 backend/uploads/
 backend/temp/
 backend/node_modules/
+backend/package-lock.json
 
 # Testing
 coverage/

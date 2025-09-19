@@ -1,17 +1,20 @@
 // backend/src/index.ts
 
-import Fastify from "fastify";
+import dotenv from "dotenv";
+dotenv.config();
+
 import cors from "@fastify/cors";
 import jwt from "@fastify/jwt";
-import { materialsRoutes } from "./routes/materials.routes";
+import Fastify from "fastify";
 import { initializeAI } from "./ai/aiService";
 import { adminRoutes } from "./routes/admin.routes";
-import { initializeQueue } from "./services/queueService";
 import { authRoutes } from "./routes/auth.routes";
 import { exerciseRoutes } from "./routes/exercise.routes";
-import { studentRoutes } from "./routes/student.routes";
 import { learningRoutes } from "./routes/learning.routes";
+import { materialsRoutes } from "./routes/materials.routes";
+import { studentRoutes } from "./routes/student.routes";
 import { studyPlanRoutes } from "./routes/studyPlan.routes";
+import { initializeQueue } from "./services/queueService";
 
 const fastify = Fastify({
   logger: {

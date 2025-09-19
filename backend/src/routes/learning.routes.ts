@@ -557,15 +557,16 @@ export async function learningRoutes(fastify: FastifyInstance) {
   fastify.post("/session/complete", async (request, reply) => {
     try {
       const userId = (request.user as any).userId;
+      console.log("=== SESSION COMPLETE REQUEST ===");
+      console.log("Body:", JSON.stringify(request.body, null, 2));
+
       const { stats, completedExercises = [] } = request.body as any;
 
-      // Nie zapisuj pustych sesji
+      console.log("Parsed stats:", stats);
+      console.log("Parsed completedExercises:", completedExercises);
+
       if (!stats || stats.completed === 0) {
-        // Wyczyść filtry nawet dla pustej sesji
-        userSessionFilters.delete(userId);
-        if (sessionSkippedExercises.has(userId)) {
-          sessionSkippedExercises.get(userId)!.clear();
-        }
+        console.log("NO DATA TO SAVE - returning early!");
         return reply.send({ success: true, message: "No data to save" });
       }
 

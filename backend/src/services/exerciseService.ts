@@ -1,8 +1,8 @@
 // backend/src/services/exerciseService.ts
 
+import { assessEssayWithAI, assessShortAnswerWithAI } from "../ai/aiService";
 import { prisma } from "../lib/prisma";
 import { AssessmentService } from "./assessmentService";
-import { assessShortAnswerWithAI, assessEssayWithAI } from "../ai/aiService";
 
 export class ExerciseService {
   private assessmentService: AssessmentService;

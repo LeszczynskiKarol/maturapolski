@@ -1,28 +1,26 @@
 // frontend/src/features/learning/LearningSession.tsx
 
-import React, { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { api } from "../../services/api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import confetti from "canvas-confetti";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  Play,
-  ChevronRight,
-  Clock,
-  Target,
-  Brain,
-  TrendingUp,
+  AlertCircle,
   Award,
   CheckCircle,
-  XCircle,
-  SkipForward,
-  Trophy,
-  AlertCircle,
-  Filter,
   ChevronDown,
+  ChevronRight,
+  Clock,
+  Filter,
+  Play,
+  SkipForward,
+  Target,
+  TrendingUp,
+  Trophy,
   X,
-  Settings,
+  XCircle,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import confetti from "canvas-confetti";
+import React, { useEffect, useState } from "react";
+import { api } from "../../services/api";
 
 const SESSION_LIMIT = 20;
 
@@ -77,7 +75,6 @@ export const LearningSession: React.FC = () => {
   const [completedExercises, setCompletedExercises] = useState<
     Array<{ id: string; score: number }>
   >([]);
-
   // NOWY STAN DLA FILTRÓW
   const [sessionFilters, setSessionFilters] = useState<SessionFilters>({});
 
@@ -131,25 +128,38 @@ export const LearningSession: React.FC = () => {
       const result = response.data;
       const isCorrect = result.score > 0;
 
-      // Dodaj zadanie do listy ukończonych
-      setCompletedExercises((prev) => [
-        ...prev,
-        {
-          id: currentExercise.id,
-          score: result.score || 0,
-        },
-      ]);
+      console.log("=== SUBMIT SUCCESS ===");
+      console.log("Result:", result);
+      console.log("Score:", result.score);
 
-      setSessionStats((prev) => ({
-        ...prev,
-        completed: prev.completed + 1,
-        correct: prev.correct + (isCorrect ? 1 : 0),
-        streak: isCorrect ? prev.streak + 1 : 0,
-        maxStreak: isCorrect
-          ? Math.max(prev.maxStreak, prev.streak + 1)
-          : prev.maxStreak,
-        points: prev.points + (result.score || 0),
-      }));
+      // ZAWSZE dodaj do completed exercises, niezależnie od wyniku!
+      setCompletedExercises((prev) => {
+        const updated = [
+          ...prev,
+          {
+            id: currentExercise.id,
+            score: result.score || 0,
+          },
+        ];
+        console.log("Updated completedExercises:", updated);
+        return updated;
+      });
+
+      // ZAWSZE zwiększ completed, niezależnie od wyniku!
+      setSessionStats((prev) => {
+        const newStats = {
+          ...prev,
+          completed: prev.completed + 1, // ZAWSZE zwiększ
+          correct: prev.correct + (isCorrect ? 1 : 0),
+          streak: isCorrect ? prev.streak + 1 : 0,
+          maxStreak: isCorrect
+            ? Math.max(prev.maxStreak, prev.streak + 1)
+            : prev.maxStreak,
+          points: prev.points + (result.score || 0),
+        };
+        console.log("New session stats:", newStats);
+        return newStats;
+      });
 
       setShowFeedback(true);
 
@@ -215,11 +225,14 @@ export const LearningSession: React.FC = () => {
 
   // End session
   const endSession = async () => {
-    // Zapisz statystyki tylko jeśli coś zostało zrobione
+    console.log("=== ENDING SESSION ===");
+    console.log("sessionStats:", sessionStats);
+    console.log("completedExercises:", completedExercises);
+
     if (sessionStats.completed > 0) {
       await saveSessionMutation.mutateAsync({
-        ...sessionStats,
-        completedExercises: [], // Możesz tu dodać tablicę ukończonych zadań jeśli potrzeba
+        stats: sessionStats, // ✅ Jako osobne pole "stats"!
+        completedExercises: completedExercises, // ✅ Rzeczywiste dane!
       });
     }
 
@@ -248,7 +261,7 @@ export const LearningSession: React.FC = () => {
   // Next exercise with filters
   const goToNextExercise = async () => {
     if (sessionStats.completed >= SESSION_LIMIT) {
-      endSession();
+      await endSession();
       return;
     }
 
@@ -261,11 +274,11 @@ export const LearningSession: React.FC = () => {
       if (data) {
         setCurrentExercise(data);
       } else {
-        endSession();
+        await endSession();
       }
     } catch (error) {
       console.error("Error fetching next exercise:", error);
-      endSession();
+      await endSession();
     } finally {
       setIsLoadingNext(false);
     }
@@ -276,15 +289,15 @@ export const LearningSession: React.FC = () => {
     setAnswer(null);
     setShowFeedback(false);
 
-    const newStats = {
-      ...sessionStats,
-      completed: sessionStats.completed + 1,
-      streak: 0,
-    };
-    setSessionStats(newStats);
+    console.log("=== SKIP EXERCISE ===");
+    console.log("Skipping exercise:", skippedExerciseId);
 
-    if (newStats.completed >= SESSION_LIMIT) {
-      endSession();
+    // NIE ZWIĘKSZAJ completed dla pominiętych! To nie jest ukończenie zadania!
+    // Pominięte zadania nie powinny się liczyć do statystyk
+
+    // Sprawdź czy osiągnięto limit (ale nie zwiększaj completed)
+    if (sessionStats.completed >= SESSION_LIMIT) {
+      await endSession();
       return;
     }
 
@@ -298,11 +311,11 @@ export const LearningSession: React.FC = () => {
         setCurrentExercise(data);
       } else {
         console.log("Got same exercise or no more exercises available");
-        endSession();
+        await endSession();
       }
     } catch (error) {
       console.error("Error fetching next exercise:", error);
-      endSession();
+      await endSession();
     }
   };
 
@@ -503,7 +516,10 @@ export const LearningSession: React.FC = () => {
           </div>
 
           <button
-            onClick={endSession}
+            onClick={async () => {
+              console.log("=== ZAKOŃCZ SESJĘ BUTTON CLICKED ===");
+              await endSession();
+            }}
             className="px-4 py-2 text-gray-600 hover:text-gray-900"
           >
             Zakończ sesję

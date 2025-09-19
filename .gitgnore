@@ -3,6 +3,9 @@ node_modules/
 */node_modules/
 package-lock.json
 
+start-app.ps1
+stop-app.ps1
+
 # Environment variables
 .env
 .env.local
