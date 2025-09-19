@@ -445,56 +445,105 @@ export async function learningRoutes(fastify: FastifyInstance) {
     try {
       const userId = (request.user as any).userId;
 
-      // Today's stats
+      // Today's stats - pobierz z DailyProgress
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      const todaySubmissions = await prisma.submission.findMany({
+      const todayProgress = await prisma.dailyProgress.findUnique({
         where: {
-          userId,
-          createdAt: { gte: today },
+          userId_date: {
+            userId,
+            date: today,
+          },
         },
       });
 
-      const todayExercises = todaySubmissions.length;
-      const todayCorrect = todaySubmissions.filter(
-        (s) => (s.score || 0) > 0
-      ).length;
+      const todayExercises = todayProgress?.exercisesCount || 0;
+      const todayCorrect = todayProgress
+        ? Math.round(
+            (todayProgress.exercisesCount * (todayProgress.averageScore || 0)) /
+              100
+          )
+        : 0;
 
-      // Recent sessions
-      const recentSessionsRaw = await prisma.$queryRaw<any[]>`
-        SELECT 
-          DATE(s."createdAt") as date,
-          COUNT(*)::int as completed,
-          AVG(CASE WHEN s.score > 0 THEN 100 ELSE 0 END)::float as "correctRate",
-          SUM(COALESCE(s.score, 0))::int as points,
-          EXTRACT(EPOCH FROM (MAX(s."createdAt") - MIN(s."createdAt")))::int as duration_seconds
-        FROM "Submission" s
-        WHERE s."userId" = ${userId}
-          AND s."createdAt" >= NOW() - INTERVAL '7 days'
-        GROUP BY DATE(s."createdAt")
-        ORDER BY date DESC
-        LIMIT 7
-      `;
+      // Pobierz ostatnie 7 dni z DailyProgress
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      sevenDaysAgo.setHours(0, 0, 0, 0);
 
-      const recentSessions = recentSessionsRaw.map((session) => ({
-        date: new Date(session.date).toISOString().split("T")[0],
-        completed: Number(session.completed),
-        correctRate: Math.round(Number(session.correctRate || 0)),
-        points: Number(session.points),
-        duration: Math.round(Number(session.duration_seconds || 0) / 60),
-      }));
+      const recentProgress = await prisma.dailyProgress.findMany({
+        where: {
+          userId,
+          date: {
+            gte: sevenDaysAgo,
+            lte: today,
+          },
+        },
+        orderBy: { date: "desc" },
+        take: 7,
+      });
 
+      // Formatuj dane sesji
+      const recentSessions = recentProgress
+        .filter((progress) => progress.exercisesCount > 0)
+        .map((progress) => {
+          // Oblicz przybliżoną liczbę poprawnych na podstawie średniej
+          const correctCount = Math.round(
+            (progress.exercisesCount * (progress.averageScore || 0)) / 100
+          );
+
+          // Przybliżone punkty (2 pkt na poprawne zadanie średnio)
+          const estimatedPoints = correctCount * 2;
+
+          return {
+            date: progress.date.toISOString().split("T")[0],
+            completed: progress.exercisesCount,
+            correctRate: Math.round(progress.averageScore || 0),
+            points: estimatedPoints,
+            duration: progress.studyTime || 0, // już w minutach
+          };
+        });
+
+      // Pobierz profil użytkownika
       const profile = await prisma.userProfile.findUnique({
         where: { userId },
       });
 
+      // Sprawdź streak - czy użytkownik ćwiczył wczoraj
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      yesterday.setHours(0, 0, 0, 0);
+
+      const yesterdayProgress = await prisma.dailyProgress.findUnique({
+        where: {
+          userId_date: {
+            userId,
+            date: yesterday,
+          },
+        },
+      });
+
+      // Jeśli nie ćwiczył wczoraj, zresetuj streak
+      let currentStreak = profile?.studyStreak || 0;
+      if (!yesterdayProgress || yesterdayProgress.exercisesCount === 0) {
+        // Jeśli dzisiaj już ćwiczył, streak = 1, jeśli nie to 0
+        currentStreak = todayExercises > 0 ? 1 : 0;
+
+        // Zaktualizuj streak w profilu jeśli się zmienił
+        if (profile && profile.studyStreak !== currentStreak) {
+          await prisma.userProfile.update({
+            where: { userId },
+            data: { studyStreak: currentStreak },
+          });
+        }
+      }
+
       return reply.send({
         todayExercises,
         todayCorrect,
-        streak: profile?.studyStreak || 0,
+        streak: currentStreak,
         level: profile?.level || 1,
-        averageScore: profile?.averageScore || 0,
+        averageScore: Math.round(profile?.averageScore || 0),
         totalPoints: profile?.totalPoints || 0,
         recentSessions,
       });
@@ -508,49 +557,177 @@ export async function learningRoutes(fastify: FastifyInstance) {
   fastify.post("/session/complete", async (request, reply) => {
     try {
       const userId = (request.user as any).userId;
-      const { stats } = request.body as any;
+      const { stats, completedExercises = [] } = request.body as any;
+
+      // Nie zapisuj pustych sesji
+      if (!stats || stats.completed === 0) {
+        // Wyczyść filtry nawet dla pustej sesji
+        userSessionFilters.delete(userId);
+        if (sessionSkippedExercises.has(userId)) {
+          sessionSkippedExercises.get(userId)!.clear();
+        }
+        return reply.send({ success: true, message: "No data to save" });
+      }
 
       // Clear session filters
       userSessionFilters.delete(userId);
+
+      // Clear skipped exercises for this user
+      if (sessionSkippedExercises.has(userId)) {
+        sessionSkippedExercises.get(userId)!.clear();
+      }
+
+      // Oblicz średni wynik dla tej sesji
+      const sessionAverageScore =
+        stats.completed > 0
+          ? Math.round((stats.correct / stats.completed) * 100)
+          : 0;
+
+      // Pobierz aktualny profil
+      const currentProfile = await prisma.userProfile.findUnique({
+        where: { userId },
+      });
+
+      if (!currentProfile) {
+        // Utwórz profil jeśli nie istnieje
+        await prisma.userProfile.create({
+          data: {
+            userId,
+            studyStreak: 1,
+            totalPoints: stats.points || 0,
+            averageScore: sessionAverageScore,
+            level: 1,
+          },
+        });
+      }
+
+      // Oblicz nową średnią ważoną
+      const oldAverage = currentProfile?.averageScore || 0;
+      const totalExercises = currentProfile?.totalPoints
+        ? Math.floor(currentProfile.totalPoints / 2)
+        : 0; // przybliżona liczba wszystkich zadań
+
+      // Nowa średnia ważona
+      const newTotalExercises = totalExercises + stats.completed;
+      const newAverage =
+        newTotalExercises > 0
+          ? Math.round(
+              (oldAverage * totalExercises +
+                sessionAverageScore * stats.completed) /
+                newTotalExercises
+            )
+          : sessionAverageScore;
 
       // Update user profile
       const updatedProfile = await prisma.userProfile.update({
         where: { userId },
         data: {
           totalPoints: { increment: stats.points || 0 },
-          studyStreak: { increment: 1 },
+          // Streak - zwiększ tylko jeśli zrobiono minimum 5 zadań z dobrym wynikiem
+          studyStreak:
+            stats.completed >= 5 && sessionAverageScore >= 50
+              ? { increment: 1 }
+              : undefined,
+          averageScore: newAverage,
+          level: {
+            set:
+              Math.floor(
+                (currentProfile.totalPoints + (stats.points || 0)) / 1000
+              ) + 1,
+          },
         },
       });
 
-      // Update spaced repetition data for completed exercises
-      if (stats.completedExercises) {
-        for (const exerciseData of stats.completedExercises) {
-          await spacedRepetition.updateRepetitionData(
+      // WAŻNE: Zapisz sesję jako OSOBNY wpis w DailyProgress
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // Sprawdź czy jest już wpis na dzisiaj
+      const existingProgress = await prisma.dailyProgress.findUnique({
+        where: {
+          userId_date: {
             userId,
-            exerciseData.id,
-            exerciseData.score
-          );
+            date: today,
+          },
+        },
+      });
+
+      if (existingProgress) {
+        // AKTUALIZUJ istniejący wpis - DODAJ do istniejących wartości
+        await prisma.dailyProgress.update({
+          where: {
+            userId_date: {
+              userId,
+              date: today,
+            },
+          },
+          data: {
+            exercisesCount: { increment: stats.completed },
+            studyTime: { increment: Math.round(stats.timeSpent / 60) },
+            // Oblicz nową średnią dla całego dnia
+            averageScore: Math.round(
+              ((existingProgress.averageScore || 0) *
+                existingProgress.exercisesCount +
+                sessionAverageScore * stats.completed) /
+                (existingProgress.exercisesCount + stats.completed)
+            ),
+          },
+        });
+      } else {
+        // Stwórz nowy wpis dla dzisiejszego dnia
+        await prisma.dailyProgress.create({
+          data: {
+            userId,
+            date: today,
+            exercisesCount: stats.completed,
+            studyTime: Math.round(stats.timeSpent / 60),
+            averageScore: sessionAverageScore,
+          },
+        });
+      }
+
+      // Update spaced repetition data jeśli są dane o ukończonych zadaniach
+      if (
+        completedExercises &&
+        Array.isArray(completedExercises) &&
+        completedExercises.length > 0
+      ) {
+        for (const exerciseData of completedExercises) {
+          if (exerciseData.id && exerciseData.score !== undefined) {
+            await spacedRepetition.updateRepetitionData(
+              userId,
+              exerciseData.id,
+              exerciseData.score
+            );
+          }
         }
       }
 
-      // Create achievement if milestone reached
-      if (stats.streak >= 10) {
+      // Create achievement notifications for milestones
+      if (stats.maxStreak >= 10) {
         await createNotification(
           userId,
           "achievement",
           "🔥 Niesamowita seria!",
-          `Odpowiedziałeś poprawnie na ${stats.streak} pytań z rzędu!`
+          `Odpowiedziałeś poprawnie na ${stats.maxStreak} pytań z rzędu!`
+        );
+      }
+
+      if (stats.completed === 20 && sessionAverageScore >= 80) {
+        await createNotification(
+          userId,
+          "achievement",
+          "⭐ Perfekcyjna sesja!",
+          `Ukończyłeś pełną sesję z wynikiem ${sessionAverageScore}%!`
         );
       }
 
       // Check for level up
       const newLevel = Math.floor(updatedProfile.totalPoints / 1000) + 1;
-      if (newLevel > updatedProfile.level) {
-        await prisma.userProfile.update({
-          where: { userId },
-          data: { level: newLevel },
-        });
+      const oldLevel =
+        Math.floor((currentProfile?.totalPoints || 0) / 1000) + 1;
 
+      if (newLevel > oldLevel) {
         await createNotification(
           userId,
           "level_up",
@@ -559,12 +736,55 @@ export async function learningRoutes(fastify: FastifyInstance) {
         );
       }
 
-      return reply.send({ success: true, profile: updatedProfile });
+      // Pobierz zaktualizowane statystyki do zwrócenia
+      const finalProfile = await prisma.userProfile.findUnique({
+        where: { userId },
+      });
+
+      return reply.send({
+        success: true,
+        profile: finalProfile,
+        sessionStats: {
+          completed: stats.completed,
+          correct: stats.correct,
+          points: stats.points,
+          averageScore: sessionAverageScore,
+          timeMinutes: Math.round(stats.timeSpent / 60),
+        },
+        userStats: {
+          totalPoints: finalProfile?.totalPoints || 0,
+          level: Math.floor((finalProfile?.totalPoints || 0) / 1000) + 1,
+          averageScore: finalProfile?.averageScore || 0,
+          studyStreak: finalProfile?.studyStreak || 0,
+        },
+      });
     } catch (error) {
       console.error("Error completing session:", error);
       return reply.code(500).send({ error: "Failed to complete session" });
     }
   });
+
+  // Funkcja pomocnicza do obliczania nowej średniej ważonej
+  async function calculateNewAverage(
+    userId: string,
+    newScore: number,
+    weight: number
+  ): Promise<number> {
+    const profile = await prisma.userProfile.findUnique({
+      where: { userId },
+      select: { averageScore: true },
+    });
+
+    const oldAverage = profile?.averageScore || 0;
+
+    // Użyj ważonej średniej: stara średnia ma wagę 70%, nowa 30%
+    // ale waga nowej sesji rośnie z liczbą zadań
+    const normalizedWeight = Math.min(weight / 20, 1); // max waga przy 20 zadaniach
+    const newWeight = 0.3 * normalizedWeight;
+    const oldWeight = 1 - newWeight;
+
+    return Math.round(oldAverage * oldWeight + newScore * newWeight);
+  }
 
   fastify.post("/session/clear-skipped", async (request, reply) => {
     const userId = (request.user as any).userId;

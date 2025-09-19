@@ -74,6 +74,9 @@ export const LearningSession: React.FC = () => {
   const [showFeedback, setShowFeedback] = useState(false);
   const [sessionComplete, setSessionComplete] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [completedExercises, setCompletedExercises] = useState<
+    Array<{ id: string; score: number }>
+  >([]);
 
   // NOWY STAN DLA FILTRÓW
   const [sessionFilters, setSessionFilters] = useState<SessionFilters>({});
@@ -128,6 +131,15 @@ export const LearningSession: React.FC = () => {
       const result = response.data;
       const isCorrect = result.score > 0;
 
+      // Dodaj zadanie do listy ukończonych
+      setCompletedExercises((prev) => [
+        ...prev,
+        {
+          id: currentExercise.id,
+          score: result.score || 0,
+        },
+      ]);
+
       setSessionStats((prev) => ({
         ...prev,
         completed: prev.completed + 1,
@@ -157,15 +169,20 @@ export const LearningSession: React.FC = () => {
 
   // Save session results
   const saveSessionMutation = useMutation({
-    mutationFn: (stats: any) =>
-      api.post("/api/learning/session/complete", { stats }),
+    mutationFn: (data: any) => api.post("/api/learning/session/complete", data),
     onSuccess: () => {
       refetchStats();
-      confetti({
-        particleCount: 200,
-        spread: 100,
-        origin: { y: 0.5 },
-      });
+      // Pokazuj konfetti tylko dla udanych sesji
+      if (sessionStats.completed > 0 && sessionStats.correct > 0) {
+        confetti({
+          particleCount: 200,
+          spread: 100,
+          origin: { y: 0.5 },
+        });
+      }
+    },
+    onError: (error) => {
+      console.error("Error saving session:", error);
     },
   });
 
@@ -173,6 +190,7 @@ export const LearningSession: React.FC = () => {
   const startSession = async () => {
     setSessionActive(true);
     setSessionComplete(false);
+    setCompletedExercises([]); // Reset ukończonych zadań
     setSessionStats({
       completed: 0,
       correct: 0,
@@ -196,9 +214,35 @@ export const LearningSession: React.FC = () => {
   };
 
   // End session
-  const endSession = () => {
+  const endSession = async () => {
+    // Zapisz statystyki tylko jeśli coś zostało zrobione
+    if (sessionStats.completed > 0) {
+      await saveSessionMutation.mutateAsync({
+        ...sessionStats,
+        completedExercises: [], // Możesz tu dodać tablicę ukończonych zadań jeśli potrzeba
+      });
+    }
+
+    // Wyczyść filtry na backendzie
+    await api.post("/api/learning/session/filters", {});
+
+    // Resetuj stan sesji
     setSessionComplete(true);
-    saveSessionMutation.mutate(sessionStats);
+    setSessionActive(false);
+    setSessionFilters({});
+    setCurrentExercise(null);
+    setAnswer(null);
+    setShowFeedback(false);
+
+    // Resetuj statystyki
+    setSessionStats({
+      completed: 0,
+      correct: 0,
+      streak: 0,
+      maxStreak: 0,
+      points: 0,
+      timeSpent: 0,
+    });
   };
 
   // Next exercise with filters
@@ -318,60 +362,69 @@ export const LearningSession: React.FC = () => {
             <Trophy className="w-20 h-20 text-yellow-500 mx-auto mb-4" />
             <h2 className="text-3xl font-bold mb-2">Sesja zakończona!</h2>
             <p className="text-gray-600 mb-6">
-              Świetna robota! Oto Twoje wyniki:
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl">
-              <p className="text-sm text-gray-600">Ukończone zadania</p>
-              <p className="text-2xl font-bold text-blue-600">
-                {sessionStats.completed}
-              </p>
-            </div>
-            <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl">
-              <p className="text-sm text-gray-600">Poprawne odpowiedzi</p>
-              <p className="text-2xl font-bold text-green-600">
-                {sessionStats.correct}/{sessionStats.completed}
-              </p>
-            </div>
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-xl">
-              <p className="text-sm text-gray-600">Najdłuższa seria</p>
-              <p className="text-2xl font-bold text-orange-600">
-                {sessionStats.maxStreak}
-              </p>
-            </div>
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl">
-              <p className="text-sm text-gray-600">Zdobyte punkty</p>
-              <p className="text-2xl font-bold text-purple-600">
-                +{sessionStats.points}
-              </p>
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <p className="text-sm text-gray-600 mb-2">Skuteczność</p>
-            <div className="w-full bg-gray-200 rounded-full h-4">
-              <div
-                className="bg-gradient-to-r from-blue-500 to-green-500 h-4 rounded-full transition-all duration-500"
-                style={{
-                  width: `${
-                    sessionStats.completed > 0
-                      ? (sessionStats.correct / sessionStats.completed) * 100
-                      : 0
-                  }%`,
-                }}
-              />
-            </div>
-            <p className="text-right text-sm text-gray-600 mt-1">
               {sessionStats.completed > 0
-                ? Math.round(
-                    (sessionStats.correct / sessionStats.completed) * 100
-                  )
-                : 0}
-              %
+                ? "Oto Twoje wyniki:"
+                : "Nie ukończyłeś żadnych zadań w tej sesji."}
             </p>
           </div>
+
+          {sessionStats.completed > 0 ? (
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl">
+                  <p className="text-sm text-gray-600">Ukończone zadania</p>
+                  <p className="text-2xl font-bold text-blue-600">
+                    {sessionStats.completed}
+                  </p>
+                </div>
+                <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl">
+                  <p className="text-sm text-gray-600">Poprawne odpowiedzi</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {sessionStats.correct}/{sessionStats.completed}
+                  </p>
+                </div>
+                <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-xl">
+                  <p className="text-sm text-gray-600">Najdłuższa seria</p>
+                  <p className="text-2xl font-bold text-orange-600">
+                    {sessionStats.maxStreak}
+                  </p>
+                </div>
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl">
+                  <p className="text-sm text-gray-600">Zdobyte punkty</p>
+                  <p className="text-2xl font-bold text-purple-600">
+                    +{sessionStats.points}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <p className="text-sm text-gray-600 mb-2">Skuteczność</p>
+                <div className="w-full bg-gray-200 rounded-full h-4">
+                  <div
+                    className="bg-gradient-to-r from-blue-500 to-green-500 h-4 rounded-full transition-all duration-500"
+                    style={{
+                      width: `${
+                        sessionStats.completed > 0
+                          ? (sessionStats.correct / sessionStats.completed) *
+                            100
+                          : 0
+                      }%`,
+                    }}
+                  />
+                </div>
+                <p className="text-right text-sm text-gray-600 mt-1">
+                  {Math.round(
+                    (sessionStats.correct / sessionStats.completed) * 100
+                  )}
+                  %
+                </p>
+              </div>
+            </>
+          ) : (
+            <div className="py-8 text-center text-gray-500">
+              <p>Rozpocznij nową sesję, aby zacząć naukę.</p>
+            </div>
+          )}
 
           <div className="flex gap-4">
             <button
@@ -379,13 +432,27 @@ export const LearningSession: React.FC = () => {
                 setSessionActive(false);
                 setSessionComplete(false);
                 setSessionFilters({});
+                setCompletedExercises([]); // Wyczyść też ukończone zadania
+                setSessionStats({
+                  completed: 0,
+                  correct: 0,
+                  streak: 0,
+                  maxStreak: 0,
+                  points: 0,
+                  timeSpent: 0,
+                });
+                refetchStats(); // Odśwież statystyki
               }}
               className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Zakończ
             </button>
             <button
-              onClick={startSession}
+              onClick={() => {
+                setSessionComplete(false);
+                setCompletedExercises([]); // Wyczyść ukończone zadania
+                startSession();
+              }}
               className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
             >
               <Play className="w-5 h-5" />
