@@ -933,6 +933,65 @@ export async function learningRoutes(fastify: FastifyInstance) {
       return reply.code(500).send({ error: "Failed to count exercises" });
     }
   });
+  fastify.get("/sessions/history", async (request, reply) => {
+    try {
+      const userId = (request.user as any).userId;
+      const { limit = 50, offset = 0 } = request.query as {
+        limit?: number;
+        offset?: number;
+      };
+
+      console.log("=== FETCHING SESSION HISTORY ===");
+      console.log("UserId:", userId);
+      console.log("Limit:", limit, "Offset:", offset);
+
+      const sessions = await prisma.dailyProgress.findMany({
+        where: {
+          userId,
+          exercisesCount: { gt: 0 },
+        },
+        orderBy: { date: "desc" },
+        take: Number(limit), // ⚠️ Konwertuj na liczbę!
+        skip: Number(offset), // ⚠️ Konwertuj na liczbę!
+      });
+
+      console.log("Found sessions:", sessions.length);
+      console.log("Sessions data:", sessions);
+
+      // Policz całkowitą liczbę sesji
+      const total = await prisma.dailyProgress.count({
+        where: {
+          userId,
+          exercisesCount: { gt: 0 },
+        },
+      });
+
+      console.log("Total sessions count:", total);
+
+      // Formatuj dane
+      const formattedSessions = sessions.map((session) => ({
+        id: session.id,
+        date: session.date.toISOString().split("T")[0],
+        exercisesCount: session.exercisesCount,
+        studyTime: session.studyTime || 0,
+        averageScore: Math.round(session.averageScore || 0),
+        points: Math.round(
+          (session.exercisesCount * (session.averageScore || 0)) / 50
+        ),
+      }));
+
+      console.log("Formatted sessions:", formattedSessions);
+
+      return reply.send({
+        sessions: formattedSessions,
+        total,
+        hasMore: Number(offset) + Number(limit) < total,
+      });
+    } catch (error) {
+      console.error("Error getting session history:", error);
+      return reply.code(500).send({ error: "Failed to get session history" });
+    }
+  });
 }
 
 async function createNotification(

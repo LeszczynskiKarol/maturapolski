@@ -1,24 +1,25 @@
 // frontend/src/components/Layout.tsx
 
-import React, { useState } from "react";
-import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Home,
-  BookOpen,
-  TrendingUp,
-  FileText,
-  Brain,
-  LogOut,
-  User,
-  Trophy,
-  Menu,
-  X,
-  ChevronLeft,
   Bell,
+  BookOpen,
+  Brain,
+  ChevronLeft,
+  Clock,
+  FileText,
+  Home,
+  LogOut,
+  Menu,
   Settings,
+  TrendingUp,
+  Trophy,
+  User,
+  X,
 } from "lucide-react";
-import { useAuthStore } from "../store/authStore";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 
 export const Layout: React.FC = () => {
   const location = useLocation();
@@ -31,6 +32,7 @@ export const Layout: React.FC = () => {
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: Home },
     { name: "Nauka", href: "/learn", icon: Brain },
+    { name: "Historia sesji", href: "/sessions", icon: Clock },
     { name: "Zadania", href: "/exercises", icon: BookOpen },
     { name: "Postępy", href: "/progress", icon: TrendingUp },
     { name: "Egzamin", href: "/exam", icon: FileText },

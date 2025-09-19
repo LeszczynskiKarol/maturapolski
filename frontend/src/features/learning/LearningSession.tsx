@@ -20,9 +20,10 @@ import {
   XCircle,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { api } from "../../services/api";
 
-const SESSION_LIMIT = 20;
+const SESSION_LIMIT = 1;
 
 // Definicje typów dla filtrów
 interface SessionFilters {
@@ -1088,6 +1089,8 @@ const SessionStart: React.FC<{
   onStart: () => void;
   stats: any;
 }> = ({ onStart, stats }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-8 text-white mb-6">
@@ -1127,8 +1130,30 @@ const SessionStart: React.FC<{
       </div>
 
       <div className="bg-white rounded-xl shadow-sm p-6">
-        <h2 className="text-xl font-semibold mb-4">Twoje ostatnie sesje</h2>
-        <RecentSessions sessions={stats?.recentSessions || []} />
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">Twoje ostatnie sesje</h2>
+          {stats?.recentSessions?.length >= 5 && (
+            <button
+              onClick={() => navigate("/sessions")}
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+            >
+              Zobacz wszystkie
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+        <RecentSessions sessions={stats?.recentSessions?.slice(0, 5) || []} />
+
+        {stats?.recentSessions?.length > 5 && (
+          <div className="mt-4 text-center">
+            <button
+              onClick={() => navigate("/sessions")}
+              className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              Zobacz więcej ({stats.recentSessions.length - 5} starszych sesji)
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

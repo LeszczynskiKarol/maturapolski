@@ -1,10 +1,11 @@
 // frontend/src/App.tsx
 
-import React from "react";
-import { LearningSession } from "./features/learning/LearningSession";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import React from "react";
 import { Toaster } from "react-hot-toast";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { LearningSession } from "./features/learning/LearningSession";
+import { SessionHistory } from "./features/learning/SessionHistory";
 import { useAuthStore } from "./store/authStore";
 
 // Layout
@@ -18,22 +19,22 @@ import { LoginPage } from "./features/auth/LoginPage";
 import { RegisterPage } from "./features/auth/RegisterPage";
 
 // Student
-import { StudentDashboard } from "./features/student/Dashboard";
+import { ExamSimulator } from "./features/exams/ExamSimulator";
 import { ExerciseList } from "./features/exercises/ExerciseList";
 import { ExerciseSolver } from "./features/exercises/ExerciseSolver";
-import { ProgressTracker } from "./features/student/ProgressTracker";
-import { ExamSimulator } from "./features/exams/ExamSimulator";
 import { LeaderboardPage } from "./features/gamification/LeaderboardPage";
+import { StudentDashboard } from "./features/student/Dashboard";
+import { ProgressTracker } from "./features/student/ProgressTracker";
 
 // Admin
 import { AdminDashboard } from "./features/admin/AdminDashboard";
+import AdminMaterialsEditor from "./features/admin/AdminMaterialsEditor";
 import ExerciseManager from "./features/admin/ExerciseManager";
 import { UserManager } from "./features/admin/UserManager";
-import AdminMaterialsEditor from "./features/admin/AdminMaterialsEditor";
 
 // Materials
-import MaterialsPage from "./features/materials/MaterialsPage";
 import { MaterialDetailPage } from "./features/materials/MaterialDetailPage";
+import MaterialsPage from "./features/materials/MaterialsPage";
 
 const queryClient = new QueryClient();
 
@@ -164,6 +165,15 @@ export const App: React.FC = () => {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/sessions"
+              element={
+                <ProtectedRoute>
+                  <SessionHistory />
+                </ProtectedRoute>
+              }
+            />
+
             <Route
               path="/leaderboard"
               element={
