@@ -553,6 +553,102 @@ export async function learningRoutes(fastify: FastifyInstance) {
     }
   });
 
+  // Pobierz szczegóły konkretnej sesji
+  fastify.get("/session/:sessionId/details", async (request, reply) => {
+    try {
+      const userId = (request.user as any).userId;
+      const { sessionId } = request.params as { sessionId: string };
+
+      console.log("=== FETCHING SESSION DETAILS ===");
+      console.log("SessionId:", sessionId);
+      console.log("UserId:", userId);
+
+      const session = await prisma.dailyProgress.findFirst({
+        where: {
+          id: sessionId,
+          userId,
+        },
+      });
+
+      if (!session) {
+        return reply.code(404).send({ error: "Session not found" });
+      }
+
+      console.log("Found session:", session);
+
+      // ⚠️ ROZSZERZ ZAKRES DAT - szukaj też dzień później (problem z UTC)
+      const startOfDay = new Date(session.date);
+      startOfDay.setHours(0, 0, 0, 0);
+
+      const endOfNextDay = new Date(session.date);
+      endOfNextDay.setDate(endOfNextDay.getDate() + 2); // Dodaj 2 dni dla pewności
+      endOfNextDay.setHours(23, 59, 59, 999);
+
+      console.log("Extended date range:", startOfDay, "to", endOfNextDay);
+
+      const submissions = await prisma.submission.findMany({
+        where: {
+          userId,
+          createdAt: {
+            gte: startOfDay,
+            lte: endOfNextDay,
+          },
+        },
+        include: {
+          exercise: true,
+        },
+        orderBy: { createdAt: "asc" },
+      });
+
+      console.log("Found submissions:", submissions.length);
+
+      // Jeśli za dużo submissions, filtruj do limitu sesji
+      const sessionDate = new Date(session.date);
+      const relevantSubmissions = submissions
+        .filter((sub) => {
+          const subDate = new Date(sub.createdAt);
+          const diffInHours =
+            Math.abs(subDate.getTime() - sessionDate.getTime()) /
+            (1000 * 60 * 60);
+          return diffInHours <= 48; // W ciągu 48 godzin od daty sesji
+        })
+        .slice(0, session.exercisesCount); // Weź tylko tyle ile było w sesji
+
+      console.log("Relevant submissions:", relevantSubmissions.length);
+
+      // Formatuj dane
+      const formattedSubmissions = relevantSubmissions.map((sub) => ({
+        id: sub.id,
+        exerciseId: sub.exerciseId,
+        question: sub.exercise.question,
+        type: sub.exercise.type,
+        category: sub.exercise.category,
+        difficulty: sub.exercise.difficulty,
+        maxPoints: sub.exercise.points,
+        userAnswer: sub.answer,
+        correctAnswer: sub.exercise.correctAnswer,
+        score: sub.score || 0,
+        feedback: sub.feedback,
+        createdAt: sub.createdAt,
+        exerciseContent: sub.exercise.content,
+      }));
+
+      return reply.send({
+        session: {
+          id: session.id,
+          date: session.date.toISOString().split("T")[0],
+          exercisesCount: session.exercisesCount,
+          studyTime: session.studyTime,
+          averageScore: Math.round(session.averageScore || 0),
+        },
+        submissions: formattedSubmissions,
+      });
+    } catch (error) {
+      console.error("Error getting session details:", error);
+      return reply.code(500).send({ error: "Failed to get session details" });
+    }
+  });
+
   // Save session results
   fastify.post("/session/complete", async (request, reply) => {
     try {

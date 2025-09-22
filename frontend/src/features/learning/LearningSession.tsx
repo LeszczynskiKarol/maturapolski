@@ -23,7 +23,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { api } from "../../services/api";
 
-const SESSION_LIMIT = 1;
+const SESSION_LIMIT = 20;
 
 // Definicje typów dla filtrów
 interface SessionFilters {
@@ -1132,7 +1132,7 @@ const SessionStart: React.FC<{
       <div className="bg-white rounded-xl shadow-sm p-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Twoje ostatnie sesje</h2>
-          {stats?.recentSessions?.length >= 5 && (
+          {stats?.recentSessions?.length > 0 && ( // ✅ Zmień z >= 5 na > 0
             <button
               onClick={() => navigate("/sessions")}
               className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
@@ -1144,15 +1144,14 @@ const SessionStart: React.FC<{
         </div>
         <RecentSessions sessions={stats?.recentSessions?.slice(0, 5) || []} />
 
-        {stats?.recentSessions?.length > 5 && (
-          <div className="mt-4 text-center">
-            <button
-              onClick={() => navigate("/sessions")}
-              className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-            >
-              Zobacz więcej ({stats.recentSessions.length - 5} starszych sesji)
-            </button>
-          </div>
+        {stats?.recentSessions?.length > 0 && ( // ✅ Zmień z >= 5 na > 0
+          <button
+            onClick={() => navigate("/sessions")}
+            className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+          >
+            Zobacz wszystkie
+            <ChevronRight className="w-4 h-4" />
+          </button>
         )}
       </div>
     </div>
