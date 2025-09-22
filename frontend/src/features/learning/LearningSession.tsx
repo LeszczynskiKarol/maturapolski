@@ -683,18 +683,79 @@ export const LearningSession: React.FC = () => {
               </div>
             )}
 
-            {/* Feedback section - pozostaje bez zmian */}
+            {/* Feedback section */}
             {showFeedback && submitMutation.data && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-4"
               >
-                {/* Feedback content - bez zmian */}
+                {/* Dla zadań CLOSED */}
+                {(currentExercise.type === "CLOSED_SINGLE" ||
+                  currentExercise.type === "CLOSED_MULTIPLE") && (
+                  <div
+                    className={`p-4 rounded-lg ${
+                      submitMutation.data.data.score > 0
+                        ? "bg-green-50 border border-green-200"
+                        : "bg-red-50 border border-red-200"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      {submitMutation.data.data.score > 0 ? (
+                        <>
+                          <CheckCircle className="w-5 h-5 text-green-600" />
+                          <span className="font-semibold text-green-700">
+                            Świetnie! +{submitMutation.data.data.score} pkt
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <XCircle className="w-5 h-5 text-red-600" />
+                          <span className="font-semibold text-red-700">
+                            Niepoprawna odpowiedź
+                          </span>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Wyjaśnienie dla zadań CLOSED */}
+                    {submitMutation.data.data.feedback && (
+                      <>
+                        {!submitMutation.data.data.feedback.correct &&
+                          submitMutation.data.data.feedback
+                            .correctAnswerText && (
+                            <div className="mt-3 text-sm">
+                              <p className="font-medium text-gray-700 mb-1">
+                                Poprawna odpowiedź:
+                              </p>
+                              <p className="text-gray-600">
+                                {
+                                  submitMutation.data.data.feedback
+                                    .correctAnswerText
+                                }
+                              </p>
+                            </div>
+                          )}
+
+                        {submitMutation.data.data.feedback.explanation && (
+                          <div className="mt-3 pt-3 border-t border-gray-200 text-sm">
+                            <p className="font-medium text-gray-700 mb-1">
+                              Wyjaśnienie:
+                            </p>
+                            <p className="text-gray-600">
+                              {submitMutation.data.data.feedback.explanation}
+                            </p>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {/* Dla zadań SHORT_ANSWER i SYNTHESIS_NOTE */}
                 {(currentExercise.type === "SHORT_ANSWER" ||
                   currentExercise.type === "SYNTHESIS_NOTE") &&
-                submitMutation.data.data.feedback ? (
-                  <div className="space-y-4">
+                  submitMutation.data.data.feedback && (
                     <div
                       className={`p-4 rounded-lg ${
                         submitMutation.data.data.feedback.isCorrect
@@ -750,40 +811,14 @@ export const LearningSession: React.FC = () => {
                         </div>
                       )}
                     </div>
-                  </div>
-                ) : (
-                  <div
-                    className={`p-4 rounded-lg ${
-                      submitMutation.data.data.score > 0
-                        ? "bg-green-50 border border-green-200"
-                        : "bg-red-50 border border-red-200"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      {submitMutation.data.data.score > 0 ? (
-                        <>
-                          <CheckCircle className="w-5 h-5 text-green-600" />
-                          <span className="font-semibold text-green-700">
-                            Świetnie! +{submitMutation.data.data.score} pkt
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <XCircle className="w-5 h-5 text-red-600" />
-                          <span className="font-semibold text-red-700">
-                            Niepoprawna odpowiedź
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                )}
+                  )}
 
+                {/* Przycisk następnego zadania */}
                 <div className="flex justify-end">
                   <button
                     onClick={goToNextExercise}
                     className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
-                             flex items-center gap-2"
+                 flex items-center gap-2"
                   >
                     {sessionStats.completed >= SESSION_LIMIT - 1 ? (
                       <>

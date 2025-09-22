@@ -812,6 +812,31 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
             </div>
           </div>
 
+          {/* Wyjaśnienie odpowiedzi */}
+          {(formData.type === "CLOSED_SINGLE" ||
+            formData.type === "CLOSED_MULTIPLE") && (
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Wyjaśnienie prawidłowej odpowiedzi
+              </label>
+              <textarea
+                value={formData.metadata?.explanation || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    metadata: {
+                      ...formData.metadata,
+                      explanation: e.target.value,
+                    },
+                  })
+                }
+                className="w-full px-3 py-2 border rounded-lg"
+                rows={3}
+                placeholder="Dlaczego ta odpowiedź jest prawidłowa? To pole pojawi się uczniowi po udzieleniu odpowiedzi..."
+              />
+            </div>
+          )}
+
           {/* Actions */}
           <div className="flex justify-end gap-3 pt-4 border-t">
             <button

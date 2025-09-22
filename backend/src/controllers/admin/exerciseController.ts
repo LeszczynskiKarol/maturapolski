@@ -58,6 +58,7 @@ const CreateExerciseSchema = z.object({
   tags: z.array(z.string()),
   metadata: z
     .object({
+      explanation: z.string().optional(),
       requiredReadings: z.array(z.string()).optional(),
       contexts: z.array(z.string()).optional(),
       timeLimit: z.number().optional(),

@@ -130,9 +130,37 @@ export class ExerciseService {
         JSON.stringify(answer) === JSON.stringify(exercise.correctAnswer);
       const score = isCorrect ? exercise.points : 0;
 
+      // Pobierz wyjaśnienie z metadata
+      const metadata = exercise.metadata as any;
+      const explanation = metadata?.explanation;
+
+      // Znajdź tekst poprawnej odpowiedzi
+      let correctAnswerText = "";
+      const content = exercise.content as any;
+      const options = content?.options || [];
+
+      if (exercise.type === "CLOSED_SINGLE") {
+        const correctIndex = exercise.correctAnswer as number;
+        correctAnswerText = options[correctIndex] || "";
+      } else {
+        const correctIndices = exercise.correctAnswer as number[];
+        correctAnswerText = correctIndices
+          .map((idx) => options[idx])
+          .filter(Boolean)
+          .join(", ");
+      }
+
       await prisma.submission.update({
         where: { id: submission.id },
-        data: { score },
+        data: {
+          score,
+          feedback: {
+            correct: isCorrect,
+            correctAnswer: exercise.correctAnswer,
+            correctAnswerText,
+            explanation: explanation || null, // Użyj null jeśli brak
+          },
+        },
       });
 
       return {
@@ -140,7 +168,9 @@ export class ExerciseService {
         score,
         feedback: {
           correct: isCorrect,
-          explanation: (exercise.metadata as any)?.explanation || null,
+          correctAnswer: exercise.correctAnswer,
+          correctAnswerText,
+          explanation: explanation || null, // Użyj null jeśli brak
         },
         message: isCorrect
           ? `Świetnie! Zdobyłeś ${score} punktów!`

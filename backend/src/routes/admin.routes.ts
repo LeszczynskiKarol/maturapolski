@@ -55,6 +55,7 @@ const ExerciseSchema = z.object({
   tags: z.array(z.string()).default([]),
   metadata: z
     .object({
+      explanation: z.string().optional(),
       wordLimit: z
         .object({
           min: z.number().optional(),
