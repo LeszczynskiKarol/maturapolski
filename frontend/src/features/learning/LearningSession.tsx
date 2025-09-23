@@ -66,6 +66,12 @@ const CATEGORIES = [
 ];
 
 export const LearningSession: React.FC = () => {
+  console.log("=== LEARNING SESSION RENDER ===");
+  console.log(
+    "localStorage sessionFilters:",
+    localStorage.getItem("sessionFilters")
+  );
+
   const [sessionActive, setSessionActive] = useState(false);
   const [currentExercise, setCurrentExercise] = useState<any>(null);
   const [isLoadingNext, setIsLoadingNext] = useState(false);
@@ -76,8 +82,23 @@ export const LearningSession: React.FC = () => {
   const [completedExercises, setCompletedExercises] = useState<
     Array<{ id: string; score: number }>
   >([]);
-  // NOWY STAN DLA FILTRÓW
-  const [sessionFilters, setSessionFilters] = useState<SessionFilters>({});
+
+  // SPRAWDŹ CZY SĄ FILTRY Z PLANU TYGODNIOWEGO
+  const [sessionFilters, setSessionFilters] = useState<SessionFilters>(() => {
+    const storedFilters = localStorage.getItem("sessionFilters");
+    console.log("Reading filters from localStorage:", storedFilters);
+    if (storedFilters) {
+      try {
+        const filters = JSON.parse(storedFilters);
+        console.log("Parsed filters:", filters);
+        return filters;
+      } catch {
+        console.log("Failed to parse filters");
+        return {};
+      }
+    }
+    return {};
+  });
 
   const [sessionStats, setSessionStats] = useState({
     completed: 0,
@@ -87,6 +108,10 @@ export const LearningSession: React.FC = () => {
     points: 0,
     timeSpent: 0,
   });
+
+  // Sprawdź czy sesja została uruchomiona z planu tygodniowego
+  const isWeekPlanSession =
+    sessionFilters && Object.keys(sessionFilters).length > 0;
 
   // Fetch user stats
   const { data: userStats, refetch: refetchStats } = useQuery({
@@ -346,6 +371,28 @@ export const LearningSession: React.FC = () => {
       setIsLoadingNext(false);
     }
   };
+
+  // AUTO-START JEŚLI SĄ FILTRY Z PLANU!
+  useEffect(() => {
+    console.log("=== useEffect CHECK ===");
+    console.log("sessionFilters:", sessionFilters);
+    console.log("sessionActive:", sessionActive);
+    console.log("sessionComplete:", sessionComplete);
+
+    const hasWeekFilters = Object.keys(sessionFilters).length > 0;
+    console.log("hasWeekFilters:", hasWeekFilters);
+
+    if (hasWeekFilters && !sessionActive && !sessionComplete) {
+      console.log("SHOULD AUTO-START SESSION!");
+      localStorage.removeItem("sessionFilters");
+      setTimeout(() => {
+        console.log("CALLING startSession()");
+        startSession();
+      }, 100);
+    } else {
+      console.log("NOT STARTING: conditions not met");
+    }
+  }, []); // Tylko raz przy montowaniu
 
   // Timer
   useEffect(() => {

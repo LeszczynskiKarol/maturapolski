@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
 import {
   Calendar,
@@ -41,6 +42,7 @@ interface StudyPlanData {
 }
 
 export const StudyPlan: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [examDate, setExamDate] = useState("");
@@ -66,6 +68,34 @@ export const StudyPlan: React.FC = () => {
       }
     },
   });
+
+  const startWeekSession = async (week: number) => {
+    try {
+      const response = await api.post("/api/study/start-week-session", {
+        week,
+      });
+
+      console.log("=== SAVING FILTERS TO LOCALSTORAGE ===");
+      console.log("Filters from API:", response.data.filters);
+
+      // Zapisz filtry do localStorage
+      localStorage.setItem(
+        "sessionFilters",
+        JSON.stringify(response.data.filters)
+      );
+
+      console.log(
+        "Saved to localStorage:",
+        localStorage.getItem("sessionFilters")
+      );
+
+      // UŻYJ NAVIGATE ZAMIAST window.location.href
+      navigate("/learn");
+    } catch (err) {
+      console.error("Error starting week session:", err);
+      alert("Nie udało się rozpocząć sesji tygodniowej");
+    }
+  };
 
   // Initialize examDate when plan data is loaded
   useEffect(() => {
@@ -369,13 +399,14 @@ export const StudyPlan: React.FC = () => {
           </div>
 
           <button
-            onClick={() => setSelectedWeek(plan.currentWeek)}
-            className="w-full px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white 
-                 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 
-                 transition-colors flex items-center justify-center gap-2"
+            onClick={() => {
+              const weekToStart = plan.currentWeek; // UŻYJ CURRENT WEEK!
+              console.log("Starting session for current week:", weekToStart);
+              startWeekSession(weekToStart);
+            }}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
           >
-            <Play className="w-4 h-4" />
-            Zobacz zadania na ten tydzień
+            Rozpocznij naukę
           </button>
         </motion.div>
       )}
