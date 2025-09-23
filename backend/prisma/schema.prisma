@@ -27,8 +27,11 @@ model User {
   weeklyProgress WeeklyProgress[]
   studyGoals    StudyGoal[]
   dailyProgress DailyProgress[]
-  materialProgress UserMaterialProgress[]  // DODAJ TĘ LINIĘ!
+  materialProgress UserMaterialProgress[]
+  examSessions  ExamSession[]
+  exerciseUsage ExerciseUsage[]
 }
+
 
 model UserProfile {
   id              String    @id @default(cuid())
@@ -65,6 +68,8 @@ model Exercise {
   
   submissions   Submission[]
   spacedRepetitions SpacedRepetition[]
+  examQuestions ExamQuestion[]
+  usageHistory  ExerciseUsage[]
 }
 
 model Submission {
@@ -84,6 +89,29 @@ model Submission {
   
   assessment  Assessment?
 }
+
+model ExerciseUsage {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  exerciseId    String
+  exercise      Exercise  @relation(fields: [exerciseId], references: [id])
+  
+  lastUsedAt    DateTime  @default(now())
+  usageCount    Int       @default(1)
+  context       UsageContext // LEARNING, EXAM, STUDY_PLAN
+  
+  @@unique([userId, exerciseId])
+  @@index([userId, lastUsedAt])
+  @@index([exerciseId])
+}
+
+enum UsageContext {
+  LEARNING
+  EXAM
+  STUDY_PLAN
+}
+
 
 model Assessment {
   id           String      @id @default(cuid())
@@ -391,6 +419,109 @@ model UserMaterialProgress {
   @@unique([userId, materialId])
   @@index([userId])
 }
+
+model MockExam {
+  id            String    @id @default(cuid())
+  title         String
+  year          Int?      // np. 2024
+  type          ExamType  // PODSTAWOWY, ROZSZERZONY
+  duration      Int       // czas trwania w minutach (170 dla podstawowej)
+  isActive      Boolean   @default(true)
+  
+  sections      ExamSection[]
+  sessions      ExamSession[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model ExamSection {
+  id            String    @id @default(cuid())
+  examId        String
+  exam          MockExam  @relation(fields: [examId], references: [id])
+  
+  order         Int       // kolejność sekcji
+  title         String    // np. "Test historycznoliteracki"
+  instruction   String    @db.Text
+  timeLimit     Int?      // limit czasu na sekcję (opcjonalny)
+  
+  questions     ExamQuestion[]
+  
+  @@unique([examId, order])
+}
+
+model ExamQuestion {
+  id            String    @id @default(cuid())
+  sectionId     String
+  section       ExamSection @relation(fields: [sectionId], references: [id])
+  
+  order         Int       // kolejność w sekcji
+  exerciseId    String?   // powiązanie z istniejącym zadaniem
+  exercise      Exercise? @relation(fields: [exerciseId], references: [id])
+  
+  // Lub własne zadanie
+  type          ExerciseType?
+  question      String?   @db.Text
+  content       Json?
+  points        Int
+  
+  @@unique([sectionId, order])
+}
+
+model ExamSession {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  examId        String
+  exam          MockExam  @relation(fields: [examId], references: [id])
+  
+  startedAt     DateTime  @default(now())
+  finishedAt    DateTime?
+  timeSpent     Int?      // w sekundach
+  
+  status        ExamStatus @default(IN_PROGRESS)
+  
+  answers       ExamAnswer[]
+  
+  // Wyniki
+  totalScore    Float?
+  maxScore      Float?
+  percentScore  Float?
+  
+  // Ocena szczegółowa
+  assessment    Json?
+  
+  @@index([userId])
+  @@index([examId])
+}
+
+model ExamAnswer {
+  id            String    @id @default(cuid())
+  sessionId     String
+  session       ExamSession @relation(fields: [sessionId], references: [id])
+  questionId    String
+  
+  answer        Json
+  score         Float?
+  maxScore      Float
+  
+  submittedAt   DateTime  @default(now())
+  
+  @@unique([sessionId, questionId])
+}
+
+enum ExamType {
+  PODSTAWOWY
+  ROZSZERZONY
+}
+
+enum ExamStatus {
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+  TIMEOUT
+}
+
 
 enum MaterialType {
   EPOCH_OVERVIEW

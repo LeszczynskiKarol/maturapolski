@@ -11,6 +11,7 @@ import { adminRoutes } from "./routes/admin.routes";
 import { authRoutes } from "./routes/auth.routes";
 import { exerciseRoutes } from "./routes/exercise.routes";
 import { learningRoutes } from "./routes/learning.routes";
+import { examRoutes } from "./routes/exam.routes";
 import { materialsRoutes } from "./routes/materials.routes";
 import { studentRoutes } from "./routes/student.routes";
 import { studyPlanRoutes } from "./routes/studyPlan.routes";
@@ -70,6 +71,10 @@ console.log("✓ Student routes registered at /api/student/*");
 // Study Plan routes
 fastify.register(studyPlanRoutes, { prefix: "/api/study" });
 console.log("✓ Study Plan routes registered at /api/study/*");
+
+// Exam routes
+fastify.register(examRoutes, { prefix: "/api/exams" });
+console.log("✓ Exam routes registered at /api/exams/*");
 
 // Exercise routes
 fastify.register(exerciseRoutes, { prefix: "/api/exercises" });

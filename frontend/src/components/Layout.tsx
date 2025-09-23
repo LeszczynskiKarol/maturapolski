@@ -36,8 +36,8 @@ export const Layout: React.FC = () => {
     { name: "Historia sesji", href: "/sessions", icon: Clock },
     { name: "Zadania", href: "/exercises", icon: BookOpen },
     { name: "Postępy", href: "/progress", icon: TrendingUp },
-    { name: "Egzamin", href: "/exam", icon: FileText },
-    { name: "Ranking", href: "/leaderboard", icon: Trophy },
+    { name: "Egzamin", href: "/exams", icon: FileText },
+    //{ name: "Ranking", href: "/leaderboard", icon: Trophy },
   ];
 
   const handleLogout = () => {

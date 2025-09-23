@@ -2,6 +2,9 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { useEffect } from "react";
+import { ExamHub } from "./features/exams/ExamHub";
+import { LiveExam } from "./features/exams/LiveExam";
+import { ExamResults } from "./features/exams/ExamResults";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { LearningSession } from "./features/learning/LearningSession";
@@ -145,14 +148,13 @@ export const App: React.FC = () => {
                   </ProtectedRoute>
                 }
               />
+              <Route path="/exams" element={<ExamHub />} />
+              <Route path="/exam/:sessionId" element={<LiveExam />} />
               <Route
-                path="/exam"
-                element={
-                  <ProtectedRoute>
-                    <ExamSimulator />
-                  </ProtectedRoute>
-                }
+                path="/exam/results/:sessionId"
+                element={<ExamResults />}
               />
+
               <Route
                 path="/learn"
                 element={
