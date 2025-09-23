@@ -6,74 +6,6 @@ import { assessShortAnswerWithAI, assessEssayWithAI } from "../ai/aiService";
 import { differenceInMinutes } from "date-fns";
 import { ExerciseSelectionService } from "../services/exerciseSelectionService"; // DODAJ TEN IMPORT!
 
-// Struktura zgodna z arkuszem maturalnym
-const EXAM_STRUCTURE = {
-  PODSTAWOWY: {
-    duration: 170, // 170 minut
-    sections: [
-      {
-        name: "Test",
-        instruction:
-          "Test składa się z 9 zadań zamkniętych (1-9) oraz 6 zadań otwartych krótkiej odpowiedzi (10-15).",
-        questions: [
-          {
-            range: [1, 9],
-            type: "CLOSED_SINGLE",
-            points: 1,
-            category: "HISTORICAL_LITERARY",
-          },
-          {
-            range: [10, 15],
-            type: "SHORT_ANSWER",
-            points: 1,
-            category: "LANGUAGE_USE",
-          },
-        ],
-      },
-      {
-        name: "Wypracowanie",
-        instruction: "Napisz wypracowanie na jeden z dwóch tematów.",
-        questions: [
-          { range: [16, 16], type: "ESSAY", points: 35, category: "WRITING" },
-        ],
-      },
-    ],
-  },
-  ROZSZERZONY: {
-    duration: 180,
-    sections: [
-      {
-        name: "Część I",
-        questions: [
-          {
-            range: [1, 15],
-            type: "CLOSED_SINGLE",
-            points: 1,
-            category: "HISTORICAL_LITERARY",
-          },
-        ],
-      },
-      {
-        name: "Część II",
-        questions: [
-          {
-            range: [16, 20],
-            type: "SHORT_ANSWER",
-            points: 2,
-            category: "LANGUAGE_USE",
-          },
-        ],
-      },
-      {
-        name: "Wypracowanie",
-        questions: [
-          { range: [21, 21], type: "ESSAY", points: 40, category: "WRITING" },
-        ],
-      },
-    ],
-  },
-};
-
 export async function examRoutes(fastify: FastifyInstance) {
   // Auth middleware
   fastify.addHook("onRequest", async (request, reply) => {
@@ -257,6 +189,18 @@ export async function examRoutes(fastify: FastifyInstance) {
         maxScore,
       },
     });
+
+    if (exam.title.includes("Maturalny")) {
+      return reply.send({
+        sessionId: session.id,
+        redirectTo: `/exam/mature/${session.id}`, // NOWY URL!
+        exam: {
+          ...exam,
+          maxScore,
+          startedAt: session.startedAt,
+        },
+      });
+    }
 
     return reply.send({
       sessionId: session.id,
@@ -544,6 +488,208 @@ export async function examRoutes(fastify: FastifyInstance) {
       grade: getGrade(percentScore),
       assessment: assessmentDetails,
       summary: generateExamSummary(percentScore),
+    });
+  });
+
+// ENDPOINT DO UTWORZENIA EGZAMINU MATURALNEGO
+  fastify.post("/create-mature-exam", async (request, reply) => {
+    const userId = (request.user as any).userId;
+    
+    // Sprawdź czy admin
+    const user = await prisma.user.findUnique({ where: { id: userId }});
+    if (user?.role !== 'ADMIN') {
+      return reply.code(403).send({ error: "Tylko admin może tworzyć egzaminy" });
+    }
+
+    // Sprawdź czy już istnieje
+    const existing = await prisma.mockExam.findFirst({
+      where: { title: { contains: "Egzamin Maturalny 2025" }}
+    });
+    
+    if (existing) {
+      return reply.send({ message: "Egzamin już istnieje", examId: existing.id });
+    }
+
+    // UTWÓRZ EGZAMIN MATURALNY
+    const exam = await prisma.mockExam.create({
+      data: {
+        title: "Egzamin Maturalny 2025 - Język Polski (poziom podstawowy)",
+        year: 2025,
+        type: "PODSTAWOWY",
+        duration: 240,
+        isActive: true,
+        sections: {
+          create: [
+            {
+              order: 1,
+              title: "Arkusz 1 - Część 1: Język polski w użyciu",
+              instruction: "Przeczytaj uważnie teksty, a następnie wykonaj zadania.",
+              questions: {
+                create: [
+                  {
+                    order: 1,
+                    type: "CUSTOM",
+                    question: "Na podstawie tekstu Carla Sagana wyjaśnij sens zdania: „Rozpoczęliśmy wędrówkę pośród «wędrowców»".",
+                    points: 1,
+                    content: {
+                      taskType: "WYJASNIENIE_SENSU",
+                      tekstZrodlowy: {
+                        autor: "Carl Sagan",
+                        tytul: "Błękitna kropka",
+                        fragment: `Nasi dalecy przodkowie, gdy obserwowali „gwiazdy", zauważyli, że pięć z nich
+zachowuje się odmiennie niż pozostałe. W odróżnieniu od tak zwanych gwiazd stałych,
+wschodzących i zachodzących w niewzruszonym porządku, ruch tamtej piątki był dziwnie
+skomplikowany. Z upływem miesięcy „gwiazdy" wędrowały powoli wśród innych, niekiedy
+nawet zataczały pętle. Dzisiaj te ciała nazywamy planetami, od greckiego słowa planetes,
+które oznacza „wędrujący". Rozpoczęliśmy wędrówkę pośród „wędrowców".`
+                      }
+                    }
+                  },
+                  {
+                    order: 2,
+                    type: "CUSTOM", 
+                    question: "Rozstrzygnij, czy w obu tekstach jest mowa o tej samej przyczynie zainteresowania kosmosem.",
+                    points: 2,
+                    content: {
+                      taskType: "ROZSTRZYGNIECIE",
+                      tekstyZrodlowe: [
+                        {
+                          autor: "Carl Sagan",
+                          fragment: "Życie szuka innego życia. Nikogo na Ziemi nie stać na podróż na Marsa."
+                        },
+                        {
+                          autor: "Marta Trepczyńska", 
+                          fragment: "Czy ludzie mogą żyć na innej planecie? NASA bada możliwość kolonizacji."
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    order: 3,
+                    type: "CUSTOM",
+                    question: "Oceń prawdziwość stwierdzeń odnoszących się do tekstów.",
+                    points: 1,
+                    content: {
+                      taskType: "PRAWDA_FALSZ",
+                      stwierdzenia: [
+                        {
+                          tekst: "Czasowniki w 1. os. lm. zmniejszają dystans między autorem a czytelnikami.",
+                          poprawna: true
+                        },
+                        {
+                          tekst: "Przymiotnik 'ziemskie' w 'dwa ziemskie tygodnie' jest wartościujący.",
+                          poprawna: false
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    order: 4,
+                    type: "CUSTOM",
+                    question: "Napisz notatkę syntetyzującą: odkrywanie kosmosu jako potrzeba człowieka (60-90 wyrazów).",
+                    points: 4,
+                    content: {
+                      taskType: "NOTATKA_SYNTETYZUJACA",
+                      wymagania: {
+                        minSlow: 60,
+                        maxSlow: 90
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              order: 2,
+              title: "Arkusz 1 - Część 2: Test historycznoliteracki",
+              instruction: "Wykonaj zadania. Odpowiadaj własnymi słowami.",
+              questions: {
+                create: [
+                  {
+                    order: 5,
+                    type: "CUSTOM",
+                    question: "Do których postaci mitologicznych nawiązują fragmenty?",
+                    points: 1,
+                    content: {
+                      taskType: "PRZYPORZADKOWANIE",
+                      opcje: ["Herakles", "Charon", "Syzyf", "Ikar"],
+                      fragmenty: [
+                        {
+                          id: "A",
+                          tekst: "Jest pracowity, silny i wytrwały,\nLwia skóra nagie barki mu pokrywa",
+                          autor: "Adam Asnyk",
+                          poprawna: "Herakles"
+                        },
+                        {
+                          id: "B", 
+                          tekst: "Był taki młody nie rozumiał że skrzydła są tylko przenośnią",
+                          autor: "Zbigniew Herbert",
+                          poprawna: "Ikar"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    order: 6,
+                    type: "CUSTOM",
+                    question: "Czym różni się postawa życiowa w 'Rozmowie Mistrza Polikarpa' od 'Wiosny' Morsztyna?",
+                    points: 1,
+                    content: {
+                      taskType: "ANALIZA_FRAGMENTU",
+                      fragmenty: [
+                        {
+                          tytul: "Rozmowa Mistrza Polikarpa ze Śmiercią",
+                          tekst: "Chowali tu żywot swoj ciasno,\nAlić jich sirca nad słońce jasno"
+                        },
+                        {
+                          tytul: "Wiosna",
+                          autor: "Jan Andrzej Morsztyn",
+                          tekst: "Spieszmy się, spieszmy, niż nas czas nadgoni"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              order: 3,
+              title: "Arkusz 2 - Wypracowanie",
+              instruction: "Wybierz jeden temat i napisz wypracowanie (min. 400 słów).",
+              questions: {
+                create: [
+                  {
+                    order: 7,
+                    type: "ESSAY",
+                    question: "Wybierz temat wypracowania",
+                    points: 35,
+                    content: {
+                      tematy: [
+                        {
+                          numer: 1,
+                          tytul: "Źródło nadziei w czasach trudnych dla człowieka",
+                          polecenie: "Odwołaj się do lektury obowiązkowej i innego utworu."
+                        },
+                        {
+                          numer: 2,
+                          tytul: "Jak błędna ocena sytuacji wpływa na życie człowieka?",
+                          polecenie: "Odwołaj się do lektury obowiązkowej i innego utworu."
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    });
+
+    return reply.send({ 
+      success: true, 
+      examId: exam.id,
+      message: "Egzamin maturalny utworzony!"
     });
   });
 

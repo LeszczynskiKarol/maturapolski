@@ -1,14 +1,25 @@
 // frontend/src/features/student/Dashboard.tsx
 
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
-import { TrendingUp, Target, Clock, Award, Calendar } from "lucide-react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import {
+  TrendingUp,
+  Target,
+  Clock,
+  Award,
+  Calendar,
+  FileText,
+} from "lucide-react";
 import { api } from "../../services/api";
 import { StudyPlan } from "./StudyPlan";
 import { WeakPointsAnalysis } from "./WeakPointsAnalysis";
 import { ProgressTracker } from "./ProgressTracker";
+import { useAuthStore } from "../../store/authStore";
+import { toast } from "react-hot-toast";
 
 export const StudentDashboard: React.FC = () => {
+  const user = useAuthStore((state) => state.user);
+
   const { data: stats } = useQuery({
     queryKey: ["student-stats"],
     queryFn: () => api.get("/api/student/stats").then((r) => r.data),
@@ -24,8 +35,55 @@ export const StudentDashboard: React.FC = () => {
     queryFn: () => api.get("/api/study/plan").then((r) => r.data),
   });
 
+  // Mutation do tworzenia egzaminu maturalnego (tylko dla admina)
+  const createMatureExamMutation = useMutation({
+    mutationFn: () => api.post("/api/exams/create-mature-exam"),
+    onSuccess: (response) => {
+      toast.success(response.data.message || "Egzamin maturalny utworzony!");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.error || "Błąd tworzenia egzaminu");
+    },
+  });
+
   return (
     <div className="p-6 space-y-6">
+      {/* ADMIN CONTROLS - tylko dla admina */}
+      {user?.role === "ADMIN" && (
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-300 dark:border-yellow-700 rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-yellow-800 dark:text-yellow-300">
+                Panel Administratora
+              </h3>
+              <p className="text-sm text-yellow-600 dark:text-yellow-400 mt-1">
+                Zarządzaj egzaminami i treścią
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => createMatureExamMutation.mutate()}
+                disabled={createMatureExamMutation.isPending}
+                className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 
+                         disabled:opacity-50 flex items-center gap-2"
+              >
+                <FileText className="w-4 h-4" />
+                {createMatureExamMutation.isPending
+                  ? "Tworzenie..."
+                  : "Utwórz Egzamin Maturalny 2025"}
+              </button>
+
+              <button
+                onClick={() => (window.location.href = "/admin")}
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+              >
+                Panel Admina →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <StatCard
@@ -106,7 +164,7 @@ export const StudentDashboard: React.FC = () => {
             </div>
 
             <button
-              onClick={() => (window.location.href = "/student/progress")}
+              onClick={() => (window.location.href = "/progress")}
               className="mt-4 w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
             >
               Zobacz szczegółowe statystyki →

@@ -2,8 +2,9 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { useEffect } from "react";
-import { ExamHub } from "./features/exams/ExamHub";
+import { MatureExamViewer } from "./features/exams/MatureExamViewer";
 import { LiveExam } from "./features/exams/LiveExam";
+import { ExamList } from "./features/exams/ExamList";
 import { ExamResults } from "./features/exams/ExamResults";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
@@ -24,7 +25,6 @@ import { LoginPage } from "./features/auth/LoginPage";
 import { RegisterPage } from "./features/auth/RegisterPage";
 
 // Student
-import { ExamSimulator } from "./features/exams/ExamSimulator";
 import { ExerciseList } from "./features/exercises/ExerciseList";
 import { ExerciseSolver } from "./features/exercises/ExerciseSolver";
 import { LeaderboardPage } from "./features/gamification/LeaderboardPage";
@@ -148,11 +148,38 @@ export const App: React.FC = () => {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/exams" element={<ExamHub />} />
-              <Route path="/exam/:sessionId" element={<LiveExam />} />
+              {/* EXAM ROUTES - DODAJ TE! */}
+              <Route
+                path="/exams"
+                element={
+                  <ProtectedRoute>
+                    <ExamList />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/exam/session/:sessionId"
+                element={
+                  <ProtectedRoute>
+                    <LiveExam />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/exam/mature/:sessionId"
+                element={
+                  <ProtectedRoute>
+                    <MatureExamViewer />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/exam/results/:sessionId"
-                element={<ExamResults />}
+                element={
+                  <ProtectedRoute>
+                    <ExamResults />
+                  </ProtectedRoute>
+                }
               />
 
               <Route
