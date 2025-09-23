@@ -1,3 +1,105 @@
+/* frontend/src/index.css */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  /* Light mode variables */
+  :root {
+    --toast-bg: #ffffff;
+    --toast-color: #111827;
+    --scrollbar-thumb: #cbd5e1;
+    --scrollbar-track: #f1f5f9;
+  }
+
+  /* Dark mode variables */
+  .dark {
+    --toast-bg: #1f2937;
+    --toast-color: #f3f4f6;
+    --scrollbar-thumb: #4b5563;
+    --scrollbar-track: #111827;
+  }
+
+  /* Smooth transition for theme changes */
+  * {
+    @apply transition-colors duration-200;
+  }
+
+  /* Custom scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+  }
+}
+
+@layer components {
+  /* Dark mode aware card component */
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-sm dark:shadow-gray-900/20;
+  }
+
+  /* Dark mode aware text */
+  .text-primary {
+    @apply text-gray-900 dark:text-white;
+  }
+
+  .text-secondary {
+    @apply text-gray-600 dark:text-gray-400;
+  }
+
+  /* Dark mode aware button */
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 
+           text-white font-medium py-2 px-4 rounded-lg transition-colors;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 
+           text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-lg transition-colors;
+  }
+
+  /* Dark mode aware input */
+  .input-field {
+    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 
+           rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
+           placeholder-gray-500 dark:placeholder-gray-400
+           focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
+           focus:border-transparent transition-colors;
+  }
+
+  /* Animation for theme toggle */
+  .theme-transition {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  /* Dark mode charts/graphs colors */
+  .chart-primary {
+    @apply text-blue-600 dark:text-blue-400;
+  }
+
+  .chart-secondary {
+    @apply text-green-600 dark:text-green-400;
+  }
+
+  .chart-tertiary {
+    @apply text-purple-600 dark:text-purple-400;
+  }
+}

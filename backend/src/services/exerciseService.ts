@@ -2,14 +2,9 @@
 
 import { assessEssayWithAI, assessShortAnswerWithAI } from "../ai/aiService";
 import { prisma } from "../lib/prisma";
-import { AssessmentService } from "./assessmentService";
 
 export class ExerciseService {
-  private assessmentService: AssessmentService;
-
-  constructor() {
-    this.assessmentService = new AssessmentService();
-  }
+  constructor() {}
 
   async getAdaptiveExercise(userId: string) {
     const userProfile = await prisma.userProfile.findUnique({

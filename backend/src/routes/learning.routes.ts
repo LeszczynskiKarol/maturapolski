@@ -60,365 +60,133 @@ export async function learningRoutes(fastify: FastifyInstance) {
       if (!sessionSkippedExercises.has(userId)) {
         sessionSkippedExercises.set(userId, new Set());
       }
-      if (!userRecentExercises.has(userId)) {
-        userRecentExercises.set(userId, []);
-      }
 
       const skippedInSession = sessionSkippedExercises.get(userId)!;
-      const recentExercises = userRecentExercises.get(userId)!;
 
-      // Jeśli przekazano ID do wykluczenia (pominięte zadanie), dodaj do setu
+      // Jeśli przekazano ID do wykluczenia (pominięte zadanie)
       if (excludeId) {
         skippedInSession.add(excludeId);
-        console.log(
-          `User ${userId} skipped exercise ${excludeId}. Total skipped: ${skippedInSession.size}`
-        );
       }
 
-      // KROK 1: Zbuduj warunki WHERE na podstawie filtrów
+      // WAŻNE: Pobierz WSZYSTKIE ostatnie rozwiązania z bazy (nie tylko 3 dni)
+      // To zapewni, że nie będą się powtarzać przy kolejnych logowaniach
+      const recentSubmissions = await prisma.submission.findMany({
+        where: { userId },
+        select: {
+          exerciseId: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: "desc" },
+        take: 1000, // Weź ostatnie 100 rozwiązań
+      });
+
+      // Sortuj po dacie - najnowsze na końcu kolejki
+      const sortedByDate = recentSubmissions
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+        .map((s) => s.exerciseId);
+
+      // Zbuduj listę wykluczonych - ostatnie 50 zadań
+      const recentlyShownIds = sortedByDate.slice(0, 50);
+
+      // Zbuduj WHERE z wykluczeniami
       const baseWhere: any = {
-        id: { notIn: [...Array.from(skippedInSession), ...recentExercises] },
+        id: {
+          notIn: [
+            ...Array.from(skippedInSession),
+            ...recentlyShownIds, // Użyj z bazy, nie z RAM
+          ],
+        },
       };
 
       // Dodaj filtry
-      if (filters.type) {
-        baseWhere.type = filters.type;
+      if (filters.type) baseWhere.type = filters.type;
+      if (filters.category) baseWhere.category = filters.category;
+      if (filters.category === "HISTORICAL_LITERARY" && filters.epoch) {
+        baseWhere.epoch = filters.epoch;
       }
-
-      if (filters.category) {
-        baseWhere.category = filters.category;
-
-        // Jeśli wybrano HISTORICAL_LITERARY i epokę, dodaj filtr epoki
-        if (filters.category === "HISTORICAL_LITERARY" && filters.epoch) {
-          baseWhere.epoch = filters.epoch;
-        }
-      }
-
       if (filters.difficulty && filters.difficulty.length > 0) {
         baseWhere.difficulty = { in: filters.difficulty };
       }
 
-      if (filters.points) {
-        baseWhere.points = {
-          gte: filters.points.min,
-          lte: filters.points.max,
-        };
+      console.log(
+        `User ${userId}: excluded ${recentlyShownIds.length} recent exercises`
+      );
+
+      // PRIORYTET 1: Zadania NIGDY nierozwiązane
+      const neverDoneExercises = await prisma.exercise.findMany({
+        where: {
+          ...baseWhere,
+          NOT: {
+            submissions: {
+              some: { userId },
+            },
+          },
+        },
+        take: 20,
+      });
+
+      if (neverDoneExercises.length > 0) {
+        const randomIndex = Math.floor(
+          Math.random() * neverDoneExercises.length
+        );
+        return reply.send(neverDoneExercises[randomIndex]);
       }
 
-      console.log(`Filters for user ${userId}:`, baseWhere);
-
-      // KROK 2: Pobierz różne okresy dla lepszej randomizacji
-      const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
-      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-      const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
-
-      // Pobierz ostatnie odpowiedzi z różnych okresów
-      const recentSubmissions = await prisma.submission.findMany({
+      // PRIORYTET 2: Najdawniej rozwiązane (ale nie z ostatnich 50)
+      const oldestSolved = await prisma.submission.findMany({
         where: {
           userId,
-          createdAt: {
-            gte: threeDaysAgo,
+          exerciseId: {
+            notIn: [...Array.from(skippedInSession), ...recentlyShownIds],
+          },
+          exercise: {
+            ...(filters.type && { type: filters.type }),
+            ...(filters.category && { category: filters.category }),
+            ...(filters.epoch && { epoch: filters.epoch }),
           },
         },
         select: {
           exerciseId: true,
           createdAt: true,
-          score: true,
+        },
+        orderBy: { createdAt: "asc" }, // Najstarsze najpierw!
+        take: 10,
+      });
+
+      if (oldestSolved.length > 0) {
+        const exerciseId = oldestSolved[0].exerciseId;
+        const exercise = await prisma.exercise.findUnique({
+          where: { id: exerciseId },
+        });
+        if (exercise) {
+          console.log(
+            `Selected oldest exercise from ${oldestSolved[0].createdAt}`
+          );
+          return reply.send(exercise);
+        }
+      }
+
+      // PRIORYTET 3: Jeśli nie ma nic - weź dowolne (ale poza ostatnimi 20)
+      const lastResort = await prisma.exercise.findFirst({
+        where: {
+          ...baseWhere,
+          id: { notIn: sortedByDate.slice(0, 20) }, // Wyklucz tylko ostatnie 20
         },
       });
 
-      // Dodaj ostatnie rozwiązania do wykluczonych
-      const excludedFromRecent = recentSubmissions.map((s) => s.exerciseId);
-      baseWhere.id.notIn = [...baseWhere.id.notIn, ...excludedFromRecent];
-
-      // KROK 3: Strategia wyboru z randomizacją
-      const random = Math.random();
-      let selectedExercise = null;
-
-      // 30% szans - Zadania do powtórki (spaced repetition)
-      if (random < 0.3) {
-        const dueForReview = await prisma.spacedRepetition.findMany({
-          where: {
-            userId,
-            nextReview: { lte: new Date() },
-            exerciseId: { notIn: baseWhere.id.notIn },
-            exercise: baseWhere.category
-              ? { category: baseWhere.category }
-              : {},
-          },
-          orderBy: { nextReview: "asc" },
-          take: 5,
-          include: { exercise: true },
-        });
-
-        if (dueForReview.length > 0) {
-          // Sprawdź czy spełniają filtry
-          const filtered = dueForReview.filter((rep) => {
-            const ex = rep.exercise;
-            if (filters.type && ex.type !== filters.type) return false;
-            if (
-              filters.difficulty &&
-              !filters.difficulty.includes(ex.difficulty)
-            )
-              return false;
-            if (
-              filters.points &&
-              (ex.points < filters.points.min || ex.points > filters.points.max)
-            )
-              return false;
-            if (filters.epoch && ex.epoch !== filters.epoch) return false;
-            return true;
-          });
-
-          if (filtered.length > 0) {
-            const randomIndex = Math.floor(Math.random() * filtered.length);
-            selectedExercise = filtered[randomIndex].exercise;
-          }
-        }
+      if (lastResort) {
+        return reply.send(lastResort);
       }
 
-      // 40% szans - Nowe zadania (nigdy nie rozwiązane)
-      if (!selectedExercise && random < 0.7) {
-        const neverDoneExercises = await prisma.exercise.findMany({
-          where: {
-            ...baseWhere,
-            NOT: {
-              submissions: {
-                some: { userId },
-              },
-            },
-          },
-          select: {
-            id: true,
-            difficulty: true,
-            category: true,
-            epoch: true,
-            type: true,
-            points: true,
-            question: true,
-            content: true,
-            correctAnswer: true,
-            tags: true,
-            metadata: true,
-            createdAt: true,
-          },
-        });
+      // Absolutnie ostatnia opcja - zwróć cokolwiek
+      const anyExercise = await prisma.exercise.findFirst({
+        where: {
+          ...(filters.type && { type: filters.type }),
+          ...(filters.category && { category: filters.category }),
+        },
+      });
 
-        if (neverDoneExercises.length > 0) {
-          // Jeśli nie ma filtra trudności, preferuj łatwiejsze
-          if (!filters.difficulty || filters.difficulty.length === 0) {
-            // Grupuj po poziomie trudności
-            const byDifficulty: Record<number, any[]> = {};
-            neverDoneExercises.forEach((ex) => {
-              if (!byDifficulty[ex.difficulty]) {
-                byDifficulty[ex.difficulty] = [];
-              }
-              byDifficulty[ex.difficulty].push(ex);
-            });
-
-            // Wybierz poziom trudności (preferuj niższe)
-            const difficulties = Object.keys(byDifficulty).map(Number).sort();
-            let targetDifficulty = difficulties[0];
-
-            const diffRandom = Math.random();
-            if (diffRandom < 0.7 && difficulties[0]) {
-              targetDifficulty = difficulties[0];
-            } else if (diffRandom < 0.9 && difficulties[1]) {
-              targetDifficulty = difficulties[1];
-            } else if (difficulties[2]) {
-              targetDifficulty = difficulties[2];
-            }
-
-            // Wybierz losowe zadanie z tego poziomu
-            const candidates =
-              byDifficulty[targetDifficulty] || neverDoneExercises;
-            selectedExercise =
-              candidates[Math.floor(Math.random() * candidates.length)];
-          } else {
-            // Jeśli są filtry, wybierz losowo z przefiltrowanych
-            selectedExercise =
-              neverDoneExercises[
-                Math.floor(Math.random() * neverDoneExercises.length)
-              ];
-          }
-        }
-      }
-
-      // 30% szans - Zadania ze słabych kategorii (z uwzględnieniem filtrów)
-      if (!selectedExercise) {
-        // Analiza słabych kategorii użytkownika
-        const weakWhere = filters.category
-          ? `AND e.category = '${filters.category}'`
-          : "";
-        const epochWhere = filters.epoch
-          ? `AND e.epoch = '${filters.epoch}'`
-          : "";
-
-        const weakCategoriesRaw = await prisma.$queryRawUnsafe<any[]>(
-          `
-          SELECT 
-            e.category,
-            ${filters.epoch ? "e.epoch," : ""}
-            AVG(CAST(s.score AS FLOAT)) as avg_score,
-            COUNT(*)::int as attempts
-          FROM "Submission" s
-          JOIN "Exercise" e ON s."exerciseId" = e.id
-          WHERE s."userId" = $1
-            AND s.score IS NOT NULL
-            AND s."createdAt" > $2
-            ${weakWhere}
-            ${epochWhere}
-          GROUP BY e.category ${filters.epoch ? ", e.epoch" : ""}
-          HAVING AVG(CAST(s.score AS FLOAT)) < 70
-          ORDER BY AVG(CAST(s.score AS FLOAT)) ASC
-          LIMIT 3
-        `,
-          userId,
-          fourteenDaysAgo
-        );
-
-        if (weakCategoriesRaw.length > 0) {
-          // Wybierz losową słabą kategorię
-          const randomCategory =
-            weakCategoriesRaw[
-              Math.floor(Math.random() * weakCategoriesRaw.length)
-            ];
-
-          const weakExercises = await prisma.exercise.findMany({
-            where: {
-              ...baseWhere,
-              category: randomCategory.category,
-              ...(randomCategory.epoch && { epoch: randomCategory.epoch }),
-            },
-            take: 10,
-          });
-
-          if (weakExercises.length > 0) {
-            selectedExercise =
-              weakExercises[Math.floor(Math.random() * weakExercises.length)];
-          }
-        }
-      }
-
-      // KROK 4: Fallback - stare zadania (sprzed 7 dni) z filtrami
-      if (!selectedExercise) {
-        const oldSubmissions = await prisma.submission.findMany({
-          where: {
-            userId,
-            createdAt: { lt: sevenDaysAgo },
-            score: { lt: 100 },
-            exercise: {
-              ...(filters.type && { type: filters.type }),
-              ...(filters.category && { category: filters.category }),
-              ...(filters.epoch && { epoch: filters.epoch }),
-              ...(filters.difficulty && {
-                difficulty: { in: filters.difficulty },
-              }),
-              ...(filters.points && {
-                points: {
-                  gte: filters.points.min,
-                  lte: filters.points.max,
-                },
-              }),
-            },
-          },
-          select: {
-            exerciseId: true,
-            score: true,
-          },
-          orderBy: { score: "asc" },
-          take: 20,
-        });
-
-        if (oldSubmissions.length > 0) {
-          const shuffled = oldSubmissions
-            .filter((s) => !baseWhere.id.notIn.includes(s.exerciseId))
-            .sort(() => Math.random() - 0.5);
-
-          if (shuffled.length > 0) {
-            selectedExercise = await prisma.exercise.findUnique({
-              where: { id: shuffled[0].exerciseId },
-            });
-          }
-        }
-      }
-
-      // KROK 5: Ostateczny fallback - dowolne zadanie z filtrami
-      if (!selectedExercise) {
-        // Pobierz wszystkie dostępne zadania z filtrami
-        const allAvailable = await prisma.exercise.findMany({
-          where: {
-            ...(filters.type && { type: filters.type }),
-            ...(filters.category && { category: filters.category }),
-            ...(filters.epoch && { epoch: filters.epoch }),
-            ...(filters.difficulty && {
-              difficulty: { in: filters.difficulty },
-            }),
-            ...(filters.points && {
-              points: {
-                gte: filters.points.min,
-                lte: filters.points.max,
-              },
-            }),
-            id: { notIn: baseWhere.id.notIn },
-          },
-          select: { id: true },
-        });
-
-        if (allAvailable.length > 0) {
-          const randomIndex = Math.floor(Math.random() * allAvailable.length);
-          selectedExercise = await prisma.exercise.findUnique({
-            where: { id: allAvailable[randomIndex].id },
-          });
-        } else {
-          // Absolutnie ostatnia opcja - wyczyść pamięć i zacznij od nowa
-          console.log(
-            "No exercises available with current filters - clearing memory"
-          );
-          skippedInSession.clear();
-          recentExercises.length = 0;
-
-          // Spróbuj jeszcze raz bez wykluczeń
-          const anyExercise = await prisma.exercise.findFirst({
-            where: {
-              ...(filters.type && { type: filters.type }),
-              ...(filters.category && { category: filters.category }),
-              ...(filters.epoch && { epoch: filters.epoch }),
-              ...(filters.difficulty && {
-                difficulty: { in: filters.difficulty },
-              }),
-              ...(filters.points && {
-                points: {
-                  gte: filters.points.min,
-                  lte: filters.points.max,
-                },
-              }),
-            },
-          });
-
-          if (anyExercise) {
-            selectedExercise = anyExercise;
-          }
-        }
-      }
-
-      // Zapisz pokazane zadanie w pamięci
-      if (selectedExercise) {
-        recentExercises.push(selectedExercise.id);
-        if (recentExercises.length > MAX_RECENT_MEMORY) {
-          recentExercises.shift();
-        }
-
-        console.log(
-          `Selected exercise ${selectedExercise.id} for user ${userId} with filters`
-        );
-      } else {
-        console.log(
-          `No exercise found for user ${userId} with current filters`
-        );
-      }
-
-      return reply.send(selectedExercise);
+      return reply.send(anyExercise);
     } catch (error) {
       console.error("Error getting next exercise:", error);
       return reply.code(500).send({ error: "Failed to get next exercise" });
@@ -429,12 +197,15 @@ export async function learningRoutes(fastify: FastifyInstance) {
   fastify.post("/session/start", async (request, reply) => {
     const userId = (request.user as any).userId;
 
-    // Wyczyść pominięte zadania
+    // Wyczyść WSZYSTKO z RAM dla tego użytkownika
     if (sessionSkippedExercises.has(userId)) {
       sessionSkippedExercises.get(userId)!.clear();
     }
 
-    // NIE czyść pamięci ostatnich zadań - zachowaj ciągłość między sesjami
+    // USUŃ z RAM historię ostatnich - teraz używamy bazy
+    if (userRecentExercises.has(userId)) {
+      userRecentExercises.set(userId, []);
+    }
 
     console.log(`Started new learning session for user ${userId}`);
     return reply.send({ success: true });

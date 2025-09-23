@@ -1,15 +1,17 @@
 // frontend/src/App.tsx
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { LearningSession } from "./features/learning/LearningSession";
 import { SessionHistory } from "./features/learning/SessionHistory";
 import { useAuthStore } from "./store/authStore";
+import { useThemeStore } from "./store/themeStore";
 
-// Layout
+// Layouts
 import { Layout } from "./components/Layout";
+import { AdminLayout } from "./components/AdminLayout";
 
 // Public
 import { LandingPage } from "./features/public/LandingPage";
@@ -38,6 +40,19 @@ import MaterialsPage from "./features/materials/MaterialsPage";
 
 const queryClient = new QueryClient();
 
+// Component to initialize theme
+const ThemeInitializer: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const initializeTheme = useThemeStore((state) => state.initializeTheme);
+
+  useEffect(() => {
+    initializeTheme();
+  }, [initializeTheme]);
+
+  return <>{children}</>;
+};
+
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -64,131 +79,121 @@ export const App: React.FC = () => {
   const user = useAuthStore((state) => state.user);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+    <ThemeInitializer>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
 
-          {/* Public Materials routes */}
-          <Route path="/materialy" element={<MaterialsPage />} />
-          <Route path="/materialy/:slug" element={<MaterialDetailPage />} />
+            {/* Public Materials routes */}
+            <Route path="/materialy" element={<MaterialsPage />} />
+            <Route path="/materialy/:slug" element={<MaterialDetailPage />} />
 
-          {/* Admin routes - BEZ zagnieżdżania */}
-          <Route
-            path="/admin"
-            element={
-              <AdminRoute>
-                <AdminDashboard />
-              </AdminRoute>
-            }
+            {/* Admin routes */}
+            <Route
+              path="/admin"
+              element={
+                <AdminRoute>
+                  <AdminLayout />
+                </AdminRoute>
+              }
+            >
+              <Route index element={<AdminDashboard />} />
+              <Route path="exercises" element={<ExerciseManager />} />
+              <Route path="users" element={<UserManager />} />
+              <Route path="materials" element={<AdminMaterialsEditor />} />
+            </Route>
+
+            {/* Student routes with layout */}
+            <Route element={<Layout />}>
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    {user?.role === "ADMIN" ? (
+                      <Navigate to="/admin" replace />
+                    ) : (
+                      <StudentDashboard />
+                    )}
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/exercises"
+                element={
+                  <ProtectedRoute>
+                    <ExerciseList />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/exercises/:id"
+                element={
+                  <ProtectedRoute>
+                    <ExerciseSolver />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/progress"
+                element={
+                  <ProtectedRoute>
+                    <ProgressTracker />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/exam"
+                element={
+                  <ProtectedRoute>
+                    <ExamSimulator />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/learn"
+                element={
+                  <ProtectedRoute>
+                    <LearningSession />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/sessions"
+                element={
+                  <ProtectedRoute>
+                    <SessionHistory />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/leaderboard"
+                element={
+                  <ProtectedRoute>
+                    <LeaderboardPage />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
+
+            {/* Catch all */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              className: "",
+              style: {
+                background: "var(--toast-bg)",
+                color: "var(--toast-color)",
+              },
+            }}
           />
-          <Route
-            path="/admin/exercises"
-            element={
-              <AdminRoute>
-                <ExerciseManager />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/users"
-            element={
-              <AdminRoute>
-                <UserManager />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/materials"
-            element={
-              <AdminRoute>
-                <AdminMaterialsEditor />
-              </AdminRoute>
-            }
-          />
-
-          {/* Student routes with layout - WSZYSTKIE TRASY STUDENCKIE W LAYOUT */}
-          <Route element={<Layout />}>
-            {/* Dashboard - TERAZ TEŻ W LAYOUT! */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  {user?.role === "ADMIN" ? (
-                    <Navigate to="/admin" replace />
-                  ) : (
-                    <StudentDashboard />
-                  )}
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/exercises"
-              element={
-                <ProtectedRoute>
-                  <ExerciseList />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/exercises/:id"
-              element={
-                <ProtectedRoute>
-                  <ExerciseSolver />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/progress"
-              element={
-                <ProtectedRoute>
-                  <ProgressTracker />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/exam"
-              element={
-                <ProtectedRoute>
-                  <ExamSimulator />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/learn"
-              element={
-                <ProtectedRoute>
-                  <LearningSession />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/sessions"
-              element={
-                <ProtectedRoute>
-                  <SessionHistory />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/leaderboard"
-              element={
-                <ProtectedRoute>
-                  <LeaderboardPage />
-                </ProtectedRoute>
-              }
-            />
-          </Route>
-
-          {/* Catch all */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-        <Toaster position="top-right" />
-      </BrowserRouter>
-    </QueryClientProvider>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </ThemeInitializer>
   );
 };
