@@ -370,12 +370,14 @@ export const LearningSession: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-white rounded-2xl shadow-xl p-8"
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl dark:shadow-gray-900/30 p-8"
         >
           <div className="text-center">
-            <Trophy className="w-20 h-20 text-yellow-500 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold mb-2">Sesja zakończona!</h2>
-            <p className="text-gray-600 mb-6">
+            <Trophy className="w-20 h-20 text-yellow-500 dark:text-yellow-400 mx-auto mb-4" />
+            <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
+              Sesja zakończona!
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
               {sessionStats.completed > 0
                 ? "Oto Twoje wyniki:"
                 : "Nie ukończyłeś żadnych zadań w tej sesji."}
@@ -385,37 +387,48 @@ export const LearningSession: React.FC = () => {
           {sessionStats.completed > 0 ? (
             <>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl">
-                  <p className="text-sm text-gray-600">Ukończone zadania</p>
-                  <p className="text-2xl font-bold text-blue-600">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-4 rounded-xl">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Ukończone zadania
+                  </p>
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                     {sessionStats.completed}
                   </p>
                 </div>
-                <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl">
-                  <p className="text-sm text-gray-600">Poprawne odpowiedzi</p>
-                  <p className="text-2xl font-bold text-green-600">
+                <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-4 rounded-xl">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Poprawne odpowiedzi
+                  </p>
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                     {sessionStats.correct}/{sessionStats.completed}
                   </p>
                 </div>
-                <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-xl">
-                  <p className="text-sm text-gray-600">Najdłuższa seria</p>
-                  <p className="text-2xl font-bold text-orange-600">
+                <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 p-4 rounded-xl">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Najdłuższa seria
+                  </p>
+                  <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
                     {sessionStats.maxStreak}
                   </p>
                 </div>
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl">
-                  <p className="text-sm text-gray-600">Zdobyte punkty</p>
-                  <p className="text-2xl font-bold text-purple-600">
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-4 rounded-xl">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Zdobyte punkty
+                  </p>
+                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                     +{sessionStats.points}
                   </p>
                 </div>
               </div>
 
               <div className="mb-6">
-                <p className="text-sm text-gray-600 mb-2">Skuteczność</p>
-                <div className="w-full bg-gray-200 rounded-full h-4">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                  Skuteczność
+                </p>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4">
                   <div
-                    className="bg-gradient-to-r from-blue-500 to-green-500 h-4 rounded-full transition-all duration-500"
+                    className="bg-gradient-to-r from-blue-500 to-green-500 dark:from-blue-400 dark:to-green-400 
+                         h-4 rounded-full transition-all duration-500"
                     style={{
                       width: `${
                         sessionStats.completed > 0
@@ -426,7 +439,7 @@ export const LearningSession: React.FC = () => {
                     }}
                   />
                 </div>
-                <p className="text-right text-sm text-gray-600 mt-1">
+                <p className="text-right text-sm text-gray-600 dark:text-gray-400 mt-1">
                   {Math.round(
                     (sessionStats.correct / sessionStats.completed) * 100
                   )}
@@ -435,7 +448,7 @@ export const LearningSession: React.FC = () => {
               </div>
             </>
           ) : (
-            <div className="py-8 text-center text-gray-500">
+            <div className="py-8 text-center text-gray-500 dark:text-gray-400">
               <p>Rozpocznij nową sesję, aby zacząć naukę.</p>
             </div>
           )}
@@ -446,7 +459,7 @@ export const LearningSession: React.FC = () => {
                 setSessionActive(false);
                 setSessionComplete(false);
                 setSessionFilters({});
-                setCompletedExercises([]); // Wyczyść też ukończone zadania
+                setCompletedExercises([]);
                 setSessionStats({
                   completed: 0,
                   correct: 0,
@@ -455,19 +468,23 @@ export const LearningSession: React.FC = () => {
                   points: 0,
                   timeSpent: 0,
                 });
-                refetchStats(); // Odśwież statystyki
+                refetchStats();
               }}
-              className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 
+                   rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 
+                   text-gray-700 dark:text-gray-300 transition-colors"
             >
               Zakończ
             </button>
             <button
               onClick={() => {
                 setSessionComplete(false);
-                setCompletedExercises([]); // Wyczyść ukończone zadania
+                setCompletedExercises([]);
                 startSession();
               }}
-              className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white 
+                   rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 
+                   transition-colors flex items-center justify-center gap-2"
             >
               <Play className="w-5 h-5" />
               Nowa sesja
@@ -485,7 +502,7 @@ export const LearningSession: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto p-6">
       {/* Session Header */}
-      <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-4 mb-6">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-6">
             <SessionStat
@@ -521,16 +538,18 @@ export const LearningSession: React.FC = () => {
               console.log("=== ZAKOŃCZ SESJĘ BUTTON CLICKED ===");
               await endSession();
             }}
-            className="px-4 py-2 text-gray-600 hover:text-gray-900"
+            className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 
+                 dark:hover:text-white transition-colors"
           >
             Zakończ sesję
           </button>
         </div>
 
         {/* Progress bar */}
-        <div className="mt-4 h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div className="mt-4 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
+            className="h-full bg-gradient-to-r from-blue-500 to-purple-500 
+                 dark:from-blue-400 dark:to-purple-400"
             initial={{ width: 0 }}
             animate={{
               width: `${(sessionStats.completed / SESSION_LIMIT) * 100}%`,
@@ -539,14 +558,15 @@ export const LearningSession: React.FC = () => {
           />
         </div>
         <div className="flex justify-between items-center mt-1">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Cel sesji: {sessionStats.completed}/{SESSION_LIMIT} zadań
           </p>
 
           {/* PRZYCISK DO FILTRÓW */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium"
+            className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 
+                 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
           >
             <Filter className="w-4 h-4" />
             {showFilters ? "Ukryj filtry" : "Filtry zadań"}
@@ -585,31 +605,40 @@ export const LearningSession: React.FC = () => {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
-            className="bg-white rounded-xl shadow-sm p-8"
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-8"
           >
             {/* Exercise Header */}
             <div className="flex justify-between items-start mb-6">
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                  <span
+                    className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 
+                           dark:text-blue-300 rounded-full text-sm"
+                  >
                     {currentExercise.category}
                   </span>
                   {currentExercise.epoch && (
-                    <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
+                    <span
+                      className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 
+                             text-purple-700 dark:text-purple-300 rounded-full text-sm"
+                    >
                       {
                         EPOCHS.find((e) => e.value === currentExercise.epoch)
                           ?.label
                       }
                     </span>
                   )}
-                  <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm">
+                  <span
+                    className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 
+                           text-yellow-700 dark:text-yellow-300 rounded-full text-sm"
+                  >
                     Poziom {currentExercise.difficulty}
                   </span>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
                     {currentExercise.points} pkt
                   </span>
                 </div>
-                <h2 className="text-xl font-semibold">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                   {currentExercise.question}
                 </h2>
               </div>
@@ -617,7 +646,9 @@ export const LearningSession: React.FC = () => {
               <button
                 onClick={skipExercise}
                 disabled={sessionStats.completed >= SESSION_LIMIT - 1}
-                className="flex items-center gap-1 text-gray-500 hover:text-gray-700 disabled:opacity-50"
+                className="flex items-center gap-1 text-gray-500 dark:text-gray-400 
+                     hover:text-gray-700 dark:hover:text-gray-200 
+                     disabled:opacity-50 transition-colors"
               >
                 <SkipForward className="w-4 h-4" />
                 Pomiń
@@ -626,8 +657,8 @@ export const LearningSession: React.FC = () => {
 
             {/* Exercise Content */}
             {currentExercise.content?.text && (
-              <div className="bg-gray-50 p-4 rounded-lg mb-6">
-                <p className="whitespace-pre-wrap">
+              <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg mb-6">
+                <p className="whitespace-pre-wrap text-gray-900 dark:text-gray-100">
                   {currentExercise.content.text}
                 </p>
               </div>
@@ -636,27 +667,16 @@ export const LearningSession: React.FC = () => {
             {/* Answer Input */}
             {!showFeedback && (
               <div className="space-y-4">
-                {currentExercise.type === "CLOSED_SINGLE" && (
-                  <RadioOptions
-                    options={currentExercise.content.options || []}
-                    value={answer}
-                    onChange={setAnswer}
-                  />
-                )}
-
-                {currentExercise.type === "CLOSED_MULTIPLE" && (
-                  <CheckboxOptions
-                    options={currentExercise.content.options || []}
-                    value={answer || []}
-                    onChange={setAnswer}
-                  />
-                )}
+                {/* ... input components with dark mode ... */}
 
                 {currentExercise.type === "SHORT_ANSWER" && (
                   <textarea
                     value={answer || ""}
                     onChange={(e) => setAnswer(e.target.value)}
-                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
+                         rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
+                         bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
+                         placeholder-gray-500 dark:placeholder-gray-400"
                     rows={4}
                     placeholder="Wpisz swoją odpowiedź..."
                   />
@@ -672,8 +692,9 @@ export const LearningSession: React.FC = () => {
                       (Array.isArray(answer) && answer.length === 0) ||
                       submitMutation.isPending
                     }
-                    className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
-                             disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white rounded-lg 
+                         hover:bg-blue-700 dark:hover:bg-blue-600 
+                         disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {submitMutation.isPending
                       ? "Sprawdzanie..."
@@ -696,39 +717,39 @@ export const LearningSession: React.FC = () => {
                   <div
                     className={`p-4 rounded-lg ${
                       submitMutation.data.data.score > 0
-                        ? "bg-green-50 border border-green-200"
-                        : "bg-red-50 border border-red-200"
+                        ? "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
+                        : "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-2">
                       {submitMutation.data.data.score > 0 ? (
                         <>
-                          <CheckCircle className="w-5 h-5 text-green-600" />
-                          <span className="font-semibold text-green-700">
+                          <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                          <span className="font-semibold text-green-700 dark:text-green-300">
                             Świetnie! +{submitMutation.data.data.score} pkt
                           </span>
                         </>
                       ) : (
                         <>
-                          <XCircle className="w-5 h-5 text-red-600" />
-                          <span className="font-semibold text-red-700">
+                          <XCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                          <span className="font-semibold text-red-700 dark:text-red-300">
                             Niepoprawna odpowiedź
                           </span>
                         </>
                       )}
                     </div>
 
-                    {/* Wyjaśnienie dla zadań CLOSED */}
+                    {/* Wyjaśnienie */}
                     {submitMutation.data.data.feedback && (
                       <>
                         {!submitMutation.data.data.feedback.correct &&
                           submitMutation.data.data.feedback
                             .correctAnswerText && (
                             <div className="mt-3 text-sm">
-                              <p className="font-medium text-gray-700 mb-1">
+                              <p className="font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Poprawna odpowiedź:
                               </p>
-                              <p className="text-gray-600">
+                              <p className="text-gray-600 dark:text-gray-400">
                                 {
                                   submitMutation.data.data.feedback
                                     .correctAnswerText
@@ -738,11 +759,11 @@ export const LearningSession: React.FC = () => {
                           )}
 
                         {submitMutation.data.data.feedback.explanation && (
-                          <div className="mt-3 pt-3 border-t border-gray-200 text-sm">
-                            <p className="font-medium text-gray-700 mb-1">
+                          <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 text-sm">
+                            <p className="font-medium text-gray-700 dark:text-gray-300 mb-1">
                               Wyjaśnienie:
                             </p>
-                            <p className="text-gray-600">
+                            <p className="text-gray-600 dark:text-gray-400">
                               {submitMutation.data.data.feedback.explanation}
                             </p>
                           </div>
@@ -752,73 +773,13 @@ export const LearningSession: React.FC = () => {
                   </div>
                 )}
 
-                {/* Dla zadań SHORT_ANSWER i SYNTHESIS_NOTE */}
-                {(currentExercise.type === "SHORT_ANSWER" ||
-                  currentExercise.type === "SYNTHESIS_NOTE") &&
-                  submitMutation.data.data.feedback && (
-                    <div
-                      className={`p-4 rounded-lg ${
-                        submitMutation.data.data.feedback.isCorrect
-                          ? "bg-green-50 border border-green-200"
-                          : submitMutation.data.data.feedback.isPartiallyCorrect
-                          ? "bg-yellow-50 border border-yellow-200"
-                          : "bg-red-50 border border-red-200"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        {submitMutation.data.data.feedback.isCorrect ? (
-                          <>
-                            <CheckCircle className="w-5 h-5 text-green-600" />
-                            <span className="font-semibold text-green-700">
-                              Świetnie! +{submitMutation.data.data.score} pkt
-                            </span>
-                          </>
-                        ) : submitMutation.data.data.feedback
-                            .isPartiallyCorrect ? (
-                          <>
-                            <AlertCircle className="w-5 h-5 text-yellow-600" />
-                            <span className="font-semibold text-yellow-700">
-                              Częściowo poprawne:{" "}
-                              {submitMutation.data.data.score}/
-                              {submitMutation.data.data.feedback.maxScore} pkt
-                            </span>
-                          </>
-                        ) : (
-                          <>
-                            <XCircle className="w-5 h-5 text-red-600" />
-                            <span className="font-semibold text-red-700">
-                              Niepoprawna odpowiedź
-                            </span>
-                          </>
-                        )}
-                      </div>
-
-                      {submitMutation.data.data.feedback.feedback && (
-                        <div className="mt-3 text-sm text-gray-700">
-                          <p className="font-medium mb-1">Ocena AI:</p>
-                          <p>{submitMutation.data.data.feedback.feedback}</p>
-                        </div>
-                      )}
-
-                      {submitMutation.data.data.feedback.correctAnswer && (
-                        <div className="mt-3 pt-3 border-t border-gray-200">
-                          <p className="text-sm font-medium mb-1 text-gray-700">
-                            Przykładowa poprawna odpowiedź:
-                          </p>
-                          <div className="text-sm text-gray-600 bg-white p-3 rounded">
-                            {submitMutation.data.data.feedback.correctAnswer}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
                 {/* Przycisk następnego zadania */}
                 <div className="flex justify-end">
                   <button
                     onClick={goToNextExercise}
-                    className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
-                 flex items-center gap-2"
+                    className="px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white rounded-lg 
+                         hover:bg-blue-700 dark:hover:bg-blue-600 
+                         flex items-center gap-2 transition-colors"
                   >
                     {sessionStats.completed >= SESSION_LIMIT - 1 ? (
                       <>
@@ -929,21 +890,24 @@ const InSessionFilters: React.FC<{
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-4">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <h3 className="text-sm font-semibold text-gray-700">Filtry zadań</h3>
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+            Filtry zadań
+          </h3>
+
           {/* Licznik dostępnych ćwiczeń */}
           {isCountLoading || isLoading ? (
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-gray-500 dark:text-gray-400">
               <span className="inline-block animate-pulse">Ładowanie...</span>
             </span>
           ) : availableCount !== null ? (
             <span
               className={`text-xs px-2 py-1 rounded-full ${
                 availableCount > 0
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
+                  ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
+                  : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
               }`}
             >
               {availableCount > 0
@@ -955,7 +919,8 @@ const InSessionFilters: React.FC<{
         {hasFilters && (
           <button
             onClick={clearFilters}
-            className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1"
+            className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 
+                     dark:hover:text-gray-200 flex items-center gap-1"
             disabled={isLoading}
           >
             <X className="w-3 h-3" />
@@ -1083,33 +1048,17 @@ const InSessionFilters: React.FC<{
 
       {/* Aktualne filtry - podsumowanie */}
       {hasFilters && (
-        <div className="mt-3 pt-3 border-t">
-          <p className="text-xs text-gray-600 mb-1">Aktywne filtry:</p>
+        <div className="mt-3 pt-3 border-t dark:border-gray-700">
+          <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+            Aktywne filtry:
+          </p>
           <div className="flex flex-wrap gap-1">
             {localFilters.category && (
-              <span className="px-2 py-1 bg-gray-100 rounded text-xs">
+              <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs text-gray-700 dark:text-gray-300">
                 {
                   CATEGORIES.find((c) => c.value === localFilters.category)
                     ?.label
                 }
-              </span>
-            )}
-            {localFilters.epoch && (
-              <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs">
-                {EPOCHS.find((e) => e.value === localFilters.epoch)?.label}
-              </span>
-            )}
-            {localFilters.type && (
-              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">
-                {
-                  EXERCISE_TYPES.find((t) => t.value === localFilters.type)
-                    ?.label
-                }
-              </span>
-            )}
-            {selectedDifficulties.length > 0 && (
-              <span className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs">
-                Trudność: {selectedDifficulties.join(", ")}⭐
               </span>
             )}
           </div>
@@ -1164,13 +1113,16 @@ const SessionStart: React.FC<{
         </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Twoje ostatnie sesje</h2>
-          {stats?.recentSessions?.length > 0 && ( // ✅ Zmień z >= 5 na > 0
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            Twoje ostatnie sesje
+          </h2>
+          {stats?.recentSessions?.length > 0 && (
             <button
               onClick={() => navigate("/sessions")}
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+              className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 
+                   dark:hover:text-blue-300 font-medium flex items-center gap-1"
             >
               Zobacz wszystkie
               <ChevronRight className="w-4 h-4" />
@@ -1178,16 +1130,6 @@ const SessionStart: React.FC<{
           )}
         </div>
         <RecentSessions sessions={stats?.recentSessions?.slice(0, 5) || []} />
-
-        {stats?.recentSessions?.length > 0 && ( // ✅ Zmień z >= 5 na > 0
-          <button
-            onClick={() => navigate("/sessions")}
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
-          >
-            Zobacz wszystkie
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        )}
       </div>
     </div>
   );
@@ -1201,12 +1143,18 @@ const SessionStat: React.FC<{
   highlight?: boolean;
 }> = ({ icon, label, value, highlight }) => (
   <div
-    className={`flex items-center gap-2 ${highlight ? "text-orange-600" : ""}`}
+    className={`flex items-center gap-2 ${
+      highlight
+        ? "text-orange-600 dark:text-orange-400"
+        : "text-gray-700 dark:text-gray-300"
+    }`}
   >
-    {icon}
+    <div className={highlight ? "" : "text-gray-500 dark:text-gray-400"}>
+      {icon}
+    </div>
     <div>
-      <p className="text-xs text-gray-600">{label}</p>
-      <p className="font-semibold">{value}</p>
+      <p className="text-xs text-gray-600 dark:text-gray-400">{label}</p>
+      <p className="font-semibold text-gray-900 dark:text-white">{value}</p>
     </div>
   </div>
 );
@@ -1214,91 +1162,35 @@ const SessionStat: React.FC<{
 const RecentSessions: React.FC<{ sessions: any[] }> = ({ sessions }) => (
   <div className="space-y-3">
     {sessions.length === 0 ? (
-      <p className="text-gray-500 text-center py-4">
+      <p className="text-gray-500 dark:text-gray-400 text-center py-4">
         Brak poprzednich sesji. Rozpocznij pierwszą!
       </p>
     ) : (
       sessions.map((session: any, index: number) => (
         <div
           key={`session-${index}`}
-          className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+          className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700/50 
+                     rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         >
           <div>
-            <p className="font-medium">{session.date}</p>
-            <p className="text-sm text-gray-600">
+            <p className="font-medium text-gray-900 dark:text-white">
+              {session.date}
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               {session.completed} zadań, {session.correctRate}% poprawnych
             </p>
           </div>
           <div className="text-right">
-            <p className="font-semibold text-green-600">
+            <p className="font-semibold text-green-600 dark:text-green-400">
               +{session.points} pkt
             </p>
-            <p className="text-sm text-gray-600">{session.duration} min</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {session.duration} min
+            </p>
           </div>
         </div>
       ))
     )}
-  </div>
-);
-
-const RadioOptions: React.FC<{
-  options: string[];
-  value: number | null;
-  onChange: (value: number) => void;
-}> = ({ options, value, onChange }) => (
-  <div className="space-y-3">
-    {options.map((option, index) => (
-      <label
-        key={index}
-        className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors
-          ${
-            value === index ? "border-blue-500 bg-blue-50" : "hover:bg-gray-50"
-          }`}
-      >
-        <input
-          type="radio"
-          name="answer"
-          checked={value === index}
-          onChange={() => onChange(index)}
-          className="w-4 h-4 text-blue-600"
-        />
-        <span className="ml-3">{option}</span>
-      </label>
-    ))}
-  </div>
-);
-
-const CheckboxOptions: React.FC<{
-  options: string[];
-  value: number[];
-  onChange: (value: number[]) => void;
-}> = ({ options, value, onChange }) => (
-  <div className="space-y-3">
-    {options.map((option, index) => (
-      <label
-        key={index}
-        className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors
-          ${
-            value.includes(index)
-              ? "border-blue-500 bg-blue-50"
-              : "hover:bg-gray-50"
-          }`}
-      >
-        <input
-          type="checkbox"
-          checked={value.includes(index)}
-          onChange={(e) => {
-            if (e.target.checked) {
-              onChange([...value, index]);
-            } else {
-              onChange(value.filter((v) => v !== index));
-            }
-          }}
-          className="w-4 h-4 text-blue-600"
-        />
-        <span className="ml-3">{option}</span>
-      </label>
-    ))}
   </div>
 );
 

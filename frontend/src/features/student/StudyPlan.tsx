@@ -307,50 +307,62 @@ export const StudyPlan: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border border-blue-200 p-6"
+          className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 
+               rounded-xl border border-blue-200 dark:border-blue-800 p-6"
         >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <Target className="w-5 h-5 text-blue-600" />
+            <h3 className="text-lg font-semibold flex items-center gap-2 text-gray-900 dark:text-white">
+              <Target className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               Ten tydzień: {currentWeekData.focus}
             </h3>
-            <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+            <span
+              className="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 
+                       rounded-full text-sm font-medium"
+            >
               Tydzień {plan.currentWeek}
             </span>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4 mb-4">
             <div>
-              <h4 className="font-medium mb-2 text-gray-700">Cele tygodnia:</h4>
+              <h4 className="font-medium mb-2 text-gray-700 dark:text-gray-300">
+                Cele tygodnia:
+              </h4>
               <ul className="space-y-2">
                 {currentWeekData.goals.map((goal, index) => (
                   <li key={index} className="flex items-start gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">{goal}</span>
+                    <CheckCircle className="w-4 h-4 text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">
+                      {goal}
+                    </span>
                   </li>
                 ))}
               </ul>
             </div>
 
             <div>
-              <h4 className="font-medium mb-2 text-gray-700">Statystyki:</h4>
+              <h4 className="font-medium mb-2 text-gray-700 dark:text-gray-300">
+                Statystyki:
+              </h4>
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
-                  <Clock className="w-4 h-4 text-gray-500" />
-                  <span>
+                  <Clock className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                  <span className="text-gray-700 dark:text-gray-300">
                     Szacowany czas: {currentWeekData.estimatedTime} godzin
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <BookOpen className="w-4 h-4 text-gray-500" />
-                  <span>
+                  <BookOpen className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                  <span className="text-gray-700 dark:text-gray-300">
                     Zadania do wykonania:{" "}
                     {currentWeekData.exercises?.length || 0}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <TrendingUp className="w-4 h-4 text-gray-500" />
-                  <span>Ukończono: {currentWeekData.completionRate || 0}%</span>
+                  <TrendingUp className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                  <span className="text-gray-700 dark:text-gray-300">
+                    Ukończono: {currentWeekData.completionRate || 0}%
+                  </span>
                 </div>
               </div>
             </div>
@@ -358,7 +370,9 @@ export const StudyPlan: React.FC = () => {
 
           <button
             onClick={() => setSelectedWeek(plan.currentWeek)}
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+            className="w-full px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white 
+                 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 
+                 transition-colors flex items-center justify-center gap-2"
           >
             <Play className="w-4 h-4" />
             Zobacz zadania na ten tydzień
@@ -367,8 +381,10 @@ export const StudyPlan: React.FC = () => {
       )}
 
       {/* Weekly Timeline */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h3 className="text-lg font-semibold mb-4">Harmonogram tygodniowy</h3>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-6">
+        <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+          Harmonogram tygodniowy
+        </h3>
 
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {plan.plan.map((week, index) => {
@@ -383,30 +399,50 @@ export const StudyPlan: React.FC = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
                 className={`
-                  flex items-center justify-between p-4 rounded-lg cursor-pointer
-                  transition-all duration-200 hover:shadow-md
-                  ${isCurrentWeek ? "bg-blue-100 border-2 border-blue-300" : ""}
-                  ${isPastWeek ? "bg-green-50 border border-green-200" : ""}
-                  ${isFutureWeek ? "bg-gray-50 border border-gray-200" : ""}
-                `}
+            flex items-center justify-between p-4 rounded-lg cursor-pointer
+            transition-all duration-200 hover:shadow-md dark:hover:shadow-gray-900/30
+            ${
+              isCurrentWeek
+                ? "bg-blue-100 dark:bg-blue-900/30 border-2 border-blue-300 dark:border-blue-600"
+                : ""
+            }
+            ${
+              isPastWeek
+                ? "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700"
+                : ""
+            }
+            ${
+              isFutureWeek
+                ? "bg-gray-50 dark:bg-gray-700/30 border border-gray-200 dark:border-gray-700"
+                : ""
+            }
+          `}
                 onClick={() => setSelectedWeek(week.week)}
               >
                 <div className="flex items-center gap-4">
                   <div
                     className={`
-                      w-10 h-10 rounded-full flex items-center justify-center
-                      text-sm font-bold transition-colors
-                      ${isCurrentWeek ? "bg-blue-600 text-white" : ""}
-                      ${isPastWeek ? "bg-green-600 text-white" : ""}
-                      ${isFutureWeek ? "bg-gray-300 text-gray-700" : ""}
-                    `}
+                w-10 h-10 rounded-full flex items-center justify-center
+                text-sm font-bold transition-colors
+                ${
+                  isCurrentWeek ? "bg-blue-600 dark:bg-blue-500 text-white" : ""
+                }
+                ${isPastWeek ? "bg-green-600 dark:bg-green-500 text-white" : ""}
+                ${
+                  isFutureWeek
+                    ? "bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300"
+                    : ""
+                }
+              `}
                   >
                     {week.week}
                   </div>
 
                   <div>
-                    <p className="font-medium">{week.focus}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {week.focus}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {week.estimatedTime}h nauki •{" "}
                       {week.exercises?.length || 0} zadań
                     </p>
@@ -415,15 +451,20 @@ export const StudyPlan: React.FC = () => {
 
                 <div className="flex items-center gap-2">
                   {week.completed && (
-                    <CheckCircle className="w-5 h-5 text-green-600" />
+                    <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
                   )}
                   {isCurrentWeek && (
-                    <span className="px-2 py-1 bg-blue-600 text-white rounded text-xs font-medium">
+                    <span
+                      className="px-2 py-1 bg-blue-600 dark:bg-blue-500 text-white 
+                             rounded text-xs font-medium"
+                    >
                       Obecny
                     </span>
                   )}
-                  {isFutureWeek && <Lock className="w-4 h-4 text-gray-400" />}
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                  {isFutureWeek && (
+                    <Lock className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                  )}
+                  <ChevronRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                 </div>
               </motion.div>
             );
@@ -438,30 +479,31 @@ export const StudyPlan: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4"
             onClick={() => setSelectedWeek(null)}
           >
             <motion.div
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
-              className="bg-white rounded-xl shadow-xl max-w-3xl w-full max-h-[80vh] overflow-y-auto"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-3xl w-full max-h-[80vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="sticky top-0 bg-white border-b p-6">
+              <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-6">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h3 className="text-xl font-bold">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                       Tydzień {selectedWeek}: {weeklyTasks.focus}
                     </h3>
-                    <p className="text-gray-500">
+                    <p className="text-gray-500 dark:text-gray-400">
                       {weeklyTasks.exercises?.length || 0} zadań •{" "}
                       {weeklyTasks.estimatedTime}h
                     </p>
                   </div>
                   <button
                     onClick={() => setSelectedWeek(null)}
-                    className="p-2 hover:bg-gray-100 rounded-lg"
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg 
+                         text-gray-700 dark:text-gray-300"
                   >
                     ✕
                   </button>
@@ -470,40 +512,49 @@ export const StudyPlan: React.FC = () => {
 
               <div className="p-6">
                 <div className="mb-6">
-                  <h4 className="font-semibold mb-3">Cele tygodnia:</h4>
+                  <h4 className="font-semibold mb-3 text-gray-900 dark:text-white">
+                    Cele tygodnia:
+                  </h4>
                   <div className="space-y-2">
                     {weeklyTasks.goals?.map((goal: string, index: number) => (
                       <div key={index} className="flex items-start gap-2">
-                        <CheckSquare className="w-4 h-4 text-blue-600 mt-0.5" />
-                        <span className="text-sm">{goal}</span>
+                        <CheckSquare className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5" />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
+                          {goal}
+                        </span>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="font-semibold mb-3">Zadania do wykonania:</h4>
+                  <h4 className="font-semibold mb-3 text-gray-900 dark:text-white">
+                    Zadania do wykonania:
+                  </h4>
                   <div className="space-y-2">
                     {weeklyTasks.exercises?.map((exercise: any) => (
                       <div
                         key={exercise.id}
-                        className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
+                        className="flex items-center justify-between p-3 border dark:border-gray-700 
+                             rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50"
                       >
                         <div className="flex items-center gap-3">
                           {exercise.completed ? (
-                            <CheckCircle className="w-5 h-5 text-green-600" />
+                            <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
                           ) : (
-                            <Circle className="w-5 h-5 text-gray-400" />
+                            <Circle className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                           )}
                           <div>
-                            <p className="font-medium">{exercise.question}</p>
-                            <p className="text-sm text-gray-500">
+                            <p className="font-medium text-gray-900 dark:text-white">
+                              {exercise.question}
+                            </p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
                               {exercise.category} • {exercise.difficulty}
                             </p>
                           </div>
                         </div>
                         {exercise.score && (
-                          <span className="text-sm font-medium text-green-600">
+                          <span className="text-sm font-medium text-green-600 dark:text-green-400">
                             {exercise.score}%
                           </span>
                         )}
@@ -515,7 +566,8 @@ export const StudyPlan: React.FC = () => {
                 {selectedWeek === plan.currentWeek && (
                   <button
                     onClick={() => completeWeek.mutate(selectedWeek)}
-                    className="mt-6 w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                    className="mt-6 w-full px-4 py-3 bg-green-600 dark:bg-green-500 text-white 
+                         rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors"
                   >
                     <CheckCircle className="w-4 h-4 inline mr-2" />
                     Oznacz tydzień jako ukończony
@@ -534,21 +586,23 @@ export const StudyPlan: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4"
             onClick={() => setShowSettings(false)}
           >
             <motion.div
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
-              className="bg-white rounded-xl shadow-xl max-w-md w-full p-6"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6"
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-xl font-bold mb-4">Ustawienia planu nauki</h3>
+              <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+                Ustawienia planu nauki
+              </h3>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Data egzaminu maturalnego
                   </label>
                   <input
@@ -556,12 +610,15 @@ export const StudyPlan: React.FC = () => {
                     value={examDate}
                     onChange={(e) => setExamDate(e.target.value)}
                     min={new Date().toISOString().split("T")[0]}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 
+                         rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
+                         focus:outline-none bg-white dark:bg-gray-700 
+                         text-gray-900 dark:text-white"
                   />
                 </div>
 
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <p className="text-sm text-blue-800">
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                  <p className="text-sm text-blue-800 dark:text-blue-300">
                     <AlertCircle className="w-4 h-4 inline mr-1" />
                     Po ustawieniu daty egzaminu zostanie wygenerowany
                     spersonalizowany plan nauki dostosowany do Twoich słabych
@@ -572,14 +629,18 @@ export const StudyPlan: React.FC = () => {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setShowSettings(false)}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                    className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 
+                         rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 
+                         text-gray-700 dark:text-gray-300"
                   >
                     Anuluj
                   </button>
                   <button
                     onClick={handleSaveExamDate}
                     disabled={!examDate || updateExamDate.isPending}
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white 
+                         rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 
+                         disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {updateExamDate.isPending ? "Zapisywanie..." : "Zapisz"}
                   </button>
