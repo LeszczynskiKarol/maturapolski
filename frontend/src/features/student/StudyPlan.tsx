@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
 import {
@@ -69,31 +70,135 @@ export const StudyPlan: React.FC = () => {
     },
   });
 
-  const startWeekSession = async (week: number) => {
+  const startWeekSession = async (weekNumber: number) => {
     try {
-      const response = await api.post("/api/study/start-week-session", {
-        week,
-      });
+      console.log("=== START WEEK SESSION ===");
+      console.log("Week number:", weekNumber);
 
-      console.log("=== SAVING FILTERS TO LOCALSTORAGE ===");
-      console.log("Filters from API:", response.data.filters);
+      const week = plan?.plan.find((w: WeekPlan) => w.week === weekNumber);
 
-      // Zapisz filtry do localStorage
-      localStorage.setItem(
-        "sessionFilters",
-        JSON.stringify(response.data.filters)
-      );
+      if (!week) {
+        console.error("Week not found:", weekNumber);
+        alert("Nie znaleziono danych tygodnia");
+        return;
+      }
 
-      console.log(
-        "Saved to localStorage:",
-        localStorage.getItem("sessionFilters")
-      );
+      console.log("Found week data:", week);
 
-      // UŻYJ NAVIGATE ZAMIAST window.location.href
-      navigate("/learn");
-    } catch (err) {
-      console.error("Error starting week session:", err);
-      alert("Nie udało się rozpocząć sesji tygodniowej");
+      // Przygotuj filtry dla sesji
+      const filters: any = {
+        weekNumber: weekNumber, // Dodaj numer tygodnia do filtrów
+      };
+
+      // Rozszerzone mapowanie kategorii
+      const focus = week.focus.toLowerCase();
+
+      if (
+        focus.includes("język") ||
+        focus.includes("gramatyka") ||
+        focus.includes("słownictwo")
+      ) {
+        filters.category = "LANGUAGE_USE";
+      } else if (
+        focus.includes("histor") ||
+        focus.includes("literatur") ||
+        focus.includes("epok")
+      ) {
+        filters.category = "HISTORICAL_LITERARY";
+      } else if (
+        focus.includes("pisanie") ||
+        focus.includes("wypracowań") ||
+        focus.includes("essay")
+      ) {
+        filters.category = "WRITING";
+      } else if (
+        focus.includes("powtórka") ||
+        focus.includes("rewizja") ||
+        focus.includes("podsumowanie")
+      ) {
+        // Dla powtórki - NIE ustawiaj kategorii, żeby były zadania ze wszystkich
+        console.log("Powtórka materiału - wszystkie kategorie");
+        // Możesz opcjonalnie dodać wszystkie kategorie lub zostawić puste
+      } else {
+        // Domyślnie dla innych - może rotacja kategorii?
+        const categories = ["LANGUAGE_USE", "HISTORICAL_LITERARY", "WRITING"];
+        filters.category = categories[weekNumber % 3];
+        console.log("Domyślna kategoria:", filters.category);
+      }
+
+      // Dodaj epokę dla testów historycznoliterackich
+      if (
+        filters.category === "HISTORICAL_LITERARY" &&
+        week.goals &&
+        week.goals.length > 0
+      ) {
+        const epochMap: Record<string, string> = {
+          starożytność: "ANTIQUITY",
+          średniowiecze: "MIDDLE_AGES",
+          renesans: "RENAISSANCE",
+          barok: "BAROQUE",
+          oświecenie: "ENLIGHTENMENT",
+          romantyzm: "ROMANTICISM",
+          pozytywizm: "POSITIVISM",
+          "młoda polska": "YOUNG_POLAND",
+          dwudziestolecie: "INTERWAR",
+          współczesność: "CONTEMPORARY",
+        };
+
+        // Sprawdź w celach i fokusie
+        const textToCheck = [...week.goals, week.focus].join(" ").toLowerCase();
+
+        for (const [epochName, epochCode] of Object.entries(epochMap)) {
+          if (textToCheck.includes(epochName)) {
+            filters.epoch = epochCode;
+            console.log("Znaleziono epokę:", epochCode);
+            break;
+          }
+        }
+      }
+
+      // Ustaw poziomy trudności - dla powtórki wszystkie, dla reszty progresywnie
+      if (focus.includes("powtórka")) {
+        // Dla powtórki - wszystkie poziomy trudności
+        filters.difficulty = [1, 2, 3, 4, 5];
+      } else {
+        // Progresywny wzrost trudności
+        const baseDifficulty = Math.min(5, Math.ceil(weekNumber / 4));
+        const maxDifficulty = Math.min(5, baseDifficulty + 1);
+
+        // Zakres trudności np. [2,3] dla tygodnia 5-8
+        filters.difficulty = [];
+        for (let i = Math.max(1, baseDifficulty - 1); i <= maxDifficulty; i++) {
+          filters.difficulty.push(i);
+        }
+      }
+
+      console.log("Generated filters:", filters);
+      console.log("Category:", filters.category || "ALL");
+      console.log("Difficulty levels:", filters.difficulty);
+
+      // Zapisz do localStorage
+      const filtersJson = JSON.stringify(filters);
+      localStorage.setItem("sessionFilters", filtersJson);
+
+      // Weryfikuj zapis
+      const saved = localStorage.getItem("sessionFilters");
+      console.log("Saved to localStorage:", saved);
+
+      if (!saved) {
+        console.error("localStorage save failed!");
+        alert("Błąd przy zapisywaniu filtrów sesji");
+        return;
+      }
+
+      // Nawigacja do /learn
+      console.log("Navigating to /learn...");
+      setTimeout(() => {
+        navigate("/learn");
+      }, 50);
+    } catch (error) {
+      console.error("Error starting week session:", error);
+      alert("Nie udało się rozpocząć sesji");
     }
   };
 

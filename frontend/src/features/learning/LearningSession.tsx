@@ -19,7 +19,7 @@ import {
   X,
   XCircle,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { api } from "../../services/api";
 
@@ -66,11 +66,7 @@ const CATEGORIES = [
 ];
 
 export const LearningSession: React.FC = () => {
-  console.log("=== LEARNING SESSION RENDER ===");
-  console.log(
-    "localStorage sessionFilters:",
-    localStorage.getItem("sessionFilters")
-  );
+  const hasAutoStarted = useRef(false);
 
   const [sessionActive, setSessionActive] = useState(false);
   const [currentExercise, setCurrentExercise] = useState<any>(null);
@@ -82,6 +78,7 @@ export const LearningSession: React.FC = () => {
   const [completedExercises, setCompletedExercises] = useState<
     Array<{ id: string; score: number }>
   >([]);
+  const [isPlanSession, setIsPlanSession] = useState(false);
 
   // SPRAWDŹ CZY SĄ FILTRY Z PLANU TYGODNIOWEGO
   const [sessionFilters, setSessionFilters] = useState<SessionFilters>(() => {
@@ -372,25 +369,40 @@ export const LearningSession: React.FC = () => {
     }
   };
 
-  // AUTO-START JEŚLI SĄ FILTRY Z PLANU!
   useEffect(() => {
     console.log("=== useEffect CHECK ===");
-    console.log("sessionFilters:", sessionFilters);
-    console.log("sessionActive:", sessionActive);
-    console.log("sessionComplete:", sessionComplete);
+    const storedFilters = localStorage.getItem("sessionFilters");
+    console.log("Raw localStorage filters:", storedFilters);
 
-    const hasWeekFilters = Object.keys(sessionFilters).length > 0;
-    console.log("hasWeekFilters:", hasWeekFilters);
+    if (storedFilters && !sessionActive && !sessionComplete) {
+      hasAutoStarted.current = true;
+      try {
+        const filters = JSON.parse(storedFilters);
+        console.log("Parsed filters from plan:", filters);
 
-    if (hasWeekFilters && !sessionActive && !sessionComplete) {
-      console.log("SHOULD AUTO-START SESSION!");
-      localStorage.removeItem("sessionFilters");
-      setTimeout(() => {
-        console.log("CALLING startSession()");
-        startSession();
-      }, 100);
-    } else {
-      console.log("NOT STARTING: conditions not met");
+        // Ustaw filtry i oznacz jako sesję planowaną
+        setSessionFilters(filters);
+        setIsPlanSession(true); // Oznacz jako sesję z planu
+
+        console.log("SHOULD AUTO-START PLAN SESSION!");
+
+        setTimeout(async () => {
+          console.log("Starting plan session with filters:", filters);
+
+          // Najpierw ustaw filtry na backendzie
+          await api.post("/api/learning/session/filters", filters);
+
+          // Potem wystartuj sesję
+          await startSession();
+
+          // Dopiero teraz wyczyść localStorage
+          localStorage.removeItem("sessionFilters");
+          console.log("Plan session started successfully");
+        }, 100);
+      } catch (error) {
+        console.error("Error parsing session filters:", error);
+        localStorage.removeItem("sessionFilters");
+      }
     }
   }, []); // Tylko raz przy montowaniu
 
