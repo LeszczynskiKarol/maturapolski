@@ -197,17 +197,12 @@ export async function learningRoutes(fastify: FastifyInstance) {
   fastify.post("/session/start", async (request, reply) => {
     const userId = (request.user as any).userId;
 
-    // Wyczyść WSZYSTKO z RAM dla tego użytkownika
-    if (sessionSkippedExercises.has(userId)) {
-      sessionSkippedExercises.get(userId)!.clear();
-    }
+    // WAŻNE: Wyczyść WSZYSTKO dla tego użytkownika
+    sessionSkippedExercises.delete(userId);
+    userRecentExercises.delete(userId);
+    userSessionFilters.delete(userId);
 
-    // USUŃ z RAM historię ostatnich - teraz używamy bazy
-    if (userRecentExercises.has(userId)) {
-      userRecentExercises.set(userId, []);
-    }
-
-    console.log(`Started new learning session for user ${userId}`);
+    console.log(`Cleared all session data for user ${userId}`);
     return reply.send({ success: true });
   });
 

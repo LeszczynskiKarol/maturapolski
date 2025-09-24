@@ -221,6 +221,8 @@ export const LearningSession: React.FC = () => {
 
   // Start session
   const startSession = async () => {
+    await api.post("/api/learning/session/start");
+
     setSessionActive(true);
     setSessionComplete(false);
     setCompletedExercises([]); // Reset ukończonych zadań
@@ -726,19 +728,123 @@ export const LearningSession: React.FC = () => {
             {/* Answer Input */}
             {!showFeedback && (
               <div className="space-y-4">
-                {/* ... input components with dark mode ... */}
+                {/* CLOSED SINGLE */}
+                {currentExercise.type === "CLOSED_SINGLE" && (
+                  <div className="space-y-2">
+                    {(currentExercise.content?.options || []).map(
+                      (option: string, index: number) => (
+                        <label
+                          key={index}
+                          className="flex items-center p-3 border border-gray-300 dark:border-gray-600 
+                     rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700 
+                     cursor-pointer transition-colors"
+                        >
+                          <input
+                            type="radio"
+                            name="answer"
+                            value={index}
+                            checked={answer === index}
+                            onChange={() => setAnswer(index)}
+                            className="mr-3"
+                          />
+                          <span className="text-gray-900 dark:text-white">
+                            {option}
+                          </span>
+                        </label>
+                      )
+                    )}
+                  </div>
+                )}
 
+                {/* CLOSED MULTIPLE */}
+                {currentExercise.type === "CLOSED_MULTIPLE" && (
+                  <div className="space-y-2">
+                    {(currentExercise.content?.options || []).map(
+                      (option: string, index: number) => (
+                        <label
+                          key={index}
+                          className="flex items-center p-3 border border-gray-300 dark:border-gray-600 
+                     rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-700 
+                     cursor-pointer transition-colors"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={(answer || []).includes(index)}
+                            onChange={(e) => {
+                              const current = answer || [];
+                              if (e.target.checked) {
+                                setAnswer([...current, index]);
+                              } else {
+                                setAnswer(
+                                  current.filter((i: number) => i !== index)
+                                );
+                              }
+                            }}
+                            className="mr-3"
+                          />
+                          <span className="text-gray-900 dark:text-white">
+                            {option}
+                          </span>
+                        </label>
+                      )
+                    )}
+                  </div>
+                )}
+
+                {/* SHORT ANSWER */}
                 {currentExercise.type === "SHORT_ANSWER" && (
                   <textarea
                     value={answer || ""}
                     onChange={(e) => setAnswer(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
-                         rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
-                         bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
-                         placeholder-gray-500 dark:placeholder-gray-400"
+             rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
+             bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
+             placeholder-gray-500 dark:placeholder-gray-400"
                     rows={4}
                     placeholder="Wpisz swoją odpowiedź..."
                   />
+                )}
+
+                {/* SYNTHESIS NOTE */}
+                {currentExercise.type === "SYNTHESIS_NOTE" && (
+                  <div>
+                    <textarea
+                      value={answer || ""}
+                      onChange={(e) => setAnswer(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
+               rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
+               bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
+               placeholder-gray-500 dark:placeholder-gray-400"
+                      rows={6}
+                      placeholder="Napisz notatkę syntetyzującą..."
+                    />
+                    {currentExercise.content?.requirements && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                        Wymagania:{" "}
+                        {currentExercise.content.requirements.join(", ")}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* ESSAY */}
+                {currentExercise.type === "ESSAY" && (
+                  <div>
+                    <textarea
+                      value={answer || ""}
+                      onChange={(e) => setAnswer(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
+               rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
+               bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
+               placeholder-gray-500 dark:placeholder-gray-400"
+                      rows={12}
+                      placeholder="Napisz wypracowanie..."
+                    />
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                      Liczba słów:{" "}
+                      {(answer || "").split(/\s+/).filter(Boolean).length}
+                    </div>
+                  </div>
                 )}
 
                 <div className="flex justify-end">
@@ -752,8 +858,8 @@ export const LearningSession: React.FC = () => {
                       submitMutation.isPending
                     }
                     className="px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white rounded-lg 
-                         hover:bg-blue-700 dark:hover:bg-blue-600 
-                         disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+             hover:bg-blue-700 dark:hover:bg-blue-600 
+             disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {submitMutation.isPending
                       ? "Sprawdzanie..."
