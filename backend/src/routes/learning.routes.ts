@@ -14,6 +14,18 @@ const MAX_RECENT_MEMORY = 20;
 // Przechowuj filtry sesji dla każdego użytkownika
 const userSessionFilters = new Map<string, any>();
 
+interface SessionState {
+  completed: number;
+  correct: number;
+  streak: number;
+  maxStreak: number;
+  points: number;
+  timeSpent: number;
+  completedExercises: any[];
+  skippedExercises: string[];
+  filters: any;
+}
+
 export async function learningRoutes(fastify: FastifyInstance) {
   // Middleware - verify JWT
   fastify.addHook("onRequest", async (request, reply) => {
@@ -22,6 +34,130 @@ export async function learningRoutes(fastify: FastifyInstance) {
     } catch (err) {
       reply.code(401).send({ error: "Unauthorized" });
     }
+  });
+
+  // Start or resume session
+  fastify.post("/session/start", async (request, reply) => {
+    const userId = (request.user as any).userId;
+
+    // Sprawdź czy jest aktywna sesja
+    const activeSession = await prisma.learningSession.findFirst({
+      where: {
+        userId,
+        status: "IN_PROGRESS",
+      },
+      orderBy: { lastActiveAt: "desc" },
+    });
+
+    if (activeSession) {
+      // Zwróć istniejącą sesję
+      return reply.send({
+        sessionId: activeSession.id,
+        isResumed: true,
+        state: {
+          completed: activeSession.completed,
+          correct: activeSession.correct,
+          streak: activeSession.streak,
+          maxStreak: activeSession.maxStreak,
+          points: activeSession.points,
+          timeSpent: activeSession.timeSpent,
+          completedExercises: activeSession.completedExercises || [],
+          skippedExercises: activeSession.skippedExercises || [],
+          filters: activeSession.filters || {},
+        },
+      });
+    }
+
+    // Utwórz nową sesję
+    const newSession = await prisma.learningSession.create({
+      data: {
+        userId,
+        status: "IN_PROGRESS",
+      },
+    });
+
+    // Wyczyść dane w pamięci
+    sessionSkippedExercises.delete(userId);
+    userRecentExercises.delete(userId);
+    userSessionFilters.delete(userId);
+
+    return reply.send({
+      sessionId: newSession.id,
+      isResumed: false,
+      state: {
+        completed: 0,
+        correct: 0,
+        streak: 0,
+        maxStreak: 0,
+        points: 0,
+        timeSpent: 0,
+        completedExercises: [],
+        skippedExercises: [],
+        filters: {},
+      },
+    });
+  });
+
+  // Save session state
+  fastify.post("/session/save-state", async (request, reply) => {
+    const userId = (request.user as any).userId;
+    const { sessionId, state } = request.body as {
+      sessionId: string;
+      state: SessionState;
+    };
+
+    await prisma.learningSession.update({
+      where: { id: sessionId },
+      data: {
+        completed: state.completed,
+        correct: state.correct,
+        streak: state.streak,
+        maxStreak: state.maxStreak,
+        points: state.points,
+        timeSpent: state.timeSpent,
+        completedExercises: state.completedExercises,
+        skippedExercises: state.skippedExercises,
+        filters: state.filters,
+        lastActiveAt: new Date(),
+      },
+    });
+
+    return reply.send({ success: true });
+  });
+
+  // Pause session
+  fastify.post("/session/pause", async (request, reply) => {
+    const userId = (request.user as any).userId;
+    const { sessionId, state } = request.body as any;
+
+    await prisma.learningSession.update({
+      where: { id: sessionId },
+      data: {
+        status: "PAUSED",
+        ...state,
+        lastActiveAt: new Date(),
+      },
+    });
+
+    return reply.send({ success: true });
+  });
+
+  // Get active sessions
+  fastify.get("/active-sessions", async (request, reply) => {
+    const userId = (request.user as any).userId;
+
+    const sessions = await prisma.learningSession.findMany({
+      where: {
+        userId,
+        status: "IN_PROGRESS",
+        lastActiveAt: {
+          gte: new Date(Date.now() - 24 * 60 * 60 * 1000), // ostatnie 24h
+        },
+      },
+      orderBy: { lastActiveAt: "desc" },
+    });
+
+    return reply.send(sessions);
   });
 
   // Set session filters
@@ -193,19 +329,6 @@ export async function learningRoutes(fastify: FastifyInstance) {
     }
   });
 
-  // Clear session data (wywoływane przy rozpoczęciu nowej sesji)
-  fastify.post("/session/start", async (request, reply) => {
-    const userId = (request.user as any).userId;
-
-    // WAŻNE: Wyczyść WSZYSTKO dla tego użytkownika
-    sessionSkippedExercises.delete(userId);
-    userRecentExercises.delete(userId);
-    userSessionFilters.delete(userId);
-
-    console.log(`Cleared all session data for user ${userId}`);
-    return reply.send({ success: true });
-  });
-
   // Get learning stats
   fastify.get("/stats", async (request, reply) => {
     try {
@@ -304,6 +427,18 @@ export async function learningRoutes(fastify: FastifyInstance) {
         }
       }
 
+      const activeSessions = await prisma.learningSession.findMany({
+        where: {
+          userId,
+          status: "IN_PROGRESS",
+          lastActiveAt: {
+            gte: new Date(Date.now() - 48 * 60 * 60 * 1000), // ostatnie 48h
+          },
+        },
+        orderBy: { lastActiveAt: "desc" },
+        take: 3,
+      });
+
       return reply.send({
         todayExercises,
         todayCorrect,
@@ -312,6 +447,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
         averageScore: Math.round(profile?.averageScore || 0),
         totalPoints: profile?.totalPoints || 0,
         recentSessions,
+        activeSessions,
       });
     } catch (error) {
       console.error("Error getting learning stats:", error);
@@ -853,6 +989,58 @@ export async function learningRoutes(fastify: FastifyInstance) {
       console.error("Error getting session history:", error);
       return reply.code(500).send({ error: "Failed to get session history" });
     }
+  });
+
+  // Get all sessions including active ones
+  fastify.get("/sessions/all", async (request, reply) => {
+    const userId = (request.user as any).userId;
+
+    // Pobierz aktywne sesje
+    const activeSessions = await prisma.learningSession.findMany({
+      where: {
+        userId,
+        status: "IN_PROGRESS",
+      },
+      orderBy: { lastActiveAt: "desc" },
+    });
+
+    // Pobierz ukończone sesje z DailyProgress
+    const completedSessions = await prisma.dailyProgress.findMany({
+      where: {
+        userId,
+        exercisesCount: { gt: 0 },
+      },
+      orderBy: { date: "desc" },
+      take: 50,
+    });
+
+    // Formatuj dane
+    const formattedActive = activeSessions.map((s) => ({
+      id: s.id,
+      type: "active",
+      date: s.startedAt,
+      completed: s.completed,
+      correct: s.correct,
+      points: s.points,
+      timeSpent: Math.round(s.timeSpent / 60),
+      status: "IN_PROGRESS",
+    }));
+
+    const formattedCompleted = completedSessions.map((s) => ({
+      id: s.id,
+      type: "completed",
+      date: s.date,
+      exercisesCount: s.exercisesCount,
+      studyTime: s.studyTime || 0,
+      averageScore: Math.round(s.averageScore || 0),
+      points: Math.round((s.exercisesCount * (s.averageScore || 0)) / 50),
+      status: "COMPLETED",
+    }));
+
+    return reply.send({
+      active: formattedActive,
+      completed: formattedCompleted,
+    });
   });
 }
 

@@ -30,6 +30,7 @@ model User {
   materialProgress UserMaterialProgress[]
   examSessions  ExamSession[]
   exerciseUsage ExerciseUsage[]
+  learningSessions LearningSession[]
 }
 
 
@@ -526,6 +527,41 @@ model ExamAnswer {
   submittedAt   DateTime  @default(now())
   
   @@unique([sessionId, questionId])
+}
+
+model LearningSession {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  
+  status        LearningSessionStatus @default(IN_PROGRESS)
+  
+  startedAt     DateTime  @default(now())
+  lastActiveAt  DateTime  @default(now())
+  finishedAt    DateTime?
+  
+  // Stan sesji
+  completed     Int       @default(0)
+  correct       Int       @default(0)
+  streak        Int       @default(0)
+  maxStreak     Int       @default(0)
+  points        Int       @default(0)
+  timeSpent     Int       @default(0) // sekundy
+  
+  // Filtry sesji
+  filters       Json?     // zapisane filtry
+  
+  // Ukończone zadania
+  completedExercises Json? // [{id, score}]
+  skippedExercises   Json? // [id1, id2...]
+  
+  @@index([userId, status])
+}
+
+enum LearningSessionStatus {
+  IN_PROGRESS
+  COMPLETED
+  PAUSED
 }
 
 enum ExamType {

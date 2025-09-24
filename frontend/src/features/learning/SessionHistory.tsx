@@ -22,22 +22,11 @@ export const SessionHistory: React.FC = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
   const [expandedSession, setExpandedSession] = useState<string | null>(null);
-  const pageSize = 10;
 
   const { data, isLoading } = useQuery({
-    queryKey: ["session-history", currentPage],
-    queryFn: () =>
-      api
-        .get("/api/learning/sessions/history", {
-          params: {
-            limit: pageSize,
-            offset: currentPage * pageSize,
-          },
-        })
-        .then((r) => r.data),
+    queryKey: ["all-sessions", currentPage],
+    queryFn: () => api.get("/api/learning/sessions/all").then((r) => r.data),
   });
-
-  const totalPages = data ? Math.ceil(data.total / pageSize) : 0;
 
   const formatUserAnswer = (submission: any) => {
     const { type, userAnswer, exerciseContent } = submission;
@@ -158,7 +147,7 @@ export const SessionHistory: React.FC = () => {
             <span className="text-sm font-medium">Łącznie sesji</span>
           </div>
           <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-            {data?.total || 0}
+            {(data?.active?.length || 0) + (data?.completed?.length || 0)}
           </p>
         </div>
 
@@ -168,12 +157,12 @@ export const SessionHistory: React.FC = () => {
             <span className="text-sm font-medium">Średni wynik</span>
           </div>
           <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-            {data?.sessions?.length > 0
+            {data?.completed?.length > 0
               ? Math.round(
-                  data.sessions.reduce(
+                  data.completed.reduce(
                     (acc: number, s: any) => acc + s.averageScore,
                     0
-                  ) / data.sessions.length
+                  ) / data.completed.length
                 )
               : 0}
             %
@@ -186,7 +175,7 @@ export const SessionHistory: React.FC = () => {
             <span className="text-sm font-medium">Zadań rozwiązanych</span>
           </div>
           <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-            {data?.sessions?.reduce(
+            {data?.completed?.reduce(
               (acc: number, s: any) => acc + s.exercisesCount,
               0
             ) || 0}
@@ -200,7 +189,7 @@ export const SessionHistory: React.FC = () => {
           </div>
           <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
             {Math.round(
-              (data?.sessions?.reduce(
+              (data?.completed?.reduce(
                 (acc: number, s: any) => acc + s.studyTime,
                 0
               ) || 0) / 60
@@ -210,10 +199,50 @@ export const SessionHistory: React.FC = () => {
         </div>
       </div>
 
+      {/* Nieukończone sesje */}
+      {data?.active?.length > 0 && (
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4 mb-6">
+          <h3 className="font-semibold text-lg text-yellow-900 dark:text-yellow-100 mb-3">
+            Nieukończone sesje ({data.active.length})
+          </h3>
+          <div className="space-y-2">
+            {data.active.map((session: any) => (
+              <div
+                key={session.id}
+                className="bg-white dark:bg-gray-800 rounded-lg p-4 
+                     border border-yellow-200 dark:border-yellow-700"
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      Rozpoczęta{" "}
+                      {new Date(session.date).toLocaleString("pl-PL")}
+                    </p>
+                    <div className="flex gap-4 mt-1 text-sm text-gray-600 dark:text-gray-400">
+                      <span>📝 {session.completed}/20 zadań</span>
+                      <span>✅ {session.correct} poprawnych</span>
+                      <span>⏱️ {session.timeSpent} min</span>
+                      <span>🏆 +{session.points} pkt</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => navigate("/learn")}
+                    className="px-4 py-2 bg-yellow-600 text-white rounded-lg 
+                       hover:bg-yellow-700 transition-colors font-medium"
+                  >
+                    Kontynuuj
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Lista sesji */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 overflow-hidden">
         <div className="space-y-0">
-          {data?.sessions?.map((session: any, index: number) => (
+          {data?.completed?.map((session: any, index: number) => (
             <div key={session.id}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -410,43 +439,14 @@ export const SessionHistory: React.FC = () => {
           ))}
         </div>
 
-        {/* Paginacja */}
-        {totalPages > 1 && (
-          <div className="p-4 border-t dark:border-gray-700 flex justify-center items-center gap-4">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
-              disabled={currentPage === 0}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 
-                       disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            </button>
-
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              Strona {currentPage + 1} z {totalPages}
-            </span>
-
-            <button
-              onClick={() =>
-                setCurrentPage((p) => Math.min(totalPages - 1, p + 1))
-              }
-              disabled={currentPage === totalPages - 1}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 
-                       disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            </button>
-          </div>
-        )}
-
-        {data?.sessions?.length === 0 && (
+        {data?.completed?.length === 0 && !data?.active?.length && (
           <div className="p-12 text-center text-gray-500 dark:text-gray-400">
             <Trophy className="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
             <p>Brak zapisanych sesji nauki</p>
             <button
               onClick={() => navigate("/learn")}
               className="mt-4 px-6 py-2 bg-blue-600 dark:bg-blue-500 text-white 
-                       rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
+               rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600"
             >
               Rozpocznij pierwszą sesję
             </button>

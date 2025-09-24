@@ -1,6 +1,7 @@
 // frontend/src/features/learning/LearningSession.tsx
 
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 import confetti from "canvas-confetti";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -66,7 +67,10 @@ const CATEGORIES = [
 ];
 
 export const LearningSession: React.FC = () => {
+  const navigate = useNavigate();
   const hasAutoStarted = useRef(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [lastSaveTime, setLastSaveTime] = useState(Date.now());
 
   const [sessionActive, setSessionActive] = useState(false);
   const [currentExercise, setCurrentExercise] = useState<any>(null);
@@ -79,6 +83,25 @@ export const LearningSession: React.FC = () => {
     Array<{ id: string; score: number }>
   >([]);
   const [isPlanSession, setIsPlanSession] = useState(false);
+
+  // Funkcja zapisywania stanu
+  const saveSessionState = async () => {
+    if (!sessionId) return;
+
+    try {
+      await api.post("/api/learning/session/save-state", {
+        sessionId,
+        state: {
+          ...sessionStats,
+          completedExercises,
+          filters: sessionFilters,
+        },
+      });
+      setLastSaveTime(Date.now());
+    } catch (error) {
+      console.error("Failed to save session state:", error);
+    }
+  };
 
   // SPRAWDŹ CZY SĄ FILTRY Z PLANU TYGODNIOWEGO
   const [sessionFilters, setSessionFilters] = useState<SessionFilters>(() => {
@@ -219,52 +242,62 @@ export const LearningSession: React.FC = () => {
     },
   });
 
-  // Start session
   const startSession = async () => {
-    await api.post("/api/learning/session/start");
+    try {
+      const response = await api.post("/api/learning/session/start");
+      const { sessionId: newSessionId, isResumed, state } = response.data;
 
-    setSessionActive(true);
-    setSessionComplete(false);
-    setCompletedExercises([]); // Reset ukończonych zadań
-    setSessionStats({
-      completed: 0,
-      correct: 0,
-      streak: 0,
-      maxStreak: 0,
-      points: 0,
-      timeSpent: 0,
-    });
+      setSessionId(newSessionId);
 
-    // Ustaw filtry jeśli są wybrane
-    if (Object.keys(sessionFilters).length > 0) {
-      await api.post("/api/learning/session/filters", sessionFilters);
+      if (isResumed) {
+        // Wznów sesję
+        setSessionStats(state);
+        setCompletedExercises(state.completedExercises || []);
+        setSessionFilters(state.filters || {});
+
+        // Pokaż komunikat
+        toast.success("Wznowiono poprzednią sesję nauki");
+      } else {
+        // Nowa sesja
+        setSessionStats({
+          completed: 0,
+          correct: 0,
+          streak: 0,
+          maxStreak: 0,
+          points: 0,
+          timeSpent: 0,
+        });
+        setCompletedExercises([]);
+      }
+
+      setSessionActive(true);
+      setSessionComplete(false);
+
+      // Pobierz pierwsze zadanie
+      setIsLoadingNext(true);
+      const { data } = await fetchNextExercise();
+      setCurrentExercise(data);
+      setIsLoadingNext(false);
+    } catch (error) {
+      console.error("Failed to start session:", error);
+      toast.error("Nie udało się rozpocząć sesji");
     }
-
-    setIsLoadingNext(true);
-    const { data } = await fetchNextExercise();
-    setCurrentExercise(data);
-    setIsLoadingNext(false);
-
-    await api.post("/api/learning/session/clear-skipped");
   };
 
-  // End session
+  // Zaktualizuj funkcję endSession
   const endSession = async () => {
-    console.log("=== ENDING SESSION ===");
-    console.log("sessionStats:", sessionStats);
-    console.log("completedExercises:", completedExercises);
-
-    if (sessionStats.completed > 0) {
+    if (sessionId && sessionStats.completed > 0) {
       await saveSessionMutation.mutateAsync({
-        stats: sessionStats, // ✅ Jako osobne pole "stats"!
-        completedExercises: completedExercises, // ✅ Rzeczywiste dane!
+        sessionId,
+        stats: sessionStats,
+        completedExercises: completedExercises,
       });
     }
 
-    // Wyczyść filtry na backendzie
-    await api.post("/api/learning/session/filters", {});
-
-    // Resetuj stan sesji
+    // Resetuj wszystko
+    setSessionId(null);
+    setSessionComplete(true);
+    setSessionActive(false);
     setSessionComplete(true);
     setSessionActive(false);
     setSessionFilters({});
@@ -281,6 +314,18 @@ export const LearningSession: React.FC = () => {
       points: 0,
       timeSpent: 0,
     });
+  };
+
+  const pauseSession = async () => {
+    if (!sessionId) return;
+
+    await api.post("/api/learning/session/pause", {
+      sessionId,
+      state: sessionStats,
+    });
+
+    navigate("/dashboard"); // navigate już jest zaimportowany w komponencie
+    toast("Sesja została wstrzymana. Możesz ją kontynuować później.");
   };
 
   // Next exercise with filters
@@ -424,6 +469,47 @@ export const LearningSession: React.FC = () => {
     };
   }, [sessionActive, sessionComplete]);
 
+  // Auto-save co 30 sekund
+  useEffect(() => {
+    if (!sessionActive || !sessionId) return;
+
+    const saveInterval = setInterval(async () => {
+      await saveSessionState();
+    }, 30000); // 30 sekund
+
+    return () => clearInterval(saveInterval);
+  }, [sessionActive, sessionId, sessionStats]);
+
+  // Zapisz stan przed zamknięciem strony
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (sessionActive && sessionId) {
+        // Zapisz stan synchronicznie
+        navigator.sendBeacon(
+          "/api/learning/session/save-state",
+          JSON.stringify({
+            sessionId,
+            state: {
+              ...sessionStats,
+              completedExercises,
+              skippedExercises: [], // Pusta tablica zamiast błędnego kodu
+              filters: sessionFilters,
+            },
+          })
+        );
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [
+    sessionActive,
+    sessionId,
+    sessionStats,
+    completedExercises,
+    sessionFilters,
+  ]);
+
   // Session complete screen
   if (sessionComplete) {
     return (
@@ -515,6 +601,13 @@ export const LearningSession: React.FC = () => {
           )}
 
           <div className="flex gap-4">
+            <button
+              onClick={pauseSession}
+              className="px-4 py-2 text-yellow-600 dark:text-yellow-400 hover:text-yellow-700 
+           dark:hover:text-yellow-300 transition-colors"
+            >
+              Wstrzymaj sesję
+            </button>
             <button
               onClick={() => {
                 setSessionActive(false);
@@ -1239,6 +1332,14 @@ const SessionStart: React.FC<{
   stats: any;
 }> = ({ onStart, stats }) => {
   const navigate = useNavigate();
+  const [activeSessions, setActiveSessions] = useState<any[]>([]);
+
+  // Pobierz aktywne sesje
+  useEffect(() => {
+    api.get("/api/learning/active-sessions").then((r) => {
+      setActiveSessions(r.data);
+    });
+  }, []);
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -1278,11 +1379,47 @@ const SessionStart: React.FC<{
         </button>
       </div>
 
+      {stats?.activeSessions?.length > 0 && (
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4 mb-4">
+          <h3 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-3">
+            Nieukończone sesje
+          </h3>
+          <div className="space-y-2">
+            {stats.activeSessions.map((session: any) => (
+              <div
+                key={session.id}
+                className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 
+                     rounded-lg border border-yellow-200 dark:border-yellow-700"
+              >
+                <div>
+                  <p className="font-medium text-gray-900 dark:text-white">
+                    Sesja z{" "}
+                    {new Date(session.startedAt).toLocaleDateString("pl-PL")}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Ukończono {session.completed} z 20 zadań •{session.correct}{" "}
+                    poprawnych
+                  </p>
+                </div>
+                <button
+                  onClick={onStart}
+                  className="px-4 py-2 bg-yellow-600 text-white rounded-lg 
+                     hover:bg-yellow-700 transition-colors text-sm font-medium"
+                >
+                  Kontynuuj
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
             Twoje ostatnie sesje
           </h2>
+
           {stats?.recentSessions?.length > 0 && (
             <button
               onClick={() => navigate("/sessions")}
