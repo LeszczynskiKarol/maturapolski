@@ -3,7 +3,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { MatureExamViewer } from "./features/exams/MatureExamViewer";
-import { LiveExam } from "./features/exams/LiveExam";
 // UŻYWAMY KOMPONENTÓW KTÓRE JUŻ STWORZYLIŚMY!
 import { ExamStructureManager } from "./features/admin/exams/ExamStructureManager";
 import { ExamQuestionsManager } from "./features/admin/ExamQuestionsManager"; // Nowy - tylko pytania egzaminacyjne!
@@ -160,14 +159,6 @@ export const App: React.FC = () => {
                 element={
                   <ProtectedRoute>
                     <ExamList />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/exam/session/:sessionId"
-                element={
-                  <ProtectedRoute>
-                    <LiveExam />
                   </ProtectedRoute>
                 }
               />

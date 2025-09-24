@@ -8,6 +8,7 @@ import {
   FileText,
   Clock,
   Award,
+  X,
   Play,
   RotateCw,
   BookOpen,
@@ -48,17 +49,25 @@ export const ExamList: React.FC = () => {
 
   const startExamMutation = useMutation({
     mutationFn: (examId: string) => api.post(`/api/exams/${examId}/start`),
-    onSuccess: (response) => {
+    onSuccess: (response, examId) => {
       const data = response.data;
 
-      // Sprawdź czy to egzamin dynamiczny
+      // Znajdź egzamin żeby sprawdzić czy to maturalny
+      const exam = exams?.find((e) => e.id === examId);
+      const isMaturalny = exam?.title.includes("Maturalny");
+
       if (data.isIntelligent) {
         toast.success("Przygotowano unikalny zestaw pytań!");
       } else {
         toast.success("Rozpoczęto egzamin!");
       }
 
-      navigate(`/exam/session/${data.sessionId}`);
+      // Używaj MatureExamViewer dla egzaminów maturalnych
+      if (isMaturalny) {
+        navigate(`/exam/mature/${data.sessionId}`);
+      } else {
+        navigate(`/exam/session/${data.sessionId}`);
+      }
     },
     onError: (error: any) => {
       if (error.response?.data?.sessionId) {
@@ -259,22 +268,48 @@ const ExamCard: React.FC<{
       {/* Actions */}
       <div className="p-6">
         {exam.hasActiveSession ? (
-          <button
-            onClick={() => {
-              const activeSession = exam.sessions.find(
-                (s: any) => s.status === "IN_PROGRESS"
-              );
-              if (activeSession) {
-                navigate(`/exam/session/${activeSession.id}`);
+          <div className="flex gap-2">
+            <button
+              onClick={() =>
+                navigate(
+                  `/exam/mature/${
+                    exam.sessions.find((s) => s.status === "IN_PROGRESS")?.id
+                  }`
+                )
               }
-            }}
-            className="w-full flex items-center justify-center gap-2 
-                     px-4 py-2 bg-yellow-500 text-white rounded-lg
-                     hover:bg-yellow-600 transition-colors"
-          >
-            <RotateCw className="w-4 h-4" />
-            Kontynuuj egzamin
-          </button>
+              className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 
+               text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 
+               transition-all transform hover:scale-105"
+            >
+              <Play className="w-5 h-5 inline mr-2" />
+              Kontynuuj egzamin
+            </button>
+            <button
+              onClick={async () => {
+                if (
+                  confirm("Czy na pewno chcesz zakończyć aktualny egzamin?")
+                ) {
+                  const sessionId = exam.sessions.find(
+                    (s) => s.status === "IN_PROGRESS"
+                  )?.id;
+                  if (sessionId) {
+                    try {
+                      await api.post(`/api/exams/session/${sessionId}/abandon`);
+                      toast.success("Egzamin został przerwany");
+                      window.location.reload();
+                    } catch (error) {
+                      toast.error("Błąd podczas przerywania egzaminu");
+                    }
+                  }
+                }
+              }}
+              className="px-4 py-3 bg-red-600 text-white rounded-lg 
+               hover:bg-red-700 transition-all"
+              title="Zakończ egzamin"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         ) : (
           <button
             onClick={onStart}

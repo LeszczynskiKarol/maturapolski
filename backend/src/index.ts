@@ -9,7 +9,7 @@ import Fastify from "fastify";
 import { adminQuestionsRoutes } from "./routes/adminQuestions.routes";
 import { initializeAI } from "./ai/aiService";
 import { adminRoutes } from "./routes/admin.routes";
-import { examAdminRoutes } from "./routes/examAdmin.routes";
+
 import { authRoutes } from "./routes/auth.routes";
 import { exerciseRoutes } from "./routes/exercise.routes";
 import { learningRoutes } from "./routes/learning.routes";
@@ -89,10 +89,6 @@ console.log("✓ Learning routes registered at /api/learning/*");
 // Trasy publiczne
 fastify.register(materialsRoutes, { prefix: "/api/materials" });
 console.log("✓ Materials routes registered at /api/materials/*");
-
-// Exams for admin:
-fastify.register(examAdminRoutes, { prefix: "/api/admin/exams" });
-console.log("✓ Exam Admin routes registered at /api/admin/exams/*");
 
 // Questions for exams for admin:
 console.log(

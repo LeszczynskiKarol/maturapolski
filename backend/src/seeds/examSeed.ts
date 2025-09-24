@@ -1,6 +1,11 @@
 // backend/src/seeds/examSeed.ts
 
-import { PrismaClient } from "@prisma/client";
+import {
+  PrismaClient,
+  ExerciseType,
+  Category,
+  LiteraryEpoch,
+} from "@prisma/client";
 import { hash } from "bcrypt";
 
 const prisma = new PrismaClient();
@@ -11,7 +16,7 @@ async function main() {
   // 1. TWORZENIE STRUKTUR EGZAMINACYJNYCH (bez konkretnych pytań!)
   console.log("📝 Tworzę struktury egzaminów...");
 
-  const examPodstawowy = await prisma.mockExam.create({
+  await prisma.mockExam.create({
     data: {
       title: "Egzamin Maturalny 2025 - Poziom Podstawowy (Dynamiczny)",
       year: 2025,
@@ -26,7 +31,6 @@ async function main() {
             instruction:
               "Przeczytaj uważnie teksty, a następnie wykonaj zadania.",
             timeLimit: 45,
-            // NIE dodajemy questions - system dobierze je dynamicznie!
           },
           {
             order: 2,
@@ -45,7 +49,7 @@ async function main() {
     },
   });
 
-  const examRozszerzony = await prisma.mockExam.create({
+  await prisma.mockExam.create({
     data: {
       title: "Egzamin Maturalny 2025 - Poziom Rozszerzony (Dynamiczny)",
       year: 2025,
@@ -85,48 +89,48 @@ async function main() {
   // PYTANIA - JĘZYK W UŻYCIU (poziom podstawowy)
   const jezykPytaniaPodstawowe = [
     {
-      type: "SHORT_ANSWER",
-      category: "LANGUAGE_USE",
+      type: ExerciseType.SHORT_ANSWER,
+      category: Category.LANGUAGE_USE,
       difficulty: 2,
       question:
         "Wyjaśnij znaczenie frazeologizmu 'mieć muchy w nosie' i podaj przykład jego użycia.",
-      correctAnswer: null, // Oceniane przez AI
       tags: ["frazeologia", "język", "znaczenie"],
       metadata: { isExamQuestion: true },
     },
     {
-      type: "SHORT_ANSWER",
-      category: "LANGUAGE_USE",
+      type: ExerciseType.SHORT_ANSWER,
+      category: Category.LANGUAGE_USE,
       difficulty: 2,
       question:
         "Przekształć zdanie pojedyncze w złożone: 'Uczniowie czytający książki rozwijają wyobraźnię.'",
-      correctAnswer: null,
       tags: ["składnia", "zdania", "przekształcenia"],
       metadata: { isExamQuestion: true },
     },
     {
-      type: "SHORT_ANSWER",
-      category: "LANGUAGE_USE",
+      type: ExerciseType.SHORT_ANSWER,
+      category: Category.LANGUAGE_USE,
       difficulty: 3,
       question:
         "Wyjaśnij różnicę między metaforą a porównaniem. Podaj po jednym przykładzie.",
-      correctAnswer: null,
       tags: ["środki stylistyczne", "metafora", "porównanie"],
       metadata: { isExamQuestion: true },
     },
     {
-      type: "SYNTHESIS_NOTE",
-      category: "LANGUAGE_USE",
+      type: ExerciseType.SYNTHESIS_NOTE,
+      category: Category.LANGUAGE_USE,
       difficulty: 3,
       question:
         "Na podstawie podanego fragmentu napisz notatkę syntetyzującą główne cechy stylu autora (60-90 słów).",
-      correctAnswer: null,
       tags: ["notatka", "styl", "synteza"],
       metadata: { isExamQuestion: true },
     },
+  ];
+
+  // PYTANIA ZAMKNIĘTE z content
+  const pytaniaZamkniete = [
     {
-      type: "CLOSED_MULTIPLE",
-      category: "LANGUAGE_USE",
+      type: ExerciseType.CLOSED_MULTIPLE,
+      category: Category.LANGUAGE_USE,
       difficulty: 2,
       question:
         "Które z podanych wyrazów są zapożyczeniami z języka angielskiego?",
@@ -139,30 +143,27 @@ async function main() {
           "kawiarnia",
           "biznes",
         ],
-        correctAnswer: [0, 1, 3, 5], // komputer, marketing, weekend, biznes
       },
+      correctAnswer: [0, 1, 3, 5],
       tags: ["zapożyczenia", "słownictwo"],
       metadata: { isExamQuestion: true },
     },
-  ];
-
-  // PYTANIA - HISTORYCZNOLITERACKIE (poziom podstawowy)
-  const historycznoPytaniaPodstawowe = [
     {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
+      type: ExerciseType.CLOSED_SINGLE,
+      category: Category.HISTORICAL_LITERARY,
       difficulty: 2,
       question: "W której epoce powstały 'Dziady' Adama Mickiewicza?",
       content: {
         options: ["Oświecenie", "Romantyzm", "Pozytywizm", "Młoda Polska"],
-        correctAnswer: 1, // Romantyzm
       },
+      correctAnswer: 1,
       tags: ["epoki", "romantyzm", "Mickiewicz"],
       metadata: { isExamQuestion: true },
+      epoch: LiteraryEpoch.ROMANTICISM,
     },
     {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
+      type: ExerciseType.CLOSED_SINGLE,
+      category: Category.HISTORICAL_LITERARY,
       difficulty: 2,
       question: "Kto jest autorem 'Lalki'?",
       content: {
@@ -172,122 +173,15 @@ async function main() {
           "Władysław Reymont",
           "Stefan Żeromski",
         ],
-        correctAnswer: 1, // Bolesław Prus
       },
+      correctAnswer: 1,
       tags: ["pozytywizm", "powieść", "Prus"],
       metadata: { isExamQuestion: true },
+      epoch: LiteraryEpoch.POSITIVISM,
     },
     {
-      type: "SHORT_ANSWER",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 3,
-      question: "Wyjaśnij symbolikę tytułu 'Wesela' Stanisława Wyspiańskiego.",
-      correctAnswer: null, // Oceniane przez AI
-      tags: ["Młoda Polska", "Wyspiański", "symbolizm"],
-      metadata: { isExamQuestion: true },
-    },
-    {
-      type: "SHORT_ANSWER",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 3,
-      question: "Opisz motyw wielkiej emigracji w literaturze romantycznej.",
-      correctAnswer: null,
-      tags: ["romantyzm", "emigracja", "motywy"],
-      metadata: { isExamQuestion: true },
-    },
-  ];
-
-  // PYTANIA - WYPRACOWANIA (różne poziomy)
-  const wypracowania = [
-    {
-      type: "ESSAY",
-      category: "WRITING",
-      difficulty: 3,
-      question:
-        "Temat 1: Rola przyjaźni w życiu człowieka. W pracy odwołaj się do wybranej lektury obowiązkowej oraz innych tekstów kultury.",
-      correctAnswer: null, // Oceniane przez AI
-      tags: ["wypracowanie", "przyjaźń", "lektura"],
-      metadata: { isExamQuestion: true, minWords: 400 },
-    },
-    {
-      type: "ESSAY",
-      category: "WRITING",
-      difficulty: 4,
-      question:
-        "Temat 2: Konflikt między jednostką a społeczeństwem w literaturze. Omów problem na przykładzie wybranych utworów.",
-      correctAnswer: null,
-      tags: ["wypracowanie", "konflikt", "społeczeństwo"],
-      metadata: { isExamQuestion: true, minWords: 400 },
-    },
-    {
-      type: "ESSAY",
-      category: "WRITING",
-      difficulty: 5,
-      question:
-        "Temat 3: Czy literatura może zmieniać rzeczywistość? Rozważ problem w kontekście wybranych utworów z różnych epok.",
-      correctAnswer: null,
-      tags: ["wypracowanie", "literatura zaangażowana", "epoki"],
-      metadata: { isExamQuestion: true, minWords: 500 },
-    },
-  ];
-
-  // PYTANIA DLA POZIOMU ROZSZERZONEGO
-  const jezykPytaniaRozszerzone = [
-    {
-      type: "SHORT_ANSWER",
-      category: "LANGUAGE_USE",
-      difficulty: 4,
-      question:
-        "Przeanalizuj funkcje stylistyczne anafor w podanym fragmencie poetyckim.",
-      correctAnswer: null,
-      tags: ["stylistyka", "anafora", "poezja"],
-      metadata: { isExamQuestion: true },
-    },
-    {
-      type: "SHORT_ANSWER",
-      category: "LANGUAGE_USE",
-      difficulty: 5,
-      question:
-        "Wyjaśnij zjawisko neosemantyzacji na przykładzie współczesnego języka polskiego.",
-      correctAnswer: null,
-      tags: ["językoznawstwo", "neosemantyzacja", "współczesność"],
-      metadata: { isExamQuestion: true },
-    },
-    {
-      type: "SYNTHESIS_NOTE",
-      category: "LANGUAGE_USE",
-      difficulty: 4,
-      question:
-        "Porównaj style wypowiedzi w dwóch podanych fragmentach publicystycznych (80-120 słów).",
-      correctAnswer: null,
-      tags: ["publicystyka", "styl", "porównanie"],
-      metadata: { isExamQuestion: true },
-    },
-  ];
-
-  const historycznoPytaniaRozszerzone = [
-    {
-      type: "SHORT_ANSWER",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 4,
-      question: "Omów recepcję 'Dziadów' w różnych epokach literackich.",
-      correctAnswer: null,
-      tags: ["Dziady", "recepcja", "epoki"],
-      metadata: { isExamQuestion: true },
-    },
-    {
-      type: "SHORT_ANSWER",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 5,
-      question:
-        "Porównaj koncepcję tragizmu w dramatach antycznych i romantycznych.",
-      correctAnswer: null,
-      tags: ["tragizm", "dramat", "komparatystyka"],
-      metadata: { isExamQuestion: true },
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
+      type: ExerciseType.CLOSED_MULTIPLE,
+      category: Category.HISTORICAL_LITERARY,
       difficulty: 4,
       question:
         "Które z podanych cech charakteryzują poetykę awangardy Krakowskiej?",
@@ -300,65 +194,290 @@ async function main() {
           "Klasycyzm",
           "Urbanizm",
         ],
-        correctAnswer: [0, 2, 3, 5], // Eksperyment, Metaforyka, Antyestetyzm, Urbanizm
       },
+      correctAnswer: [0, 2, 3, 5],
       tags: ["awangarda", "dwudziestolecie", "poezja"],
+      metadata: { isExamQuestion: true },
+      epoch: LiteraryEpoch.INTERWAR,
+    },
+  ];
+
+  // PYTANIA HISTORYCZNOLITERACKIE (poziom podstawowy)
+  const historycznoPytaniaPodstawowe = [
+    {
+      type: ExerciseType.SHORT_ANSWER,
+      category: Category.HISTORICAL_LITERARY,
+      difficulty: 3,
+      question: "Wyjaśnij symbolikę tytułu 'Wesela' Stanisława Wyspiańskiego.",
+      tags: ["Młoda Polska", "Wyspiański", "symbolizm"],
+      metadata: { isExamQuestion: true },
+      epoch: LiteraryEpoch.YOUNG_POLAND,
+    },
+    {
+      type: ExerciseType.SHORT_ANSWER,
+      category: Category.HISTORICAL_LITERARY,
+      difficulty: 3,
+      question: "Opisz motyw wielkiej emigracji w literaturze romantycznej.",
+      tags: ["romantyzm", "emigracja", "motywy"],
+      metadata: { isExamQuestion: true },
+      epoch: LiteraryEpoch.ROMANTICISM,
+    },
+    {
+      type: ExerciseType.SHORT_ANSWER,
+      category: Category.HISTORICAL_LITERARY,
+      difficulty: 2,
+      question: "Wymień trzy cechy gatunkowe ballady romantycznej.",
+      tags: ["gatunki", "ballada", "romantyzm"],
+      metadata: { isExamQuestion: true },
+      epoch: LiteraryEpoch.ROMANTICISM,
+    },
+    {
+      type: ExerciseType.SHORT_ANSWER,
+      category: Category.HISTORICAL_LITERARY,
+      difficulty: 3,
+      question: "Porównaj kreację bohatera romantycznego i pozytywistycznego.",
+      tags: ["bohater", "romantyzm", "pozytywizm"],
       metadata: { isExamQuestion: true },
     },
   ];
 
-  // Dodaj wszystkie pytania do bazy
-  const wszystkiePytania = [
-    ...jezykPytaniaPodstawowe,
-    ...historycznoPytaniaPodstawowe,
-    ...wypracowania,
-    ...jezykPytaniaRozszerzone,
-    ...historycznoPytaniaRozszerzone,
+  // WYPRACOWANIA
+  const wypracowania = [
+    {
+      type: ExerciseType.ESSAY,
+      category: Category.WRITING,
+      difficulty: 3,
+      question:
+        "Temat 1: Rola przyjaźni w życiu człowieka. W pracy odwołaj się do wybranej lektury obowiązkowej oraz innych tekstów kultury.",
+      tags: ["wypracowanie", "przyjaźń", "lektura"],
+      metadata: { isExamQuestion: true, minWords: 400 },
+    },
+    {
+      type: ExerciseType.ESSAY,
+      category: Category.WRITING,
+      difficulty: 4,
+      question:
+        "Temat 2: Konflikt między jednostką a społeczeństwem w literaturze. Omów problem na przykładzie wybranych utworów.",
+      tags: ["wypracowanie", "konflikt", "społeczeństwo"],
+      metadata: { isExamQuestion: true, minWords: 400 },
+    },
+    {
+      type: ExerciseType.ESSAY,
+      category: Category.WRITING,
+      difficulty: 5,
+      question:
+        "Temat 3: Czy literatura może zmieniać rzeczywistość? Rozważ problem w kontekście wybranych utworów z różnych epok.",
+      tags: ["wypracowanie", "literatura zaangażowana", "epoki"],
+      metadata: { isExamQuestion: true, minWords: 500 },
+    },
+    {
+      type: ExerciseType.ESSAY,
+      category: Category.WRITING,
+      difficulty: 3,
+      question:
+        "Temat 4: Miłość jako źródło cierpienia i szczęścia. Omów zagadnienie na podstawie wybranych tekstów.",
+      tags: ["wypracowanie", "miłość", "uczucia"],
+      metadata: { isExamQuestion: true, minWords: 400 },
+    },
+    {
+      type: ExerciseType.ESSAY,
+      category: Category.WRITING,
+      difficulty: 4,
+      question:
+        "Temat 5: Motyw wędrówki w literaturze. Przedstaw różne jej znaczenia i funkcje.",
+      tags: ["wypracowanie", "wędrówka", "motyw"],
+      metadata: { isExamQuestion: true, minWords: 400 },
+    },
   ];
 
-  for (const pytanie of wszystkiePytania) {
+  // PYTANIA ROZSZERZONE
+  const pytaniaRozszerzone = [
+    {
+      type: ExerciseType.SHORT_ANSWER,
+      category: Category.LANGUAGE_USE,
+      difficulty: 4,
+      question:
+        "Przeanalizuj funkcje stylistyczne anafor w podanym fragmencie poetyckim.",
+      tags: ["stylistyka", "anafora", "poezja"],
+      metadata: { isExamQuestion: true },
+    },
+    {
+      type: ExerciseType.SHORT_ANSWER,
+      category: Category.LANGUAGE_USE,
+      difficulty: 5,
+      question:
+        "Wyjaśnij zjawisko neosemantyzacji na przykładzie współczesnego języka polskiego.",
+      tags: ["językoznawstwo", "neosemantyzacja", "współczesność"],
+      metadata: { isExamQuestion: true },
+    },
+    {
+      type: ExerciseType.SYNTHESIS_NOTE,
+      category: Category.LANGUAGE_USE,
+      difficulty: 4,
+      question:
+        "Porównaj style wypowiedzi w dwóch podanych fragmentach publicystycznych (80-120 słów).",
+      tags: ["publicystyka", "styl", "porównanie"],
+      metadata: { isExamQuestion: true },
+    },
+    {
+      type: ExerciseType.SHORT_ANSWER,
+      category: Category.HISTORICAL_LITERARY,
+      difficulty: 4,
+      question: "Omów recepcję 'Dziadów' w różnych epokach literackich.",
+      tags: ["Dziady", "recepcja", "epoki"],
+      metadata: { isExamQuestion: true },
+    },
+    {
+      type: ExerciseType.SHORT_ANSWER,
+      category: Category.HISTORICAL_LITERARY,
+      difficulty: 5,
+      question:
+        "Porównaj koncepcję tragizmu w dramatach antycznych i romantycznych.",
+      tags: ["tragizm", "dramat", "komparatystyka"],
+      metadata: { isExamQuestion: true },
+    },
+  ];
+
+  // Dodaj pytania - tylko otwarte (bez epoch)
+  for (const pytanie of jezykPytaniaPodstawowe) {
     await prisma.exercise.create({
       data: {
-        ...pytanie,
-        content: pytanie.content || {},
-        correctAnswer: pytanie.correctAnswer,
+        type: pytanie.type,
+        category: pytanie.category,
+        difficulty: pytanie.difficulty,
+        question: pytanie.question,
+        tags: pytanie.tags,
+        metadata: pytanie.metadata,
+        content: {},
+        points:
+          pytanie.type === ExerciseType.SYNTHESIS_NOTE
+            ? 4
+            : pytanie.type === ExerciseType.SHORT_ANSWER
+            ? 2
+            : 1,
       },
     });
   }
 
-  console.log(`✅ Utworzono ${wszystkiePytania.length} pytań egzaminacyjnych!`);
-
-  // 3. UTWÓRZ PRZYKŁADOWEGO UŻYTKOWNIKA (opcjonalne)
-  console.log("👤 Tworzę użytkownika testowego...");
-
-  const hashedPassword = await hash("test123", 10);
-
-  const testUser = await prisma.user.create({
-    data: {
-      email: "student@test.pl",
-      password: hashedPassword,
-      firstName: "Jan",
-      lastName: "Testowy",
-      role: "STUDENT",
-      profile: {
-        create: {
-          level: 3,
-          totalPoints: 0,
-          streakDays: 0,
-          averageScore: 0,
-        },
+  // Dodaj pytania historycznoliterackie z epoch
+  for (const pytanie of historycznoPytaniaPodstawowe) {
+    await prisma.exercise.create({
+      data: {
+        type: pytanie.type,
+        category: pytanie.category,
+        difficulty: pytanie.difficulty,
+        question: pytanie.question,
+        tags: pytanie.tags,
+        metadata: pytanie.metadata,
+        content: {},
+        points: 2,
+        epoch: pytanie.epoch || null,
       },
-    },
+    });
+  }
+
+  // Dodaj pytania zamknięte
+  for (const pytanie of pytaniaZamkniete) {
+    await prisma.exercise.create({
+      data: {
+        type: pytanie.type,
+        category: pytanie.category,
+        difficulty: pytanie.difficulty,
+        question: pytanie.question,
+        tags: pytanie.tags,
+        metadata: pytanie.metadata,
+        content: pytanie.content,
+        correctAnswer: pytanie.correctAnswer,
+        points: pytanie.type === ExerciseType.CLOSED_MULTIPLE ? 2 : 1,
+        epoch: pytanie.epoch || null,
+      },
+    });
+  }
+
+  // Dodaj wypracowania
+  for (const wypracowanie of wypracowania) {
+    await prisma.exercise.create({
+      data: {
+        type: wypracowanie.type,
+        category: wypracowanie.category,
+        difficulty: wypracowanie.difficulty,
+        question: wypracowanie.question,
+        tags: wypracowanie.tags,
+        metadata: wypracowanie.metadata,
+        content: {},
+        points:
+          wypracowanie.difficulty === 3
+            ? 35
+            : wypracowanie.difficulty === 4
+            ? 38
+            : 40,
+      },
+    });
+  }
+
+  // Dodaj pytania rozszerzone
+  for (const pytanie of pytaniaRozszerzone) {
+    await prisma.exercise.create({
+      data: {
+        type: pytanie.type,
+        category: pytanie.category,
+        difficulty: pytanie.difficulty,
+        question: pytanie.question,
+        tags: pytanie.tags,
+        metadata: pytanie.metadata,
+        content: {},
+        points: pytanie.type === ExerciseType.SYNTHESIS_NOTE ? 5 : 3,
+      },
+    });
+  }
+
+  const totalQuestions =
+    jezykPytaniaPodstawowe.length +
+    pytaniaZamkniete.length +
+    historycznoPytaniaPodstawowe.length +
+    wypracowania.length +
+    pytaniaRozszerzone.length;
+
+  console.log(`✅ Utworzono ${totalQuestions} pytań egzaminacyjnych!`);
+
+  // 3. UTWÓRZ PRZYKŁADOWEGO UŻYTKOWNIKA
+  console.log("👤 Sprawdzam użytkownika testowego...");
+
+  const existingUser = await prisma.user.findUnique({
+    where: { email: "student@test.pl" },
   });
 
-  console.log(
-    "✅ Użytkownik testowy utworzony (email: student@test.pl, hasło: test123)"
-  );
+  if (!existingUser) {
+    const hashedPassword = await hash("test123", 10);
+
+    await prisma.user.create({
+      data: {
+        email: "student@test.pl",
+        password: hashedPassword,
+        firstName: "Jan",
+        lastName: "Testowy",
+        role: "STUDENT",
+        profile: {
+          create: {
+            level: 3,
+            totalPoints: 0,
+            averageScore: 0,
+          },
+        },
+      },
+    });
+
+    console.log(
+      "✅ Użytkownik testowy utworzony (email: student@test.pl, hasło: test123)"
+    );
+  } else {
+    console.log("ℹ️ Użytkownik testowy już istnieje");
+  }
 
   console.log("\n🎉 Seed zakończony pomyślnie!");
   console.log("📊 Statystyki:");
   console.log(`   - Struktury egzaminów: 2`);
-  console.log(`   - Pytania egzaminacyjne: ${wszystkiePytania.length}`);
+  console.log(`   - Pytania egzaminacyjne: ${totalQuestions}`);
   console.log(`   - Użytkownicy testowi: 1`);
 }
 

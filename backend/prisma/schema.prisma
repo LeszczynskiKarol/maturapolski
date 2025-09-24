@@ -491,6 +491,7 @@ model ExamSession {
   user          User      @relation(fields: [userId], references: [id])
   examId        String
   exam          MockExam  @relation(fields: [examId], references: [id])
+  isIntelligent Boolean?   @default(false)
   
   startedAt     DateTime  @default(now())
   finishedAt    DateTime?
