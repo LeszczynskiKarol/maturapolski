@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { MatureExamViewer } from "./features/exams/MatureExamViewer";
 import { LiveExam } from "./features/exams/LiveExam";
+import { ExamManager } from "./features/admin/exams/ExamManager";
 import { ExamList } from "./features/exams/ExamList";
 import { ExamResults } from "./features/exams/ExamResults";
 import { Toaster } from "react-hot-toast";
@@ -108,6 +109,7 @@ export const App: React.FC = () => {
               <Route path="exercises" element={<ExerciseManager />} />
               <Route path="users" element={<UserManager />} />
               <Route path="materials" element={<AdminMaterialsEditor />} />
+              <Route path="exams" element={<ExamManager />} />
             </Route>
 
             {/* Student routes with layout */}
