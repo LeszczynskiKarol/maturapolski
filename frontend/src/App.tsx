@@ -5,7 +5,6 @@ import React, { useEffect } from "react";
 import { MatureExamViewer } from "./features/exams/MatureExamViewer";
 // UŻYWAMY KOMPONENTÓW KTÓRE JUŻ STWORZYLIŚMY!
 import { ExamStructureManager } from "./features/admin/exams/ExamStructureManager";
-import { ExamQuestionsManager } from "./features/admin/ExamQuestionsManager"; // Nowy - tylko pytania egzaminacyjne!
 import { ExamList } from "./features/exams/ExamList";
 import { ExamResults } from "./features/exams/ExamResults";
 import { Toaster } from "react-hot-toast";
@@ -112,7 +111,6 @@ export const App: React.FC = () => {
               <Route path="materials" element={<AdminMaterialsEditor />} />
               {/* UŻYWAMY KOMPONENTÓW Z INTELIGENTNYM DOBOREM! */}
               <Route path="exams" element={<ExamStructureManager />} />
-              <Route path="questions" element={<ExamQuestionsManager />} />
             </Route>
 
             {/* Student routes with layout */}

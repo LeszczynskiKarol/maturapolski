@@ -6,10 +6,9 @@ dotenv.config();
 import cors from "@fastify/cors";
 import jwt from "@fastify/jwt";
 import Fastify from "fastify";
-import { adminQuestionsRoutes } from "./routes/adminQuestions.routes";
 import { initializeAI } from "./ai/aiService";
 import { adminRoutes } from "./routes/admin.routes";
-
+import { examStructureRoutes } from "./routes/examStructure.routes";
 import { authRoutes } from "./routes/auth.routes";
 import { exerciseRoutes } from "./routes/exercise.routes";
 import { learningRoutes } from "./routes/learning.routes";
@@ -78,6 +77,12 @@ console.log("✓ Study Plan routes registered at /api/study/*");
 fastify.register(examRoutes, { prefix: "/api/exams" });
 console.log("✓ Exam routes registered at /api/exams/*");
 
+// Exam Structure routes (dla admina)
+fastify.register(examStructureRoutes, { prefix: "/api/admin/exam-structures" });
+console.log(
+  "✓ Exam Structure routes registered at /api/admin/exam-structures/*"
+);
+
 // Exercise routes
 fastify.register(exerciseRoutes, { prefix: "/api/exercises" });
 console.log("✓ Exercise routes registered at /api/exercises/*");
@@ -89,12 +94,6 @@ console.log("✓ Learning routes registered at /api/learning/*");
 // Trasy publiczne
 fastify.register(materialsRoutes, { prefix: "/api/materials" });
 console.log("✓ Materials routes registered at /api/materials/*");
-
-// Questions for exams for admin:
-console.log(
-  "✓ Admin Exam Questions routes registered at /api/admin/questions/*"
-);
-fastify.register(adminQuestionsRoutes, { prefix: "/api/admin/questions" });
 
 // Error handler
 fastify.setErrorHandler(async (error, request, reply) => {

@@ -16,7 +16,6 @@ const navigation = [
   { name: "Dashboard", href: "/admin", icon: BarChart3 },
   { name: "Zadania", href: "/admin/exercises", icon: BookOpen },
   { name: "Egzaminy", href: "/admin/exams", icon: FileText },
-  { name: "Pytania egz.", href: "/admin/questions", icon: HelpCircle },
   { name: "Użytkownicy", href: "/admin/users", icon: Users },
   { name: "Materiały", href: "/admin/materials", icon: FileText },
 ];

@@ -111,40 +111,6 @@ export const AdminDashboard: React.FC = () => {
           </p>
         </Link>
       </div>
-      {/* ADMIN CONTROLS - tylko dla admina */}
-
-      <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-300 dark:border-yellow-700 rounded-lg p-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="font-semibold text-yellow-800 dark:text-yellow-300">
-              Panel Administratora
-            </h3>
-            <p className="text-sm text-yellow-600 dark:text-yellow-400 mt-1">
-              Zarządzaj egzaminami i treścią
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => createMatureExamMutation.mutate()}
-              disabled={createMatureExamMutation.isPending}
-              className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 
-                         disabled:opacity-50 flex items-center gap-2"
-            >
-              <FileText className="w-4 h-4" />
-              {createMatureExamMutation.isPending
-                ? "Tworzenie..."
-                : "Utwórz Egzamin Maturalny 2025"}
-            </button>
-
-            <button
-              onClick={() => (window.location.href = "/admin")}
-              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
-            >
-              Panel Admina →
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
