@@ -7,8 +7,9 @@
     "start": "node dist/index.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "seed": "tsx prisma/seed.ts",
-    "seed:exams": "tsx prisma/seed-exam.ts"
+    "seed": "ts-node src/seeds/examSeed.ts",
+    "seed:exams": "tsx prisma/seed-exam.ts",
+    "seed:reset": "npx prisma db push --force-reset && npm run seed"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.3",

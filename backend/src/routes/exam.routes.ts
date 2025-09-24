@@ -100,59 +100,6 @@ export async function examRoutes(fastify: FastifyInstance) {
     const { examId } = request.params as { examId: string };
     const userId = (request.user as any).userId;
 
-    const selectionService = new ExerciseSelectionService();
-
-    // Pobierz egzamin
-    const exam = await prisma.mockExam.findUnique({
-      where: { id: examId },
-      include: {
-        sections: {
-          include: {
-            questions: true,
-          },
-        },
-      },
-    });
-
-    if (!exam) {
-      return reply.code(404).send({ error: "Egzamin nie istnieje" });
-    }
-
-    // Jeśli egzamin nie ma przypisanych ćwiczeń, dobierz je dynamicznie
-    for (const section of exam.sections) {
-      for (const question of section.questions) {
-        if (!question.exerciseId) {
-          // Dobierz ćwiczenie dla tego pytania
-          const exercises = await selectionService.getExercisesForExam(
-            userId,
-            question.type === "ESSAY"
-              ? "WRITING"
-              : question.type === "SHORT_ANSWER"
-              ? "LANGUAGE_USE"
-              : "HISTORICAL_LITERARY",
-            question.type!,
-            1,
-            { min: 2, max: 5 } // Dostosuj trudność
-          );
-
-          if (exercises[0]) {
-            // Zaktualizuj pytanie z wybranym ćwiczeniem
-            await prisma.examQuestion.update({
-              where: { id: question.id },
-              data: { exerciseId: exercises[0].id },
-            });
-
-            // Zapisz użycie
-            await selectionService.recordExerciseUsage(
-              userId,
-              exercises[0].id,
-              "EXAM"
-            );
-          }
-        }
-      }
-    }
-
     // Sprawdź czy nie ma aktywnej sesji
     const activeSession = await prisma.examSession.findFirst({
       where: {
@@ -163,22 +110,97 @@ export async function examRoutes(fastify: FastifyInstance) {
     });
 
     if (activeSession) {
-      return reply.code(400).send({
-        error: "Masz już rozpoczętą sesję tego egzaminu",
+      // Jeśli jest aktywna sesja, zwróć ją
+      return reply.send({
         sessionId: activeSession.id,
+        redirectTo: `/exam/mature/${activeSession.id}`,
+        message: "Kontynuacja istniejącej sesji",
       });
     }
+
+    const exam = await prisma.mockExam.findUnique({
+      where: { id: examId },
+      include: {
+        sections: {
+          include: {
+            questions: {
+              include: {
+                exercise: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
     if (!exam) {
       return reply.code(404).send({ error: "Egzamin nie istnieje" });
     }
 
+    // Sprawdź czy to egzamin dynamiczny
+    const isDynamic =
+      exam.title.includes("Dynamiczny") || exam.title.includes("Maturalny");
+
+    let sessionAssessment: any = null;
+
+    if (isDynamic) {
+      // Import serwisu (na górze pliku)
+      const { IntelligentExamService } = await import(
+        "../services/intelligentExamService"
+      );
+      const intelligentService = new IntelligentExamService();
+
+      // Określ typ egzaminu
+      const examType =
+        exam.type === "ROZSZERZONY" ? "ROZSZERZONY" : "PODSTAWOWY";
+
+      // Dobierz pytania inteligentnie
+      const selectedQuestions = await intelligentService.selectQuestionsForExam(
+        userId,
+        examType as any
+      );
+
+      // Przygotuj metadane pytań do zapisania w sesji
+      const questionsMetadata: any[] = [];
+
+      for (const [sectionKey, questions] of selectedQuestions.entries()) {
+        for (const question of questions) {
+          questionsMetadata.push({
+            exerciseId: question.id,
+            section: sectionKey,
+            type: question.type,
+            points: question.points,
+            order: questionsMetadata.length + 1,
+          });
+
+          // Zapisz użycie
+          await intelligentService.recordExamUsage(
+            userId,
+            "", // sessionId będzie dodane później
+            [question.id]
+          );
+        }
+      }
+
+      sessionAssessment = {
+        isDynamic: true,
+        questionsMetadata,
+        generatedAt: new Date(),
+      };
+    }
+
     // Oblicz max punktów
-    const maxScore = exam.sections.reduce(
-      (sum, section) =>
-        sum + section.questions.reduce((sSum, q) => sSum + q.points, 0),
-      0
-    );
+    const maxScore =
+      isDynamic && sessionAssessment
+        ? sessionAssessment.questionsMetadata.reduce(
+            (sum: number, q: any) => sum + q.points,
+            0
+          )
+        : exam.sections.reduce(
+            (sum, section) =>
+              sum + section.questions.reduce((sSum, q) => sSum + q.points, 0),
+            0
+          );
 
     // Utwórz nową sesję
     const session = await prisma.examSession.create({
@@ -187,29 +209,49 @@ export async function examRoutes(fastify: FastifyInstance) {
         examId,
         status: "IN_PROGRESS",
         maxScore,
+        assessment: sessionAssessment, // Zapisz metadane pytań
+        isIntelligent: isDynamic, // Dodaj flagę
       },
     });
 
-    if (exam.title.includes("Maturalny")) {
-      return reply.send({
-        sessionId: session.id,
-        redirectTo: `/exam/mature/${session.id}`, // NOWY URL!
-        exam: {
-          ...exam,
-          maxScore,
-          startedAt: session.startedAt,
-        },
-      });
-    }
-
     return reply.send({
       sessionId: session.id,
+      redirectTo: `/exam/mature/${session.id}`,
       exam: {
         ...exam,
         maxScore,
         startedAt: session.startedAt,
+        isDynamic,
       },
     });
+  });
+
+  // Porzuć/przerwij egzamin
+  fastify.post("/session/:sessionId/abandon", async (request, reply) => {
+    const { sessionId } = request.params as { sessionId: string };
+    const userId = (request.user as any).userId;
+
+    const session = await prisma.examSession.findFirst({
+      where: {
+        id: sessionId,
+        userId,
+        status: "IN_PROGRESS",
+      },
+    });
+
+    if (!session) {
+      return reply.code(404).send({ error: "Sesja nie istnieje" });
+    }
+
+    await prisma.examSession.update({
+      where: { id: sessionId },
+      data: {
+        status: "ABANDONED",
+        finishedAt: new Date(),
+      },
+    });
+
+    return reply.send({ success: true });
   });
 
   // Pobierz aktywną sesję
@@ -489,6 +531,34 @@ export async function examRoutes(fastify: FastifyInstance) {
       assessment: assessmentDetails,
       summary: generateExamSummary(percentScore),
     });
+  });
+
+  fastify.post("/get-questions", async (request, reply) => {
+    const { questionIds } = request.body as { questionIds: string[] };
+    const userId = (request.user as any).userId;
+
+    if (
+      !questionIds ||
+      !Array.isArray(questionIds) ||
+      questionIds.length === 0
+    ) {
+      return reply.code(400).send({ error: "Invalid question IDs" });
+    }
+
+    // Pobierz ćwiczenia
+    const exercises = await prisma.exercise.findMany({
+      where: {
+        id: { in: questionIds },
+      },
+    });
+
+    // Jeśli brak ćwiczeń, zwróć pustą tablicę
+    if (exercises.length === 0) {
+      console.log("No exercises found for IDs:", questionIds);
+      return reply.send([]);
+    }
+
+    return reply.send(exercises);
   });
 
   // ENDPOINT DO UTWORZENIA EGZAMINU MATURALNEGO

@@ -1,44 +1,27 @@
 // backend/src/services/intelligentExamService.ts
 
 import { prisma } from "../lib/prisma";
-import { differenceInDays, subDays } from "date-fns";
-
-interface ExamRequirements {
-  type: "PODSTAWOWY" | "ROZSZERZONY";
-  sections: Array<{
-    title: string;
-    questionCount: number;
-    requirements: Array<{
-      type: string; // CLOSED_SINGLE, SHORT_ANSWER, ESSAY, etc.
-      category?: string; // HISTORICAL_LITERARY, LANGUAGE_USE, WRITING
-      difficulty?: { min: number; max: number };
-      count: number;
-      points: number;
-      specificTags?: string[]; // np. ['mitologia', 'barok', 'romantyzm']
-    }>;
-  }>;
-}
+import { differenceInDays } from "date-fns";
 
 interface ScoringFactors {
-  recencyWeight: number; // Waga dla ostatnio używanych (0-1)
-  performanceWeight: number; // Waga dla wyników użytkownika (0-1)
-  difficultyWeight: number; // Waga dla poziomu trudności (0-1)
-  diversityWeight: number; // Waga dla różnorodności tematycznej (0-1)
+  recencyWeight: number;
+  performanceWeight: number;
+  difficultyWeight: number;
+  diversityWeight: number;
 }
 
 export class IntelligentExamService {
   private readonly DEFAULT_SCORING_FACTORS: ScoringFactors = {
-    recencyWeight: 0.4, // 40% wpływu ma to, kiedy ostatnio używane
-    performanceWeight: 0.3, // 30% wpływu mają wyniki użytkownika
-    difficultyWeight: 0.2, // 20% wpływu ma dopasowanie trudności
-    diversityWeight: 0.1, // 10% wpływu ma różnorodność
+    recencyWeight: 0.4,
+    performanceWeight: 0.3,
+    difficultyWeight: 0.2,
+    diversityWeight: 0.1,
   };
 
   // Definicje struktury egzaminów
   private readonly EXAM_STRUCTURES = {
     PODSTAWOWY: {
       arkusz1_czesc1: {
-        // Język polski w użyciu
         requirements: [
           {
             type: "SHORT_ANSWER",
@@ -64,7 +47,6 @@ export class IntelligentExamService {
         ],
       },
       arkusz1_czesc2: {
-        // Test historycznoliteracki
         requirements: [
           {
             type: "CLOSED_SINGLE",
@@ -90,7 +72,6 @@ export class IntelligentExamService {
         ],
       },
       arkusz2: {
-        // Wypracowanie
         requirements: [
           {
             type: "ESSAY",
@@ -178,7 +159,7 @@ export class IntelligentExamService {
           userId,
           requirement,
           examType,
-          sectionQuestions.map((q) => q.id) // Wykluczamy już wybrane
+          sectionQuestions.map((q) => q.id)
         );
         sectionQuestions.push(...questions);
       }
@@ -204,15 +185,22 @@ export class IntelligentExamService {
       excludeIds
     );
 
+    // Jeśli brak kandydatów, zwróć pustą tablicę
+    if (candidates.length === 0) {
+      console.warn(
+        `Brak pytań dla wymagania: ${requirement.type} / ${requirement.category}`
+      );
+      return [];
+    }
+
     // Oblicz score dla każdego pytania
     const scoredCandidates = await this.scoreQuestions(
       candidates,
       userId,
-      requirement,
       examType
     );
 
-    // Sortuj według score (malejąco - wyższy score = lepszy wybór)
+    // Sortuj według score (malejąco)
     scoredCandidates.sort((a, b) => b.score - a.score);
 
     // Wybierz top N pytań
@@ -258,7 +246,7 @@ export class IntelligentExamService {
             createdAt: true,
           },
           orderBy: { createdAt: "desc" },
-          take: 50, // Ostatnie 50 podejść
+          take: 50,
         },
         usageHistory: {
           select: {
@@ -278,7 +266,6 @@ export class IntelligentExamService {
   private async scoreQuestions(
     candidates: any[],
     userId: string,
-    requirement: any,
     examType: string
   ) {
     const userProfile = await prisma.userProfile.findUnique({
@@ -288,18 +275,19 @@ export class IntelligentExamService {
 
     return candidates.map((question) => {
       let score = 100; // Bazowy score
+      let daysSinceUse = null; // Deklarujemy zmienną tutaj
 
       // 1. RECENCY SCORE - penalizuj ostatnio używane
       const userUsage = question.usageHistory.find(
         (u: any) => u.userId === userId
       );
       if (userUsage) {
-        const daysSinceUse = differenceInDays(new Date(), userUsage.lastUsedAt);
+        daysSinceUse = differenceInDays(new Date(), userUsage.lastUsedAt); // Przypisujemy wartość
 
         // Skalowanie penalizacji
         let recencyPenalty = 0;
         if (daysSinceUse < 7) {
-          recencyPenalty = 80; // Bardzo duża penalizacja dla użytych w ostatnim tygodniu
+          recencyPenalty = 80;
         } else if (daysSinceUse < 14) {
           recencyPenalty = 60;
         } else if (daysSinceUse < 30) {
@@ -329,8 +317,10 @@ export class IntelligentExamService {
       const userSubmissions = question.submissions.filter(
         (s: any) => s.userId === userId
       );
+      let avgUserScore = null;
+
       if (userSubmissions.length > 0) {
-        const avgUserScore =
+        avgUserScore =
           userSubmissions.reduce(
             (sum: number, s: any) => sum + (s.score || 0),
             0
@@ -345,10 +335,8 @@ export class IntelligentExamService {
         } else if (avgUserScore >= 0.8 && avgUserScore <= 0.9) {
           performanceBonus = 15;
         } else if (avgUserScore < 0.5) {
-          // Zbyt trudne - mała penalizacja
           performanceBonus = -10;
         } else if (avgUserScore > 0.9) {
-          // Zbyt łatwe - penalizacja
           performanceBonus = -20;
         }
 
@@ -372,7 +360,6 @@ export class IntelligentExamService {
 
       // 4. DIVERSITY BONUS - premiuj różnorodność tematyczną
       if (question.tags && question.tags.length > 0) {
-        // Losowy bonus za różnorodność (symulacja)
         const diversityBonus = Math.random() * 20;
         score += diversityBonus * this.DEFAULT_SCORING_FACTORS.diversityWeight;
       }
@@ -387,17 +374,11 @@ export class IntelligentExamService {
 
       return {
         question,
-        score: Math.max(0, score), // Nie pozwól na ujemny score
+        score: Math.max(0, score),
         factors: {
-          recency: userUsage ? daysSinceUse : null,
+          recency: daysSinceUse, // Używamy zmiennej
           usageCount: userUsage?.usageCount || 0,
-          avgUserScore:
-            userSubmissions.length > 0
-              ? userSubmissions.reduce(
-                  (sum: number, s: any) => sum + (s.score || 0),
-                  0
-                ) / userSubmissions.length
-              : null,
+          avgUserScore,
         },
       };
     });
@@ -408,7 +389,7 @@ export class IntelligentExamService {
    */
   async recordExamUsage(
     userId: string,
-    sessionId: string,
+    _sessionId: string, // Prefix _ oznacza, że parametr jest intencjonalnie nieużywany
     questionIds: string[]
   ) {
     const usageRecords = questionIds.map((exerciseId) => ({
