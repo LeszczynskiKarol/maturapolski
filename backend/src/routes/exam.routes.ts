@@ -4,7 +4,8 @@ import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 import { assessShortAnswerWithAI, assessEssayWithAI } from "../ai/aiService";
 import { differenceInMinutes } from "date-fns";
-import { ExerciseSelectionService } from "../services/exerciseSelectionService"; // DODAJ TEN IMPORT!
+import { IntelligentExamService } from "../services/intelligentExamService";
+import { ExerciseSelectionService } from "../services/exerciseSelectionService";
 
 export async function examRoutes(fastify: FastifyInstance) {
   // Auth middleware
@@ -16,7 +17,10 @@ export async function examRoutes(fastify: FastifyInstance) {
     }
   });
 
-  // Pobierz dostępne egzaminy
+  const intelligentExamService = new IntelligentExamService();
+  const exerciseSelectionService = new ExerciseSelectionService();
+
+  // STARA FUNKCJA - dla kompatybilności wstecznej
   fastify.get("/available", async (request, reply) => {
     const exams = await prisma.mockExam.findMany({
       where: { isActive: true },
@@ -43,7 +47,6 @@ export async function examRoutes(fastify: FastifyInstance) {
       orderBy: { createdAt: "desc" },
     });
 
-    // Oblicz max punktów dla każdego egzaminu
     const examsWithStats = exams.map((exam) => {
       const totalPoints = exam.sections.reduce(
         (sum, section) =>
@@ -68,39 +71,115 @@ export async function examRoutes(fastify: FastifyInstance) {
     return reply.send(examsWithStats);
   });
 
-  fastify.get("/session/:sessionId/results", async (request, reply) => {
-    const { sessionId } = request.params as { sessionId: string };
-    const userId = (request.user as any).userId;
-
-    const session = await prisma.examSession.findFirst({
-      where: {
-        id: sessionId,
-        userId,
-        status: "COMPLETED",
+  // NOWY ENDPOINT - typy egzaminów (dynamiczne)
+  fastify.get("/available-types", async (request, reply) => {
+    const examTypes = [
+      {
+        id: "matura-podstawowa-2025",
+        title: "Matura 2025 - Poziom Podstawowy",
+        type: "PODSTAWOWY",
+        duration: 240,
+        estimatedPoints: 55,
+        description:
+          "Egzamin na poziomie podstawowym z dynamicznym doborem pytań",
+        structure: {
+          sections: [
+            {
+              name: "Język polski w użyciu",
+              questionCount: 5,
+              estimatedPoints: 8,
+            },
+            {
+              name: "Test historycznoliteracki",
+              questionCount: 15,
+              estimatedPoints: 15,
+            },
+            {
+              name: "Wypracowanie",
+              questionCount: 1,
+              estimatedPoints: 35,
+            },
+          ],
+        },
       },
+      {
+        id: "matura-rozszerzona-2025",
+        title: "Matura 2025 - Poziom Rozszerzony",
+        type: "ROZSZERZONY",
+        duration: 300,
+        estimatedPoints: 70,
+        description:
+          "Egzamin na poziomie rozszerzonym z dynamicznym doborem pytań",
+        structure: {
+          sections: [
+            {
+              name: "Język polski w użyciu",
+              questionCount: 6,
+              estimatedPoints: 14,
+            },
+            {
+              name: "Test historycznoliteracki",
+              questionCount: 17,
+              estimatedPoints: 21,
+            },
+            {
+              name: "Wypracowanie",
+              questionCount: 1,
+              estimatedPoints: 40,
+            },
+          ],
+        },
+      },
+    ];
+
+    // Pobierz historię sesji użytkownika
+    const userId = (request.user as any).userId;
+    const userSessions = await prisma.examSession.findMany({
+      where: { userId },
+      select: {
+        id: true,
+        status: true,
+        percentScore: true,
+        startedAt: true, // Zmienione z createdAt
+        finishedAt: true,
+        assessment: true,
+      },
+      orderBy: { startedAt: "desc" }, // Zmienione z createdAt
     });
 
-    if (!session) {
-      return reply.code(404).send({ error: "Wyniki niedostępne" });
-    }
+    // Dodaj statystyki do każdego typu egzaminu
+    const typesWithStats = examTypes.map((examType) => {
+      const typeSessions = userSessions.filter((s) => {
+        const assessment = s.assessment as any;
+        return assessment?.examTypeId === examType.id;
+      });
 
-    return reply.send({
-      sessionId: session.id,
-      totalScore: session.totalScore,
-      maxScore: session.maxScore,
-      percentScore: session.percentScore,
-      grade: getGrade(session.percentScore || 0),
-      assessment: session.assessment,
-      summary: generateExamSummary(session.percentScore || 0),
+      const completedSessions = typeSessions.filter(
+        (s) => s.status === "COMPLETED"
+      );
+      const bestScore = completedSessions.reduce(
+        (max, s) => Math.max(max, s.percentScore || 0),
+        0
+      );
+
+      return {
+        ...examType,
+        attemptCount: typeSessions.length,
+        bestScore: bestScore > 0 ? bestScore : null,
+        hasActiveSession: typeSessions.some((s) => s.status === "IN_PROGRESS"),
+        lastActiveSessionId: typeSessions.find(
+          (s) => s.status === "IN_PROGRESS"
+        )?.id,
+      };
     });
+
+    return reply.send(typesWithStats);
   });
 
-  // Rozpocznij egzamin
+  // STARA FUNKCJA start egzaminu - dla kompatybilności
   fastify.post("/:examId/start", async (request, reply) => {
     const { examId } = request.params as { examId: string };
     const userId = (request.user as any).userId;
-
-    const selectionService = new ExerciseSelectionService();
 
     // Pobierz egzamin
     const exam = await prisma.mockExam.findUnique({
@@ -110,47 +189,13 @@ export async function examRoutes(fastify: FastifyInstance) {
           include: {
             questions: true,
           },
+          orderBy: { order: "asc" },
         },
       },
     });
 
     if (!exam) {
       return reply.code(404).send({ error: "Egzamin nie istnieje" });
-    }
-
-    // Jeśli egzamin nie ma przypisanych ćwiczeń, dobierz je dynamicznie
-    for (const section of exam.sections) {
-      for (const question of section.questions) {
-        if (!question.exerciseId) {
-          // Dobierz ćwiczenie dla tego pytania
-          const exercises = await selectionService.getExercisesForExam(
-            userId,
-            question.type === "ESSAY"
-              ? "WRITING"
-              : question.type === "SHORT_ANSWER"
-              ? "LANGUAGE_USE"
-              : "HISTORICAL_LITERARY",
-            question.type!,
-            1,
-            { min: 2, max: 5 } // Dostosuj trudność
-          );
-
-          if (exercises[0]) {
-            // Zaktualizuj pytanie z wybranym ćwiczeniem
-            await prisma.examQuestion.update({
-              where: { id: question.id },
-              data: { exerciseId: exercises[0].id },
-            });
-
-            // Zapisz użycie
-            await selectionService.recordExerciseUsage(
-              userId,
-              exercises[0].id,
-              "EXAM"
-            );
-          }
-        }
-      }
     }
 
     // Sprawdź czy nie ma aktywnej sesji
@@ -169,50 +214,224 @@ export async function examRoutes(fastify: FastifyInstance) {
       });
     }
 
-    if (!exam) {
-      return reply.code(404).send({ error: "Egzamin nie istnieje" });
+    // Sprawdź czy egzamin ma przypisane pytania
+    const hasQuestions = exam.sections.some((s) => s.questions.length > 0);
+
+    if (!hasQuestions) {
+      // Egzamin bez pytań - użyj dynamicznego doboru
+      const selectedQuestions =
+        await intelligentExamService.selectQuestionsForExam(
+          userId,
+          exam.type as "PODSTAWOWY" | "ROZSZERZONY"
+        );
+
+      let maxScore = 0;
+      const questionsMetadata: any[] = [];
+
+      // Tworzymy tymczasowe pytania dla sesji
+      for (const section of exam.sections) {
+        const sectionKey = mapSectionToKey(section.title);
+        const questions = selectedQuestions.get(sectionKey) || [];
+
+        for (let i = 0; i < questions.length; i++) {
+          const q = questions[i];
+
+          await prisma.examQuestion.create({
+            data: {
+              sectionId: section.id,
+              order: i + 1,
+              exerciseId: q.id,
+              type: q.type,
+              points: q.points,
+              question: q.question,
+              content: q.content || {},
+            },
+          });
+
+          maxScore += q.points;
+          questionsMetadata.push({
+            exerciseId: q.id,
+            section: sectionKey,
+            points: q.points,
+          });
+        }
+      }
+
+      // Zapisz użycie pytań
+      const allQuestionIds = Array.from(selectedQuestions.values())
+        .flat()
+        .map((q) => q.id);
+
+      await intelligentExamService.recordExamUsage(
+        userId,
+        examId, // Używamy examId tymczasowo
+        allQuestionIds
+      );
+
+      // Utwórz sesję
+      const session = await prisma.examSession.create({
+        data: {
+          userId,
+          examId,
+          status: "IN_PROGRESS",
+          maxScore,
+          assessment: {
+            intelligentSelection: true,
+            questionsMetadata,
+            selectionDate: new Date().toISOString(),
+          },
+        },
+      });
+
+      return reply.send({
+        sessionId: session.id,
+        exam: {
+          ...exam,
+          maxScore,
+          startedAt: session.startedAt,
+          isIntelligent: true,
+        },
+      });
+    } else {
+      // Standardowe pytania
+      const maxScore = exam.sections.reduce(
+        (sum, section) =>
+          sum + section.questions.reduce((sSum, q) => sSum + q.points, 0),
+        0
+      );
+
+      const session = await prisma.examSession.create({
+        data: {
+          userId,
+          examId,
+          status: "IN_PROGRESS",
+          maxScore,
+        },
+      });
+
+      return reply.send({
+        sessionId: session.id,
+        exam: {
+          ...exam,
+          maxScore,
+          startedAt: session.startedAt,
+          isIntelligent: false,
+        },
+      });
+    }
+  });
+
+  // NOWY ENDPOINT - start dynamicznego egzaminu
+  fastify.post("/start-dynamic/:examTypeId", async (request, reply) => {
+    const { examTypeId } = request.params as { examTypeId: string };
+    const userId = (request.user as any).userId;
+
+    // Sprawdź aktywne sesje
+    const activeSessions = await prisma.examSession.findMany({
+      where: {
+        userId,
+        status: "IN_PROGRESS",
+      },
+    });
+
+    const hasActiveOfType = activeSessions.some((s) => {
+      const assessment = s.assessment as any;
+      return assessment?.examTypeId === examTypeId;
+    });
+
+    if (hasActiveOfType) {
+      const activeSession = activeSessions.find((s) => {
+        const assessment = s.assessment as any;
+        return assessment?.examTypeId === examTypeId;
+      });
+
+      return reply.code(400).send({
+        error: "Masz już aktywną sesję tego typu egzaminu",
+        sessionId: activeSession?.id,
+      });
     }
 
-    // Oblicz max punktów
-    const maxScore = exam.sections.reduce(
-      (sum, section) =>
-        sum + section.questions.reduce((sSum, q) => sSum + q.points, 0),
-      0
-    );
+    // Określ typ egzaminu
+    const examType = examTypeId.includes("rozszerzon")
+      ? "ROZSZERZONY"
+      : "PODSTAWOWY";
 
-    // Utwórz nową sesję
+    // Pobierz dynamicznie dobrane pytania
+    const selectedQuestions =
+      await intelligentExamService.selectQuestionsForExam(
+        userId,
+        examType as "PODSTAWOWY" | "ROZSZERZONY"
+      );
+
+    let maxScore = 0;
+    const questionsMetadata: any[] = [];
+
+    selectedQuestions.forEach((questions, sectionKey) => {
+      questions.forEach((q) => {
+        maxScore += q.points;
+        questionsMetadata.push({
+          exerciseId: q.id,
+          section: sectionKey,
+          points: q.points,
+          type: q.type,
+        });
+      });
+    });
+
+    // Utwórz fałszywy egzamin lub użyj istniejącego szablonu
+    let examId = "DYNAMIC";
+    const templateExam = await prisma.mockExam.findFirst({
+      where: {
+        title: { contains: "Dynamiczny" },
+        type: examType as any,
+      },
+    });
+
+    if (templateExam) {
+      examId = templateExam.id;
+    }
+
+    // Utwórz sesję
     const session = await prisma.examSession.create({
       data: {
         userId,
         examId,
         status: "IN_PROGRESS",
         maxScore,
+        assessment: {
+          examTypeId,
+          examType,
+          isDynamic: true,
+          questionsMetadata,
+          selectionDate: new Date().toISOString(),
+        },
       },
     });
 
-    if (exam.title.includes("Maturalny")) {
-      return reply.send({
-        sessionId: session.id,
-        redirectTo: `/exam/mature/${session.id}`, // NOWY URL!
-        exam: {
-          ...exam,
-          maxScore,
-          startedAt: session.startedAt,
-        },
-      });
-    }
+    // Zapisz użycie pytań
+    const allQuestionIds = Array.from(selectedQuestions.values())
+      .flat()
+      .map((q) => q.id);
+
+    await intelligentExamService.recordExamUsage(
+      userId,
+      session.id,
+      allQuestionIds
+    );
 
     return reply.send({
+      success: true,
       sessionId: session.id,
-      exam: {
-        ...exam,
-        maxScore,
-        startedAt: session.startedAt,
-      },
+      examType,
+      examTypeId,
+      duration: examType === "PODSTAWOWY" ? 240 : 300,
+      maxScore,
+      questionsCount: allQuestionIds.length,
+      message: "Egzamin przygotowany z unikalnym zestawem pytań",
     });
   });
 
-  // Pobierz aktywną sesję
+  // Pobierz sesję egzaminu
   fastify.get("/session/:sessionId", async (request, reply) => {
     const { sessionId } = request.params as { sessionId: string };
     const userId = (request.user as any).userId;
@@ -246,7 +465,6 @@ export async function examRoutes(fastify: FastifyInstance) {
       return reply.code(404).send({ error: "Sesja nie istnieje" });
     }
 
-    // Oblicz pozostały czas
     const elapsedMinutes = differenceInMinutes(new Date(), session.startedAt);
     const remainingMinutes = Math.max(
       0,
@@ -261,10 +479,16 @@ export async function examRoutes(fastify: FastifyInstance) {
       });
     }
 
+    // Sprawdź czy to sesja dynamiczna
+    const assessment = session.assessment as any;
+    const isIntelligent =
+      assessment?.intelligentSelection || assessment?.isDynamic || false;
+
     return reply.send({
       ...session,
       elapsedMinutes,
       remainingMinutes,
+      isIntelligent,
     });
   });
 
@@ -322,7 +546,7 @@ export async function examRoutes(fastify: FastifyInstance) {
     return reply.send({ success: true, answerId: examAnswer.id });
   });
 
-  // Zakończ egzamin i oceń
+  // Zakończ egzamin
   fastify.post("/session/:sessionId/finish", async (request, reply) => {
     const { sessionId } = request.params as { sessionId: string };
     const userId = (request.user as any).userId;
@@ -375,14 +599,10 @@ export async function examRoutes(fastify: FastifyInstance) {
         exercise.type === "CLOSED_SINGLE" ||
         exercise.type === "CLOSED_MULTIPLE"
       ) {
-        // Pobierz poprawną odpowiedź z właściwego miejsca
         let correctAnswer: any = null;
-
         if (question.exercise) {
-          // Jeśli jest powiązane ćwiczenie
           correctAnswer = question.exercise.correctAnswer;
         } else if (question.content) {
-          // Jeśli jest własna treść pytania
           const content = question.content as any;
           correctAnswer = content.correctAnswer;
         }
@@ -394,12 +614,10 @@ export async function examRoutes(fastify: FastifyInstance) {
           feedback = { correct: isCorrect };
         }
       } else if (exercise.type === "SHORT_ANSWER") {
-        // Ocena AI - konwertuj answer na string jeśli trzeba
         const answerText =
           typeof answer.answer === "string"
             ? answer.answer
             : JSON.stringify(answer.answer);
-
         const questionText =
           question.exercise?.question ||
           question.question ||
@@ -414,12 +632,10 @@ export async function examRoutes(fastify: FastifyInstance) {
         score = aiResult.score;
         feedback = aiResult;
       } else if (exercise.type === "ESSAY") {
-        // Ocena wypracowania przez AI
         const answerText =
           typeof answer.answer === "string"
             ? answer.answer
             : JSON.stringify(answer.answer);
-
         const questionText =
           question.exercise?.question ||
           question.question ||
@@ -448,13 +664,12 @@ export async function examRoutes(fastify: FastifyInstance) {
       });
     }
 
-    // Oblicz procent
-    const maxScore = session.exam.sections.reduce(
-      (sum, section) =>
-        sum + section.questions.reduce((sSum, q) => sSum + q.points, 0),
-      0
-    );
+    // Oblicz procent - zabezpieczenie przed null
+    const maxScore = session.maxScore || 100; // Domyślnie 100 jeśli null
     const percentScore = Math.round((totalScore / maxScore) * 100);
+
+    // Pobierz obecny assessment i rozszerz go
+    const currentAssessment = (session.assessment as any) || {};
 
     // Zaktualizuj sesję
     const finishedSession = await prisma.examSession.update({
@@ -466,6 +681,7 @@ export async function examRoutes(fastify: FastifyInstance) {
         totalScore,
         percentScore,
         assessment: {
+          ...currentAssessment,
           details: assessmentDetails,
           summary: generateExamSummary(percentScore),
         },
@@ -488,232 +704,6 @@ export async function examRoutes(fastify: FastifyInstance) {
       grade: getGrade(percentScore),
       assessment: assessmentDetails,
       summary: generateExamSummary(percentScore),
-    });
-  });
-
-  // ENDPOINT DO UTWORZENIA EGZAMINU MATURALNEGO
-  fastify.post("/create-mature-exam", async (request, reply) => {
-    const userId = (request.user as any).userId;
-
-    // Sprawdź czy admin
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (user?.role !== "ADMIN") {
-      return reply
-        .code(403)
-        .send({ error: "Tylko admin może tworzyć egzaminy" });
-    }
-
-    // Sprawdź czy już istnieje
-    const existing = await prisma.mockExam.findFirst({
-      where: { title: { contains: "Egzamin Maturalny 2025" } },
-    });
-
-    if (existing) {
-      return reply.send({
-        message: "Egzamin już istnieje",
-        examId: existing.id,
-      });
-    }
-
-    // UTWÓRZ EGZAMIN MATURALNY
-    const exam = await prisma.mockExam.create({
-      data: {
-        title: "Egzamin Maturalny 2025 - Język Polski (poziom podstawowy)",
-        year: 2025,
-        type: "PODSTAWOWY",
-        duration: 240,
-        isActive: true,
-        sections: {
-          create: [
-            {
-              order: 1,
-              title: "Arkusz 1 - Część 1: Język polski w użyciu",
-              instruction:
-                "Przeczytaj uważnie teksty, a następnie wykonaj zadania.",
-              questions: {
-                create: [
-                  {
-                    order: 1,
-                    type: "SHORT_ANSWER",
-                    question:
-                      "Na podstawie tekstu Carla Sagana wyjaśnij sens zdania: „Rozpoczęliśmy wędrówkę pośród «wędrowców",
-                    points: 1,
-                    content: {
-                      taskType: "WYJASNIENIE_SENSU",
-                      tekstZrodlowy: {
-                        autor: "Carl Sagan",
-                        tytul: "Błękitna kropka",
-                        fragment: `Nasi dalecy przodkowie, gdy obserwowali „gwiazdy", zauważyli, że pięć z nich
-zachowuje się odmiennie niż pozostałe. W odróżnieniu od tak zwanych gwiazd stałych,
-wschodzących i zachodzących w niewzruszonym porządku, ruch tamtej piątki był dziwnie
-skomplikowany. Z upływem miesięcy „gwiazdy" wędrowały powoli wśród innych, niekiedy
-nawet zataczały pętle. Dzisiaj te ciała nazywamy planetami, od greckiego słowa planetes,
-które oznacza „wędrujący". Rozpoczęliśmy wędrówkę pośród „wędrowców".`,
-                      },
-                    },
-                  },
-                  {
-                    order: 2,
-                    type: "SHORT_ANSWER",
-                    question:
-                      "Rozstrzygnij, czy w obu tekstach jest mowa o tej samej przyczynie zainteresowania kosmosem.",
-                    points: 2,
-                    content: {
-                      taskType: "ROZSTRZYGNIECIE",
-                      tekstyZrodlowe: [
-                        {
-                          autor: "Carl Sagan",
-                          fragment:
-                            "Życie szuka innego życia. Nikogo na Ziemi nie stać na podróż na Marsa.",
-                        },
-                        {
-                          autor: "Marta Trepczyńska",
-                          fragment:
-                            "Czy ludzie mogą żyć na innej planecie? NASA bada możliwość kolonizacji.",
-                        },
-                      ],
-                    },
-                  },
-                  {
-                    order: 3,
-                    type: "CLOSED_MULTIPLE",
-                    question:
-                      "Oceń prawdziwość stwierdzeń odnoszących się do tekstów.",
-                    points: 1,
-                    content: {
-                      taskType: "PRAWDA_FALSZ",
-                      stwierdzenia: [
-                        {
-                          tekst:
-                            "Czasowniki w 1. os. lm. zmniejszają dystans między autorem a czytelnikami.",
-                          poprawna: true,
-                        },
-                        {
-                          tekst:
-                            "Przymiotnik 'ziemskie' w 'dwa ziemskie tygodnie' jest wartościujący.",
-                          poprawna: false,
-                        },
-                      ],
-                    },
-                  },
-                  {
-                    order: 4,
-                    type: "SYNTHESIS_NOTE",
-                    question:
-                      "Napisz notatkę syntetyzującą: odkrywanie kosmosu jako potrzeba człowieka (60-90 wyrazów).",
-                    points: 4,
-                    content: {
-                      taskType: "NOTATKA_SYNTETYZUJACA",
-                      wymagania: {
-                        minSlow: 60,
-                        maxSlow: 90,
-                      },
-                    },
-                  },
-                ],
-              },
-            },
-            {
-              order: 2,
-              title: "Arkusz 1 - Część 2: Test historycznoliteracki",
-              instruction: "Wykonaj zadania. Odpowiadaj własnymi słowami.",
-              questions: {
-                create: [
-                  {
-                    order: 5,
-                    type: "CLOSED_MULTIPLE",
-                    question:
-                      "Do których postaci mitologicznych nawiązują fragmenty?",
-                    points: 1,
-                    content: {
-                      taskType: "PRZYPORZADKOWANIE",
-                      opcje: ["Herakles", "Charon", "Syzyf", "Ikar"],
-                      fragmenty: [
-                        {
-                          id: "A",
-                          tekst:
-                            "Jest pracowity, silny i wytrwały,\nLwia skóra nagie barki mu pokrywa",
-                          autor: "Adam Asnyk",
-                          poprawna: "Herakles",
-                        },
-                        {
-                          id: "B",
-                          tekst:
-                            "Był taki młody nie rozumiał że skrzydła są tylko przenośnią",
-                          autor: "Zbigniew Herbert",
-                          poprawna: "Ikar",
-                        },
-                      ],
-                    },
-                  },
-                  {
-                    order: 6,
-                    type: "SHORT_ANSWER",
-                    question:
-                      "Czym różni się postawa życiowa w 'Rozmowie Mistrza Polikarpa' od 'Wiosny' Morsztyna?",
-                    points: 1,
-                    content: {
-                      taskType: "ANALIZA_FRAGMENTU",
-                      fragmenty: [
-                        {
-                          tytul: "Rozmowa Mistrza Polikarpa ze Śmiercią",
-                          tekst:
-                            "Chowali tu żywot swoj ciasno,\nAlić jich sirca nad słońce jasno",
-                        },
-                        {
-                          tytul: "Wiosna",
-                          autor: "Jan Andrzej Morsztyn",
-                          tekst: "Spieszmy się, spieszmy, niż nas czas nadgoni",
-                        },
-                      ],
-                    },
-                  },
-                ],
-              },
-            },
-            {
-              order: 3,
-              title: "Arkusz 2 - Wypracowanie",
-              instruction:
-                "Wybierz jeden temat i napisz wypracowanie (min. 400 słów).",
-              questions: {
-                create: [
-                  {
-                    order: 7,
-                    type: "ESSAY",
-                    question: "Wybierz temat wypracowania",
-                    points: 35,
-                    content: {
-                      tematy: [
-                        {
-                          numer: 1,
-                          tytul:
-                            "Źródło nadziei w czasach trudnych dla człowieka",
-                          polecenie:
-                            "Odwołaj się do lektury obowiązkowej i innego utworu.",
-                        },
-                        {
-                          numer: 2,
-                          tytul:
-                            "Jak błędna ocena sytuacji wpływa na życie człowieka?",
-                          polecenie:
-                            "Odwołaj się do lektury obowiązkowej i innego utworu.",
-                        },
-                      ],
-                    },
-                  },
-                ],
-              },
-            },
-          ],
-        },
-      },
-    });
-
-    return reply.send({
-      success: true,
-      examId: exam.id,
-      message: "Egzamin maturalny utworzony!",
     });
   });
 
@@ -741,9 +731,24 @@ które oznacza „wędrujący". Rozpoczęliśmy wędrówkę pośród „wędrowc
 
     return reply.send(sessions);
   });
+
+  // Pobierz statystyki użytkownika
+  fastify.get("/user-stats", async (request, reply) => {
+    const userId = (request.user as any).userId;
+    const stats = await intelligentExamService.getUserExerciseStats(userId);
+    return reply.send(stats);
+  });
 }
 
 // Funkcje pomocnicze
+function mapSectionToKey(sectionTitle: string): string {
+  if (sectionTitle.includes("Język polski w użyciu")) return "arkusz1_czesc1";
+  if (sectionTitle.includes("Test historycznoliteracki"))
+    return "arkusz1_czesc2";
+  if (sectionTitle.includes("Wypracowanie")) return "arkusz2";
+  return "arkusz1_czesc1";
+}
+
 function getGrade(percentScore: number): string {
   if (percentScore >= 90) return "Celujący (6)";
   if (percentScore >= 75) return "Bardzo dobry (5)";

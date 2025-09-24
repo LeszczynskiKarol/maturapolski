@@ -1,4 +1,5 @@
 // backend/src/routes/examAdmin.routes.ts
+// ========================================
 
 import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
@@ -19,13 +20,18 @@ export async function examAdminRoutes(fastify: FastifyInstance) {
     }
   });
 
-  // Lista wszystkich egzaminów
+  // ZMIENIONE - Pokazuj tylko struktury dynamiczne
   fastify.get("/", async (request, reply) => {
     const exams = await prisma.mockExam.findMany({
       include: {
         sections: {
-          include: {
-            questions: true,
+          select: {
+            id: true,
+            title: true,
+            order: true,
+            _count: {
+              select: { questions: true },
+            },
           },
         },
         _count: {
@@ -35,34 +41,27 @@ export async function examAdminRoutes(fastify: FastifyInstance) {
       orderBy: { createdAt: "desc" },
     });
 
-    return reply.send(exams);
-  });
+    // Podziel na dynamiczne i stałe
+    const categorizedExams = exams.map((exam) => {
+      const isDynamic = exam.sections.every((s) => s._count.questions === 0);
+      const totalQuestions = exam.sections.reduce(
+        (sum, s) => sum + s._count.questions,
+        0
+      );
 
-  // Szczegóły egzaminu
-  fastify.get("/:id", async (request, reply) => {
-    const { id } = request.params as { id: string };
-
-    const exam = await prisma.mockExam.findUnique({
-      where: { id },
-      include: {
-        sections: {
-          include: {
-            questions: true,
-          },
-          orderBy: { order: "asc" },
-        },
-      },
+      return {
+        ...exam,
+        isDynamic,
+        totalQuestions,
+        examType: isDynamic ? "DYNAMICZNY" : "STATYCZNY",
+      };
     });
 
-    if (!exam) {
-      return reply.code(404).send({ error: "Egzamin nie znaleziony" });
-    }
-
-    return reply.send(exam);
+    return reply.send(categorizedExams);
   });
 
-  // Utwórz nowy egzamin
-  fastify.post("/", async (request, reply) => {
+  // NOWY ENDPOINT - Utwórz strukturę dynamiczną
+  fastify.post("/structure", async (request, reply) => {
     const data = request.body as any;
 
     const exam = await prisma.mockExam.create({
@@ -71,169 +70,37 @@ export async function examAdminRoutes(fastify: FastifyInstance) {
         year: data.year,
         type: data.type,
         duration: data.duration,
-        isActive: data.isActive ?? true,
+        isActive: data.isActive ?? false,
+        // Tworzymy sekcje BEZ pytań
         sections: {
           create: data.sections?.map((section: any, index: number) => ({
             order: index + 1,
             title: section.title,
             instruction: section.instruction,
-            questions: {
-              create: section.questions?.map((q: any, qIndex: number) => ({
-                order: qIndex + 1,
-                type: q.type,
-                question: q.question,
-                points: q.points,
-                content: q.content || {},
-              })),
-            },
+            // Bez questions!
           })),
         },
       },
     });
 
-    return reply.send(exam);
+    return reply.send({
+      success: true,
+      examId: exam.id,
+      message: "Struktura dynamiczna utworzona",
+    });
   });
 
-  // Edytuj egzamin
-  fastify.put("/:id", async (request, reply) => {
-    const { id } = request.params as { id: string };
+  // STARY ENDPOINT - dla kompatybilności (egzaminy ze stałymi pytaniami)
+  fastify.post("/", async (request, reply) => {
     const data = request.body as any;
 
-    // Najpierw usuń stare sekcje
-    await prisma.examSection.deleteMany({
-      where: { examId: id },
+    // Ten endpoint może nadal tworzyć egzaminy ze stałymi pytaniami
+    // ale powinien być oznaczony jako deprecated
+
+    return reply.code(400).send({
+      error:
+        "Użyj /structure dla nowych egzaminów dynamicznych lub /admin/questions dla zarządzania pytaniami",
+      deprecated: true,
     });
-
-    // Zaktualizuj egzamin z nowymi sekcjami
-    const exam = await prisma.mockExam.update({
-      where: { id },
-      data: {
-        title: data.title,
-        year: data.year,
-        type: data.type,
-        duration: data.duration,
-        isActive: data.isActive,
-        sections: {
-          create: data.sections?.map((section: any, index: number) => ({
-            order: index + 1,
-            title: section.title,
-            instruction: section.instruction,
-            questions: {
-              create: section.questions?.map((q: any, qIndex: number) => ({
-                order: qIndex + 1,
-                type: q.type,
-                question: q.question,
-                points: q.points,
-                content: q.content || {},
-              })),
-            },
-          })),
-        },
-      },
-      include: {
-        sections: {
-          include: {
-            questions: true,
-          },
-        },
-      },
-    });
-
-    return reply.send(exam);
-  });
-
-  // Usuń egzamin
-  fastify.delete("/:id", async (request, reply) => {
-    const { id } = request.params as { id: string };
-
-    // Sprawdź czy nie ma aktywnych sesji
-    const activeSessions = await prisma.examSession.count({
-      where: {
-        examId: id,
-        status: "IN_PROGRESS",
-      },
-    });
-
-    if (activeSessions > 0) {
-      return reply.code(400).send({
-        error: "Nie można usunąć egzaminu z aktywnymi sesjami",
-      });
-    }
-
-    await prisma.mockExam.delete({
-      where: { id },
-    });
-
-    return reply.send({ success: true });
-  });
-
-  // Duplikuj egzamin
-  fastify.post("/:id/duplicate", async (request, reply) => {
-    const { id } = request.params as { id: string };
-
-    const original = await prisma.mockExam.findUnique({
-      where: { id },
-      include: {
-        sections: {
-          include: {
-            questions: true,
-          },
-        },
-      },
-    });
-
-    if (!original) {
-      return reply.code(404).send({ error: "Egzamin nie znaleziony" });
-    }
-
-    const duplicate = await prisma.mockExam.create({
-      data: {
-        title: `${original.title} (kopia)`,
-        year: original.year,
-        type: original.type,
-        duration: original.duration,
-        isActive: false,
-        sections: {
-          create: original.sections.map((section) => ({
-            order: section.order,
-            title: section.title,
-            instruction: section.instruction,
-            questions: {
-              create: section.questions.map((q) => ({
-                order: q.order,
-                type: q.type,
-                question: q.question,
-                points: q.points,
-                content: q.content,
-              })),
-            },
-          })),
-        },
-      },
-    });
-
-    return reply.send(duplicate);
-  });
-
-  // Aktywuj/dezaktywuj egzamin
-  fastify.patch("/:id/toggle", async (request, reply) => {
-    const { id } = request.params as { id: string };
-
-    const exam = await prisma.mockExam.findUnique({
-      where: { id },
-    });
-
-    if (!exam) {
-      return reply.code(404).send({ error: "Egzamin nie znaleziony" });
-    }
-
-    const updated = await prisma.mockExam.update({
-      where: { id },
-      data: {
-        isActive: !exam.isActive,
-      },
-    });
-
-    return reply.send(updated);
   });
 }
