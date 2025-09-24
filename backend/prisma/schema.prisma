@@ -72,6 +72,22 @@ model Exercise {
   usageHistory  ExerciseUsage[]
 }
 
+model TextSource {
+  id        String   @id @default(cuid())
+  examId    String
+  exam      MockExam @relation(fields: [examId], references: [id])
+  
+  autor     String
+  tytul     String
+  fragment  String   @db.Text
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([examId])
+}
+
+
 model Submission {
   id          String         @id @default(cuid())
   userId      String
@@ -430,6 +446,7 @@ model MockExam {
   
   sections      ExamSection[]
   sessions      ExamSession[]
+  textSources   TextSource[]
   
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
