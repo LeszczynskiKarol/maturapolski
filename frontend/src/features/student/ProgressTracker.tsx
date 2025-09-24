@@ -42,6 +42,10 @@ export const ProgressTracker: React.FC = () => {
     queryKey: ["exercise-history"],
     queryFn: () => api.get("/api/student/history").then((r) => r.data),
   });
+  console.log("History raw data:", history);
+  console.log("History status:", {
+    data: history,
+  });
 
   const COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"];
 
@@ -189,9 +193,15 @@ export const ProgressTracker: React.FC = () => {
       <div className="bg-white rounded-xl shadow-sm p-6">
         <h3 className="text-lg font-semibold mb-4">Ostatnia aktywność</h3>
         <div className="space-y-3">
-          {history?.slice(0, 10).map((item: any) => (
-            <ActivityItem key={item.id} activity={item} />
-          ))}
+          {history?.exercises && history.exercises.length > 0 ? (
+            history.exercises
+              .slice(0, 10)
+              .map((item: any) => (
+                <ActivityItem key={item.id} activity={item} />
+              ))
+          ) : (
+            <p className="text-gray-500">Brak aktywności do wyświetlenia</p>
+          )}
         </div>
       </div>
     </div>
@@ -235,28 +245,36 @@ const StatCard: React.FC<{
   );
 };
 
-const ActivityItem: React.FC<{ activity: any }> = ({ activity }) => (
-  <div className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
-    <div className="flex items-center gap-3">
-      <div
-        className={`p-2 rounded-lg ${
-          activity.score >= 80
-            ? "bg-green-100 text-green-600"
-            : activity.score >= 60
-            ? "bg-yellow-100 text-yellow-600"
-            : "bg-red-100 text-red-600"
-        }`}
-      >
-        <BookOpen className="w-4 h-4" />
+const ActivityItem: React.FC<{ activity: any }> = ({ activity }) => {
+  const percentage =
+    activity.percentage || (activity.score / activity.maxPoints) * 100;
+  const timeAgo = new Date(activity.date).toLocaleDateString("pl-PL");
+
+  return (
+    <div className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
+      <div className="flex items-center gap-3">
+        <div
+          className={`p-2 rounded-lg ${
+            percentage >= 80
+              ? "bg-green-100 text-green-600"
+              : percentage >= 60
+              ? "bg-yellow-100 text-yellow-600"
+              : "bg-red-100 text-red-600"
+          }`}
+        >
+          <BookOpen className="w-4 h-4" />
+        </div>
+        <div>
+          <p className="font-medium">
+            {activity.question?.substring(0, 50)}...
+          </p>
+          <p className="text-sm text-gray-600">{activity.category}</p>
+        </div>
       </div>
-      <div>
-        <p className="font-medium">{activity.exerciseName}</p>
-        <p className="text-sm text-gray-600">{activity.category}</p>
+      <div className="text-right">
+        <p className="font-semibold">{percentage.toFixed(0)}%</p>
+        <p className="text-xs text-gray-500">{timeAgo}</p>
       </div>
     </div>
-    <div className="text-right">
-      <p className="font-semibold">{activity.score}%</p>
-      <p className="text-xs text-gray-500">{activity.timeAgo}</p>
-    </div>
-  </div>
-);
+  );
+};

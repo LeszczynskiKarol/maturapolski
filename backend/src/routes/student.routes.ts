@@ -93,102 +93,232 @@ export async function studentRoutes(fastify: FastifyInstance) {
     try {
       const userId = (request.user as any).userId;
 
-      // Category progress - using regular Prisma queries instead of raw SQL
+      // Pobierz profil użytkownika
+      const userProfile = await prisma.userProfile.findUnique({
+        where: { userId },
+      });
+
+      // 1. STATYSTYKI OGÓLNE
+      const [
+        totalExercises,
+        completedExercises,
+        examSessions,
+        learningSessions,
+      ] = await Promise.all([
+        prisma.exercise.count(),
+        prisma.submission.count({ where: { userId } }),
+        prisma.examSession.count({
+          where: { userId, status: "COMPLETED" },
+        }),
+        prisma.learningSession.count({
+          where: { userId, status: "COMPLETED" },
+        }),
+      ]);
+
+      // 2. DANE DO WYKRESU POSTĘPU W CZASIE (ostatnie 30 dni)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      const dailyProgress = await prisma.dailyProgress.findMany({
+        where: {
+          userId,
+          date: { gte: thirtyDaysAgo },
+        },
+        orderBy: { date: "asc" },
+      });
+
+      const progressData = dailyProgress.map((day) => ({
+        date: day.date.toISOString().split("T")[0],
+        score: Math.round(day.averageScore || 0),
+        exercises: day.exercisesCount,
+      }));
+
+      // 3. WYDAJNOŚĆ WG KATEGORII (dla wykresu radarowego)
       const categories = ["LANGUAGE_USE", "HISTORICAL_LITERARY", "WRITING"];
-      const categoryProgress = await Promise.all(
+      const categoryPerformance = await Promise.all(
         categories.map(async (category) => {
-          const [totalCount, submissionData] = await Promise.all([
-            prisma.exercise.count({
-              where: { category: category as any },
-            }),
+          const submissions = await prisma.submission.findMany({
+            where: {
+              userId,
+              exercise: { category: category as any },
+            },
+            select: { score: true },
+          });
 
-            prisma.submission.findMany({
-              where: {
-                userId,
-                exercise: { category: category as any },
-              },
-              include: { exercise: true },
-            }),
-          ]);
-
-          const completedExercises = new Set(
-            submissionData.map((s) => s.exerciseId)
-          ).size;
           const avgScore =
-            submissionData.length > 0
-              ? submissionData.reduce((sum, s) => sum + (s.score || 0), 0) /
-                submissionData.length
+            submissions.length > 0
+              ? submissions.reduce((sum, s) => sum + (s.score || 0), 0) /
+                submissions.length
               : 0;
-          const lastAttempt =
-            submissionData.length > 0
-              ? submissionData.sort(
-                  (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-                )[0].createdAt
-              : null;
+
+          // Pobierz średnią globalną dla porównania
+          const globalAvg = await prisma.submission.aggregate({
+            where: {
+              exercise: { category: category as any },
+            },
+            _avg: { score: true },
+          });
 
           return {
-            category,
-            total_exercises: totalCount,
-            completed_exercises: completedExercises,
-            avg_score: Math.round(avgScore * 100) / 100,
-            last_attempt: lastAttempt,
+            category:
+              category === "LANGUAGE_USE"
+                ? "Język w użyciu"
+                : category === "HISTORICAL_LITERARY"
+                ? "Test historycznoliteracki"
+                : "Pisanie",
+            score: Math.round(avgScore * 20), // Przekształć na skalę 0-100
+            average: Math.round((globalAvg._avg.score || 0) * 20),
           };
         })
       );
 
-      // Recent activity (last 30 days) - simplified
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      // 4. STATYSTYKI TRUDNOŚCI
+      const difficultyStats = await Promise.all(
+        [1, 2, 3, 4, 5].map(async (difficulty) => {
+          const submissions = await prisma.submission.findMany({
+            where: {
+              userId,
+              exercise: { difficulty },
+            },
+          });
 
+          const completed = submissions.filter(
+            (s) => (s.score || 0) > 0
+          ).length;
+          const failed = submissions.filter((s) => s.score === 0).length;
+
+          return {
+            difficulty: `Poziom ${difficulty}`,
+            completed,
+            failed,
+          };
+        })
+      );
+
+      // 5. ROZKŁAD CZASU NA KATEGORIE
+      const timeByCategory = await Promise.all(
+        categories.map(async (category) => {
+          const submissions = await prisma.submission.findMany({
+            where: {
+              userId,
+              exercise: { category: category as any },
+            },
+            select: { timeSpent: true },
+          });
+
+          const totalTime = submissions.reduce(
+            (sum, s) => sum + (s.timeSpent || 0),
+            0
+          );
+
+          return {
+            name:
+              category === "LANGUAGE_USE"
+                ? "Język w użyciu"
+                : category === "HISTORICAL_LITERARY"
+                ? "Test historycznoliteracki"
+                : "Pisanie",
+            value: Math.round(totalTime / 60), // minuty
+          };
+        })
+      );
+
+      // 6. HISTORIA OSTATNICH AKTYWNOŚCI
       const recentSubmissions = await prisma.submission.findMany({
-        where: {
-          userId,
-          createdAt: { gte: thirtyDaysAgo },
+        where: { userId },
+        include: {
+          exercise: {
+            select: {
+              question: true,
+              category: true,
+              points: true,
+            },
+          },
         },
         orderBy: { createdAt: "desc" },
+        take: 10,
       });
 
-      // Group by date
-      const activityByDate = new Map();
-      recentSubmissions.forEach((submission) => {
-        const date = submission.createdAt.toISOString().split("T")[0];
-        if (!activityByDate.has(date)) {
-          activityByDate.set(date, { exercises_completed: 0, scores: [] });
-        }
-        const dayData = activityByDate.get(date);
-        dayData.exercises_completed++;
-        if (submission.score !== null) {
-          dayData.scores.push(submission.score);
-        }
+      const history = recentSubmissions.map((sub) => ({
+        id: sub.id,
+        exerciseName: sub.exercise.question.substring(0, 50) + "...",
+        category: sub.exercise.category,
+        score: Math.round(((sub.score || 0) / sub.exercise.points) * 100),
+        timeAgo: getTimeAgo(sub.createdAt),
+      }));
+
+      // 7. OBLICZ ŚREDNI WYNIK
+      const allScores = await prisma.submission.findMany({
+        where: {
+          userId,
+          score: { not: null },
+        },
+        select: { score: true },
+        orderBy: { createdAt: "desc" },
+        take: 100,
       });
 
-      const recentActivity = Array.from(activityByDate.entries())
-        .map(([date, data]) => ({
-          date,
-          exercises_completed: data.exercises_completed,
-          avg_score:
-            data.scores.length > 0
-              ? Math.round(
-                  (data.scores.reduce(
-                    (sum: number, score: number) => sum + score,
-                    0
-                  ) /
-                    data.scores.length) *
-                    100
-                ) / 100
-              : 0,
-        }))
-        .sort((a, b) => b.date.localeCompare(a.date));
+      const averageScore =
+        allScores.length > 0
+          ? Math.round(
+              allScores.reduce((sum, s) => sum + (s.score || 0), 0) /
+                allScores.length
+            )
+          : 0;
 
-      const response = {
-        categoryProgress: convertBigIntToNumber(categoryProgress),
-        recentActivity: convertBigIntToNumber(recentActivity),
-      };
+      // Sprawdź zmianę wyniku
+      const lastWeekScores = await prisma.submission.findMany({
+        where: {
+          userId,
+          createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+          score: { not: null },
+        },
+        select: { score: true },
+      });
 
-      return reply.send(response);
+      const lastWeekAvg =
+        lastWeekScores.length > 0
+          ? lastWeekScores.reduce((sum, s) => sum + (s.score || 0), 0) /
+            lastWeekScores.length
+          : 0;
+
+      const scoreChange = averageScore - lastWeekAvg;
+
+      // 8. OBLICZ CAŁKOWITY CZAS NAUKI (w tym miesiącu)
+      const thisMonth = new Date();
+      thisMonth.setDate(1);
+      thisMonth.setHours(0, 0, 0, 0);
+
+      const monthlyTime = await prisma.dailyProgress.aggregate({
+        where: {
+          userId,
+          date: { gte: thisMonth },
+        },
+        _sum: { studyTime: true },
+      });
+
+      return reply.send({
+        // Podstawowe statystyki
+        averageScore,
+        scoreChange: Math.round(scoreChange),
+        totalPoints: userProfile?.totalPoints || 0,
+        level: userProfile?.level || 1,
+        completedExercises,
+        totalExercises,
+        totalTime: monthlyTime._sum.studyTime || 0,
+
+        // Dane do wykresów
+        progressData,
+        categoryPerformance,
+        difficultyStats,
+        timeDistribution: timeByCategory,
+
+        // Historia
+        history,
+      });
     } catch (error) {
-      console.error("Error getting student progress:", error);
-      return reply.code(500).send({ error: "Failed to get student progress" });
+      console.error("Error getting progress:", error);
+      return reply.code(500).send({ error: "Failed to get progress data" });
     }
   });
 
@@ -231,4 +361,92 @@ export async function studentRoutes(fastify: FastifyInstance) {
       return reply.code(500).send({ error: "Failed to update notification" });
     }
   });
+
+  // Get detailed history
+  fastify.get("/history", async (request, reply) => {
+    const userId = (request.user as any).userId;
+    const { limit = 50, offset = 0 } = request.query as any;
+
+    const [submissions, exams, sessions] = await Promise.all([
+      // Submissions z exercises
+      prisma.submission.findMany({
+        where: { userId },
+        include: {
+          exercise: {
+            select: {
+              question: true,
+              category: true,
+              type: true,
+              difficulty: true,
+              points: true,
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+        take: limit,
+        skip: offset,
+      }),
+
+      // Egzaminy
+      prisma.examSession.findMany({
+        where: { userId, status: "COMPLETED" },
+        include: {
+          exam: {
+            select: { title: true, type: true },
+          },
+        },
+        orderBy: { finishedAt: "desc" },
+        take: 10,
+      }),
+
+      // Sesje nauki
+      prisma.learningSession.findMany({
+        where: { userId, status: "COMPLETED" },
+        orderBy: { finishedAt: "desc" },
+        take: 10,
+      }),
+    ]);
+
+    return reply.send({
+      exercises: submissions.map((s) => ({
+        id: s.id,
+        date: s.createdAt,
+        question: s.exercise.question,
+        category: s.exercise.category,
+        type: s.exercise.type,
+        difficulty: s.exercise.difficulty,
+        score: s.score,
+        maxPoints: s.exercise.points,
+        percentage: s.score
+          ? Math.round((s.score / s.exercise.points) * 100)
+          : 0,
+      })),
+      exams: exams.map((e) => ({
+        id: e.id,
+        date: e.finishedAt,
+        title: e.exam.title,
+        type: e.exam.type,
+        score: e.percentScore,
+        totalPoints: e.totalScore,
+      })),
+      learningSessions: sessions.map((s) => ({
+        id: s.id,
+        date: s.finishedAt,
+        completed: s.completed,
+        correct: s.correct,
+        points: s.points,
+        timeSpent: Math.round(s.timeSpent / 60),
+      })),
+    });
+  });
+}
+
+function getTimeAgo(date: Date): string {
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+
+  if (seconds < 60) return "przed chwilą";
+  if (seconds < 3600) return `${Math.floor(seconds / 60)} min temu`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)} godz. temu`;
+  if (seconds < 604800) return `${Math.floor(seconds / 86400)} dni temu`;
+  return date.toLocaleDateString("pl-PL");
 }

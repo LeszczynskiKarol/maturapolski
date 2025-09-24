@@ -156,27 +156,6 @@ export const ExamList: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Sekcja: Egzaminy tradycyjne */}
-      {staticExams.length > 0 && (
-        <div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Egzaminy ze stałym zestawem pytań
-          </h2>
-
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {staticExams.map((exam) => (
-              <ExamCard
-                key={exam.id}
-                exam={exam}
-                isDynamic={false}
-                onStart={() => startExamMutation.mutate(exam.id)}
-                isStarting={startExamMutation.isPending}
-              />
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
