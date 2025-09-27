@@ -299,6 +299,26 @@ export async function studyPlanRoutes(fastify: FastifyInstance) {
       const focus = selectFocusForWeek(week, weeksUntilExam, phase);
       const intensity = getIntensityForPhase(phase);
 
+      // Oznacz wszystkie ćwiczenia z tego tygodnia jako "planowane"
+      const weekExercises = await getWeekExercises(
+        userId,
+        focus,
+        intensity,
+        week
+      );
+
+      // Zapisz kontekst dla tych ćwiczeń
+      for (const exercise of weekExercises) {
+        await prisma.exerciseView.create({
+          data: {
+            userId,
+            exerciseId: exercise.id,
+            context: "STUDY_PLAN",
+            answered: false,
+          },
+        });
+      }
+
       // Ustaw filtry sesji dla tego tygodnia
       const filters = getFiltersForWeek(focus);
 
@@ -668,18 +688,27 @@ function getWeeklyGoals(
 
 function getFiltersForWeek(focus: string): any {
   const categories = mapFocusToCategories(focus);
+  const difficulty = getDifficultyForIntensity(
+    getIntensityForPhase(focus) // Pobierz intensity dla focus
+  );
 
-  // Jeśli tylko jedna kategoria - zwróć jako string
-  // Jeśli wiele - możesz zwrócić tablicę lub pierwszą
+  // Zwróć pełny obiekt filtrów
+  const filters: any = {};
+
   if (categories.length === 1) {
-    return { category: categories[0] };
+    filters.category = categories[0];
   } else if (categories.length > 1) {
-    // Dla WEAK_POINTS, REVISION itp. - wybierz losową kategorię
-    // lub zwróć wszystkie
-    return {
-      category: categories[0], // Lub Math.random() do losowania
-    };
+    // Dla wielu kategorii, wybierz pierwszą lub losową
+    filters.category =
+      categories[Math.floor(Math.random() * categories.length)];
   }
 
-  return { category: "LANGUAGE_USE" }; // Fallback
+  // Dodaj difficulty jako tablicę
+  const difficultyRange = [];
+  for (let i = difficulty.min; i <= difficulty.max; i++) {
+    difficultyRange.push(i);
+  }
+  filters.difficulty = difficultyRange;
+
+  return filters;
 }

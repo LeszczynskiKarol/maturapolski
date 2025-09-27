@@ -524,6 +524,8 @@ export const StudyPlan: React.FC = () => {
 
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {plan.plan.map((week, index) => {
+            const isLocked = week.week > plan.currentWeek;
+
             const isCurrentWeek = week.week === plan.currentWeek;
             const isPastWeek = week.week < plan.currentWeek;
             const isFutureWeek = week.week > plan.currentWeek;

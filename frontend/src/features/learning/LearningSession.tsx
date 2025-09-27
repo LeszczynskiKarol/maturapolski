@@ -68,6 +68,7 @@ const CATEGORIES = [
 
 export const LearningSession: React.FC = () => {
   const navigate = useNavigate();
+  const [hasIncompleteSession, setHasIncompleteSession] = useState(false);
   const hasAutoStarted = useRef(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [lastSaveTime, setLastSaveTime] = useState(Date.now());
@@ -170,8 +171,19 @@ export const LearningSession: React.FC = () => {
   const submitMutation = useMutation({
     mutationFn: (data: any) =>
       api.post(`/api/exercises/${currentExercise.id}/submit`, data),
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       const result = response.data;
+
+      // Oznacz pytanie jako odpowiedziane
+      if (sessionId) {
+        await api.post(
+          `/api/learning/exercise/${currentExercise.id}/answered`,
+          {
+            sessionId,
+          }
+        );
+      }
+
       const isCorrect = result.score > 0;
 
       console.log("=== SUBMIT SUCCESS ===");
@@ -245,18 +257,29 @@ export const LearningSession: React.FC = () => {
   const startSession = async () => {
     try {
       const response = await api.post("/api/learning/session/start");
-      const { sessionId: newSessionId, isResumed, state } = response.data;
+      const {
+        sessionId: newSessionId,
+        isResumed,
+        mustContinue,
+        answeredCount,
+        state,
+      } = response.data;
 
       setSessionId(newSessionId);
 
-      if (isResumed) {
-        // Wznów sesję
+      if (isResumed && mustContinue) {
+        // Automatycznie wznów bez pytania
         setSessionStats(state);
         setCompletedExercises(state.completedExercises || []);
         setSessionFilters(state.filters || {});
 
-        // Pokaż komunikat
-        toast.success("Wznowiono poprzednią sesję nauki");
+        // NIE pokazuj komunikatu, tylko małą informację
+        if (answeredCount > 0) {
+          toast(`Kontynuujesz sesję (${state.completed}/20 zadań)`, {
+            icon: "📚",
+            duration: 2000,
+          });
+        }
       } else {
         // Nowa sesja
         setSessionStats({
@@ -286,24 +309,44 @@ export const LearningSession: React.FC = () => {
 
   // Zaktualizuj funkcję endSession
   const endSession = async () => {
+    console.log("=== ENDING SESSION ===");
+    console.log("SessionId:", sessionId);
+    console.log("Stats:", sessionStats);
+
+    // Jeśli są jakiekolwiek ukończone zadania, zapisz sesję
     if (sessionId && sessionStats.completed > 0) {
-      await saveSessionMutation.mutateAsync({
-        sessionId,
-        stats: sessionStats,
-        completedExercises: completedExercises,
-      });
+      try {
+        await saveSessionMutation.mutateAsync({
+          sessionId,
+          stats: sessionStats,
+          completedExercises: completedExercises,
+        });
+      } catch (error) {
+        console.error("Failed to save session:", error);
+      }
+    } else if (sessionId && sessionStats.completed === 0) {
+      // Dla pustych sesji - tylko usuń z bazy
+      try {
+        await api.post("/api/learning/session/complete", {
+          sessionId,
+          stats: sessionStats,
+          completedExercises: [],
+        });
+        console.log("Empty session removed");
+      } catch (error) {
+        console.error("Failed to remove empty session:", error);
+      }
     }
 
-    // Resetuj wszystko
+    // ZAWSZE resetuj stan lokalny
     setSessionId(null);
-    setSessionComplete(true);
-    setSessionActive(false);
     setSessionComplete(true);
     setSessionActive(false);
     setSessionFilters({});
     setCurrentExercise(null);
     setAnswer(null);
     setShowFeedback(false);
+    setCompletedExercises([]);
 
     // Resetuj statystyki
     setSessionStats({
@@ -417,41 +460,61 @@ export const LearningSession: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log("=== useEffect CHECK ===");
-    const storedFilters = localStorage.getItem("sessionFilters");
-    console.log("Raw localStorage filters:", storedFilters);
+    const handleRouteChange = () => {
+      if (sessionActive && sessionId && sessionStats.completed > 0) {
+        // Zapisz stan sesji
+        saveSessionState();
 
-    if (storedFilters && !sessionActive && !sessionComplete) {
+        // NIE kończ sesji - tylko zapisz stan
+        // Sesja pozostaje IN_PROGRESS
+      }
+    };
+
+    // Nasłuchuj na zmianę route
+    window.addEventListener("popstate", handleRouteChange);
+
+    return () => {
+      window.removeEventListener("popstate", handleRouteChange);
+    };
+  }, [sessionActive, sessionId, sessionStats]);
+
+  useEffect(() => {
+    // Sprawdź czy są filtry z planu
+    const storedFilters = localStorage.getItem("sessionFilters");
+
+    if (
+      storedFilters &&
+      !sessionActive &&
+      !sessionComplete &&
+      !hasAutoStarted.current
+    ) {
       hasAutoStarted.current = true;
       try {
         const filters = JSON.parse(storedFilters);
-        console.log("Parsed filters from plan:", filters);
-
-        // Ustaw filtry i oznacz jako sesję planowaną
         setSessionFilters(filters);
-        setIsPlanSession(true); // Oznacz jako sesję z planu
+        setIsPlanSession(true);
 
-        console.log("SHOULD AUTO-START PLAN SESSION!");
-
-        setTimeout(async () => {
-          console.log("Starting plan session with filters:", filters);
-
-          // Najpierw ustaw filtry na backendzie
-          await api.post("/api/learning/session/filters", filters);
-
-          // Potem wystartuj sesję
-          await startSession();
-
-          // Dopiero teraz wyczyść localStorage
-          localStorage.removeItem("sessionFilters");
-          console.log("Plan session started successfully");
+        // Automatycznie startuj
+        setTimeout(() => {
+          api.post("/api/learning/session/filters", filters).then(() => {
+            startSession();
+            localStorage.removeItem("sessionFilters");
+          });
         }, 100);
       } catch (error) {
         console.error("Error parsing session filters:", error);
         localStorage.removeItem("sessionFilters");
       }
+    } else if (!sessionActive && !sessionComplete && !hasAutoStarted.current) {
+      // Sprawdź czy jest aktywna sesja do kontynuowania
+      api.get("/api/learning/session/check-active").then((response) => {
+        if (response.data.hasActiveSession) {
+          // Automatycznie wznów
+          startSession();
+        }
+      });
     }
-  }, []); // Tylko raz przy montowaniu
+  }, []);
 
   // Timer
   useEffect(() => {
@@ -1332,107 +1395,45 @@ const SessionStart: React.FC<{
   stats: any;
 }> = ({ onStart, stats }) => {
   const navigate = useNavigate();
-  const [activeSessions, setActiveSessions] = useState<any[]>([]);
+  const [hasActiveSession, setHasActiveSession] = useState(false);
+  const [activeSessionInfo, setActiveSessionInfo] = useState<any>(null);
 
-  // Pobierz aktywne sesje
   useEffect(() => {
-    api.get("/api/learning/active-sessions").then((r) => {
-      setActiveSessions(r.data);
+    // Sprawdź aktywną sesję
+    api.get("/api/learning/session/check-active").then((response) => {
+      if (response.data.hasActiveSession) {
+        setHasActiveSession(true);
+        setActiveSessionInfo(response.data);
+      }
     });
   }, []);
 
+  if (hasActiveSession && activeSessionInfo) {
+    return (
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-6 border-2 border-yellow-300">
+          <h2 className="text-xl font-bold mb-4 text-yellow-900 dark:text-yellow-100">
+            Masz aktywną sesję nauki
+          </h2>
+          <p className="text-yellow-800 dark:text-yellow-200 mb-4">
+            Ukończono {activeSessionInfo.completed} z {activeSessionInfo.total}{" "}
+            zadań. Musisz dokończyć obecną sesję przed rozpoczęciem nowej.
+          </p>
+          <button
+            onClick={onStart}
+            className="px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-semibold"
+          >
+            Kontynuuj sesję
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Normalny widok startowy gdy nie ma aktywnej sesji
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-8 text-white mb-6">
-        <h1 className="text-3xl font-bold mb-4">Gotowy na dzisiejszą naukę?</h1>
-        <p className="text-blue-100 mb-6">
-          System dopasuje zadania do Twojego poziomu i postępów. Sesja zawiera{" "}
-          {SESSION_LIMIT} zadań. Możesz zmieniać filtry w trakcie sesji!
-        </p>
-
-        <div className="grid grid-cols-4 gap-4 mb-6">
-          <div className="bg-white/10 rounded-lg p-4">
-            <p className="text-3xl font-bold">{stats?.todayExercises || 0}</p>
-            <p className="text-sm text-blue-100">Zadań dzisiaj</p>
-          </div>
-          <div className="bg-white/10 rounded-lg p-4">
-            <p className="text-3xl font-bold">{stats?.streak || 0}</p>
-            <p className="text-sm text-blue-100">Dni z rzędu</p>
-          </div>
-          <div className="bg-white/10 rounded-lg p-4">
-            <p className="text-3xl font-bold">{stats?.averageScore || 0}%</p>
-            <p className="text-sm text-blue-100">Średni wynik</p>
-          </div>
-          <div className="bg-white/10 rounded-lg p-4">
-            <p className="text-3xl font-bold">{stats?.level || 1}</p>
-            <p className="text-sm text-blue-100">Twój poziom</p>
-          </div>
-        </div>
-
-        <button
-          onClick={onStart}
-          className="px-8 py-4 bg-white text-blue-600 rounded-xl hover:bg-blue-50 
-                   font-semibold flex items-center gap-2 transition-colors"
-        >
-          <Play className="w-5 h-5" />
-          Rozpocznij sesję nauki ({SESSION_LIMIT} zadań)
-        </button>
-      </div>
-
-      {stats?.activeSessions?.length > 0 && (
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4 mb-4">
-          <h3 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-3">
-            Nieukończone sesje
-          </h3>
-          <div className="space-y-2">
-            {stats.activeSessions.map((session: any) => (
-              <div
-                key={session.id}
-                className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 
-                     rounded-lg border border-yellow-200 dark:border-yellow-700"
-              >
-                <div>
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    Sesja z{" "}
-                    {new Date(session.startedAt).toLocaleDateString("pl-PL")}
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Ukończono {session.completed} z 20 zadań •{session.correct}{" "}
-                    poprawnych
-                  </p>
-                </div>
-                <button
-                  onClick={onStart}
-                  className="px-4 py-2 bg-yellow-600 text-white rounded-lg 
-                     hover:bg-yellow-700 transition-colors text-sm font-medium"
-                >
-                  Kontynuuj
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            Twoje ostatnie sesje
-          </h2>
-
-          {stats?.recentSessions?.length > 0 && (
-            <button
-              onClick={() => navigate("/sessions")}
-              className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 
-                   dark:hover:text-blue-300 font-medium flex items-center gap-1"
-            >
-              Zobacz wszystkie
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-        <RecentSessions sessions={stats?.recentSessions?.slice(0, 5) || []} />
-      </div>
+      {/* Istniejący kod SessionStart */}
     </div>
   );
 };

@@ -31,6 +31,29 @@ model User {
   examSessions  ExamSession[]
   exerciseUsage ExerciseUsage[]
   learningSessions LearningSession[]
+  exerciseViews ExerciseView[]
+}
+
+model ExerciseView {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  exerciseId  String
+  exercise    Exercise @relation(fields: [exerciseId], references: [id])
+  
+  viewedAt    DateTime @default(now())
+  context     ViewContext // LEARNING, STUDY_PLAN
+  sessionId   String?  // ID sesji w której został wyświetlony
+  answered    Boolean  @default(false) // Czy udzielono odpowiedzi
+  
+  @@unique([userId, exerciseId, sessionId])
+  @@index([userId, viewedAt])
+  @@index([exerciseId])
+}
+
+enum ViewContext {
+  LEARNING
+  STUDY_PLAN
 }
 
 
@@ -71,6 +94,7 @@ model Exercise {
   spacedRepetitions SpacedRepetition[]
   examQuestions ExamQuestion[]
   usageHistory  ExerciseUsage[]
+  views         ExerciseView[]
 }
 
 model TextSource {

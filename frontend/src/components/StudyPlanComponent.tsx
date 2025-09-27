@@ -136,10 +136,13 @@ const StudyPlanComponent: React.FC = () => {
       console.log("Response data:", response.data);
 
       if (response.data && response.data.filters) {
-        console.log("Filters:", response.data.filters);
+        // NIE dodawaj weekNumber do filtrów!
+        const filters = response.data.filters;
+        console.log("Filters to save:", filters);
+
         localStorage.setItem(
           "sessionFilters",
-          JSON.stringify(response.data.filters)
+          JSON.stringify(filters) // Użyj filtrów bez modyfikacji
         );
         console.log("Filters saved to localStorage, redirecting...");
         window.location.href = "/learning";
@@ -150,31 +153,14 @@ const StudyPlanComponent: React.FC = () => {
     } catch (err: any) {
       console.error("=== ERROR IN startWeekSession ===");
       console.error("Full error:", err);
-      console.error("Response:", err.response);
-      console.error("Response data:", err.response?.data);
 
-      // Pokaż alert z dokładnym błędem
       const errorMessage =
         err.response?.data?.message ||
         err.response?.data?.error ||
         err.message ||
         "Nieznany błąd";
-      alert(
-        `Błąd: ${errorMessage}\n\nStatus: ${
-          err.response?.status || "brak"
-        }\nURL: /api/study/start-week-session`
-      );
+      alert(`Błąd: ${errorMessage}`);
     }
-  };
-
-  const getIntensityColor = (intensity: string) => {
-    const colors: Record<string, string> = {
-      LOW: "bg-green-100 text-green-800 border-green-300",
-      MEDIUM: "bg-yellow-100 text-yellow-800 border-yellow-300",
-      HIGH: "bg-orange-100 text-orange-800 border-orange-300",
-      CRITICAL: "bg-red-100 text-red-800 border-red-300",
-    };
-    return colors[intensity] || "bg-gray-100 text-gray-800";
   };
 
   if (loading) {
