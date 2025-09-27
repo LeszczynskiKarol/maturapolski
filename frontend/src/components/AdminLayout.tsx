@@ -1,6 +1,7 @@
 // frontend/src/components/AdminLayout.tsx
 
 import React, { useState } from "react";
+import { UserSessionsTable } from "../features/admin/UserSessionsTable";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import {
   HelpCircle,
@@ -18,6 +19,7 @@ const navigation = [
   { name: "Egzaminy", href: "/admin/exams", icon: FileText },
   { name: "Użytkownicy", href: "/admin/users", icon: Users },
   { name: "Materiały", href: "/admin/materials", icon: FileText },
+  { name: "Sesje użytkowników", href: "/admin/user-sessions", icon: FileText },
 ];
 
 export const AdminLayout: React.FC = () => {
