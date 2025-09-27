@@ -87,7 +87,8 @@ export const StudyPlan: React.FC = () => {
 
       // Przygotuj filtry dla sesji
       const filters: any = {
-        weekNumber: weekNumber, // Dodaj numer tygodnia do filtrów
+        weekNumber: weekNumber, // Ważne - identyfikator sesji StudyPlan
+        weekFocus: week.focus, // Dodaj focus dla debugowania
       };
 
       // Rozszerzone mapowanie kategorii
@@ -177,25 +178,29 @@ export const StudyPlan: React.FC = () => {
       console.log("Category:", filters.category || "ALL");
       console.log("Difficulty levels:", filters.difficulty);
 
+      console.log("=== FINAL FILTERS FOR STUDY PLAN ===");
+      console.log(JSON.stringify(filters, null, 2));
+      console.log("Category:", filters.category || "ALL");
+      console.log("Epoch:", filters.epoch || "NONE");
+      console.log("Difficulty levels:", filters.difficulty);
+      console.log("Week focus:", week.focus);
+
       // Zapisz do localStorage
       const filtersJson = JSON.stringify(filters);
       localStorage.setItem("sessionFilters", filtersJson);
+      localStorage.setItem("isStudyPlanSession", "true"); // Marker sesji StudyPlan
 
       // Weryfikuj zapis
       const saved = localStorage.getItem("sessionFilters");
       console.log("Saved to localStorage:", saved);
-
-      if (!saved) {
-        console.error("localStorage save failed!");
-        alert("Błąd przy zapisywaniu filtrów sesji");
-        return;
-      }
+      console.log(
+        "Is StudyPlan session:",
+        localStorage.getItem("isStudyPlanSession")
+      );
 
       // Nawigacja do /learn
-      console.log("Navigating to /learn...");
-      setTimeout(() => {
-        navigate("/learn");
-      }, 50);
+      console.log("Navigating to /learn with StudyPlan context...");
+      navigate("/learn");
     } catch (error) {
       console.error("Error starting week session:", error);
       alert("Nie udało się rozpocząć sesji");

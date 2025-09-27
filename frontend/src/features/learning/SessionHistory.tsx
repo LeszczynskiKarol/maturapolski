@@ -10,6 +10,8 @@ import {
   TrendingUp,
   Trophy,
   ChevronDown,
+  BookOpen,
+  CalendarCheck,
   CheckCircle,
   XCircle,
   AlertCircle,
@@ -210,10 +212,23 @@ export const SessionHistory: React.FC = () => {
               <div
                 key={session.id}
                 className="bg-white dark:bg-gray-800 rounded-lg p-4 
-                     border border-yellow-200 dark:border-yellow-700"
+               border border-yellow-200 dark:border-yellow-700"
               >
                 <div className="flex justify-between items-center">
                   <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${
+                          session.sessionType === "STUDY_PLAN"
+                            ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300"
+                            : "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                        }`}
+                      >
+                        {session.sessionType === "STUDY_PLAN"
+                          ? `📚 Plan - Tydzień ${session.weekNumber}`
+                          : "🎯 Swobodna"}
+                      </span>
+                    </div>
                     <p className="font-medium text-gray-900 dark:text-white">
                       Rozpoczęta{" "}
                       {new Date(session.date).toLocaleString("pl-PL")}
@@ -228,7 +243,7 @@ export const SessionHistory: React.FC = () => {
                   <button
                     onClick={() => navigate("/learn")}
                     className="px-4 py-2 bg-yellow-600 text-white rounded-lg 
-                       hover:bg-yellow-700 transition-colors font-medium"
+                 hover:bg-yellow-700 transition-colors font-medium"
                   >
                     Kontynuuj
                   </button>
@@ -249,8 +264,8 @@ export const SessionHistory: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
                 className="border-b dark:border-gray-700 last:border-b-0 
-                          hover:bg-gray-50 dark:hover:bg-gray-700/50 
-                          transition-colors cursor-pointer"
+                    hover:bg-gray-50 dark:hover:bg-gray-700/50 
+                    transition-colors cursor-pointer"
                 onClick={() =>
                   setExpandedSession(
                     expandedSession === session.id ? null : session.id
@@ -260,22 +275,57 @@ export const SessionHistory: React.FC = () => {
                 <div className="p-6 flex justify-between items-center">
                   <div className="flex-1">
                     <div className="flex items-center gap-4 mb-2">
-                      <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
-                        {new Date(session.date).toLocaleDateString("pl-PL", {
-                          weekday: "long",
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
-                      </h3>
-                      {session.averageScore >= 80 && (
-                        <span
-                          className="px-2 py-1 bg-green-100 dark:bg-green-900/30 
-                                       text-green-700 dark:text-green-300 text-xs rounded-full"
-                        >
-                          Świetny wynik!
-                        </span>
-                      )}
+                      {/* IKONA TYPU SESJI */}
+                      <div
+                        className={`p-2 rounded-lg ${
+                          session.sessionType === "STUDY_PLAN"
+                            ? "bg-purple-100 dark:bg-purple-900/30"
+                            : "bg-blue-100 dark:bg-blue-900/30"
+                        }`}
+                      >
+                        {session.sessionType === "STUDY_PLAN" ? (
+                          <CalendarCheck
+                            className={`w-5 h-5 text-purple-600 dark:text-purple-400`}
+                          />
+                        ) : (
+                          <BookOpen
+                            className={`w-5 h-5 text-blue-600 dark:text-blue-400`}
+                          />
+                        )}
+                      </div>
+
+                      <div>
+                        <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
+                          {new Date(session.date).toLocaleDateString("pl-PL", {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
+                        </h3>
+                        {/* BADGE TYPU SESJI */}
+                        <div className="flex items-center gap-2 mt-1">
+                          <span
+                            className={`px-2 py-1 text-xs rounded-full ${
+                              session.sessionType === "STUDY_PLAN"
+                                ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300"
+                                : "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                            }`}
+                          >
+                            {session.sessionType === "STUDY_PLAN"
+                              ? `📚 Plan nauki - Tydzień ${session.weekNumber}`
+                              : "🎯 Nauka swobodna"}
+                          </span>
+                          {session.averageScore >= 80 && (
+                            <span
+                              className="px-2 py-1 bg-green-100 dark:bg-green-900/30 
+                                     text-green-700 dark:text-green-300 text-xs rounded-full"
+                            >
+                              Świetny wynik!
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     <div className="flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
@@ -333,9 +383,19 @@ export const SessionHistory: React.FC = () => {
                     className="bg-gray-50 dark:bg-gray-900/50 border-b dark:border-gray-700"
                   >
                     <div className="p-6">
-                      <h4 className="font-semibold mb-4 text-gray-900 dark:text-white">
-                        Szczegóły odpowiedzi:
-                      </h4>
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="font-semibold text-gray-900 dark:text-white">
+                          Szczegóły odpowiedzi:
+                        </h4>
+                        {sessionDetails.sessionType === "STUDY_PLAN" && (
+                          <span
+                            className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 
+                                   text-purple-700 dark:text-purple-300 rounded-full text-sm"
+                          >
+                            Plan nauki - Tydzień {sessionDetails.weekNumber}
+                          </span>
+                        )}
+                      </div>
                       <div className="space-y-3">
                         {sessionDetails.submissions?.map(
                           (sub: any, idx: number) => (

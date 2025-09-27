@@ -448,22 +448,30 @@ export const LearningSession: React.FC = () => {
   useEffect(() => {
     console.log("=== useEffect CHECK ===");
     const storedFilters = localStorage.getItem("sessionFilters");
+    const isStudyPlanSession = localStorage.getItem("isStudyPlanSession");
+
     console.log("Raw localStorage filters:", storedFilters);
+    console.log("Is StudyPlan session:", isStudyPlanSession);
 
     if (storedFilters && !sessionActive && !sessionComplete) {
       hasAutoStarted.current = true;
       try {
         const filters = JSON.parse(storedFilters);
-        console.log("Parsed filters from plan:", filters);
+        console.log("Parsed filters:", filters);
 
-        // Ustaw filtry i oznacz jako sesję planowaną
+        if (filters.weekNumber) {
+          console.log(
+            "📚 STARTING STUDY PLAN SESSION FOR WEEK",
+            filters.weekNumber
+          );
+          console.log("Week focus:", filters.weekFocus);
+        }
+
         setSessionFilters(filters);
-        setIsPlanSession(true); // Oznacz jako sesję z planu
-
-        console.log("SHOULD AUTO-START PLAN SESSION!");
+        setIsPlanSession(!!isStudyPlanSession);
 
         setTimeout(async () => {
-          console.log("Starting plan session with filters:", filters);
+          console.log("Starting session with filters:", filters);
 
           // Najpierw ustaw filtry na backendzie
           await api.post("/api/learning/session/filters", filters);
@@ -471,16 +479,18 @@ export const LearningSession: React.FC = () => {
           // Potem wystartuj sesję
           await startSession();
 
-          // Dopiero teraz wyczyść localStorage
+          // Wyczyść localStorage
           localStorage.removeItem("sessionFilters");
-          console.log("Plan session started successfully");
+          localStorage.removeItem("isStudyPlanSession");
+          console.log("Session started successfully");
         }, 100);
       } catch (error) {
         console.error("Error parsing session filters:", error);
         localStorage.removeItem("sessionFilters");
+        localStorage.removeItem("isStudyPlanSession");
       }
     }
-  }, []); // Tylko raz przy montowaniu
+  }, []);
 
   // Timer
   useEffect(() => {
