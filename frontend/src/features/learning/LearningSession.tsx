@@ -25,6 +25,7 @@ import { useNavigate } from "react-router";
 import { api } from "../../services/api";
 
 const SESSION_LIMIT = 20;
+const SESSIONS_PER_WEEK = 4;
 
 // Definicje typów dla filtrów
 interface SessionFilters {
@@ -68,9 +69,7 @@ const CATEGORIES = [
 
 export const LearningSession: React.FC = () => {
   const navigate = useNavigate();
-  const [hasIncompleteSession, setHasIncompleteSession] = useState(false);
   const hasAutoStarted = useRef(false);
-  const [sessionId, setSessionId] = useState<string | null>(null);
   const [lastSaveTime, setLastSaveTime] = useState(Date.now());
 
   const [sessionActive, setSessionActive] = useState(false);
@@ -84,6 +83,10 @@ export const LearningSession: React.FC = () => {
     Array<{ id: string; score: number }>
   >([]);
   const [isPlanSession, setIsPlanSession] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [weekNumber, setWeekNumber] = useState<number | null>(null);
+  const [isWeekPlan, setIsWeekPlan] = useState(false);
+  const [weekProgress, setWeekProgress] = useState<any>(null);
 
   // Funkcja zapisywania stanu
   const saveSessionState = async () => {
@@ -112,6 +115,13 @@ export const LearningSession: React.FC = () => {
       try {
         const filters = JSON.parse(storedFilters);
         console.log("Parsed filters:", filters);
+
+        // Sprawdź czy to sesja planu tygodniowego
+        if (filters.isWeekPlan && filters.weekNumber) {
+          setWeekNumber(filters.weekNumber);
+          setIsWeekPlan(true);
+        }
+
         return filters;
       } catch {
         console.log("Failed to parse filters");
@@ -260,28 +270,40 @@ export const LearningSession: React.FC = () => {
       const {
         sessionId: newSessionId,
         isResumed,
-        mustContinue,
-        answeredCount,
+        weekNumber: sessionWeekNumber,
+        isWeekPlan: sessionIsWeekPlan,
         state,
       } = response.data;
 
       setSessionId(newSessionId);
 
-      if (isResumed && mustContinue) {
-        // Automatycznie wznów bez pytania
+      // Ustaw informacje o tygodniu jeśli to sesja planu
+      if (sessionIsWeekPlan && sessionWeekNumber) {
+        setWeekNumber(sessionWeekNumber);
+        setIsWeekPlan(true);
+
+        // Pobierz postęp tygodnia
+        const weekProgressResponse = await api.get(
+          `/api/study/week/${sessionWeekNumber}/progress`
+        );
+        setWeekProgress(weekProgressResponse.data);
+      }
+
+      if (isResumed && state) {
         setSessionStats(state);
         setCompletedExercises(state.completedExercises || []);
         setSessionFilters(state.filters || {});
 
-        // NIE pokazuj komunikatu, tylko małą informację
-        if (answeredCount > 0) {
-          toast(`Kontynuujesz sesję (${state.completed}/20 zadań)`, {
-            icon: "📚",
-            duration: 2000,
-          });
+        if (state.completed > 0) {
+          toast(
+            `Kontynuujesz sesję (${state.completed}/${SESSION_LIMIT} zadań)`,
+            {
+              icon: "📚",
+              duration: 2000,
+            }
+          );
         }
       } else {
-        // Nowa sesja
         setSessionStats({
           completed: 0,
           correct: 0,
@@ -307,20 +329,46 @@ export const LearningSession: React.FC = () => {
     }
   };
 
-  // Zaktualizuj funkcję endSession
   const endSession = async () => {
     console.log("=== ENDING SESSION ===");
     console.log("SessionId:", sessionId);
     console.log("Stats:", sessionStats);
+    console.log("Is Week Plan:", isWeekPlan);
+    console.log("Week Number:", weekNumber);
 
     // Jeśli są jakiekolwiek ukończone zadania, zapisz sesję
     if (sessionId && sessionStats.completed > 0) {
       try {
-        await saveSessionMutation.mutateAsync({
+        const response = await saveSessionMutation.mutateAsync({
           sessionId,
           stats: sessionStats,
           completedExercises: completedExercises,
         });
+
+        // Jeśli to sesja planu tygodniowego, pokaż postęp
+        if (response.data.weekProgress) {
+          const wp = response.data.weekProgress;
+
+          // Pokaż toast z postępem tygodnia
+          if (wp.isComplete) {
+            confetti({
+              particleCount: 300,
+              spread: 150,
+              origin: { y: 0.5 },
+            });
+            toast.success(
+              `🎉 Gratulacje! Ukończyłeś tydzień ${wp.week} planu nauki!`,
+              { duration: 5000 }
+            );
+          } else {
+            toast.success(
+              `Tydzień ${wp.week}: ${wp.sessionsCompleted}/${wp.sessionsRequired} sesji • ${wp.completionRate}% ukończone`,
+              { duration: 4000 }
+            );
+          }
+
+          setWeekProgress(wp);
+        }
       } catch (error) {
         console.error("Failed to save session:", error);
       }
@@ -347,6 +395,9 @@ export const LearningSession: React.FC = () => {
     setAnswer(null);
     setShowFeedback(false);
     setCompletedExercises([]);
+    setWeekNumber(null);
+    setIsWeekPlan(false);
+    setWeekProgress(null);
 
     // Resetuj statystyki
     setSessionStats({
@@ -357,6 +408,9 @@ export const LearningSession: React.FC = () => {
       points: 0,
       timeSpent: 0,
     });
+
+    // Wyczyść localStorage
+    localStorage.removeItem("sessionFilters");
   };
 
   const pauseSession = async () => {
@@ -577,137 +631,219 @@ export const LearningSession: React.FC = () => {
   if (sessionComplete) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl dark:shadow-gray-900/30 p-8"
-        >
-          <div className="text-center">
-            <Trophy className="w-20 h-20 text-yellow-500 dark:text-yellow-400 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
-              Sesja zakończona!
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              {sessionStats.completed > 0
-                ? "Oto Twoje wyniki:"
-                : "Nie ukończyłeś żadnych zadań w tej sesji."}
-            </p>
-          </div>
+        {/* Session Header - ZAKTUALIZOWANY */}
+        {sessionActive && (
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-4 mb-6">
+            {/* Jeśli to sesja planu, pokaż dodatkowe info */}
+            {isWeekPlan && weekNumber && weekProgress && (
+              <div className="mb-4 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Target className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                    <span className="font-medium text-purple-700 dark:text-purple-300">
+                      Plan nauki - Tydzień {weekNumber}
+                    </span>
+                  </div>
+                  <div className="text-sm text-purple-600 dark:text-purple-400">
+                    Sesja {weekProgress.sessionsCompleted + 1} z{" "}
+                    {weekProgress.sessionsRequired}
+                  </div>
+                </div>
 
-          {sessionStats.completed > 0 ? (
-            <>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-4 rounded-xl">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Ukończone zadania
-                  </p>
-                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                    {sessionStats.completed}
-                  </p>
-                </div>
-                <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-4 rounded-xl">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Poprawne odpowiedzi
-                  </p>
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                    {sessionStats.correct}/{sessionStats.completed}
-                  </p>
-                </div>
-                <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 p-4 rounded-xl">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Najdłuższa seria
-                  </p>
-                  <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
-                    {sessionStats.maxStreak}
-                  </p>
-                </div>
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-4 rounded-xl">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Zdobyte punkty
-                  </p>
-                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                    +{sessionStats.points}
-                  </p>
+                {/* Mini progress bar tygodnia */}
+                <div className="mt-2">
+                  <div className="flex justify-between text-xs text-purple-600 dark:text-purple-400 mb-1">
+                    <span>Postęp tygodnia</span>
+                    <span>
+                      {weekProgress.completedExercises + sessionStats.completed}
+                      /{weekProgress.targetExercises} zadań
+                    </span>
+                  </div>
+                  <div className="w-full h-1 bg-purple-200 dark:bg-purple-800 rounded-full">
+                    <div
+                      className="h-1 bg-purple-600 dark:bg-purple-400 rounded-full transition-all"
+                      style={{
+                        width: `${
+                          ((weekProgress.completedExercises +
+                            sessionStats.completed) /
+                            weekProgress.targetExercises) *
+                          100
+                        }%`,
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
+            )}
 
-              <div className="mb-6">
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                  Skuteczność
-                </p>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4">
-                  <div
-                    className="bg-gradient-to-r from-blue-500 to-green-500 dark:from-blue-400 dark:to-green-400 
-                         h-4 rounded-full transition-all duration-500"
-                    style={{
-                      width: `${
-                        sessionStats.completed > 0
-                          ? (sessionStats.correct / sessionStats.completed) *
-                            100
-                          : 0
-                      }%`,
-                    }}
-                  />
-                </div>
-                <p className="text-right text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  {Math.round(
-                    (sessionStats.correct / sessionStats.completed) * 100
-                  )}
-                  %
-                </p>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-6">
+                <SessionStat
+                  icon={<Target className="w-5 h-5" />}
+                  label="Ukończone"
+                  value={`${sessionStats.completed}/${SESSION_LIMIT}`}
+                />
+                <SessionStat
+                  icon={<CheckCircle className="w-5 h-5" />}
+                  label="Poprawne"
+                  value={`${sessionStats.correct}/${sessionStats.completed}`}
+                />
+                <SessionStat
+                  icon={<TrendingUp className="w-5 h-5" />}
+                  label="Seria"
+                  value={`${sessionStats.streak}`}
+                  highlight={sessionStats.streak >= 5}
+                />
+                <SessionStat
+                  icon={<Award className="w-5 h-5" />}
+                  label="Punkty"
+                  value={`+${sessionStats.points}`}
+                />
+                <SessionStat
+                  icon={<Clock className="w-5 h-5" />}
+                  label="Czas"
+                  value={formatTime(sessionStats.timeSpent)}
+                />
               </div>
-            </>
-          ) : (
-            <div className="py-8 text-center text-gray-500 dark:text-gray-400">
-              <p>Rozpocznij nową sesję, aby zacząć naukę.</p>
+
+              <button
+                onClick={async () => {
+                  console.log("=== ZAKOŃCZ SESJĘ BUTTON CLICKED ===");
+                  await endSession();
+                }}
+                className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 
+                       dark:hover:text-white transition-colors"
+              >
+                Zakończ sesję
+              </button>
             </div>
-          )}
 
-          <div className="flex gap-4">
-            <button
-              onClick={pauseSession}
-              className="px-4 py-2 text-yellow-600 dark:text-yellow-400 hover:text-yellow-700 
-           dark:hover:text-yellow-300 transition-colors"
-            >
-              Wstrzymaj sesję
-            </button>
-            <button
-              onClick={() => {
-                setSessionActive(false);
-                setSessionComplete(false);
-                setSessionFilters({});
-                setCompletedExercises([]);
-                setSessionStats({
-                  completed: 0,
-                  correct: 0,
-                  streak: 0,
-                  maxStreak: 0,
-                  points: 0,
-                  timeSpent: 0,
-                });
-                refetchStats();
-              }}
-              className="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 
-                   rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 
-                   text-gray-700 dark:text-gray-300 transition-colors"
-            >
-              Zakończ
-            </button>
-            <button
-              onClick={() => {
-                setSessionComplete(false);
-                setCompletedExercises([]);
-                startSession();
-              }}
-              className="flex-1 px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white 
-                   rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 
-                   transition-colors flex items-center justify-center gap-2"
-            >
-              <Play className="w-5 h-5" />
-              Nowa sesja
-            </button>
+            {/* Progress bar */}
+            <div className="mt-4 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-gradient-to-r from-blue-500 to-purple-500 
+                       dark:from-blue-400 dark:to-purple-400"
+                initial={{ width: 0 }}
+                animate={{
+                  width: `${(sessionStats.completed / SESSION_LIMIT) * 100}%`,
+                }}
+                transition={{ duration: 0.5 }}
+              />
+            </div>
+            <div className="flex justify-between items-center mt-1">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Cel sesji: {sessionStats.completed}/{SESSION_LIMIT} zadań
+              </p>
+
+              {/* Przycisk filtrów - ukryj dla sesji planu */}
+              {!isWeekPlan && (
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 
+                         hover:text-blue-700 dark:hover:text-blue-300 font-medium"
+                >
+                  <Filter className="w-4 h-4" />
+                  {showFilters ? "Ukryj filtry" : "Filtry zadań"}
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform ${
+                      showFilters ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+              )}
+            </div>
           </div>
-        </motion.div>
+        )}
+
+        {/* Session complete screen - ZAKTUALIZOWANY */}
+        {sessionComplete && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl dark:shadow-gray-900/30 p-8"
+          >
+            <div className="text-center">
+              <Trophy className="w-20 h-20 text-yellow-500 dark:text-yellow-400 mx-auto mb-4" />
+              <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
+                Sesja zakończona!
+              </h2>
+
+              {/* Jeśli to była sesja planu, pokaż info */}
+              {weekProgress && (
+                <div className="mt-4 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                  <p className="text-purple-700 dark:text-purple-300 font-medium">
+                    Tydzień {weekProgress.week} planu nauki
+                  </p>
+                  <p className="text-sm text-purple-600 dark:text-purple-400 mt-1">
+                    {weekProgress.isComplete
+                      ? "✅ Tydzień ukończony! Możesz przejść do następnego."
+                      : `Ukończono ${weekProgress.sessionsCompleted}/${weekProgress.sessionsRequired} sesji • ${weekProgress.completionRate}% zadań`}
+                  </p>
+                </div>
+              )}
+
+              <p className="text-gray-600 dark:text-gray-400 mb-6 mt-4">
+                {sessionStats.completed > 0
+                  ? "Oto Twoje wyniki:"
+                  : "Nie ukończyłeś żadnych zadań w tej sesji."}
+              </p>
+            </div>
+
+            {/* Reszta kodu bez zmian... */}
+
+            <div className="flex gap-4">
+              <button
+                onClick={() => {
+                  navigate("/study-plan");
+                }}
+                className="px-4 py-2 text-purple-600 dark:text-purple-400 hover:text-purple-700 
+                       dark:hover:text-purple-300 transition-colors"
+              >
+                Wróć do planu nauki
+              </button>
+
+              <button
+                onClick={() => {
+                  setSessionActive(false);
+                  setSessionComplete(false);
+                  setSessionFilters({});
+                  setCompletedExercises([]);
+                  setWeekNumber(null);
+                  setIsWeekPlan(false);
+                  setWeekProgress(null);
+                  setSessionStats({
+                    completed: 0,
+                    correct: 0,
+                    streak: 0,
+                    maxStreak: 0,
+                    points: 0,
+                    timeSpent: 0,
+                  });
+                  refetchStats();
+                }}
+                className="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 
+                       rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 
+                       text-gray-700 dark:text-gray-300 transition-colors"
+              >
+                Zakończ
+              </button>
+
+              <button
+                onClick={() => {
+                  setSessionComplete(false);
+                  setCompletedExercises([]);
+                  startSession();
+                }}
+                className="flex-1 px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white 
+                       rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 
+                       transition-colors flex items-center justify-center gap-2"
+              >
+                <Play className="w-5 h-5" />
+                Nowa sesja
+              </button>
+            </div>
+          </motion.div>
+        )}
       </div>
     );
   }

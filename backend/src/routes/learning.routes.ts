@@ -6,6 +6,8 @@ import { SpacedRepetitionService } from "../services/spacedRepetitionService";
 
 const spacedRepetition = new SpacedRepetitionService();
 
+const EXERCISES_PER_SESSION = 20;
+
 // ZACHOWANE MAPY W PAMIĘCI
 const sessionSkippedExercises = new Map<string, Set<string>>();
 const userSessionFilters = new Map<string, any>();
@@ -65,17 +67,16 @@ export async function learningRoutes(fastify: FastifyInstance) {
             .deleteMany({
               where: { sessionId: activeSession.id },
             })
-            .catch(() => {}); // Ignoruj błędy jeśli nie ma widoków
+            .catch(() => {});
 
-          // Spróbuj usunąć sesję, ale nie rzucaj błędu jeśli już nie istnieje
+          // Spróbuj usunąć sesję
           try {
             await prisma.learningSession.delete({
               where: { id: activeSession.id },
             });
           } catch (deleteError: any) {
-            // Jeśli sesja nie istnieje (P2025), to OK - kontynuuj
             if (deleteError?.code !== "P2025") {
-              throw deleteError; // Przekaż inne błędy
+              throw deleteError;
             }
           }
         } else {
@@ -93,6 +94,8 @@ export async function learningRoutes(fastify: FastifyInstance) {
           return reply.send({
             sessionId: activeSession.id,
             isResumed: true,
+            weekNumber: activeSession.weekNumber,
+            isWeekPlan: activeSession.isWeekPlan,
             state: {
               completed: activeSession.completed,
               correct: activeSession.correct,
@@ -108,22 +111,51 @@ export async function learningRoutes(fastify: FastifyInstance) {
         }
       }
 
+      // Sprawdź czy są filtry z planu tygodniowego
+      const filters = userSessionFilters.get(userId);
+      const weekNumber = filters?.weekNumber;
+      const isWeekPlan = filters?.isWeekPlan || false;
+
       // Utwórz nową sesję
       const newSession = await prisma.learningSession.create({
         data: {
           userId,
           status: "IN_PROGRESS",
+          weekNumber,
+          isWeekPlan,
+          filters,
         },
       });
+
+      // Jeśli to sesja planu, sprawdź postęp tygodnia
+      if (isWeekPlan && weekNumber) {
+        const weekProgress = await prisma.weeklyProgress.findUnique({
+          where: {
+            userId_week: { userId, week: weekNumber },
+          },
+        });
+
+        if (weekProgress && weekProgress.completed) {
+          return reply.code(400).send({
+            error: "Week already completed",
+            message: "Ten tydzień został już ukończony",
+          });
+        }
+      }
 
       // Wyczyść dane w pamięci
       sessionSkippedExercises.delete(userId);
       userRecentExercises.delete(userId);
-      userSessionFilters.delete(userId);
+      // NIE czyść filtrów jeśli to sesja planu
+      if (!isWeekPlan) {
+        userSessionFilters.delete(userId);
+      }
 
       return reply.send({
         sessionId: newSession.id,
         isResumed: false,
+        weekNumber,
+        isWeekPlan,
         state: {
           completed: 0,
           correct: 0,
@@ -133,7 +165,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
           timeSpent: 0,
           completedExercises: [],
           skippedExercises: [],
-          filters: {},
+          filters: filters || {},
         },
       });
     } catch (error) {
@@ -495,6 +527,24 @@ export async function learningRoutes(fastify: FastifyInstance) {
       console.log("SessionId:", sessionId);
       console.log("Stats:", stats);
 
+      // Pobierz informacje o sesji
+      const session = sessionId
+        ? await prisma.learningSession.findUnique({
+            where: { id: sessionId },
+          })
+        : null;
+
+      const weekNumber = session?.weekNumber;
+      const isWeekPlan = session?.isWeekPlan || false;
+
+      // DODAJ LOGOWANIE:
+      console.log("=== SESSION COMPLETE DEBUG ===");
+      console.log("Session ID:", sessionId);
+      console.log("Session data:", session);
+      console.log("Week Number:", weekNumber);
+      console.log("Is Week Plan:", isWeekPlan);
+      console.log("Stats:", stats);
+
       // Wyczyść dane w pamięci ZAWSZE
       userSessionFilters.delete(userId);
       if (sessionSkippedExercises.has(userId)) {
@@ -550,7 +600,40 @@ export async function learningRoutes(fastify: FastifyInstance) {
         });
       }
 
-      // Reszta kodu bez zmian...
+      // JEŚLI TO SESJA PLANU TYGODNIOWEGO - AKTUALIZUJ POSTĘP
+      if (isWeekPlan && weekNumber) {
+        console.log(`=== UPDATING WEEK ${weekNumber} PROGRESS ===`);
+
+        const weekProgress = await prisma.weeklyProgress.upsert({
+          where: {
+            userId_week: { userId, week: weekNumber },
+          },
+          create: {
+            userId,
+            week: weekNumber,
+            completedExercises: stats.completed || 0,
+            sessionsCompleted: 1,
+            targetExercises: 80,
+            sessionsRequired: 4,
+            completed: false,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+          update: {
+            completedExercises: {
+              increment: stats.completed || 0,
+            },
+            sessionsCompleted: {
+              increment: 1,
+            },
+            updatedAt: new Date(),
+          },
+        });
+
+        console.log("WEEK PROGRESS UPDATED:", weekProgress);
+      }
+
+      // Aktualizuj profil użytkownika
       const sessionAverageScore =
         stats.completed > 0
           ? Math.round((stats.correct / stats.completed) * 100)
@@ -636,9 +719,36 @@ export async function learningRoutes(fastify: FastifyInstance) {
         where: { userId },
       });
 
+      // Zwróć informacje o postępie tygodnia jeśli to sesja planu
+      let weekProgressInfo = null;
+      if (isWeekPlan && weekNumber) {
+        const updatedWeekProgress = await prisma.weeklyProgress.findUnique({
+          where: {
+            userId_week: { userId, week: weekNumber },
+          },
+        });
+
+        weekProgressInfo = {
+          week: weekNumber,
+          completedExercises: updatedWeekProgress?.completedExercises || 0,
+          targetExercises: updatedWeekProgress?.targetExercises || 80,
+          sessionsCompleted: updatedWeekProgress?.sessionsCompleted || 0,
+          sessionsRequired: updatedWeekProgress?.sessionsRequired || 4,
+          isComplete: updatedWeekProgress?.completed || false,
+          completionRate: updatedWeekProgress
+            ? Math.round(
+                (updatedWeekProgress.completedExercises /
+                  updatedWeekProgress.targetExercises) *
+                  100
+              )
+            : 0,
+        };
+      }
+
       return reply.send({
         success: true,
         profile: finalProfile,
+        weekProgress: weekProgressInfo,
       });
     } catch (error) {
       console.error("Error completing session:", error);
@@ -679,7 +789,36 @@ export async function learningRoutes(fastify: FastifyInstance) {
     return reply.send(validSessions);
   });
 
-  // WSZYSTKIE POZOSTAŁE ENDPOINTY BEZ ZMIAN!
+  fastify.get("/week-progress/:week", async (request, reply) => {
+    const userId = (request.user as any).userId;
+    const { week } = request.params as { week: string };
+    const weekNumber = parseInt(week);
+
+    const progress = await prisma.weeklyProgress.findUnique({
+      where: {
+        userId_week: { userId, week: weekNumber },
+      },
+    });
+
+    if (!progress) {
+      return reply.send({
+        week: weekNumber,
+        completedExercises: 0,
+        targetExercises: EXERCISES_PER_SESSION * 4,
+        sessionsCompleted: 0,
+        sessionsRequired: 4,
+        completed: false,
+        completionRate: 0,
+      });
+    }
+
+    return reply.send({
+      ...progress,
+      completionRate: Math.round(
+        (progress.completedExercises / progress.targetExercises) * 100
+      ),
+    });
+  });
 
   // Get learning stats
   fastify.get("/stats", async (request, reply) => {

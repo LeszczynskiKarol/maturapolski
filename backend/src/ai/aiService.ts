@@ -289,8 +289,8 @@ Oceń rzetelnie według kryteriów maturalnych. Bądź wymagający ale sprawiedl
 
   try {
     const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514", // Better model for essays
-      max_tokens: 64000,
+      model: "claude-3-5-haiku-latest", // or claude-sonnet-4-20250514
+      max_tokens: 4096,
       temperature: 0.3,
       messages: [
         {

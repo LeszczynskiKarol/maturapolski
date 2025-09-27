@@ -42,6 +42,9 @@ interface StudyPlanData {
   examDate?: string;
 }
 
+const EXERCISES_PER_SESSION = 20;
+const SESSIONS_PER_WEEK = 4;
+
 export const StudyPlan: React.FC = () => {
   const navigate = useNavigate();
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
@@ -87,7 +90,8 @@ export const StudyPlan: React.FC = () => {
 
       // Przygotuj filtry dla sesji
       const filters: any = {
-        weekNumber: weekNumber, // Dodaj numer tygodnia do filtrów
+        weekNumber: weekNumber,
+        isWeekPlan: true,
       };
 
       // Rozszerzone mapowanie kategorii
@@ -211,6 +215,17 @@ export const StudyPlan: React.FC = () => {
       setExamDate(formattedDate);
     }
   }, [plan]);
+
+  // Dodaj po useEffect który ładuje examDate:
+  useEffect(() => {
+    const interval = setInterval(() => {
+      queryClient.invalidateQueries({ queryKey: ["study-plan"] });
+      queryClient.invalidateQueries({ queryKey: ["weekly-tasks"] });
+      console.log("Odświeżanie danych planu...");
+    }, 5000); // Co 5 sekund
+
+    return () => clearInterval(interval);
+  }, [queryClient]);
 
   // Fetch weekly tasks
   const { data: weeklyTasks } = useQuery({
@@ -489,8 +504,9 @@ export const StudyPlan: React.FC = () => {
                 <div className="flex items-center gap-2 text-sm">
                   <BookOpen className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                   <span className="text-gray-700 dark:text-gray-300">
-                    Zadania do wykonania:{" "}
-                    {currentWeekData.exercises?.length || 0}
+                    Zadania tygodniowe:{" "}
+                    {EXERCISES_PER_SESSION * SESSIONS_PER_WEEK} (w{" "}
+                    {SESSIONS_PER_WEEK} sesjach)
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
@@ -582,7 +598,7 @@ export const StudyPlan: React.FC = () => {
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       {week.estimatedTime}h nauki •{" "}
-                      {week.exercises?.length || 0} zadań
+                      {EXERCISES_PER_SESSION * SESSIONS_PER_WEEK} zadań
                     </p>
                   </div>
                 </div>
@@ -670,34 +686,43 @@ export const StudyPlan: React.FC = () => {
                     Zadania do wykonania:
                   </h4>
                   <div className="space-y-2">
-                    {weeklyTasks.exercises?.map((exercise: any) => (
-                      <div
-                        key={exercise.id}
-                        className="flex items-center justify-between p-3 border dark:border-gray-700 
+                    {weeklyTasks.exercises?.length > 0 ? (
+                      weeklyTasks.exercises.map((exercise: any) => (
+                        <div
+                          key={exercise.id}
+                          className="flex items-center justify-between p-3 border dark:border-gray-700 
                              rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50"
-                      >
-                        <div className="flex items-center gap-3">
-                          {exercise.completed ? (
-                            <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
-                          ) : (
-                            <Circle className="w-5 h-5 text-gray-400 dark:text-gray-500" />
-                          )}
-                          <div>
-                            <p className="font-medium text-gray-900 dark:text-white">
-                              {exercise.question}
-                            </p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              {exercise.category} • {exercise.difficulty}
-                            </p>
+                        >
+                          <div className="flex items-center gap-3">
+                            {exercise.completed ? (
+                              <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                            ) : (
+                              <Circle className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+                            )}
+                            <div>
+                              <p className="font-medium text-gray-900 dark:text-white">
+                                {exercise.question}
+                              </p>
+                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {exercise.category} • {exercise.difficulty}
+                              </p>
+                            </div>
                           </div>
+                          {exercise.score && (
+                            <span className="text-sm font-medium text-green-600 dark:text-green-400">
+                              {exercise.score}%
+                            </span>
+                          )}
                         </div>
-                        {exercise.score && (
-                          <span className="text-sm font-medium text-green-600 dark:text-green-400">
-                            {exercise.score}%
-                          </span>
-                        )}
+                      ))
+                    ) : (
+                      <div className="text-center py-8 text-gray-500">
+                        <p>Zadania zostaną przydzielone podczas sesji nauki.</p>
+                        <p className="text-sm mt-2">
+                          Kliknij "Rozpocznij naukę" w głównym widoku tygodnia.
+                        </p>
                       </div>
-                    ))}
+                    )}{" "}
                   </div>
                 </div>
 

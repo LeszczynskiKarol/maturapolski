@@ -4,6 +4,10 @@ import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 import { differenceInDays } from "date-fns";
 
+const EXERCISES_PER_SESSION = 20;
+const SESSIONS_PER_WEEK = 4; // 70 zadań / 20 = ~3.5, zaokrąglamy do 4
+const EXERCISES_PER_WEEK = EXERCISES_PER_SESSION * SESSIONS_PER_WEEK; // 80 zadań max
+
 export async function studyPlanRoutes(fastify: FastifyInstance) {
   // Middleware - verify JWT
   fastify.addHook("onRequest", async (request, reply) => {
@@ -42,14 +46,14 @@ export async function studyPlanRoutes(fastify: FastifyInstance) {
       }
 
       const weeksUntilExam = Math.ceil(daysUntilExam / 7);
+
+      // Oblicz aktualny tydzień
+      const startDate = new Date(profile.examDate);
+      startDate.setDate(startDate.getDate() - weeksUntilExam * 7);
+      const daysSinceStart = differenceInDays(now, startDate);
       const currentWeek = Math.max(
         1,
-        Math.min(
-          weeksUntilExam,
-          Math.ceil(
-            (daysUntilExam - differenceInDays(profile.examDate, now)) / 7
-          ) + 1
-        )
+        Math.min(weeksUntilExam, Math.ceil(daysSinceStart / 7) + 1)
       );
 
       // Generuj plan tygodniowy
@@ -59,6 +63,35 @@ export async function studyPlanRoutes(fastify: FastifyInstance) {
         daysUntilExam,
         currentWeek
       );
+
+      // Dodaj informacje o postępie dla każdego tygodnia
+      for (const weekPlan of plan) {
+        const weekProgress = await prisma.weeklyProgress.findUnique({
+          where: {
+            userId_week: { userId, week: weekPlan.week },
+          },
+        });
+
+        if (weekProgress) {
+          weekPlan.sessionsCompleted = weekProgress.sessionsCompleted;
+          weekPlan.completedExercises = weekProgress.completedExercises;
+          weekPlan.completed = weekProgress.completed;
+          weekPlan.completionRate = Math.round(
+            (weekProgress.completedExercises / weekProgress.targetExercises) *
+              100
+          );
+        } else {
+          // Utwórz wpis progress dla tego tygodnia jeśli nie istnieje
+          await prisma.weeklyProgress.create({
+            data: {
+              userId,
+              week: weekPlan.week,
+              targetExercises: weekPlan.totalExercises,
+              sessionsRequired: weekPlan.sessionsRequired,
+            },
+          });
+        }
+      }
 
       return reply.send({
         totalWeeks: weeksUntilExam,
@@ -73,11 +106,188 @@ export async function studyPlanRoutes(fastify: FastifyInstance) {
     }
   });
 
-  // Get detailed weekly tasks with REAL exercises
+  // Get week progress details
+  fastify.get("/week/:week/progress", async (request, reply) => {
+    try {
+      const userId = (request.user as any).userId;
+      const { week } = request.params as { week: string };
+      const weekNumber = parseInt(week);
+
+      const progress = await prisma.weeklyProgress.findUnique({
+        where: {
+          userId_week: { userId, week: weekNumber },
+        },
+      });
+
+      if (!progress) {
+        return reply.send({
+          week: weekNumber,
+          completedExercises: 0,
+          targetExercises: EXERCISES_PER_WEEK,
+          sessionsCompleted: 0,
+          sessionsRequired: SESSIONS_PER_WEEK,
+          completionRate: 0,
+        });
+      }
+
+      // Pobierz sesje związane z tym tygodniem
+      const sessions = await prisma.learningSession.findMany({
+        where: {
+          userId,
+          weekNumber,
+          status: "COMPLETED",
+        },
+        select: {
+          id: true,
+          completed: true,
+          correct: true,
+          points: true,
+          finishedAt: true,
+        },
+      });
+
+      return reply.send({
+        ...progress,
+        completionRate: Math.round(
+          (progress.completedExercises / progress.targetExercises) * 100
+        ),
+        sessions,
+      });
+    } catch (error) {
+      console.error("Error getting week progress:", error);
+      return reply.code(500).send({ error: "Failed to get week progress" });
+    }
+  });
+
+  // Start week session - KLUCZOWA ZMIANA
+  fastify.post("/start-week-session", async (request, reply) => {
+    try {
+      const userId = (request.user as any).userId;
+      const { week } = request.body as { week: number };
+
+      const profile = await prisma.userProfile.findUnique({
+        where: { userId },
+      });
+
+      if (!profile?.examDate) {
+        return reply.code(404).send({ error: "No exam date set" });
+      }
+
+      const daysUntilExam = differenceInDays(profile.examDate, new Date());
+      const weeksUntilExam = Math.ceil(daysUntilExam / 7);
+
+      // Sprawdź postęp tygodnia
+      const weekProgress = await prisma.weeklyProgress.findUnique({
+        where: {
+          userId_week: { userId, week },
+        },
+      });
+
+      if (weekProgress && weekProgress.completed) {
+        return reply.code(400).send({
+          error: "Week already completed",
+          message: "Ten tydzień został już ukończony",
+        });
+      }
+
+      // Określ parametry tygodnia
+      const phase = determinePhaseForWeek(week, weeksUntilExam, daysUntilExam);
+      const focus = selectFocusForWeek(week, weeksUntilExam, phase);
+      const filters = getFiltersForWeek(focus, week);
+
+      // Zapisz filtry w formacie zgodnym z LearningSession
+      const sessionFilters = {
+        ...filters,
+        weekNumber: week,
+        isWeekPlan: true,
+      };
+
+      return reply.send({
+        success: true,
+        week,
+        focus: getCategoryDisplayName(focus),
+        filters: sessionFilters,
+        sessionsCompleted: weekProgress?.sessionsCompleted || 0,
+        sessionsRequired: SESSIONS_PER_WEEK,
+        message: `Rozpocznij sesję ${
+          (weekProgress?.sessionsCompleted || 0) + 1
+        } z ${SESSIONS_PER_WEEK} w tym tygodniu`,
+      });
+    } catch (error) {
+      console.error("Error starting week session:", error);
+      return reply.code(500).send({ error: "Failed to start week session" });
+    }
+  });
+
+  // Update week progress - wywoływane po zakończeniu sesji
+  fastify.post("/week/:week/update-progress", async (request, reply) => {
+    try {
+      const userId = (request.user as any).userId;
+      const { week } = request.params as { week: string };
+      const { exercisesCompleted, sessionId } = request.body as {
+        exercisesCompleted: number;
+        sessionId: string;
+      };
+
+      const weekNumber = parseInt(week);
+
+      const progress = await prisma.weeklyProgress.upsert({
+        where: {
+          userId_week: { userId, week: weekNumber },
+        },
+        create: {
+          userId,
+          week: weekNumber,
+          completedExercises: exercisesCompleted,
+          sessionsCompleted: 1,
+          targetExercises: EXERCISES_PER_WEEK,
+          sessionsRequired: SESSIONS_PER_WEEK,
+        },
+        update: {
+          completedExercises: {
+            increment: exercisesCompleted,
+          },
+          sessionsCompleted: {
+            increment: 1,
+          },
+        },
+      });
+
+      // Sprawdź czy tydzień jest ukończony
+      const isWeekComplete =
+        progress.completedExercises >= progress.targetExercises * 0.8 || // 80% zadań
+        progress.sessionsCompleted >= progress.sessionsRequired; // Wszystkie sesje
+
+      if (isWeekComplete && !progress.completed) {
+        await prisma.weeklyProgress.update({
+          where: {
+            userId_week: { userId, week: weekNumber },
+          },
+          data: {
+            completed: true,
+            completedAt: new Date(),
+          },
+        });
+      }
+
+      return reply.send({
+        success: true,
+        weekProgress: {
+          ...progress,
+          isComplete: isWeekComplete,
+        },
+      });
+    } catch (error) {
+      console.error("Error updating week progress:", error);
+      return reply.code(500).send({ error: "Failed to update week progress" });
+    }
+  });
+
+  // Get weekly tasks with sessions info
   fastify.get("/weekly-tasks", async (request, reply) => {
     try {
       const userId = (request.user as any).userId;
-      const { week } = request.query as { week?: number };
+      const { week } = request.query as { week?: string };
 
       const profile = await prisma.userProfile.findUnique({
         where: { userId },
@@ -90,17 +300,9 @@ export async function studyPlanRoutes(fastify: FastifyInstance) {
       const now = new Date();
       const daysUntilExam = differenceInDays(profile.examDate, now);
       const weeksUntilExam = Math.ceil(daysUntilExam / 7);
-      const currentWeek =
-        week ||
-        Math.max(
-          1,
-          Math.min(
-            weeksUntilExam,
-            Math.ceil(
-              (daysUntilExam - differenceInDays(profile.examDate, now)) / 7
-            ) + 1
-          )
-        );
+      const currentWeek = week
+        ? parseInt(String(week))
+        : calculateCurrentWeek(profile.examDate, weeksUntilExam);
 
       // Określ fazę i intensywność dla tego tygodnia
       const phase = determinePhaseForWeek(
@@ -111,52 +313,21 @@ export async function studyPlanRoutes(fastify: FastifyInstance) {
       const focus = selectFocusForWeek(currentWeek, weeksUntilExam, phase);
       const intensity = getIntensityForPhase(phase);
 
-      // POBIERZ RZECZYWISTE ĆWICZENIA Z BAZY
-      const exercises = await getWeekExercises(
-        userId,
-        focus,
-        intensity,
-        currentWeek
-      );
+      // Pobierz postęp tygodnia
+      const weekProgress = await prisma.weeklyProgress.findUnique({
+        where: {
+          userId_week: { userId, week: currentWeek },
+        },
+      });
 
-      // Pobierz postęp użytkownika
-      const exerciseIds = exercises.map((e) => e.id);
-      const submissions = await prisma.submission.findMany({
+      // Pobierz sesje związane z tym tygodniem
+      const weekSessions = await prisma.learningSession.findMany({
         where: {
           userId,
-          exerciseId: { in: exerciseIds },
+          weekNumber: currentWeek,
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: { startedAt: "desc" },
       });
-
-      // Mapuj z postępem
-      const exercisesWithProgress = exercises.map((exercise) => {
-        const userSubmissions = submissions.filter(
-          (s) => s.exerciseId === exercise.id
-        );
-        const bestSubmission = userSubmissions.reduce((best, current) => {
-          if (!best) return current;
-          return (current.score || 0) > (best.score || 0) ? current : best;
-        }, null as any);
-
-        return {
-          ...exercise,
-          completed: userSubmissions.length > 0,
-          attempts: userSubmissions.length,
-          bestScore: bestSubmission?.score || null,
-          lastAttempt: userSubmissions[0]?.createdAt || null,
-        };
-      });
-
-      // Statystyki
-      const completedExercises = exercisesWithProgress.filter(
-        (e) => e.completed
-      ).length;
-      const averageScore =
-        exercisesWithProgress
-          .filter((e) => e.bestScore !== null)
-          .reduce((acc, e) => acc + (e.bestScore / e.points) * 100, 0) /
-        (completedExercises || 1);
 
       const goals = getWeeklyGoals(focus, phase, currentWeek, weeksUntilExam);
       const estimatedTime = getEstimatedHours(intensity);
@@ -168,16 +339,30 @@ export async function studyPlanRoutes(fastify: FastifyInstance) {
         focus: getCategoryDisplayName(focus),
         goals,
         estimatedTime,
-        exercises: exercisesWithProgress,
-        statistics: {
-          totalExercises: exercises.length,
-          completedExercises,
-          completionRate:
-            exercises.length > 0
-              ? (completedExercises / exercises.length) * 100
-              : 0,
-          averageScore: Math.round(averageScore * 10) / 10,
+        totalExercises: EXERCISES_PER_WEEK,
+        sessionsRequired: SESSIONS_PER_WEEK,
+        exercisesPerSession: EXERCISES_PER_SESSION,
+        progress: {
+          completedExercises: weekProgress?.completedExercises || 0,
+          sessionsCompleted: weekProgress?.sessionsCompleted || 0,
+          completionRate: weekProgress
+            ? Math.round(
+                (weekProgress.completedExercises /
+                  weekProgress.targetExercises) *
+                  100
+              )
+            : 0,
+          isComplete: weekProgress?.completed || false,
         },
+        sessions: weekSessions.map((s) => ({
+          id: s.id,
+          status: s.status,
+          completed: s.completed,
+          correct: s.correct,
+          points: s.points,
+          startedAt: s.startedAt,
+          finishedAt: s.finishedAt,
+        })),
       });
     } catch (error) {
       console.error("Error getting weekly tasks:", error);
@@ -214,6 +399,11 @@ export async function studyPlanRoutes(fastify: FastifyInstance) {
         },
       });
 
+      // Usuń stary postęp tygodniowy
+      await prisma.weeklyProgress.deleteMany({
+        where: { userId },
+      });
+
       // Generate new plan with updated date
       const daysUntilExam = differenceInDays(parsedDate, new Date());
       const weeksUntilExam = Math.ceil(daysUntilExam / 7);
@@ -242,99 +432,6 @@ export async function studyPlanRoutes(fastify: FastifyInstance) {
       return reply.code(500).send({ error: "Failed to update exam date" });
     }
   });
-
-  // Mark week as completed
-  fastify.post("/complete-week", async (request, reply) => {
-    try {
-      const userId = (request.user as any).userId;
-      const { week } = request.body as { week: number };
-
-      await prisma.weeklyProgress.upsert({
-        where: {
-          userId_week: { userId, week },
-        },
-        create: {
-          userId,
-          week,
-          completed: true,
-          completedAt: new Date(),
-        },
-        update: {
-          completed: true,
-          completedAt: new Date(),
-        },
-      });
-
-      return reply.send({
-        success: true,
-        message: `Tydzień ${week} oznaczony jako ukończony`,
-      });
-    } catch (error) {
-      console.error("Error marking week as completed:", error);
-      return reply
-        .code(500)
-        .send({ error: "Failed to mark week as completed" });
-    }
-  });
-
-  // Start learning session with week's exercises
-  fastify.post("/start-week-session", async (request, reply) => {
-    try {
-      const userId = (request.user as any).userId;
-      const { week } = request.body as { week: number };
-
-      const profile = await prisma.userProfile.findUnique({
-        where: { userId },
-      });
-
-      if (!profile?.examDate) {
-        return reply.code(404).send({ error: "No exam date set" });
-      }
-
-      const daysUntilExam = differenceInDays(profile.examDate, new Date());
-      const weeksUntilExam = Math.ceil(daysUntilExam / 7);
-
-      // Określ parametry tygodnia
-      const phase = determinePhaseForWeek(week, weeksUntilExam, daysUntilExam);
-      const focus = selectFocusForWeek(week, weeksUntilExam, phase);
-      const intensity = getIntensityForPhase(phase);
-
-      // Oznacz wszystkie ćwiczenia z tego tygodnia jako "planowane"
-      const weekExercises = await getWeekExercises(
-        userId,
-        focus,
-        intensity,
-        week
-      );
-
-      // Zapisz kontekst dla tych ćwiczeń
-      for (const exercise of weekExercises) {
-        await prisma.exerciseView.create({
-          data: {
-            userId,
-            exerciseId: exercise.id,
-            context: "STUDY_PLAN",
-            answered: false,
-          },
-        });
-      }
-
-      // Ustaw filtry sesji dla tego tygodnia
-      const filters = getFiltersForWeek(focus);
-
-      // Zapisz filtry w sesji użytkownika (używane przez learning routes)
-      return reply.send({
-        success: true,
-        week,
-        focus: getCategoryDisplayName(focus),
-        filters,
-        message: "Sesja nauki rozpoczęta z filtrami tygodnia",
-      });
-    } catch (error) {
-      console.error("Error starting week session:", error);
-      return reply.code(500).send({ error: "Failed to start week session" });
-    }
-  });
 }
 
 // FUNKCJE POMOCNICZE
@@ -352,137 +449,46 @@ async function generateWeeklyPlan(
     const focus = selectFocusForWeek(week, totalWeeks, phase);
     const intensity = getIntensityForPhase(phase);
 
-    // Pobierz liczbę ćwiczeń dla tego tygodnia (nie same ćwiczenia - to zrobimy w weekly-tasks)
-    const exerciseCount = await countWeekExercises(userId, focus, intensity);
-
     plans.push({
       week,
       focus: getCategoryDisplayName(focus),
       goals: getWeeklyGoals(focus, phase, week, totalWeeks),
-      exercises: Array(exerciseCount).fill({}), // Placeholder dla liczby
+      totalExercises: EXERCISES_PER_WEEK,
+      sessionsRequired: SESSIONS_PER_WEEK,
+      exercisesPerSession: EXERCISES_PER_SESSION,
       estimatedTime: getEstimatedHours(intensity),
       completed: false,
       completionRate: 0,
+      sessionsCompleted: 0,
+      completedExercises: 0,
     });
   }
 
   // Uzupełnij o ukończone tygodnie
   const completedWeeks = await prisma.weeklyProgress.findMany({
-    where: { userId, completed: true },
+    where: { userId },
   });
 
   plans.forEach((week) => {
-    const isCompleted = completedWeeks.some((w) => w.week === week.week);
-    if (isCompleted) {
-      week.completed = true;
+    const progress = completedWeeks.find((w) => w.week === week.week);
+    if (progress) {
+      week.completed = progress.completed;
+      week.sessionsCompleted = progress.sessionsCompleted;
+      week.completedExercises = progress.completedExercises;
+      week.completionRate = Math.round(
+        (progress.completedExercises / progress.targetExercises) * 100
+      );
     }
   });
 
   return plans;
 }
 
-async function getWeekExercises(
-  userId: string,
-  focus: string,
-  intensity: string,
-  week: number
-) {
-  const categories = mapFocusToCategories(focus);
-  const difficulty = getDifficultyForIntensity(intensity);
-  const exercisesPerWeek = getExercisesCountForIntensity(intensity);
-
-  console.log(`Getting exercises for week ${week}:`, {
-    focus,
-    categories,
-    difficulty,
-    count: exercisesPerWeek,
-  });
-
-  // Pobierz historię użytkownika
-  const recentSubmissions = await prisma.submission.findMany({
-    where: { userId },
-    select: { exerciseId: true },
-    orderBy: { createdAt: "desc" },
-    take: 100,
-  });
-
-  const recentIds = recentSubmissions.map((s) => s.exerciseId);
-
-  // PRIORYTET 1: Nierobione zadania
-  let exercises = await prisma.exercise.findMany({
-    where: {
-      category: { in: categories },
-      difficulty: {
-        gte: difficulty.min,
-        lte: difficulty.max,
-      },
-      id: { notIn: recentIds },
-    },
-    take: Math.ceil(exercisesPerWeek * 0.7), // 70% nowych
-    orderBy: [{ difficulty: "asc" }, { createdAt: "desc" }],
-  });
-
-  // PRIORYTET 2: Zadania do powtórki (słabe wyniki)
-  if (exercises.length < exercisesPerWeek) {
-    const repetitionExercises = await prisma.exercise.findMany({
-      where: {
-        category: { in: categories },
-        difficulty: {
-          gte: difficulty.min,
-          lte: difficulty.max,
-        },
-        submissions: {
-          some: {
-            userId,
-            score: { lt: 70 },
-            createdAt: { lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
-          },
-        },
-      },
-      take: exercisesPerWeek - exercises.length,
-      orderBy: { difficulty: "asc" },
-    });
-
-    exercises = [...exercises, ...repetitionExercises];
-  }
-
-  // PRIORYTET 3: Jakiekolwiek z kategorii
-  if (exercises.length < exercisesPerWeek) {
-    const anyExercises = await prisma.exercise.findMany({
-      where: {
-        category: { in: categories },
-        id: { notIn: exercises.map((e) => e.id) },
-      },
-      take: exercisesPerWeek - exercises.length,
-    });
-
-    exercises = [...exercises, ...anyExercises];
-  }
-
-  console.log(`Found ${exercises.length} exercises for week ${week}`);
-  return exercises;
-}
-
-async function countWeekExercises(
-  userId: string,
-  focus: string,
-  intensity: string
-) {
-  const categories = mapFocusToCategories(focus);
-  const difficulty = getDifficultyForIntensity(intensity);
-
-  const count = await prisma.exercise.count({
-    where: {
-      category: { in: categories },
-      difficulty: {
-        gte: difficulty.min,
-        lte: difficulty.max,
-      },
-    },
-  });
-
-  const target = getExercisesCountForIntensity(intensity);
-  return Math.min(count, target);
+function calculateCurrentWeek(examDate: Date, totalWeeks: number): number {
+  const now = new Date();
+  const daysUntilExam = differenceInDays(examDate, now);
+  const weeksUntilExam = Math.ceil(daysUntilExam / 7);
+  return Math.max(1, totalWeeks - weeksUntilExam + 1);
 }
 
 function determinePhaseForWeek(
@@ -542,28 +548,6 @@ function selectFocusForWeek(
   return topics[week % topics.length];
 }
 
-function mapFocusToCategories(focus: string): any[] {
-  const mapping: Record<string, any[]> = {
-    LANGUAGE_USE: ["LANGUAGE_USE" as any],
-    HISTORICAL_LITERARY: ["HISTORICAL_LITERARY" as any],
-    WRITING: ["WRITING" as any],
-    WEAK_POINTS: [
-      "LANGUAGE_USE" as any,
-      "HISTORICAL_LITERARY" as any,
-      "WRITING" as any,
-    ],
-    REVISION: [
-      "LANGUAGE_USE" as any,
-      "HISTORICAL_LITERARY" as any,
-      "WRITING" as any,
-    ],
-    MOCK_EXAMS: ["WRITING" as any, "HISTORICAL_LITERARY" as any],
-    LITERARY_EPOCHS: ["HISTORICAL_LITERARY" as any],
-  };
-
-  return mapping[focus] || ["LANGUAGE_USE" as any];
-}
-
 function getIntensityForPhase(phase: string): string {
   const intensityMap: Record<string, string> = {
     FOUNDATION: "LOW",
@@ -579,31 +563,6 @@ function getIntensityForPhase(phase: string): string {
   };
 
   return intensityMap[phase] || "MEDIUM";
-}
-
-function getDifficultyForIntensity(intensity: string): {
-  min: number;
-  max: number;
-} {
-  const difficultyMap: Record<string, { min: number; max: number }> = {
-    LOW: { min: 1, max: 2 },
-    MEDIUM: { min: 2, max: 3 },
-    HIGH: { min: 3, max: 4 },
-    CRITICAL: { min: 3, max: 5 },
-  };
-
-  return difficultyMap[intensity] || { min: 1, max: 5 };
-}
-
-function getExercisesCountForIntensity(intensity: string): number {
-  const countMap: Record<string, number> = {
-    LOW: 21, // 3 dziennie * 7 dni
-    MEDIUM: 35, // 5 dziennie * 7 dni
-    HIGH: 49, // 7 dziennie * 7 dni
-    CRITICAL: 70, // 10 dziennie * 7 dni
-  };
-
-  return countMap[intensity] || 35;
 }
 
 function getEstimatedHours(intensity: string): number {
@@ -640,32 +599,32 @@ function getWeeklyGoals(
     LANGUAGE_USE: [
       "Opanuj środki stylistyczne",
       "Ćwicz analizę językową tekstów",
-      "Rozwiąż minimum 5 zadań dziennie",
+      "Ukończ 4 sesje nauki (20 zadań każda)",
     ],
     HISTORICAL_LITERARY: [
       "Powtórz epoki literackie",
       "Przeanalizuj kluczowe teksty",
-      "Naucz się ważnych cytatów",
+      "Ukończ minimum 70 zadań w 4 sesjach",
     ],
     WRITING: [
       "Napisz 2 wypracowania",
       "Ćwicz interpretację tekstu",
-      "Pracuj nad kompozycją",
+      "Pracuj nad kompozycją w 4 sesjach",
     ],
     WEAK_POINTS: [
       "Skup się na najsłabszych obszarach",
       "Powtórz błędnie rozwiązane zadania",
-      "Zrób dodatkowe ćwiczenia",
+      "Ukończ 4 sesje intensywnej nauki",
     ],
     REVISION: [
       "Powtórz cały materiał",
       "Rozwiąż arkusze maturalne",
-      "Sprawdź poziom przygotowania",
+      "Sprawdź poziom przygotowania w 4 sesjach",
     ],
     MOCK_EXAMS: [
       "Rozwiąż pełny arkusz maturalny",
       "Pracuj w warunkach egzaminacyjnych",
-      "Przeanalizuj błędy",
+      "Przeanalizuj błędy w 4 sesjach",
     ],
     LITERARY_EPOCHS: [
       "Powtórz charakterystykę epok",
@@ -674,7 +633,9 @@ function getWeeklyGoals(
     ],
   };
 
-  let selectedGoals = goals[focus] || ["Realizuj plan tygodniowy"];
+  let selectedGoals = goals[focus] || [
+    "Realizuj plan tygodniowy - 4 sesje po 20 zadań",
+  ];
 
   if (week === totalWeeks) {
     selectedGoals = [
@@ -686,29 +647,36 @@ function getWeeklyGoals(
   return selectedGoals;
 }
 
-function getFiltersForWeek(focus: string): any {
-  const categories = mapFocusToCategories(focus);
-  const difficulty = getDifficultyForIntensity(
-    getIntensityForPhase(focus) // Pobierz intensity dla focus
-  );
+function getFiltersForWeek(focus: string, week: number): any {
+  const filters: any = {
+    weekNumber: week,
+  };
 
-  // Zwróć pełny obiekt filtrów
-  const filters: any = {};
+  // Mapowanie fokusa na kategorie
+  const categoryMap: Record<string, string> = {
+    LANGUAGE_USE: "LANGUAGE_USE",
+    HISTORICAL_LITERARY: "HISTORICAL_LITERARY",
+    WRITING: "WRITING",
+    WEAK_POINTS: "", // Wszystkie kategorie
+    REVISION: "", // Wszystkie kategorie
+    MOCK_EXAMS: "WRITING",
+    LITERARY_EPOCHS: "HISTORICAL_LITERARY",
+  };
 
-  if (categories.length === 1) {
-    filters.category = categories[0];
-  } else if (categories.length > 1) {
-    // Dla wielu kategorii, wybierz pierwszą lub losową
-    filters.category =
-      categories[Math.floor(Math.random() * categories.length)];
+  if (categoryMap[focus]) {
+    filters.category = categoryMap[focus];
   }
 
-  // Dodaj difficulty jako tablicę
-  const difficultyRange = [];
-  for (let i = difficulty.min; i <= difficulty.max; i++) {
-    difficultyRange.push(i);
+  // Poziomy trudności progresywnie
+  const baseDifficulty = Math.min(5, Math.ceil(week / 4));
+  filters.difficulty = [];
+  for (
+    let i = Math.max(1, baseDifficulty - 1);
+    i <= Math.min(5, baseDifficulty + 1);
+    i++
+  ) {
+    filters.difficulty.push(i);
   }
-  filters.difficulty = difficultyRange;
 
   return filters;
 }

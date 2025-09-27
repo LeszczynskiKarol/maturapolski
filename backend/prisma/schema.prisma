@@ -232,6 +232,13 @@ model WeeklyProgress {
   week        Int
   completed   Boolean  @default(false)
   completedAt DateTime?
+  
+  // NOWE POLA dla śledzenia sesji
+  targetExercises   Int      @default(70)  // Cel tygodniowy
+  completedExercises Int     @default(0)   // Ukończone zadania
+  sessionsCompleted Int      @default(0)   // Ukończone sesje
+  sessionsRequired  Int      @default(4)   // Wymagane sesje (70/20 = ~4)
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
@@ -240,6 +247,7 @@ model WeeklyProgress {
   @@unique([userId, week])
   @@index([userId])
 }
+
 
 model StudyGoal {
   id          String   @id @default(cuid())
@@ -558,6 +566,10 @@ model LearningSession {
   userId        String
   user          User      @relation(fields: [userId], references: [id])
   
+  // NOWE POLA dla powiązania z planem
+  weekNumber    Int?      // Numer tygodnia planu
+  isWeekPlan    Boolean   @default(false) // Czy sesja jest częścią planu
+  
   status        LearningSessionStatus @default(IN_PROGRESS)
   
   startedAt     DateTime  @default(now())
@@ -580,7 +592,9 @@ model LearningSession {
   skippedExercises   Json? // [id1, id2...]
   
   @@index([userId, status])
+  @@index([userId, weekNumber])
 }
+
 
 enum LearningSessionStatus {
   IN_PROGRESS
