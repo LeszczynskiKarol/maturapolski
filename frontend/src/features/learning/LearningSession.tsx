@@ -67,6 +67,8 @@ const CATEGORIES = [
 ];
 
 export const LearningSession: React.FC = () => {
+  const [isChangingExercise, setIsChangingExercise] = useState(false);
+  const lastExerciseId = useRef<string | null>(null);
   const navigate = useNavigate();
   const hasAutoStarted = useRef(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -293,6 +295,7 @@ export const LearningSession: React.FC = () => {
         completedExercises: completedExercises,
       });
     }
+    await api.post("/api/learning/session/clear-cache");
 
     // Resetuj wszystko
     setSessionId(null);
@@ -355,37 +358,63 @@ export const LearningSession: React.FC = () => {
   };
 
   const skipExercise = async () => {
+    // Prevent double-clicking
+    if (isChangingExercise) {
+      console.log("Already changing exercise, ignoring skip");
+      return;
+    }
+
     const skippedExerciseId = currentExercise?.id;
-    setAnswer(null);
-    setShowFeedback(false);
+
+    // Jeśli to ten sam exercise co ostatnio - ignore
+    if (skippedExerciseId === lastExerciseId.current) {
+      console.log("Trying to skip same exercise twice!");
+      return;
+    }
+
+    setIsChangingExercise(true);
+    lastExerciseId.current = skippedExerciseId;
 
     console.log("=== SKIP EXERCISE ===");
     console.log("Skipping exercise:", skippedExerciseId);
 
-    // NIE ZWIĘKSZAJ completed dla pominiętych! To nie jest ukończenie zadania!
-    // Pominięte zadania nie powinny się liczyć do statystyk
+    setAnswer(null);
+    setShowFeedback(false);
 
-    // Sprawdź czy osiągnięto limit (ale nie zwiększaj completed)
     if (sessionStats.completed >= SESSION_LIMIT) {
       await endSession();
       return;
     }
 
     try {
+      // Dodaj małe opóźnienie żeby backend zdążył zapisać
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       const response = await api.get("/api/learning/next", {
         params: { excludeId: skippedExerciseId },
       });
 
       const data = response.data;
-      if (data && data.id !== skippedExerciseId) {
+
+      // Sprawdź czy nie dostaliśmy tego samego
+      if (data && data.id === skippedExerciseId) {
+        console.error("GOT SAME EXERCISE BACK!");
+        toast.error("Brak więcej dostępnych ćwiczeń w tej kategorii");
+        await endSession();
+        return;
+      }
+
+      if (data) {
         setCurrentExercise(data);
       } else {
-        console.log("Got same exercise or no more exercises available");
+        console.log("No more exercises available");
         await endSession();
       }
     } catch (error) {
       console.error("Error fetching next exercise:", error);
       await endSession();
+    } finally {
+      setIsChangingExercise(false);
     }
   };
 

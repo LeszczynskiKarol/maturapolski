@@ -10,7 +10,17 @@ const spacedRepetition = new SpacedRepetitionService();
 const sessionSkippedExercises = new Map<string, Set<string>>();
 const userSessionFilters = new Map<string, any>();
 const userRecentExercises = new Map<string, string[]>();
-const MAX_RECENT_MEMORY = 20;
+
+const sessionExerciseCache = new Map<
+  string,
+  {
+    shown: Set<string>;
+    skipped: Set<string>;
+    completed: Set<string>;
+    lastExerciseId: string | null;
+    lastRequestTime: number;
+  }
+>();
 
 interface SessionState {
   completed: number;
@@ -34,11 +44,53 @@ export async function learningRoutes(fastify: FastifyInstance) {
     }
   });
 
+  fastify.get("/debug/history", async (request, reply) => {
+    const userId = (request.user as any).userId;
+
+    const usage = await prisma.exerciseUsage.findMany({
+      where: { userId },
+      orderBy: { lastUsedAt: "desc" },
+      take: 20,
+      include: {
+        exercise: {
+          select: {
+            question: true,
+          },
+        },
+      },
+    });
+
+    const cache = getUserSessionCache(userId);
+
+    return reply.send({
+      cacheSize: cache.shown.size,
+      dbRecords: usage.length,
+      recentUsage: usage.map((u) => ({
+        id: u.exerciseId,
+        question: u.exercise.question.substring(0, 50),
+        lastUsed: u.lastUsedAt,
+        count: u.usageCount,
+      })),
+    });
+  });
+
   // Start or resume session
   fastify.post("/session/start", async (request, reply) => {
     const userId = (request.user as any).userId;
 
-    // Sprawdź czy jest aktywna sesja
+    // ZAWSZE załaduj pełną historię
+    await loadUserExerciseHistory(userId);
+    const cache = getUserSessionCache(userId);
+
+    console.log(
+      `Starting session with ${cache.shown.size} exercises in history`
+    );
+
+    if (cache.shown.size === 0) {
+      await loadUserExerciseHistory(userId);
+    }
+
+    // Sprawdź aktywną sesję
     const activeSession = await prisma.learningSession.findFirst({
       where: {
         userId,
@@ -48,17 +100,27 @@ export async function learningRoutes(fastify: FastifyInstance) {
     });
 
     if (activeSession) {
-      // Przywróć filtry do pamięci
+      // Przywróć dane z aktywnej sesji
       if (activeSession.filters) {
         userSessionFilters.set(userId, activeSession.filters);
       }
 
-      // Przywróć pominięte do pamięci
       if (activeSession.skippedExercises) {
-        sessionSkippedExercises.set(
-          userId,
-          new Set(activeSession.skippedExercises as string[])
-        );
+        const skipped = activeSession.skippedExercises as string[];
+        skipped.forEach((id) => {
+          cache.skipped.add(id);
+          cache.shown.add(id);
+        });
+      }
+
+      if (activeSession.completedExercises) {
+        const completed = (activeSession.completedExercises as any[]) || [];
+        completed.forEach((ex: any) => {
+          if (ex.id) {
+            cache.completed.add(ex.id);
+            cache.shown.add(ex.id);
+          }
+        });
       }
 
       return reply.send({
@@ -78,7 +140,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
       });
     }
 
-    // Utwórz nową sesję
+    // Nowa sesja
     const newSession = await prisma.learningSession.create({
       data: {
         userId,
@@ -86,10 +148,10 @@ export async function learningRoutes(fastify: FastifyInstance) {
       },
     });
 
-    // Wyczyść dane w pamięci
-    sessionSkippedExercises.delete(userId);
-    userRecentExercises.delete(userId);
-    userSessionFilters.delete(userId);
+    // Wyczyść TYLKO dane bieżącej sesji, NIE historię!
+    cache.completed.clear();
+    cache.skipped.clear();
+    // NIE CZYŚĆ cache.shown - to jest historia!
 
     return reply.send({
       sessionId: newSession.id,
@@ -157,60 +219,44 @@ export async function learningRoutes(fastify: FastifyInstance) {
       const userId = (request.user as any).userId;
       const { excludeId } = request.query as { excludeId?: string };
 
-      // Pobierz filtry z pamięci
-      const filters = userSessionFilters.get(userId) || {};
+      console.log("\n=== GET NEXT EXERCISE ===");
+      console.log("User:", userId);
+      console.log("ExcludeId:", excludeId);
 
-      // Inicjalizuj struktury dla użytkownika
-      if (!sessionSkippedExercises.has(userId)) {
-        sessionSkippedExercises.set(userId, new Set());
+      const cache = getUserSessionCache(userId);
+
+      // ZAWSZE załaduj pełną historię jeśli cache jest mały
+      if (cache.shown.size < 50) {
+        console.log("Cache too small, reloading full history...");
+        await loadUserExerciseHistory(userId);
       }
-      if (!userRecentExercises.has(userId)) {
-        userRecentExercises.set(userId, []);
-      }
 
-      const skippedInSession = sessionSkippedExercises.get(userId)!;
-      const recentInMemory = userRecentExercises.get(userId)!;
-
-      // Jeśli przekazano ID do wykluczenia (pominięte zadanie)
-      if (excludeId) {
-        skippedInSession.add(excludeId);
-
-        // Zapisz też w bazie
-        const activeSession = await prisma.learningSession.findFirst({
-          where: {
-            userId,
-            status: "IN_PROGRESS",
-          },
-        });
-
-        if (activeSession) {
-          const currentSkipped =
-            (activeSession.skippedExercises as string[]) || [];
-          await prisma.learningSession.update({
-            where: { id: activeSession.id },
-            data: {
-              skippedExercises: [...new Set([...currentSkipped, excludeId])],
-            },
+      // Rate limiting
+      const now = Date.now();
+      if (now - cache.lastRequestTime < 300) {
+        console.log("RATE LIMIT - too fast!");
+        if (cache.lastExerciseId) {
+          const lastExercise = await prisma.exercise.findUnique({
+            where: { id: cache.lastExerciseId },
           });
+          if (lastExercise) return reply.send(lastExercise);
         }
       }
+      cache.lastRequestTime = now;
 
-      // UŻYJ TABELI ExerciseUsage zamiast submissions
-      const recentUsage = await prisma.exerciseUsage.findMany({
-        where: {
-          userId,
-          lastUsedAt: {
-            gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // ostatnie 7 dni
-          },
-        },
-        orderBy: { lastUsedAt: "desc" },
-        take: 100,
-        select: { exerciseId: true, lastUsedAt: true },
-      });
+      // Dodaj pominięte
+      if (excludeId) {
+        cache.skipped.add(excludeId);
+        cache.shown.add(excludeId);
+        console.log(
+          `Skipped ${excludeId}. Total skipped: ${cache.skipped.size}`
+        );
+      }
 
-      const recentlyUsedIds = recentUsage.map((u) => u.exerciseId);
+      // Pobierz filtry
+      const filters = userSessionFilters.get(userId) || {};
 
-      // Pobierz też zadania ukończone w tej sesji
+      // Załaduj ukończone z aktywnej sesji
       const activeSession = await prisma.learningSession.findFirst({
         where: {
           userId,
@@ -218,31 +264,45 @@ export async function learningRoutes(fastify: FastifyInstance) {
         },
       });
 
-      const completedInSession = activeSession?.completedExercises
-        ? ((activeSession.completedExercises as any[]) || [])
-            .map((e) => e.id)
-            .filter(Boolean)
-        : [];
+      if (activeSession?.completedExercises) {
+        const completed = (activeSession.completedExercises as any[]) || [];
+        completed.forEach((ex: any) => {
+          if (ex.id) {
+            cache.completed.add(ex.id);
+            cache.shown.add(ex.id);
+          }
+        });
+      }
 
-      // Zbuduj listę wszystkich wykluczonych
-      const allExcludedIds = [
-        ...Array.from(skippedInSession),
-        ...completedInSession,
-        ...recentInMemory,
-        ...recentlyUsedIds,
-      ];
+      // WAŻNE: Pobierz WSZYSTKIE użycia z bazy, nie tylko ostatnie 24h!
+      const allUsageFromDB = await prisma.exerciseUsage.findMany({
+        where: { userId },
+        select: { exerciseId: true },
+      });
 
-      // Usuń duplikaty
-      const uniqueExcluded = [...new Set(allExcludedIds)];
+      // Dodaj wszystkie do cache
+      allUsageFromDB.forEach((usage) => {
+        cache.shown.add(usage.exerciseId);
+      });
 
-      // Zbuduj WHERE z wykluczeniami
-      const baseWhere: any = {
-        id: {
-          notIn: uniqueExcluded,
-        },
-      };
+      // Wszystkie wykluczone
+      const allExcluded = new Set<string>([
+        ...cache.shown,
+        ...cache.skipped,
+        ...cache.completed,
+      ]);
 
-      // Dodaj filtry
+      console.log(`Total excluded (including DB): ${allExcluded.size}`);
+      console.log("First 10 excluded:", Array.from(allExcluded).slice(0, 10));
+
+      // Buduj WHERE
+      const baseWhere: any = {};
+
+      if (allExcluded.size > 0) {
+        baseWhere.id = { notIn: Array.from(allExcluded) };
+      }
+
+      // Filtry
       if (filters.type) baseWhere.type = filters.type;
       if (filters.category) baseWhere.category = filters.category;
       if (filters.category === "HISTORICAL_LITERARY" && filters.epoch) {
@@ -252,137 +312,90 @@ export async function learningRoutes(fastify: FastifyInstance) {
         baseWhere.difficulty = { in: filters.difficulty };
       }
 
-      console.log(
-        `User ${userId}: excluded ${uniqueExcluded.length} exercises`
-      );
+      // Policz dostępne
+      const availableCount = await prisma.exercise.count({ where: baseWhere });
+      console.log(`Available after exclusions: ${availableCount}`);
 
-      // PRIORYTET 1: Zadania NIGDY nierozwiązane i nieużywane
-      const neverUsed = await prisma.exercise.findMany({
-        where: {
-          ...baseWhere,
-          NOT: {
-            OR: [
-              { submissions: { some: { userId } } },
-              { usageHistory: { some: { userId } } },
-            ],
+      if (availableCount === 0) {
+        console.log("No exercises! This user has seen everything!");
+
+        // Opcja: wyczyść starsze niż 30 dni
+        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const oldUsage = await prisma.exerciseUsage.findMany({
+          where: {
+            userId,
+            lastUsedAt: { lt: thirtyDaysAgo },
           },
-        },
+          select: { exerciseId: true },
+          take: 50,
+        });
+
+        if (oldUsage.length > 0) {
+          console.log(`Found ${oldUsage.length} exercises from >30 days ago`);
+          const oldIds = oldUsage.map((u) => u.exerciseId);
+          baseWhere.id = { in: oldIds };
+        } else {
+          // Absolutnie brak - pokaż jakiekolwiek
+          delete baseWhere.id;
+          console.log("Showing ANY exercise - user exhausted all!");
+        }
+      }
+
+      // Pobierz ćwiczenia
+      const exercises = await prisma.exercise.findMany({
+        where: baseWhere,
         take: 20,
       });
 
-      if (neverUsed.length > 0) {
-        const selected =
-          neverUsed[Math.floor(Math.random() * neverUsed.length)];
+      if (exercises.length === 0) {
+        console.log("ABSOLUTELY NO EXERCISES FOUND!");
+        return reply.send(null);
+      }
 
-        // Dodaj do recent w pamięci
-        recentInMemory.push(selected.id);
-        if (recentInMemory.length > MAX_RECENT_MEMORY) {
-          recentInMemory.shift();
-        }
+      // Wybierz losowe
+      const selected = exercises[Math.floor(Math.random() * exercises.length)];
 
-        // Zapisz w ExerciseUsage
-        await prisma.exerciseUsage.upsert({
-          where: {
-            userId_exerciseId: {
-              userId,
-              exerciseId: selected.id,
-            },
-          },
-          update: {
-            lastUsedAt: new Date(),
-            usageCount: { increment: 1 },
-          },
-          create: {
+      // ZAPISZ DO CACHE I BAZY
+      cache.shown.add(selected.id);
+      cache.lastExerciseId = selected.id;
+
+      console.log(
+        `Selected: ${selected.id} - "${selected.question?.substring(0, 40)}..."`
+      );
+
+      // WAŻNE: Zawsze zapisz do ExerciseUsage!
+      await prisma.exerciseUsage.upsert({
+        where: {
+          userId_exerciseId: {
             userId,
             exerciseId: selected.id,
-            context: "LEARNING",
-            usageCount: 1,
           },
-        });
-
-        return reply.send(selected);
-      }
-
-      // PRIORYTET 2: Najdawniej używane (poza ostatnimi 50)
-      const oldestUsed = await prisma.exerciseUsage.findMany({
-        where: {
+        },
+        update: {
+          lastUsedAt: new Date(),
+          usageCount: { increment: 1 },
+        },
+        create: {
           userId,
-          exerciseId: {
-            notIn: uniqueExcluded.slice(0, 50), // Wyklucz tylko ostatnie 50
-          },
-          exercise: {
-            ...(filters.type && { type: filters.type }),
-            ...(filters.category && { category: filters.category }),
-            ...(filters.epoch && { epoch: filters.epoch }),
-          },
-        },
-        include: {
-          exercise: true,
-        },
-        orderBy: { lastUsedAt: "asc" },
-        take: 10,
-      });
-
-      if (oldestUsed.length > 0) {
-        const selected = oldestUsed[0].exercise;
-        console.log(
-          `Selected oldest exercise from ${oldestUsed[0].lastUsedAt}`
-        );
-
-        // Aktualizuj recent
-        recentInMemory.push(selected.id);
-        if (recentInMemory.length > MAX_RECENT_MEMORY) {
-          recentInMemory.shift();
-        }
-
-        // Aktualizuj ExerciseUsage
-        await prisma.exerciseUsage.update({
-          where: {
-            userId_exerciseId: {
-              userId,
-              exerciseId: selected.id,
-            },
-          },
-          data: {
-            lastUsedAt: new Date(),
-            usageCount: { increment: 1 },
-          },
-        });
-
-        return reply.send(selected);
-      }
-
-      // PRIORYTET 3: Rozluźnij kryteria - wyklucz tylko z tej sesji
-      const sessionOnlyExcluded = [
-        ...Array.from(skippedInSession),
-        ...completedInSession,
-        ...recentInMemory.slice(0, 10), // Tylko ostatnie 10 z pamięci
-      ];
-
-      const lastResort = await prisma.exercise.findFirst({
-        where: {
-          ...baseWhere,
-          id: { notIn: sessionOnlyExcluded },
+          exerciseId: selected.id,
+          context: "LEARNING",
+          usageCount: 1,
         },
       });
 
-      if (lastResort) {
-        return reply.send(lastResort);
-      }
-
-      // Absolutnie ostatnia opcja
-      const anyExercise = await prisma.exercise.findFirst({
-        where: {
-          ...(filters.type && { type: filters.type }),
-          ...(filters.category && { category: filters.category }),
-        },
-      });
-
-      return reply.send(anyExercise);
+      return reply.send(selected);
     } catch (error) {
-      console.error("Error getting next exercise:", error);
+      console.error("Error:", error);
       return reply.code(500).send({ error: "Failed to get next exercise" });
     }
+  });
+
+  fastify.post("/session/clear-cache", async (request, reply) => {
+    const userId = (request.user as any).userId;
+    sessionExerciseCache.delete(userId);
+    userSessionFilters.delete(userId);
+    console.log(`Cleared all caches for user ${userId}`);
+    return reply.send({ success: true });
   });
 
   // Save session state - ZACHOWANE BEZ ZMIAN
@@ -418,23 +431,43 @@ export async function learningRoutes(fastify: FastifyInstance) {
       const userId = (request.user as any).userId;
       const { sessionId, stats, completedExercises = [] } = request.body as any;
 
-      console.log("=== SESSION COMPLETE REQUEST ===");
-      console.log("Body:", JSON.stringify(request.body, null, 2));
+      console.log("=== SESSION COMPLETE ===");
+      console.log(`Completed: ${stats?.completed || 0} exercises`);
 
-      if (!stats || stats.completed === 0) {
-        console.log("NO DATA TO SAVE - returning early!");
-        return reply.send({ success: true, message: "No data to save" });
+      // NIE CZYŚĆ cache.shown - to historia użytkownika!
+      const cache = getUserSessionCache(userId);
+      cache.completed.clear();
+      cache.skipped.clear();
+      // cache.shown POZOSTAJE!
+
+      // Zapisz ukończone do ExerciseUsage
+      if (completedExercises && completedExercises.length > 0) {
+        for (const ex of completedExercises) {
+          if (ex.id) {
+            await prisma.exerciseUsage.upsert({
+              where: {
+                userId_exerciseId: {
+                  userId,
+                  exerciseId: ex.id,
+                },
+              },
+              update: {
+                lastUsedAt: new Date(),
+                usageCount: { increment: 1 },
+              },
+              create: {
+                userId,
+                exerciseId: ex.id,
+                context: "LEARNING",
+                usageCount: 1,
+              },
+            });
+          }
+        }
       }
 
-      // Wyczyść dane w pamięci
-      userSessionFilters.delete(userId);
-      if (sessionSkippedExercises.has(userId)) {
-        sessionSkippedExercises.get(userId)!.clear();
-      }
-      userRecentExercises.delete(userId);
-
-      // Zakończ sesję w bazie
-      if (sessionId) {
+      // Reszta kodu bez zmian...
+      if (sessionId && stats && stats.completed > 0) {
         await prisma.learningSession.update({
           where: { id: sessionId },
           data: {
@@ -922,4 +955,44 @@ async function createNotification(
   } catch (error) {
     console.error("Error creating notification:", error);
   }
+}
+
+function getUserSessionCache(userId: string) {
+  if (!sessionExerciseCache.has(userId)) {
+    sessionExerciseCache.set(userId, {
+      shown: new Set(),
+      skipped: new Set(),
+      completed: new Set(),
+      lastExerciseId: null,
+      lastRequestTime: 0,
+    });
+  }
+  return sessionExerciseCache.get(userId)!;
+}
+
+async function loadUserExerciseHistory(userId: string) {
+  const cache = getUserSessionCache(userId);
+
+  // Załaduj ostatnie 100 użyć z bazy
+  const recentUsage = await prisma.exerciseUsage.findMany({
+    where: {
+      userId,
+      lastUsedAt: {
+        gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // ostatnie 7 dni
+      },
+    },
+    orderBy: { lastUsedAt: "desc" },
+    take: 100,
+    select: { exerciseId: true },
+  });
+
+  // Dodaj do cache jako "shown"
+  recentUsage.forEach((usage) => {
+    cache.shown.add(usage.exerciseId);
+  });
+
+  console.log(
+    `Loaded ${recentUsage.length} exercises from history for user ${userId}`
+  );
+  return cache;
 }
