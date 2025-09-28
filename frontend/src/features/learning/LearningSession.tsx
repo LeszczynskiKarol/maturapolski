@@ -1,11 +1,9 @@
 // frontend/src/features/learning/LearningSession.tsx
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
 import confetti from "canvas-confetti";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  AlertCircle,
   Award,
   CheckCircle,
   ChevronDown,
@@ -21,6 +19,7 @@ import {
   XCircle,
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { api } from "../../services/api";
 
@@ -246,6 +245,14 @@ export const LearningSession: React.FC = () => {
 
   const startSession = async () => {
     try {
+      localStorage.removeItem("sessionFilters");
+      localStorage.removeItem("isStudyPlanSession");
+      setSessionFilters({}); // Wyczyść filtry
+      setIsPlanSession(false);
+
+      // Wyczyść filtry na backendzie
+      await api.post("/api/learning/session/filters", {});
+
       const response = await api.post("/api/learning/session/start");
       const { sessionId: newSessionId, isResumed, state } = response.data;
 
@@ -295,7 +302,6 @@ export const LearningSession: React.FC = () => {
         completedExercises: completedExercises,
       });
     }
-    await api.post("/api/learning/session/clear-cache");
 
     // Resetuj wszystko
     setSessionId(null);

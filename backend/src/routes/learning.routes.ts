@@ -223,37 +223,182 @@ export async function learningRoutes(fastify: FastifyInstance) {
       const userId = (request.user as any).userId;
       const { excludeId } = request.query as { excludeId?: string };
 
-      // Pobierz WSZYSTKIE użycia z bazy (nie z cache!)
-      const allUsedExercises = await prisma.exerciseUsage.findMany({
-        where: { userId },
-        select: { exerciseId: true, lastUsedAt: true },
+      // Pobierz dane równolegle
+      const [
+        userProfile,
+        recentSubmissions,
+        currentSession,
+        usageHistory,
+        lastExercises,
+      ] = await Promise.all([
+        prisma.userProfile.findUnique({
+          where: { userId },
+          select: { averageScore: true, level: true, totalPoints: true },
+        }),
+        prisma.submission.findMany({
+          where: {
+            userId,
+            createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+          },
+          select: {
+            exerciseId: true,
+            score: true,
+            createdAt: true,
+            exercise: {
+              select: {
+                id: true,
+                type: true,
+                category: true,
+                difficulty: true,
+                epoch: true,
+                points: true,
+                tags: true,
+              },
+            },
+          },
+          orderBy: { createdAt: "desc" },
+          take: 20,
+        }),
+        prisma.learningSession.findFirst({
+          where: { userId, status: "IN_PROGRESS" },
+          select: {
+            completed: true,
+            correct: true,
+            streak: true,
+            filters: true,
+            completedExercises: true,
+          },
+        }),
+        prisma.exerciseUsage.findMany({
+          where: { userId },
+          select: {
+            exerciseId: true,
+            lastUsedAt: true,
+            usageCount: true,
+            context: true,
+          },
+        }),
+        // NOWE: Pobierz ostatnie 5 ćwiczeń z tej sesji
+        prisma.exerciseUsage.findMany({
+          where: {
+            userId,
+            lastUsedAt: { gte: new Date(Date.now() - 60 * 60 * 1000) }, // ostatnia godzina
+          },
+          orderBy: { lastUsedAt: "desc" },
+          take: 5,
+          include: {
+            exercise: {
+              select: {
+                type: true,
+                category: true,
+                difficulty: true,
+                epoch: true,
+                tags: true,
+              },
+            },
+          },
+        }),
+      ]);
+
+      // Statystyki sesji
+      const currentAccuracy =
+        currentSession && currentSession.completed > 0
+          ? currentSession.correct / currentSession.completed
+          : userProfile?.averageScore
+          ? userProfile.averageScore / 100
+          : 0.5;
+
+      const currentStreak = currentSession?.streak || 0;
+      const userLevel = userProfile?.level || 1;
+      const sessionExercises =
+        (currentSession?.completedExercises as any[]) || [];
+
+      // ULEPSZONA ANALIZA: Historia typów i kategorii
+      const recentTypeCount = new Map<string, number>();
+      const recentCategoryCount = new Map<string, number>();
+      const recentEpochCount = new Map<string, number>();
+      const recentTagsSet = new Set<string>();
+
+      lastExercises.forEach((usage) => {
+        if (usage.exercise) {
+          recentTypeCount.set(
+            usage.exercise.type,
+            (recentTypeCount.get(usage.exercise.type) || 0) + 1
+          );
+          recentCategoryCount.set(
+            usage.exercise.category,
+            (recentCategoryCount.get(usage.exercise.category) || 0) + 1
+          );
+          if (usage.exercise.epoch) {
+            recentEpochCount.set(
+              usage.exercise.epoch,
+              (recentEpochCount.get(usage.exercise.epoch) || 0) + 1
+            );
+          }
+          usage.exercise.tags?.forEach((tag) => recentTagsSet.add(tag));
+        }
       });
 
-      const usedIds = new Set(allUsedExercises.map((u) => u.exerciseId));
+      // Znajdź problematyczne ćwiczenia (do powtórki)
+      const failedExercises = recentSubmissions
+        .filter((s) => (s.score || 0) === 0)
+        .map((s) => ({
+          id: s.exerciseId,
+          hoursSince:
+            (Date.now() - new Date(s.createdAt).getTime()) / (1000 * 60 * 60),
+        }));
 
-      // Dodaj aktualnie wykluczane
-      if (excludeId) {
-        usedIds.add(excludeId);
-      }
-
+      // Filtry sesji
       const filters = userSessionFilters.get(userId) || {};
       const isStudyPlanSession = !!filters.weekNumber;
 
-      console.log(`\n=== GET NEXT EXERCISE ===`);
-      console.log(`Type: ${isStudyPlanSession ? "STUDY_PLAN" : "NORMAL"}`);
-      console.log(`Total used EVER: ${usedIds.size}`);
+      console.log(`\n=== INTELLIGENT SELECTION v2 ===`);
+      console.log(
+        `User: Level ${userLevel}, Accuracy: ${(currentAccuracy * 100).toFixed(
+          0
+        )}%, Streak: ${currentStreak}`
+      );
+      console.log(
+        `Type: ${
+          isStudyPlanSession ? "STUDY_PLAN Week " + filters.weekNumber : "FREE"
+        }`
+      );
+      console.log(`Recent types:`, Object.fromEntries(recentTypeCount));
 
-      // Buduj WHERE
+      // BUDUJ ZAPYTANIE
       const baseWhere: any = {};
-      if (filters.type) baseWhere.type = filters.type;
-      if (filters.category) baseWhere.category = filters.category;
-      if (filters.epoch) baseWhere.epoch = filters.epoch;
-      if (filters.difficulty?.length > 0) {
-        baseWhere.difficulty = { in: filters.difficulty };
+
+      if (isStudyPlanSession) {
+        // StudyPlan - respektuj filtry tygodnia
+        if (filters.type) baseWhere.type = filters.type;
+        if (filters.category) baseWhere.category = filters.category;
+        if (filters.epoch) baseWhere.epoch = filters.epoch;
+        if (filters.difficulty?.length > 0) {
+          baseWhere.difficulty = { in: filters.difficulty };
+        }
+      } else {
+        // Free Learning - inteligentna adaptacja
+        if (filters.category) baseWhere.category = filters.category;
+
+        // Dynamiczna trudność z szerszym zakresem
+        let targetDifficulty: number[];
+        if (currentStreak >= 5 && currentAccuracy > 0.8) {
+          targetDifficulty = [3, 4, 5];
+        } else if (currentAccuracy < 0.4) {
+          targetDifficulty = [1, 2, 3];
+        } else {
+          const base = Math.min(5, Math.max(1, Math.round(userLevel / 2)));
+          targetDifficulty = [
+            Math.max(1, base - 1),
+            base,
+            Math.min(5, base + 1),
+          ];
+        }
+        baseWhere.difficulty = { in: targetDifficulty };
       }
 
-      // Pobierz dostępne
-      const allAvailableExercises = await prisma.exercise.findMany({
+      // Pobierz kandydatów
+      const allCandidates = await prisma.exercise.findMany({
         where: baseWhere,
         include: {
           submissions: {
@@ -265,47 +410,202 @@ export async function learningRoutes(fastify: FastifyInstance) {
         },
       });
 
-      // Wyklucz WSZYSTKIE kiedykolwiek używane
-      let candidateExercises = allAvailableExercises.filter(
-        (ex) => !usedIds.has(ex.id)
+      console.log(`Found ${allCandidates.length} candidates`);
+
+      // Wyklucz używane
+      const usedIds = new Set(usageHistory.map((u) => u.exerciseId));
+      if (excludeId) usedIds.add(excludeId);
+
+      // ULEPSZONE SCOROWANIE
+      const scoredExercises = allCandidates.map((exercise) => {
+        let score = 1000;
+        let bonuses: string[] = [];
+        let penalties: string[] = [];
+
+        // 1. NIEUŻYWANE - największy bonus
+        if (!usedIds.has(exercise.id)) {
+          score += 500;
+          bonuses.push("+500 NEW");
+        } else {
+          const usage = usageHistory.find((u) => u.exerciseId === exercise.id);
+          if (usage) {
+            const daysSince =
+              (Date.now() - usage.lastUsedAt.getTime()) / 86400000;
+
+            // Progresywny bonus - im dłużej nieużywane, tym większy
+            if (daysSince > 7) {
+              const weekBonus = Math.min(500, Math.floor((daysSince - 7) * 50));
+              score += weekBonus;
+              bonuses.push(`+${weekBonus} LONG_UNUSED`);
+            }
+          }
+        }
+
+        // SPECJALNY BONUS dla StudyPlan - preferuj niepowtórzone w tym tygodniu
+        if (isStudyPlanSession && !usedIds.has(exercise.id)) {
+          score += 300; // Dodatkowy bonus dla świeżych w StudyPlan
+          bonuses.push("+300 WEEK_FRESH");
+        }
+
+        // KARA ZA ZBYT CZĘSTE ESSAY/SYNTHESIS (są trudne)
+        if (
+          ["ESSAY", "SYNTHESIS_NOTE"].includes(exercise.type) &&
+          sessionExercises.length < 10
+        ) {
+          score -= 200;
+          penalties.push("-200 TOO_EARLY_HARD");
+        }
+
+        // 2. ANTY-MONOTONIA TYPÓW (zwiększone wagi)
+        const typeCount = recentTypeCount.get(exercise.type) || 0;
+        if (typeCount > 0) {
+          const typePenalty = typeCount * 200; // zwiększona kara
+          score -= typePenalty;
+          penalties.push(`-${typePenalty} TYPE_REPEAT`);
+        } else {
+          score += 150;
+          bonuses.push("+150 NEW_TYPE");
+        }
+
+        // 3. RÓŻNORODNOŚĆ KATEGORII
+        const catCount = recentCategoryCount.get(exercise.category) || 0;
+        if (catCount > 2) {
+          const catPenalty = catCount * 50;
+          score -= catPenalty;
+          penalties.push(`-${catPenalty} CAT_REPEAT`);
+        } else if (catCount === 0) {
+          score += 100;
+          bonuses.push("+100 NEW_CAT");
+        }
+
+        // 4. RÓŻNORODNOŚĆ EPOK (dla HISTORICAL_LITERARY)
+        if (exercise.epoch) {
+          const epochCount = recentEpochCount.get(exercise.epoch) || 0;
+          if (epochCount > 1) {
+            const epochPenalty = epochCount * 80;
+            score -= epochPenalty;
+            penalties.push(`-${epochPenalty} EPOCH_REPEAT`);
+          } else if (epochCount === 0) {
+            score += 120;
+            bonuses.push("+120 NEW_EPOCH");
+          }
+        }
+
+        // 5. PROGRESJA TRUDNOŚCI
+        const lastDiff = lastExercises[0]?.exercise?.difficulty;
+        if (lastDiff) {
+          const diffChange = Math.abs(exercise.difficulty - lastDiff);
+          if (currentAccuracy > 0.7 && exercise.difficulty > lastDiff) {
+            score += 80; // bonus za zwiększanie trudności gdy dobrze idzie
+            bonuses.push("+80 DIFFICULTY_UP");
+          } else if (currentAccuracy < 0.5 && exercise.difficulty < lastDiff) {
+            score += 60; // bonus za zmniejszanie gdy źle idzie
+            bonuses.push("+60 DIFFICULTY_DOWN");
+          } else if (diffChange > 2) {
+            score -= 100; // kara za zbyt duży skok
+            penalties.push("-100 DIFF_JUMP");
+          }
+        }
+
+        // 6. SPACED REPETITION dla błędów
+        const failedEntry = failedExercises.find((f) => f.id === exercise.id);
+        if (failedEntry) {
+          if (failedEntry.hoursSince > 1 && failedEntry.hoursSince < 24) {
+            const retryBonus = Math.floor(
+              300 * (1 - Math.exp(-failedEntry.hoursSince / 6))
+            );
+            score += retryBonus;
+            bonuses.push(`+${retryBonus} RETRY`);
+          }
+        }
+
+        // 7. RÓŻNORODNOŚĆ TAGÓW
+        const commonTags =
+          exercise.tags?.filter((tag) => recentTagsSet.has(tag)).length || 0;
+        if (commonTags > 2) {
+          const tagPenalty = commonTags * 30;
+          score -= tagPenalty;
+          penalties.push(`-${tagPenalty} TAG_OVERLAP`);
+        }
+
+        // 8. BONUS ZA RZADKIE TYPY
+        const rareTypes = ["SYNTHESIS_NOTE", "ESSAY"];
+        if (rareTypes.includes(exercise.type) && sessionExercises.length > 5) {
+          score += 100;
+          bonuses.push("+100 RARE_TYPE");
+        }
+
+        // 9. LOSOWOŚĆ (małe zaburzenie dla nieprzewidywalności)
+        const randomFactor = Math.floor(Math.random() * 100) - 50;
+        score += randomFactor;
+        if (randomFactor > 25) bonuses.push(`+${randomFactor} RND`);
+        if (randomFactor < -25) penalties.push(`${randomFactor} RND`);
+
+        return {
+          exercise,
+          score,
+          debug: {
+            id: exercise.id,
+            type: exercise.type,
+            category: exercise.category,
+            difficulty: exercise.difficulty,
+            epoch: exercise.epoch,
+            isNew: !usedIds.has(exercise.id),
+            bonuses: bonuses.join(", "),
+            penalties: penalties.join(", "),
+            finalScore: score,
+          },
+        };
+      });
+
+      // Sortuj i wyświetl debug
+      scoredExercises.sort((a, b) => b.score - a.score);
+
+      console.log("\nTop 5 scored exercises:");
+      scoredExercises.slice(0, 5).forEach((item, i) => {
+        console.log(
+          `  ${i + 1}. [${item.score}] ${item.debug.type}/${
+            item.debug.difficulty
+          }`
+        );
+        console.log(`     + ${item.debug.bonuses || "none"}`);
+        console.log(`     - ${item.debug.penalties || "none"}`);
+      });
+
+      // ULEPSZONE WYBIERANIE - większa losowość w top grupie
+      const topGroup = scoredExercises.slice(
+        0,
+        Math.min(5, scoredExercises.length)
       );
 
-      console.log(`Never used: ${candidateExercises.length}`);
-
-      // Jeśli brak nieużywanych - weź najstarsze
-      if (candidateExercises.length === 0) {
-        console.log("All exercises used! Taking oldest...");
-
-        // Sortuj używane po dacie
-        const sortedUsed = allUsedExercises
-          .sort((a, b) => a.lastUsedAt.getTime() - b.lastUsedAt.getTime())
-          .slice(0, 50); // Weź 50 najstarszych
-
-        const oldestIds = new Set(sortedUsed.map((u) => u.exerciseId));
-        candidateExercises = allAvailableExercises.filter((ex) =>
-          oldestIds.has(ex.id)
-        );
-
-        console.log(`Found ${candidateExercises.length} old exercises`);
-      }
-
-      if (candidateExercises.length === 0) {
+      if (topGroup.length === 0) {
         return reply.send({
           error: "NO_EXERCISES",
-          message: "Brak ćwiczeń spełniających kryteria",
+          message: "Brak dostępnych ćwiczeń",
         });
       }
 
-      // Wybierz losowe
-      const selected =
-        candidateExercises[
-          Math.floor(Math.random() * Math.min(5, candidateExercises.length))
-        ];
+      // Ważone losowanie z lepszym rozkładem
+      const weights = [0.35, 0.25, 0.2, 0.12, 0.08];
+      const random = Math.random();
+      let cumulative = 0;
+      let selectedIndex = 0;
 
-      // ZAWSZE zapisz do bazy!
+      for (let i = 0; i < Math.min(weights.length, topGroup.length); i++) {
+        cumulative += weights[i];
+        if (random < cumulative) {
+          selectedIndex = i;
+          break;
+        }
+      }
+
+      const selected = topGroup[selectedIndex];
+      const finalExercise = selected.exercise;
+
+      // Zapisz użycie
       await prisma.exerciseUsage.upsert({
         where: {
-          userId_exerciseId: { userId, exerciseId: selected.id },
+          userId_exerciseId: { userId, exerciseId: finalExercise.id },
         },
         update: {
           lastUsedAt: new Date(),
@@ -313,16 +613,22 @@ export async function learningRoutes(fastify: FastifyInstance) {
         },
         create: {
           userId,
-          exerciseId: selected.id,
+          exerciseId: finalExercise.id,
           context: isStudyPlanSession ? "STUDY_PLAN" : "LEARNING",
           usageCount: 1,
         },
       });
 
-      console.log(`Selected: ${selected.id}`);
-      return reply.send(selected);
+      console.log(
+        `\n✓ SELECTED: ${finalExercise.type}/${finalExercise.category}/Lv${finalExercise.difficulty}`
+      );
+      console.log(
+        `  Score: ${selected.score}, Position: #${selectedIndex + 1}`
+      );
+
+      return reply.send(finalExercise);
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error in exercise selection:", error);
       return reply.code(500).send({ error: "Failed to get next exercise" });
     }
   });
@@ -847,12 +1153,19 @@ export async function learningRoutes(fastify: FastifyInstance) {
     // Dla każdej sesji sprawdź czy to StudyPlan
     const sessionsWithType = await Promise.all(
       completedSessions.map(async (session) => {
+        // Utwórz kopię daty aby nie mutować oryginału
+        const dateStart = new Date(session.date);
+        dateStart.setHours(0, 0, 0, 0);
+        const dateEnd = new Date(session.date);
+        dateEnd.setHours(23, 59, 59, 999);
+
         const learningSession = await prisma.learningSession.findFirst({
           where: {
             userId,
-            createdAt: {
-              gte: new Date(session.date.setHours(0, 0, 0, 0)),
-              lt: new Date(session.date.setHours(23, 59, 59, 999)),
+            startedAt: {
+              // Używamy startedAt!
+              gte: dateStart,
+              lt: dateEnd,
             },
           },
           select: {
@@ -862,14 +1175,18 @@ export async function learningRoutes(fastify: FastifyInstance) {
 
         const filters = learningSession?.filters as any;
         return {
-          ...session,
+          id: session.id,
+          date: session.date,
+          exercisesCount: session.exercisesCount,
+          studyTime: session.studyTime || 0,
+          averageScore: session.averageScore || 0,
           sessionType: filters?.weekNumber ? "STUDY_PLAN" : "LEARNING",
           weekNumber: filters?.weekNumber || null,
         };
       })
     );
 
-    // Formatuj dane
+    // Formatuj dane dla aktywnych sesji
     const formattedActive = activeSessions.map((s) => {
       const filters = s.filters as any;
       return {
@@ -886,6 +1203,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
       };
     });
 
+    // Formatuj dane dla ukończonych sesji
     const formattedCompleted = sessionsWithType.map((s) => ({
       id: s.id,
       type: "completed",
@@ -893,9 +1211,9 @@ export async function learningRoutes(fastify: FastifyInstance) {
       weekNumber: s.weekNumber,
       date: s.date,
       exercisesCount: s.exercisesCount,
-      studyTime: s.studyTime || 0,
-      averageScore: Math.round(s.averageScore || 0),
-      points: Math.round((s.exercisesCount * (s.averageScore || 0)) / 50),
+      studyTime: s.studyTime,
+      averageScore: Math.round(s.averageScore),
+      points: Math.round((s.exercisesCount * s.averageScore) / 50),
       status: "COMPLETED",
     }));
 
@@ -910,63 +1228,51 @@ export async function learningRoutes(fastify: FastifyInstance) {
       const userId = (request.user as any).userId;
       const { id } = request.params as { id: string };
 
-      // Dla DailyProgress
-      const dailyProgress = await prisma.dailyProgress.findUnique({
+      // Najpierw pobierz DailyProgress
+      const dailyProgressRecord = await prisma.dailyProgress.findUnique({
         where: { id },
+      });
+
+      if (!dailyProgressRecord || dailyProgressRecord.userId !== userId) {
+        return reply.code(404).send({ error: "Session not found" });
+      }
+
+      // Teraz pobierz submissions dla tego dnia
+      const submissions = await prisma.submission.findMany({
+        where: {
+          userId,
+          createdAt: {
+            gte: new Date(dailyProgressRecord.date.setHours(0, 0, 0, 0)),
+            lt: new Date(dailyProgressRecord.date.setHours(23, 59, 59, 999)),
+          },
+        },
         include: {
-          user: {
+          exercise: {
             select: {
-              submissions: {
-                where: {
-                  createdAt: {
-                    gte: new Date(
-                      new Date(dailyProgress?.date || new Date()).setHours(
-                        0,
-                        0,
-                        0,
-                        0
-                      )
-                    ),
-                    lt: new Date(
-                      new Date(dailyProgress?.date || new Date()).setHours(
-                        23,
-                        59,
-                        59,
-                        999
-                      )
-                    ),
-                  },
-                },
-                include: {
-                  exercise: {
-                    select: {
-                      question: true,
-                      type: true,
-                      category: true,
-                      difficulty: true,
-                      content: true,
-                      correctAnswer: true,
-                    },
-                  },
-                },
-                orderBy: { createdAt: "asc" },
-              },
+              question: true,
+              type: true,
+              category: true,
+              difficulty: true,
+              content: true,
+              correctAnswer: true,
             },
           },
         },
+        orderBy: { createdAt: "asc" },
       });
-
-      if (!dailyProgress || dailyProgress.userId !== userId) {
-        return reply.code(404).send({ error: "Session not found" });
-      }
 
       // Sprawdź czy to była sesja StudyPlan
       const learningSession = await prisma.learningSession.findFirst({
         where: {
           userId,
-          createdAt: {
-            gte: new Date(dailyProgress.date.setHours(0, 0, 0, 0)),
-            lt: new Date(dailyProgress.date.setHours(23, 59, 59, 999)),
+          startedAt: {
+            // Używamy startedAt zamiast createdAt!
+            gte: new Date(
+              new Date(dailyProgressRecord.date).setHours(0, 0, 0, 0)
+            ),
+            lt: new Date(
+              new Date(dailyProgressRecord.date).setHours(23, 59, 59, 999)
+            ),
           },
         },
         select: {
@@ -978,14 +1284,14 @@ export async function learningRoutes(fastify: FastifyInstance) {
         ?.weekNumber;
       const weekNumber = (learningSession?.filters as any)?.weekNumber || null;
 
-      const submissions = dailyProgress.user.submissions.map((sub) => ({
+      const formattedSubmissions = submissions.map((sub) => ({
         id: sub.id,
         question: sub.exercise.question,
         type: sub.exercise.type,
         category: sub.exercise.category,
         difficulty: sub.exercise.difficulty,
         score: sub.score || 0,
-        maxPoints: sub.exercise.content?.points || 2,
+        maxPoints: 2, // domyślnie 2 punkty
         userAnswer: sub.answer,
         correctAnswer: sub.exercise.correctAnswer,
         exerciseContent: sub.exercise.content,
@@ -995,36 +1301,13 @@ export async function learningRoutes(fastify: FastifyInstance) {
       return reply.send({
         sessionType: isStudyPlanSession ? "STUDY_PLAN" : "LEARNING",
         weekNumber,
-        submissions,
+        submissions: formattedSubmissions,
       });
     } catch (error) {
       console.error("Error getting session details:", error);
       return reply.code(500).send({ error: "Failed to get session details" });
     }
   });
-}
-
-async function createNotification(
-  userId: string,
-  type: string,
-  title: string,
-  message: string,
-  actionUrl?: string
-) {
-  try {
-    return await prisma.notification.create({
-      data: {
-        userId,
-        type,
-        title,
-        message,
-        actionUrl,
-        read: false,
-      },
-    });
-  } catch (error) {
-    console.error("Error creating notification:", error);
-  }
 }
 
 function getUserSessionCache(userId: string) {

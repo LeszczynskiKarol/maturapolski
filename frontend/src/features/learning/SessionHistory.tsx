@@ -1,20 +1,18 @@
 // frontend/src/features/learning/SessionHistory.tsx
 
 import { useQuery } from "@tanstack/react-query";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
+  BookOpen,
   Calendar,
+  CalendarCheck,
+  CheckCircle,
+  ChevronDown,
   ChevronLeft,
-  ChevronRight,
   Clock,
   TrendingUp,
   Trophy,
-  ChevronDown,
-  BookOpen,
-  CalendarCheck,
-  CheckCircle,
   XCircle,
-  AlertCircle,
 } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -254,7 +252,6 @@ export const SessionHistory: React.FC = () => {
         </div>
       )}
 
-      {/* Lista sesji */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 overflow-hidden">
         <div className="space-y-0">
           {data?.completed?.map((session: any, index: number) => (
@@ -396,6 +393,7 @@ export const SessionHistory: React.FC = () => {
                           </span>
                         )}
                       </div>
+
                       <div className="space-y-3">
                         {sessionDetails.submissions?.map(
                           (sub: any, idx: number) => (
