@@ -107,20 +107,44 @@ export async function examStructureRoutes(fastify: FastifyInstance) {
   fastify.delete("/:id", async (request, reply) => {
     const { id } = request.params as { id: string };
 
-    // Sprawdź czy nie ma aktywnych sesji
-    const activeSessions = await prisma.examSession.count({
+    // NAJPIERW usuń powiązane rekordy
+
+    // 1. Usuń odpowiedzi
+    await prisma.examAnswer.deleteMany({
       where: {
-        examId: id,
-        status: "IN_PROGRESS",
+        session: {
+          examId: id,
+        },
       },
     });
 
-    if (activeSessions > 0) {
-      return reply.code(400).send({
-        error: "Nie można usunąć egzaminu z aktywnymi sesjami",
+    // 2. Usuń sesje
+    await prisma.examSession.deleteMany({
+      where: { examId: id },
+    });
+
+    // 3. Usuń pytania
+    const sections = await prisma.examSection.findMany({
+      where: { examId: id },
+    });
+
+    for (const section of sections) {
+      await prisma.examQuestion.deleteMany({
+        where: { sectionId: section.id },
       });
     }
 
+    // 4. Usuń sekcje
+    await prisma.examSection.deleteMany({
+      where: { examId: id },
+    });
+
+    // 5. Usuń teksty źródłowe
+    await prisma.textSource.deleteMany({
+      where: { examId: id },
+    });
+
+    // 6. TERAZ możesz usunąć egzamin
     await prisma.mockExam.delete({
       where: { id },
     });

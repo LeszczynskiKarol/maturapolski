@@ -42,10 +42,47 @@ export const ExamList: React.FC = () => {
     data: exams,
     isLoading,
     refetch,
+    error,
   } = useQuery<Exam[]>({
     queryKey: ["available-exams"],
-    queryFn: () => api.get("/api/exams/available").then((r) => r.data),
+    queryFn: async () => {
+      console.log("🔍 Fetching exams from API...");
+      try {
+        const response = await api.get("/api/exams/available");
+        console.log("✅ Exams API response:", response.data);
+        console.log("Number of exams:", response.data?.length || 0);
+
+        // Debug każdy egzamin
+        response.data?.forEach((exam: any) => {
+          console.log(`- ${exam.title} (ID: ${exam.id})`);
+        });
+
+        return response.data;
+      } catch (error) {
+        console.error("❌ Error fetching exams:", error);
+        throw error;
+      }
+    },
   });
+
+  console.log("Component state:", {
+    exams,
+    isLoading,
+    error,
+    examsCount: exams?.length,
+  });
+
+  if (error) {
+    console.error("Query error:", error);
+    return (
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="bg-red-50 p-4 rounded">
+          <p className="text-red-600">Błąd pobierania egzaminów:</p>
+          <pre className="text-xs mt-2">{JSON.stringify(error, null, 2)}</pre>
+        </div>
+      </div>
+    );
+  }
 
   const startExamMutation = useMutation({
     mutationFn: (examId: string) => api.post(`/api/exams/${examId}/start`),
@@ -103,9 +140,7 @@ export const ExamList: React.FC = () => {
     );
   }
 
-  // Rozdziel egzaminy na dynamiczne i statyczne
-  const dynamicExams = exams.filter((e) => e.title.includes("Dynamiczny"));
-  const staticExams = exams.filter((e) => !e.title.includes("Dynamiczny"));
+  const dynamicExams = exams;
 
   return (
     <div className="max-w-7xl mx-auto p-6">
@@ -144,11 +179,11 @@ export const ExamList: React.FC = () => {
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {dynamicExams.map((exam) => (
+            {exams.map((exam) => (
               <ExamCard
                 key={exam.id}
                 exam={exam}
-                isDynamic={true}
+                isDynamic={true} // Wszystkie są dynamiczne
                 onStart={() => startExamMutation.mutate(exam.id)}
                 isStarting={startExamMutation.isPending}
               />
@@ -273,11 +308,12 @@ const ExamCard: React.FC<{
                   )?.id;
                   if (sessionId) {
                     try {
-                      await api.post(`/api/exams/session/${sessionId}/abandon`);
-                      toast.success("Egzamin został przerwany");
+                      // ZMIEŃ Z /abandon NA /finish !!!
+                      await api.post(`/api/exams/session/${sessionId}/finish`);
+                      toast.success("Egzamin został zakończony");
                       window.location.reload();
                     } catch (error) {
-                      toast.error("Błąd podczas przerywania egzaminu");
+                      toast.error("Błąd podczas kończenia egzaminu");
                     }
                   }
                 }

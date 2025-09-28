@@ -165,23 +165,45 @@ export async function adminQuestionsRoutes(fastify: FastifyInstance) {
   fastify.delete("/:id", async (request, reply) => {
     const { id } = request.params as { id: string };
 
-    // Sprawdź czy pytanie nie jest używane w aktywnych sesjach
-    const activeUsage = await prisma.exerciseUsage.count({
+    // NAJPIERW usuń powiązane rekordy
+
+    // 1. Usuń odpowiedzi
+    await prisma.examAnswer.deleteMany({
       where: {
-        exerciseId: id,
-        lastUsedAt: {
-          gte: new Date(Date.now() - 24 * 60 * 60 * 1000), // Ostatnie 24h
+        session: {
+          examId: id,
         },
       },
     });
 
-    if (activeUsage > 0) {
-      return reply.code(400).send({
-        error: "Nie można usunąć pytania używanego w ostatnich 24h",
+    // 2. Usuń sesje
+    await prisma.examSession.deleteMany({
+      where: { examId: id },
+    });
+
+    // 3. Usuń pytania
+    const sections = await prisma.examSection.findMany({
+      where: { examId: id },
+    });
+
+    for (const section of sections) {
+      await prisma.examQuestion.deleteMany({
+        where: { sectionId: section.id },
       });
     }
 
-    await prisma.exercise.delete({
+    // 4. Usuń sekcje
+    await prisma.examSection.deleteMany({
+      where: { examId: id },
+    });
+
+    // 5. Usuń teksty źródłowe
+    await prisma.textSource.deleteMany({
+      where: { examId: id },
+    });
+
+    // 6. TERAZ możesz usunąć egzamin
+    await prisma.mockExam.delete({
       where: { id },
     });
 

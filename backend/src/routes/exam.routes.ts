@@ -4,7 +4,6 @@ import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 import { assessShortAnswerWithAI, assessEssayWithAI } from "../ai/aiService";
 import { differenceInMinutes } from "date-fns";
-import { ExerciseSelectionService } from "../services/exerciseSelectionService"; // DODAJ TEN IMPORT!
 
 export async function examRoutes(fastify: FastifyInstance) {
   // Auth middleware
@@ -18,6 +17,17 @@ export async function examRoutes(fastify: FastifyInstance) {
 
   // Pobierz dostępne egzaminy
   fastify.get("/available", async (request, reply) => {
+    const userId = (request.user as any).userId;
+
+    console.log("=== FETCHING EXAMS ===");
+    console.log("User ID:", userId);
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { role: true },
+    });
+    console.log("User role:", user?.role);
+
     const exams = await prisma.mockExam.findMany({
       where: { isActive: true },
       include: {
@@ -31,7 +41,7 @@ export async function examRoutes(fastify: FastifyInstance) {
           },
         },
         sessions: {
-          where: { userId: (request.user as any).userId },
+          where: { userId },
           select: {
             id: true,
             status: true,
@@ -43,7 +53,10 @@ export async function examRoutes(fastify: FastifyInstance) {
       orderBy: { createdAt: "desc" },
     });
 
-    // Oblicz max punktów dla każdego egzaminu
+    console.log("Found exams:", exams.length);
+    exams.forEach((e) => console.log(" -", e.title, e.id));
+
+    // Formatuj dla frontendu
     const examsWithStats = exams.map((exam) => {
       const totalPoints = exam.sections.reduce(
         (sum, section) =>
@@ -51,20 +64,23 @@ export async function examRoutes(fastify: FastifyInstance) {
         0
       );
 
-      const userSessions = exam.sessions;
-      const bestScore = userSessions
-        .filter((s) => s.status === "COMPLETED")
-        .reduce((max, s) => Math.max(max, s.percentScore || 0), 0);
+      // Dla dynamicznych egzaminów bez pytań - ustaw domyślne punkty
+      const finalTotalPoints = totalPoints > 0 ? totalPoints : 60;
 
       return {
         ...exam,
-        totalPoints,
-        attemptCount: userSessions.length,
-        bestScore: bestScore > 0 ? bestScore : null,
-        hasActiveSession: userSessions.some((s) => s.status === "IN_PROGRESS"),
+        totalPoints: finalTotalPoints,
+        isDynamic: true, // Zawsze true dla Twoich egzaminów
+        attemptCount: exam.sessions.length,
+        bestScore:
+          exam.sessions
+            .filter((s) => s.status === "COMPLETED")
+            .reduce((max, s) => Math.max(max, s.percentScore || 0), 0) || null,
+        hasActiveSession: exam.sessions.some((s) => s.status === "IN_PROGRESS"),
       };
     });
 
+    console.log("Returning exams:", examsWithStats);
     return reply.send(examsWithStats);
   });
 
@@ -100,7 +116,7 @@ export async function examRoutes(fastify: FastifyInstance) {
     const { examId } = request.params as { examId: string };
     const userId = (request.user as any).userId;
 
-    // Sprawdź czy nie ma aktywnej sesji
+    // Sprawdź aktywną sesję
     const activeSession = await prisma.examSession.findFirst({
       where: {
         userId,
@@ -110,119 +126,66 @@ export async function examRoutes(fastify: FastifyInstance) {
     });
 
     if (activeSession) {
-      // Jeśli jest aktywna sesja, zwróć ją
       return reply.send({
         sessionId: activeSession.id,
         redirectTo: `/exam/mature/${activeSession.id}`,
-        message: "Kontynuacja istniejącej sesji",
       });
     }
 
     const exam = await prisma.mockExam.findUnique({
       where: { id: examId },
-      include: {
-        sections: {
-          include: {
-            questions: {
-              include: {
-                exercise: true,
-              },
-            },
-          },
-        },
-      },
     });
 
     if (!exam) {
       return reply.code(404).send({ error: "Egzamin nie istnieje" });
     }
 
-    // Sprawdź czy to egzamin dynamiczny
-    const isDynamic =
-      exam.title.includes("Dynamiczny") || exam.title.includes("Maturalny");
+    // ZAWSZE GENERUJ DYNAMICZNIE!
+    const { IntelligentExamService } = await import(
+      "../services/intelligentExamService"
+    );
+    const intelligentService = new IntelligentExamService();
 
-    let sessionAssessment: any = null;
+    // Dobierz pytania z tabeli Exercise
+    const selectedQuestions = await intelligentService.selectQuestionsForExam(
+      userId,
+      exam.type as "PODSTAWOWY" | "ROZSZERZONY"
+    );
 
-    if (isDynamic) {
-      // Import serwisu (na górze pliku)
-      const { IntelligentExamService } = await import(
-        "../services/intelligentExamService"
-      );
-      const intelligentService = new IntelligentExamService();
-
-      // Określ typ egzaminu
-      const examType =
-        exam.type === "ROZSZERZONY" ? "ROZSZERZONY" : "PODSTAWOWY";
-
-      // Dobierz pytania inteligentnie
-      const selectedQuestions = await intelligentService.selectQuestionsForExam(
-        userId,
-        examType as any
-      );
-
-      // Przygotuj metadane pytań do zapisania w sesji
-      const questionsMetadata: any[] = [];
-
-      for (const [sectionKey, questions] of selectedQuestions.entries()) {
-        for (const question of questions) {
-          questionsMetadata.push({
-            exerciseId: question.id,
-            section: sectionKey,
-            type: question.type,
-            points: question.points,
-            order: questionsMetadata.length + 1,
-          });
-
-          // Zapisz użycie
-          await intelligentService.recordExamUsage(
-            userId,
-            "", // sessionId będzie dodane później
-            [question.id]
-          );
-        }
-      }
-
-      sessionAssessment = {
-        isDynamic: true,
-        questionsMetadata,
-        generatedAt: new Date(),
-      };
+    // Przygotuj metadane
+    const questionsMetadata: any[] = [];
+    for (const [sectionKey, questions] of selectedQuestions.entries()) {
+      questions.forEach((q) => {
+        questionsMetadata.push({
+          exerciseId: q.id,
+          section: sectionKey,
+          type: q.type,
+          points: q.points,
+          order: questionsMetadata.length + 1,
+        });
+      });
     }
 
-    // Oblicz max punktów
-    const maxScore =
-      isDynamic && sessionAssessment
-        ? sessionAssessment.questionsMetadata.reduce(
-            (sum: number, q: any) => sum + q.points,
-            0
-          )
-        : exam.sections.reduce(
-            (sum, section) =>
-              sum + section.questions.reduce((sSum, q) => sSum + q.points, 0),
-            0
-          );
-
-    // Utwórz nową sesję
+    // Utwórz sesję
     const session = await prisma.examSession.create({
       data: {
         userId,
         examId,
         status: "IN_PROGRESS",
-        maxScore,
-        assessment: sessionAssessment, // Zapisz metadane pytań
-        isIntelligent: isDynamic, // Dodaj flagę
+        isIntelligent: true,
+        maxScore: questionsMetadata.reduce((sum, q) => sum + q.points, 0),
+        assessment: {
+          isDynamic: true,
+          questionsMetadata, // Tu są pytania, ale NIE w ExerciseUsage!
+          generatedAt: new Date(),
+        },
       },
     });
 
     return reply.send({
       sessionId: session.id,
       redirectTo: `/exam/mature/${session.id}`,
-      exam: {
-        ...exam,
-        maxScore,
-        startedAt: session.startedAt,
-        isDynamic,
-      },
+      isDynamic: true,
     });
   });
 
@@ -514,6 +477,35 @@ export async function examRoutes(fastify: FastifyInstance) {
       },
     });
 
+    if (session.assessment) {
+      const assessmentData = session.assessment as any;
+      if (assessmentData.questionsMetadata) {
+        const metadata = assessmentData.questionsMetadata as any[];
+        for (const q of metadata) {
+          await prisma.exerciseUsage.upsert({
+            where: {
+              userId_exerciseId: { userId, exerciseId: q.exerciseId },
+            },
+            create: {
+              userId,
+              exerciseId: q.exerciseId,
+              context: "EXAM",
+              lastUsedAt: new Date(),
+              usageCount: 1,
+            },
+            update: {
+              lastUsedAt: new Date(),
+              usageCount: { increment: 1 },
+              context: "EXAM",
+            },
+          });
+        }
+        console.log(
+          `Marked ${metadata.length} exam questions as USED after completion`
+        );
+      }
+    }
+
     // Dodaj punkty do profilu użytkownika
     await prisma.userProfile.update({
       where: { userId },
@@ -535,7 +527,6 @@ export async function examRoutes(fastify: FastifyInstance) {
 
   fastify.post("/get-questions", async (request, reply) => {
     const { questionIds } = request.body as { questionIds: string[] };
-    const userId = (request.user as any).userId;
 
     if (
       !questionIds ||

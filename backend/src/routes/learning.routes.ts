@@ -2,11 +2,9 @@
 
 import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
-import { ExerciseService } from "../services/exerciseService";
 import { SpacedRepetitionService } from "../services/spacedRepetitionService";
 import { LevelProgressService } from "../services/levelProgressService";
 
-const exerciseService = new ExerciseService();
 const levelProgress = new LevelProgressService();
 const spacedRepetition = new SpacedRepetitionService();
 
