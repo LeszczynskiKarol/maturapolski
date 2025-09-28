@@ -1,6 +1,7 @@
 // frontend/src/App.tsx
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { UserSessionsTable } from "./features/admin/UserSessionsTable";
 import React, { useEffect } from "react";
 import { MatureExamViewer } from "./features/exams/MatureExamViewer";
 // UŻYWAMY KOMPONENTÓW KTÓRE JUŻ STWORZYLIŚMY!
@@ -111,6 +112,7 @@ export const App: React.FC = () => {
               <Route path="materials" element={<AdminMaterialsEditor />} />
               {/* UŻYWAMY KOMPONENTÓW Z INTELIGENTNYM DOBOREM! */}
               <Route path="exams" element={<ExamStructureManager />} />
+              <Route path="user-sessions" element={<UserSessionsTable />} />
             </Route>
 
             {/* Student routes with layout */}

@@ -227,6 +227,108 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
     }
   );
 
+  fastify.get("/users/detailed-sessions", async (request, reply) => {
+    try {
+      // Pobierz wszystkich użytkowników z sesjami
+      const users = await prisma.user.findMany({
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          learningSessions: {
+            orderBy: { startedAt: "desc" },
+            select: {
+              id: true,
+              startedAt: true,
+              finishedAt: true,
+              status: true,
+              completed: true,
+              correct: true,
+              points: true,
+              timeSpent: true,
+              completedExercises: true,
+              skippedExercises: true,
+            },
+          },
+          exerciseUsage: {
+            orderBy: { lastUsedAt: "desc" },
+            select: {
+              exerciseId: true,
+              lastUsedAt: true,
+              usageCount: true,
+              exercise: {
+                select: {
+                  id: true,
+                  question: true,
+                  type: true,
+                  category: true,
+                  difficulty: true,
+                  points: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      // Dla każdej sesji rozpakuj pytania
+      const detailedUsers = await Promise.all(
+        users.map(async (user) => {
+          const sessionsWithDetails = await Promise.all(
+            user.learningSessions.map(async (session) => {
+              const completedExercises =
+                (session.completedExercises as any[]) || [];
+
+              // Pobierz szczegóły każdego pytania
+              const exerciseDetails = await Promise.all(
+                completedExercises.map(async (ex) => {
+                  if (!ex.id) return null;
+
+                  const exercise = await prisma.exercise.findUnique({
+                    where: { id: ex.id },
+                    select: {
+                      id: true,
+                      question: true,
+                      type: true,
+                      category: true,
+                      difficulty: true,
+                      points: true,
+                    },
+                  });
+
+                  return {
+                    ...exercise,
+                    userAnswer: ex.answer,
+                    score: ex.score,
+                    timestamp: ex.timestamp,
+                  };
+                })
+              );
+
+              return {
+                ...session,
+                exerciseDetails: exerciseDetails.filter(Boolean),
+              };
+            })
+          );
+
+          return {
+            ...user,
+            learningSessions: sessionsWithDetails,
+          };
+        })
+      );
+
+      return reply.send(detailedUsers);
+    } catch (error) {
+      console.error("Error:", error);
+      return reply
+        .code(500)
+        .send({ error: "Failed to fetch detailed sessions" });
+    }
+  });
+
   // PUT aktualizuj zadanie
   fastify.put<{
     Params: { id: string };
