@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import confetti from "canvas-confetti";
 import { AnimatePresence, motion } from "framer-motion";
 import {
+  AlertCircle,
   Award,
   CheckCircle,
   ChevronDown,
@@ -925,7 +926,6 @@ export const LearningSession: React.FC = () => {
                 Pomiń
               </button>
             </div>
-
             {/* Exercise Content */}
             {currentExercise.content?.text && (
               <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg mb-6">
@@ -934,7 +934,6 @@ export const LearningSession: React.FC = () => {
                 </p>
               </div>
             )}
-
             {/* Answer Input */}
             {!showFeedback && (
               <div className="space-y-4">
@@ -1080,6 +1079,7 @@ export const LearningSession: React.FC = () => {
             )}
 
             {/* Feedback section */}
+            {/* Feedback section */}
             {showFeedback && submitMutation.data && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -1147,6 +1147,207 @@ export const LearningSession: React.FC = () => {
                     )}
                   </div>
                 )}
+
+                {/* DLA PYTAŃ OTWARTYCH - SHORT_ANSWER, SYNTHESIS_NOTE, ESSAY */}
+                {(currentExercise.type === "SHORT_ANSWER" ||
+                  currentExercise.type === "SYNTHESIS_NOTE" ||
+                  currentExercise.type === "ESSAY") &&
+                  (() => {
+                    // Pobierz dane AI z odpowiedniej lokalizacji
+                    const aiData =
+                      submitMutation.data?.data?.feedback ||
+                      submitMutation.data?.data?.assessment ||
+                      submitMutation.data?.data;
+
+                    // Jeśli nie ma danych AI, nie renderuj nic
+                    if (!aiData) return null;
+
+                    return (
+                      <div
+                        className={`p-4 rounded-lg ${
+                          aiData.score > 0
+                            ? aiData.isPartiallyCorrect
+                              ? "bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800"
+                              : "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
+                            : "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
+                        }`}
+                      >
+                        {/* Nagłówek z wynikiem */}
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            {aiData.score > 0 ? (
+                              aiData.isPartiallyCorrect ? (
+                                <>
+                                  <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+                                  <span className="font-semibold text-yellow-700 dark:text-yellow-300">
+                                    Częściowo poprawna odpowiedź
+                                  </span>
+                                </>
+                              ) : (
+                                <>
+                                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                                  <span className="font-semibold text-green-700 dark:text-green-300">
+                                    Świetna odpowiedź!
+                                  </span>
+                                </>
+                              )
+                            ) : (
+                              <>
+                                <XCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                                <span className="font-semibold text-red-700 dark:text-red-300">
+                                  Niepoprawna odpowiedź
+                                </span>
+                              </>
+                            )}
+                          </div>
+                          <span className="text-lg font-bold">
+                            {aiData.score ?? 0}/{aiData.maxScore ?? 2} pkt
+                          </span>
+                        </div>
+
+                        {/* Główny feedback */}
+                        {aiData.feedback && (
+                          <div className="mb-4">
+                            <p className="text-sm text-gray-700 dark:text-gray-300">
+                              {typeof aiData.feedback === "string"
+                                ? aiData.feedback
+                                : aiData.feedback.message ||
+                                  "Brak szczegółowego feedbacku"}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Poprawne elementy (jeśli są) */}
+                        {aiData.correctElements &&
+                          aiData.correctElements.length > 0 && (
+                            <div className="mb-3 p-3 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                              <p className="font-medium text-green-700 dark:text-green-300 mb-1 text-sm">
+                                ✓ Poprawne elementy:
+                              </p>
+                              <ul className="space-y-1">
+                                {aiData.correctElements.map(
+                                  (element: string, idx: number) => (
+                                    <li
+                                      key={idx}
+                                      className="text-sm text-green-600 dark:text-green-400 ml-4"
+                                    >
+                                      • {element}
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            </div>
+                          )}
+
+                        {/* Brakujące elementy (jeśli są) */}
+                        {aiData.missingElements &&
+                          aiData.missingElements.length > 0 && (
+                            <div className="mb-3 p-3 bg-red-50 dark:bg-red-900/30 rounded-lg">
+                              <p className="font-medium text-red-700 dark:text-red-300 mb-1 text-sm">
+                                ✗ Brakujące elementy:
+                              </p>
+                              <ul className="space-y-1">
+                                {aiData.missingElements.map(
+                                  (element: string, idx: number) => (
+                                    <li
+                                      key={idx}
+                                      className="text-sm text-red-600 dark:text-red-400 ml-4"
+                                    >
+                                      • {element}
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            </div>
+                          )}
+
+                        {/* Przykładowa poprawna odpowiedź */}
+                        {aiData.correctAnswer && (
+                          <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+                            <p className="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">
+                              📚 Przykładowa poprawna odpowiedź:
+                            </p>
+                            <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+                              <p className="text-sm text-blue-800 dark:text-blue-200">
+                                {aiData.correctAnswer}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Sugestie poprawy (jeśli są) */}
+                        {aiData.suggestions &&
+                          aiData.suggestions.length > 0 && (
+                            <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+                              <p className="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">
+                                💡 Wskazówki na przyszłość:
+                              </p>
+                              <ul className="space-y-1">
+                                {aiData.suggestions.map(
+                                  (suggestion: string, idx: number) => (
+                                    <li
+                                      key={idx}
+                                      className="text-sm text-gray-600 dark:text-gray-400 ml-4"
+                                    >
+                                      • {suggestion}
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            </div>
+                          )}
+
+                        {/* Dla wypracowań - szczegółowe wyniki */}
+                        {currentExercise.type === "ESSAY" &&
+                          aiData.detailedFeedback && (
+                            <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+                              <div className="grid grid-cols-2 gap-3 mb-3">
+                                {aiData.formalScore !== undefined && (
+                                  <div className="text-sm">
+                                    <span className="text-gray-600 dark:text-gray-400">
+                                      Wymogi formalne:
+                                    </span>
+                                    <span className="ml-2 font-semibold">
+                                      {aiData.formalScore}/1
+                                    </span>
+                                  </div>
+                                )}
+                                {aiData.literaryScore !== undefined && (
+                                  <div className="text-sm">
+                                    <span className="text-gray-600 dark:text-gray-400">
+                                      Kompetencje literackie:
+                                    </span>
+                                    <span className="ml-2 font-semibold">
+                                      {aiData.literaryScore}/16
+                                    </span>
+                                  </div>
+                                )}
+                                {aiData.compositionScore !== undefined && (
+                                  <div className="text-sm">
+                                    <span className="text-gray-600 dark:text-gray-400">
+                                      Kompozycja:
+                                    </span>
+                                    <span className="ml-2 font-semibold">
+                                      {aiData.compositionScore}/7
+                                    </span>
+                                  </div>
+                                )}
+                                {aiData.languageScore !== undefined && (
+                                  <div className="text-sm">
+                                    <span className="text-gray-600 dark:text-gray-400">
+                                      Styl i język:
+                                    </span>
+                                    <span className="ml-2 font-semibold">
+                                      {aiData.languageScore}/11
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                      </div>
+                    );
+                  })()}
 
                 {/* Przycisk następnego zadania */}
                 <div className="flex justify-end">

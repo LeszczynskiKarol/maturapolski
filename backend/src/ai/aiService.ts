@@ -74,7 +74,7 @@ Bądź sprawiedliwy ale wymagający. Doceniaj częściową wiedzę, ale wymagaj 
   try {
     const response = await anthropic.messages.create({
       model: "claude-3-haiku-20240307",
-      max_tokens: 1500,
+      max_tokens: 4096,
       temperature: 0.2,
       messages: [
         {
@@ -195,7 +195,7 @@ Zwróć dokładnie taki JSON (zastąp wartości właściwymi):
   try {
     const response = await anthropic.messages.create({
       model: "claude-3-haiku-20240307",
-      max_tokens: 800,
+      max_tokens: 4096,
       temperature: 0.1,
       messages: [
         {
@@ -289,7 +289,7 @@ Oceń rzetelnie według kryteriów maturalnych. Bądź wymagający ale sprawiedl
 
   try {
     const response = await anthropic.messages.create({
-      model: "claude-3-5-haiku-latest", // claude-sonnet-4-20250514
+      model: "claude-3-haiku-20240307", // claude-sonnet-4-20250514
       max_tokens: 4096,
       temperature: 0.3,
       messages: [
