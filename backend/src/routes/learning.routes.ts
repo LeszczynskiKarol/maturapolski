@@ -2,8 +2,12 @@
 
 import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
+import { ExerciseService } from "../services/exerciseService";
 import { SpacedRepetitionService } from "../services/spacedRepetitionService";
+import { LevelProgressService } from "../services/levelProgressService";
 
+const exerciseService = new ExerciseService();
+const levelProgress = new LevelProgressService();
 const spacedRepetition = new SpacedRepetitionService();
 
 // ZACHOWANE MAPY W PAMIĘCI
@@ -223,6 +227,12 @@ export async function learningRoutes(fastify: FastifyInstance) {
       const userId = (request.user as any).userId;
       const { excludeId } = request.query as { excludeId?: string };
 
+      // NOWE: Pobierz maksymalny dostępny poziom trudności
+      const userProgress = await levelProgress.getOrCreateProgress(userId);
+      const maxAllowedDifficulty = userProgress.unlockedDifficulty;
+
+      console.log(`User max allowed difficulty: ${maxAllowedDifficulty}`);
+
       // Pobierz dane równolegle
       const [
         userProfile,
@@ -278,11 +288,10 @@ export async function learningRoutes(fastify: FastifyInstance) {
             context: true,
           },
         }),
-        // NOWE: Pobierz ostatnie 5 ćwiczeń z tej sesji
         prisma.exerciseUsage.findMany({
           where: {
             userId,
-            lastUsedAt: { gte: new Date(Date.now() - 60 * 60 * 1000) }, // ostatnia godzina
+            lastUsedAt: { gte: new Date(Date.now() - 60 * 60 * 1000) },
           },
           orderBy: { lastUsedAt: "desc" },
           take: 5,
@@ -352,11 +361,11 @@ export async function learningRoutes(fastify: FastifyInstance) {
       const filters = userSessionFilters.get(userId) || {};
       const isStudyPlanSession = !!filters.weekNumber;
 
-      console.log(`\n=== INTELLIGENT SELECTION v2 ===`);
+      console.log(`\n=== INTELLIGENT SELECTION v3 ===`);
       console.log(
-        `User: Level ${userLevel}, Accuracy: ${(currentAccuracy * 100).toFixed(
-          0
-        )}%, Streak: ${currentStreak}`
+        `User: Level ${userLevel}, Max Difficulty: ${maxAllowedDifficulty}, Accuracy: ${(
+          currentAccuracy * 100
+        ).toFixed(0)}%, Streak: ${currentStreak}`
       );
       console.log(
         `Type: ${
@@ -369,31 +378,75 @@ export async function learningRoutes(fastify: FastifyInstance) {
       const baseWhere: any = {};
 
       if (isStudyPlanSession) {
-        // StudyPlan - respektuj filtry tygodnia
+        // StudyPlan - respektuj filtry tygodnia ALE ogranicz do odblokowanych
         if (filters.type) baseWhere.type = filters.type;
         if (filters.category) baseWhere.category = filters.category;
         if (filters.epoch) baseWhere.epoch = filters.epoch;
+
         if (filters.difficulty?.length > 0) {
-          baseWhere.difficulty = { in: filters.difficulty };
+          // NOWE: Filtruj tylko dostępne poziomy
+          const allowedDifficulties = filters.difficulty.filter(
+            (d) => d <= maxAllowedDifficulty
+          );
+
+          if (allowedDifficulties.length === 0) {
+            // Jeśli wszystkie poziomy z planu są zablokowane
+            return reply.send({
+              error: "DIFFICULTY_LOCKED",
+              message: `Ten tydzień wymaga poziomu trudności ${Math.min(
+                ...filters.difficulty
+              )}, ale masz odblokowany tylko poziom ${maxAllowedDifficulty}. Zdobądź więcej punktów, aby odblokować wyższe poziomy!`,
+              requiredLevel: Math.min(...filters.difficulty),
+              currentMaxLevel: maxAllowedDifficulty,
+              pointsNeeded:
+                userProgress.pointsToUnlock3 -
+                (userProgress.difficulty1Points +
+                  userProgress.difficulty2Points),
+            });
+          }
+
+          baseWhere.difficulty = { in: allowedDifficulties };
+          console.log(
+            `StudyPlan difficulties filtered: ${filters.difficulty} -> ${allowedDifficulties}`
+          );
         }
       } else {
-        // Free Learning - inteligentna adaptacja
+        // FREE LEARNING - inteligentna adaptacja Z OGRANICZENIEM
         if (filters.category) baseWhere.category = filters.category;
 
-        // Dynamiczna trudność z szerszym zakresem
         let targetDifficulty: number[];
+
+        // Chcemy trudniejsze zadania, ale tylko do odblokowanego poziomu
         if (currentStreak >= 5 && currentAccuracy > 0.8) {
-          targetDifficulty = [3, 4, 5];
-        } else if (currentAccuracy < 0.4) {
-          targetDifficulty = [1, 2, 3];
-        } else {
-          const base = Math.min(5, Math.max(1, Math.round(userLevel / 2)));
+          targetDifficulty = [
+            Math.min(3, maxAllowedDifficulty),
+            Math.min(4, maxAllowedDifficulty),
+            Math.min(5, maxAllowedDifficulty),
+          ].filter((d) => d >= 1 && d <= maxAllowedDifficulty);
+        }
+        // Słabo idzie - łatwiejsze zadania
+        else if (currentAccuracy < 0.4) {
+          targetDifficulty = [1, 2, 3].filter((d) => d <= maxAllowedDifficulty);
+        }
+        // Normalny zakres
+        else {
+          const base = Math.min(
+            maxAllowedDifficulty,
+            Math.max(1, Math.round(userLevel / 2))
+          );
           targetDifficulty = [
             Math.max(1, base - 1),
             base,
-            Math.min(5, base + 1),
-          ];
+            Math.min(maxAllowedDifficulty, base + 1),
+          ].filter((d) => d >= 1 && d <= maxAllowedDifficulty);
         }
+
+        // Usuń duplikaty i posortuj
+        targetDifficulty = [...new Set(targetDifficulty)].sort();
+
+        console.log(
+          `Free learning difficulties: ${targetDifficulty} (max allowed: ${maxAllowedDifficulty})`
+        );
         baseWhere.difficulty = { in: targetDifficulty };
       }
 
@@ -410,13 +463,15 @@ export async function learningRoutes(fastify: FastifyInstance) {
         },
       });
 
-      console.log(`Found ${allCandidates.length} candidates`);
+      console.log(
+        `Found ${allCandidates.length} candidates within difficulty limits`
+      );
 
       // Wyklucz używane
       const usedIds = new Set(usageHistory.map((u) => u.exerciseId));
       if (excludeId) usedIds.add(excludeId);
 
-      // ULEPSZONE SCOROWANIE
+      // ULEPSZONE SCOROWANIE (bez zmian)
       const scoredExercises = allCandidates.map((exercise) => {
         let score = 1000;
         let bonuses: string[] = [];
@@ -431,8 +486,6 @@ export async function learningRoutes(fastify: FastifyInstance) {
           if (usage) {
             const daysSince =
               (Date.now() - usage.lastUsedAt.getTime()) / 86400000;
-
-            // Progresywny bonus - im dłużej nieużywane, tym większy
             if (daysSince > 7) {
               const weekBonus = Math.min(500, Math.floor((daysSince - 7) * 50));
               score += weekBonus;
@@ -441,13 +494,13 @@ export async function learningRoutes(fastify: FastifyInstance) {
           }
         }
 
-        // SPECJALNY BONUS dla StudyPlan - preferuj niepowtórzone w tym tygodniu
+        // SPECJALNY BONUS dla StudyPlan
         if (isStudyPlanSession && !usedIds.has(exercise.id)) {
-          score += 300; // Dodatkowy bonus dla świeżych w StudyPlan
+          score += 300;
           bonuses.push("+300 WEEK_FRESH");
         }
 
-        // KARA ZA ZBYT CZĘSTE ESSAY/SYNTHESIS (są trudne)
+        // KARA ZA ZBYT CZĘSTE ESSAY/SYNTHESIS
         if (
           ["ESSAY", "SYNTHESIS_NOTE"].includes(exercise.type) &&
           sessionExercises.length < 10
@@ -456,10 +509,10 @@ export async function learningRoutes(fastify: FastifyInstance) {
           penalties.push("-200 TOO_EARLY_HARD");
         }
 
-        // 2. ANTY-MONOTONIA TYPÓW (zwiększone wagi)
+        // 2. ANTY-MONOTONIA TYPÓW
         const typeCount = recentTypeCount.get(exercise.type) || 0;
         if (typeCount > 0) {
-          const typePenalty = typeCount * 200; // zwiększona kara
+          const typePenalty = typeCount * 200;
           score -= typePenalty;
           penalties.push(`-${typePenalty} TYPE_REPEAT`);
         } else {
@@ -478,7 +531,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
           bonuses.push("+100 NEW_CAT");
         }
 
-        // 4. RÓŻNORODNOŚĆ EPOK (dla HISTORICAL_LITERARY)
+        // 4. RÓŻNORODNOŚĆ EPOK
         if (exercise.epoch) {
           const epochCount = recentEpochCount.get(exercise.epoch) || 0;
           if (epochCount > 1) {
@@ -496,13 +549,13 @@ export async function learningRoutes(fastify: FastifyInstance) {
         if (lastDiff) {
           const diffChange = Math.abs(exercise.difficulty - lastDiff);
           if (currentAccuracy > 0.7 && exercise.difficulty > lastDiff) {
-            score += 80; // bonus za zwiększanie trudności gdy dobrze idzie
+            score += 80;
             bonuses.push("+80 DIFFICULTY_UP");
           } else if (currentAccuracy < 0.5 && exercise.difficulty < lastDiff) {
-            score += 60; // bonus za zmniejszanie gdy źle idzie
+            score += 60;
             bonuses.push("+60 DIFFICULTY_DOWN");
           } else if (diffChange > 2) {
-            score -= 100; // kara za zbyt duży skok
+            score -= 100;
             penalties.push("-100 DIFF_JUMP");
           }
         }
@@ -535,7 +588,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
           bonuses.push("+100 RARE_TYPE");
         }
 
-        // 9. LOSOWOŚĆ (małe zaburzenie dla nieprzewidywalności)
+        // 9. LOSOWOŚĆ
         const randomFactor = Math.floor(Math.random() * 100) - 50;
         score += randomFactor;
         if (randomFactor > 25) bonuses.push(`+${randomFactor} RND`);
@@ -572,7 +625,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
         console.log(`     - ${item.debug.penalties || "none"}`);
       });
 
-      // ULEPSZONE WYBIERANIE - większa losowość w top grupie
+      // Wybieranie z top grupy
       const topGroup = scoredExercises.slice(
         0,
         Math.min(5, scoredExercises.length)
@@ -581,11 +634,13 @@ export async function learningRoutes(fastify: FastifyInstance) {
       if (topGroup.length === 0) {
         return reply.send({
           error: "NO_EXERCISES",
-          message: "Brak dostępnych ćwiczeń",
+          message:
+            "Brak dostępnych ćwiczeń na Twoim poziomie. Sprawdź czy masz odblokowane odpowiednie poziomy trudności.",
+          currentMaxLevel: maxAllowedDifficulty,
         });
       }
 
-      // Ważone losowanie z lepszym rozkładem
+      // Ważone losowanie
       const weights = [0.35, 0.25, 0.2, 0.12, 0.08];
       const random = Math.random();
       let cumulative = 0;
@@ -631,6 +686,25 @@ export async function learningRoutes(fastify: FastifyInstance) {
       console.error("Error in exercise selection:", error);
       return reply.code(500).send({ error: "Failed to get next exercise" });
     }
+  });
+
+  fastify.get("/difficulty-progress", async (request, reply) => {
+    const userId = (request.user as any).userId;
+    const progress = await levelProgress.getDetailedProgress(userId);
+    return reply.send(progress);
+  });
+
+  // backend/src/routes/learning.routes.ts
+  fastify.get("/debug-progress/:userId", async (request, reply) => {
+    const { userId } = request.params as { userId: string };
+    const progress = await prisma.userLevelProgress.findUnique({
+      where: { userId },
+    });
+
+    return reply.send({
+      raw: progress,
+      calculated: await levelProgress.getDetailedProgress(userId),
+    });
   });
 
   fastify.post("/session/reset-daily-cache", async (request, reply) => {

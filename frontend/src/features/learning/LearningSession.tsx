@@ -9,6 +9,7 @@ import {
   ChevronDown,
   ChevronRight,
   Clock,
+  Lock,
   Filter,
   Play,
   SkipForward,
@@ -22,6 +23,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { api } from "../../services/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 const SESSION_LIMIT = 20;
 
@@ -72,7 +74,7 @@ export const LearningSession: React.FC = () => {
   const hasAutoStarted = useRef(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [lastSaveTime, setLastSaveTime] = useState(Date.now());
-
+  const queryClient = useQueryClient();
   const [sessionActive, setSessionActive] = useState(false);
   const [currentExercise, setCurrentExercise] = useState<any>(null);
   const [isLoadingNext, setIsLoadingNext] = useState(false);
@@ -84,6 +86,13 @@ export const LearningSession: React.FC = () => {
     Array<{ id: string; score: number }>
   >([]);
   const [isPlanSession, setIsPlanSession] = useState(false);
+  const { data: levelProgress } = useQuery({
+    queryKey: ["difficulty-progress"],
+    queryFn: () =>
+      api.get("/api/learning/difficulty-progress").then((r) => r.data),
+    refetchInterval: 10000, // Co 10 sekund
+    staleTime: 5000,
+  });
 
   // Funkcja zapisywania stanu
   const saveSessionState = async () => {
@@ -207,8 +216,49 @@ export const LearningSession: React.FC = () => {
         console.log("New session stats:", newStats);
         return newStats;
       });
+      // NATYCHMIASTOWA aktualizacja poziomów
+      if (result.levelProgress) {
+        // Ręcznie zaktualizuj cache React Query
+        queryClient.setQueryData(["difficulty-progress"], result.levelProgress);
+
+        // Sprawdź odblokowanie
+        if (result.unlockedNewLevel) {
+          confetti({
+            particleCount: 300,
+            spread: 100,
+            origin: { y: 0.5 },
+          });
+          toast.success(
+            `🎉 Odblokowano poziom ${result.levelProgress.currentMaxDifficulty}!`,
+            { duration: 5000 }
+          );
+        }
+      }
+
+      // Odśwież też dla pewności
+      if (result.score > 0) {
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: ["difficulty-progress"] });
+        }, 500);
+      }
 
       setShowFeedback(true);
+      if (result.score > 0) {
+        queryClient.invalidateQueries({ queryKey: ["difficulty-progress"] });
+
+        // Sprawdź czy odblokowano nowy poziom
+        if (result.levelProgress?.unlockedNewLevel) {
+          confetti({
+            particleCount: 300,
+            spread: 100,
+            origin: { y: 0.5 },
+          });
+          toast.success(
+            `🎉 Gratulacje! Odblokowano poziom ${result.levelProgress.newLevel}!`,
+            { duration: 5000 }
+          );
+        }
+      }
 
       if (
         isCorrect &&
@@ -220,6 +270,20 @@ export const LearningSession: React.FC = () => {
           spread: 70,
           origin: { y: 0.6 },
         });
+      }
+      if (
+        response.data.levelProgress &&
+        response.data.levelProgress.unlockedNewLevel
+      ) {
+        toast.success(
+          `🎉 Odblokowano poziom ${response.data.levelProgress.newLevel}!`
+        );
+      }
+      if (response.data.levelProgress) {
+        queryClient.setQueryData(
+          ["difficulty-progress"],
+          response.data.levelProgress
+        );
       }
     },
   });
@@ -756,6 +820,14 @@ export const LearningSession: React.FC = () => {
             transition={{ duration: 0.5 }}
           />
         </div>
+        {levelProgress && (
+          <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            Maksymalny poziom trudności: {levelProgress.currentMaxDifficulty}/5
+            {levelProgress.pointsNeeded > 0 &&
+              ` • ${levelProgress.pointsNeeded} pkt do poziomu ${levelProgress.nextLevel}`}
+          </div>
+        )}
+
         <div className="flex justify-between items-center mt-1">
           <p className="text-sm text-gray-600 dark:text-gray-400">
             Cel sesji: {sessionStats.completed}/{SESSION_LIMIT} zadań
@@ -1133,6 +1205,31 @@ const InSessionFilters: React.FC<{
 
   const hasFilters = Object.keys(localFilters).length > 0;
 
+  // query dla poziomów
+  const { data: levelProgress } = useQuery({
+    queryKey: ["difficulty-progress"],
+    queryFn: () =>
+      api.get("/api/learning/difficulty-progress").then((r) => r.data),
+    refetchInterval: 10000, // Co 10 sekund
+    staleTime: 5000,
+  });
+
+  useEffect(() => {
+    if (levelProgress && selectedDifficulties.length > 0) {
+      const validDifficulties = selectedDifficulties.filter(
+        (d) => d <= levelProgress.currentMaxDifficulty
+      );
+      if (validDifficulties.length !== selectedDifficulties.length) {
+        setSelectedDifficulties(validDifficulties);
+        setLocalFilters({
+          ...localFilters,
+          difficulty:
+            validDifficulties.length > 0 ? validDifficulties : undefined,
+        });
+      }
+    }
+  }, [levelProgress]);
+
   // Funkcja do pobierania liczby dostępnych ćwiczeń
   const fetchAvailableCount = async (filters: SessionFilters) => {
     setIsCountLoading(true);
@@ -1175,6 +1272,12 @@ const InSessionFilters: React.FC<{
   };
 
   const handleDifficultyToggle = (level: number) => {
+    // Blokuj jeśli poziom zablokowany
+    if (levelProgress && level > levelProgress.currentMaxDifficulty) {
+      toast.error(`Poziom ${level} jest zablokowany! Zdobądź więcej punktów.`);
+      return;
+    }
+
     const newDifficulties = selectedDifficulties.includes(level)
       ? selectedDifficulties.filter((d) => d !== level)
       : [...selectedDifficulties, level];
@@ -1315,37 +1418,56 @@ const InSessionFilters: React.FC<{
           Poziom trudności:
         </p>
         <div className="flex gap-1">
-          {[1, 2, 3, 4, 5].map((level) => (
-            <button
-              key={level}
-              onClick={() => handleDifficultyToggle(level)}
-              disabled={isLoading}
-              className={`px-3 py-2 rounded transition-colors ${
-                selectedDifficulties.includes(level)
-                  ? "bg-yellow-100 border-yellow-500"
-                  : "bg-gray-50 border-gray-200"
-              } border disabled:opacity-50`}
-            >
-              <div className="text-center">
-                <span
-                  className={
-                    selectedDifficulties.includes(level)
-                      ? "text-yellow-500"
-                      : "text-gray-400"
-                  }
-                >
-                  {"⭐".repeat(level)}
-                </span>
-                <div className="text-xs mt-1">
-                  {level === 1 && "Bardzo łatwe"}
-                  {level === 2 && "Łatwe"}
-                  {level === 3 && "Średnie"}
-                  {level === 4 && "Trudne"}
-                  {level === 5 && "Bardzo trudne"}
+          {[1, 2, 3, 4, 5].map((level) => {
+            const isLocked =
+              levelProgress && level > levelProgress.currentMaxDifficulty;
+
+            return (
+              <button
+                key={level}
+                onClick={() => handleDifficultyToggle(level)}
+                disabled={isLoading || isLocked}
+                className={`px-3 py-2 rounded transition-colors relative ${
+                  isLocked
+                    ? "bg-gray-200 dark:bg-gray-700 opacity-50 cursor-not-allowed"
+                    : selectedDifficulties.includes(level)
+                    ? "bg-yellow-100 dark:bg-yellow-900/30 border-yellow-500"
+                    : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600"
+                } border`}
+                title={
+                  isLocked
+                    ? `Odblokuj zdobywając ${
+                        levelProgress?.levels[level - 1]?.required || "?"
+                      } pkt`
+                    : undefined
+                }
+              >
+                {isLocked && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-900/10 rounded">
+                    <Lock className="w-4 h-4 text-gray-500" />
+                  </div>
+                )}
+                <div className={isLocked ? "opacity-30" : ""}>
+                  <span
+                    className={
+                      selectedDifficulties.includes(level)
+                        ? "text-yellow-500"
+                        : "text-gray-400"
+                    }
+                  >
+                    {"⭐".repeat(level)}
+                  </span>
+                  <div className="text-xs mt-1">
+                    {level === 1 && "Bardzo łatwe"}
+                    {level === 2 && "Łatwe"}
+                    {level === 3 && "Średnie"}
+                    {level === 4 && "Trudne"}
+                    {level === 5 && "Bardzo trudne"}
+                  </div>
                 </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
       </div>
 

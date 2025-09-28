@@ -3,21 +3,6 @@
 import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 
-// Helper function to convert BigInt to Number safely
-function convertBigIntToNumber(obj: any): any {
-  if (obj === null || obj === undefined) return obj;
-  if (typeof obj === "bigint") return Number(obj);
-  if (Array.isArray(obj)) return obj.map(convertBigIntToNumber);
-  if (typeof obj === "object") {
-    const result: any = {};
-    for (const [key, value] of Object.entries(obj)) {
-      result[key] = convertBigIntToNumber(value);
-    }
-    return result;
-  }
-  return obj;
-}
-
 export async function studentRoutes(fastify: FastifyInstance) {
   // Middleware - verify JWT
   fastify.addHook("onRequest", async (request, reply) => {
@@ -99,12 +84,7 @@ export async function studentRoutes(fastify: FastifyInstance) {
       });
 
       // 1. STATYSTYKI OGÓLNE
-      const [
-        totalExercises,
-        completedExercises,
-        examSessions,
-        learningSessions,
-      ] = await Promise.all([
+      const [totalExercises, completedExercises] = await Promise.all([
         prisma.exercise.count(),
         prisma.submission.count({ where: { userId } }),
         prisma.examSession.count({

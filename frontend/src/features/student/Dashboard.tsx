@@ -1,25 +1,13 @@
 // frontend/src/features/student/Dashboard.tsx
 
 import React from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import {
-  TrendingUp,
-  Target,
-  Clock,
-  Award,
-  Calendar,
-  FileText,
-} from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { api } from "../../services/api";
 import { StudyPlan } from "./StudyPlan";
 import { WeakPointsAnalysis } from "./WeakPointsAnalysis";
-import { ProgressTracker } from "./ProgressTracker";
-import { useAuthStore } from "../../store/authStore";
-import { toast } from "react-hot-toast";
+import { DifficultyProgress } from "../../components/DifficultyProgress";
 
 export const StudentDashboard: React.FC = () => {
-  const user = useAuthStore((state) => state.user);
-
   const { data: stats } = useQuery({
     queryKey: ["student-stats"],
     queryFn: () => api.get("/api/student/stats").then((r) => r.data),
@@ -30,53 +18,19 @@ export const StudentDashboard: React.FC = () => {
     queryFn: () => api.get("/api/student/progress").then((r) => r.data),
   });
 
-  const { data: studyPlan } = useQuery({
-    queryKey: ["study-plan"],
-    queryFn: () => api.get("/api/study/plan").then((r) => r.data),
-  });
-
   return (
     <div className="p-6 space-y-6">
-      {/* Header Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard
-          icon={Calendar}
-          label="Dni do matury"
-          value={stats?.daysToExam || "—"}
-          subtitle={
-            studyPlan?.examDate
-              ? new Date(studyPlan.examDate).toLocaleDateString("pl-PL")
-              : "Ustaw datę"
-          }
-          color="blue"
-        />
-        <StatCard
-          icon={Target}
-          label="Ukończone zadania"
-          value={stats?.completedExercises || 0}
-          subtitle={`z ${stats?.totalExercises || 0}`}
-          color="green"
-        />
-        <StatCard
-          icon={TrendingUp}
-          label="Średni wynik"
-          value={`${stats?.averageScore?.toFixed(0) || 0}%`}
-          subtitle="Postęp"
-          color="purple"
-        />
-        <StatCard
-          icon={Award}
-          label="Seria dni"
-          value={stats?.studyStreak || 0}
-          subtitle="dni z rzędu"
-          color="orange"
-        />
-      </div>
-
       {/* Main Content - Study Plan takes full width */}
       <div className="space-y-6">
         {/* Enhanced Study Plan - Full Width */}
-        <StudyPlan />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <StudyPlan />
+          </div>
+          <div>
+            <DifficultyProgress />
+          </div>
+        </div>
 
         {/* Two Column Layout for Analysis */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -21,6 +21,8 @@ import toast from "react-hot-toast";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { ThemeToggle } from "./ThemeSwitcher";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "../services/api";
 
 export const Layout: React.FC = () => {
   const location = useLocation();
@@ -29,6 +31,12 @@ export const Layout: React.FC = () => {
   const logout = useAuthStore((state) => state.logout);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { data: levelProgress } = useQuery({
+    queryKey: ["difficulty-progress"],
+    queryFn: () =>
+      api.get("/api/learning/difficulty-progress").then((r) => r.data),
+    refetchInterval: 60000,
+  });
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -138,24 +146,24 @@ export const Layout: React.FC = () => {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                  Poziom
+                  Twój poziom
                 </span>
                 <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                  12
+                  {levelProgress?.currentMaxDifficulty || 2}/5
                 </span>
               </div>
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div
-                  className="bg-blue-600 dark:bg-blue-400 h-2 rounded-full transition-all duration-500"
-                  style={{ width: "65%" }}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full transition-all duration-500"
+                  style={{ width: `${levelProgress?.nextLevelProgress || 0}%` }}
                 />
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                  Punkty XP
+                  Do poziomu {levelProgress?.nextLevel || 3}
                 </span>
                 <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                  3,250
+                  {levelProgress?.pointsNeeded || 100} pkt
                 </span>
               </div>
             </div>

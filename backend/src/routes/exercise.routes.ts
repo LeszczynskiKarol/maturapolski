@@ -2,8 +2,11 @@
 
 import { FastifyInstance } from "fastify";
 import { ExerciseService } from "../services/exerciseService";
+import { LevelProgressService } from "../services/levelProgressService";
+import { prisma } from "../lib/prisma";
 
 const exerciseService = new ExerciseService();
+const levelProgress = new LevelProgressService();
 
 export async function exerciseRoutes(fastify: FastifyInstance) {
   // Middleware - verify JWT
@@ -76,7 +79,51 @@ export async function exerciseRoutes(fastify: FastifyInstance) {
     const userId = (request.user as any).userId;
     const { answer } = request.body as { answer: any };
 
+    console.log("=== SUBMIT CALLED ===");
+    console.log("Exercise ID:", id);
+    console.log("User ID:", userId);
+
     const result = await exerciseService.submitAnswer(userId, id, answer);
+
+    console.log("Submit result score:", result.score);
+
+    // KRYTYCZNE: Aktualizuj punkty jeśli odpowiedź poprawna
+    if (result.score && result.score > 0) {
+      const exercise = await prisma.exercise.findUnique({
+        where: { id },
+        select: { difficulty: true, points: true },
+      });
+
+      if (exercise) {
+        console.log(
+          "Updating level progress for difficulty",
+          exercise.difficulty
+        );
+
+        // Pobierz stan PRZED aktualizacją
+        const beforeProgress = await levelProgress.getDetailedProgress(userId);
+
+        // AKTUALIZUJ PUNKTY
+        await levelProgress.updateProgressAfterExercise(
+          userId,
+          exercise.difficulty,
+          result.score,
+          true
+        );
+
+        // Pobierz stan PO aktualizacji
+        const afterProgress = await levelProgress.getDetailedProgress(userId);
+
+        // Dodaj do odpowiedzi
+        (result as any).levelProgress = afterProgress;
+        (result as any).unlockedNewLevel =
+          afterProgress.currentMaxDifficulty >
+          beforeProgress.currentMaxDifficulty;
+
+        console.log("Progress updated:", afterProgress);
+      }
+    }
+
     return reply.send(result);
   });
 
