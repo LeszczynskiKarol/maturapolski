@@ -14,6 +14,7 @@ import {
   ChevronDown,
   ChevronRight,
   Clock,
+  Crown,
   Lock,
   CreditCard,
   Link,
@@ -2687,7 +2688,6 @@ const InSessionFilters: React.FC<{
   );
 };
 
-// Session Start Component - bez zmian
 const SessionStart: React.FC<{
   onStart: () => void;
   stats: any;
@@ -2695,12 +2695,20 @@ const SessionStart: React.FC<{
   const navigate = useNavigate();
   const [activeSessions, setActiveSessions] = useState<any[]>([]);
 
+  // POBIERZ STATUS SUBSKRYPCJI
+  const { data: subscription } = useQuery({
+    queryKey: ["subscription-status"],
+    queryFn: () => api.get("/api/subscription/status").then((r) => r.data),
+  });
+
   // Pobierz aktywne sesje
   useEffect(() => {
     api.get("/api/learning/active-sessions").then((r) => {
       setActiveSessions(r.data);
     });
   }, []);
+
+  const isFreeUser = subscription?.plan === "FREE";
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -2730,17 +2738,50 @@ const SessionStart: React.FC<{
           </div>
         </div>
 
-        <button
-          onClick={onStart}
-          className="px-8 py-4 bg-white text-blue-600 rounded-xl hover:bg-blue-50 
-                   font-semibold flex items-center gap-2 transition-colors"
-        >
-          <Play className="w-5 h-5" />
-          Rozpocznij sesję nauki ({SESSION_LIMIT} zadań)
-        </button>
+        {/* BLOKADA DLA FREE USERS */}
+        {isFreeUser ? (
+          <div className="space-y-4">
+            <div className="p-4 bg-yellow-500/20 backdrop-blur-sm border border-yellow-300/30 rounded-xl">
+              <div className="flex items-start gap-3">
+                <Lock className="w-6 h-6 text-yellow-200 mt-1 flex-shrink-0" />
+                <div>
+                  <p className="font-bold text-yellow-100 text-lg mb-1">
+                    Sesje nauki dostępne tylko w Premium
+                  </p>
+                  <p className="text-yellow-50 text-sm">
+                    Aby rozpocząć sesję nauki, potrzebujesz planu Premium.
+                    Odblouj pełny dostęp do AI i wszystkich funkcji
+                    edukacyjnych.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => navigate("/subscription")}
+              className="w-full px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-500 
+                       text-gray-900 rounded-xl hover:from-yellow-500 hover:to-orange-600 
+                       font-bold flex items-center justify-center gap-3 transition-all
+                       shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              <Crown className="w-6 h-6" />
+              Ulepsz do Premium - 49 zł/miesiąc
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={onStart}
+            className="px-8 py-4 bg-white text-blue-600 rounded-xl hover:bg-blue-50 
+                     font-semibold flex items-center gap-2 transition-colors"
+          >
+            <Play className="w-5 h-5" />
+            Rozpocznij sesję nauki ({SESSION_LIMIT} zadań)
+          </button>
+        )}
       </div>
 
-      {stats?.activeSessions?.length > 0 && (
+      {!isFreeUser && stats?.activeSessions?.length > 0 && (
         <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4 mb-4">
           <h3 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-3">
             Nieukończone sesje
@@ -2758,7 +2799,7 @@ const SessionStart: React.FC<{
                     {new Date(session.startedAt).toLocaleDateString("pl-PL")}
                   </p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Ukończono {session.completed} z 20 zadań •{session.correct}{" "}
+                    Ukończono {session.completed} z 20 zadań • {session.correct}{" "}
                     poprawnych
                   </p>
                 </div>

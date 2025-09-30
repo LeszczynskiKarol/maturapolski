@@ -1,8 +1,8 @@
-// frontend/src/features/student/EpochReview.tsx
+// frontend/src/features/student/EpochReview.tsx - Z BLOKADĄ DLA FREE USERS
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Clock, ChevronRight, Star } from "lucide-react";
+import { BookOpen, Clock, ChevronRight, Star, Lock, Crown } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../services/api";
 import toast from "react-hot-toast";
@@ -94,6 +94,12 @@ export const EpochReview: React.FC = () => {
   const navigate = useNavigate();
   const [selectedEpoch, setSelectedEpoch] = useState<string | null>(null);
 
+  // POBIERZ STATUS SUBSKRYPCJI
+  const { data: subscription } = useQuery({
+    queryKey: ["subscription-status"],
+    queryFn: () => api.get("/api/subscription/status").then((r) => r.data),
+  });
+
   // Pobierz statystyki dla każdej epoki
   const { data: stats } = useQuery({
     queryKey: ["epoch-stats"],
@@ -103,7 +109,16 @@ export const EpochReview: React.FC = () => {
     },
   });
 
+  const isFreeUser = subscription?.plan === "FREE";
+
   const handleStartReview = (epochValue: string) => {
+    // BLOKADA DLA FREE USERS
+    if (isFreeUser) {
+      toast.error("Powtórki z epok dostępne tylko w planie Premium!");
+      navigate("/subscription");
+      return;
+    }
+
     const filters = {
       category: "HISTORICAL_LITERARY",
       epoch: epochValue,
@@ -136,6 +151,34 @@ export const EpochReview: React.FC = () => {
         </p>
       </div>
 
+      {/* OSTRZEŻENIE DLA FREE USERS */}
+      {isFreeUser && (
+        <div className="mb-6 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-2 border-yellow-400 dark:border-yellow-600 rounded-xl">
+          <div className="flex items-start gap-3">
+            <Lock className="w-6 h-6 text-yellow-600 dark:text-yellow-400 mt-1 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="font-bold text-yellow-900 dark:text-yellow-100 text-lg mb-1">
+                Powtórki dostępne tylko w Premium
+              </p>
+              <p className="text-yellow-800 dark:text-yellow-200 text-sm mb-3">
+                Aby korzystać z powtórek epok literackich, potrzebujesz planu
+                Premium z pełnym dostępem do AI.
+              </p>
+              <button
+                onClick={() => navigate("/subscription")}
+                className="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 
+                         text-white rounded-lg hover:from-yellow-600 hover:to-orange-600 
+                         font-semibold flex items-center gap-2 transition-all"
+              >
+                <Crown className="w-4 h-4" />
+                Ulepsz do Premium
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {EPOCHS.map((epoch) => {
           const epochStats = getEpochStats(epoch.value);
@@ -146,17 +189,31 @@ export const EpochReview: React.FC = () => {
           return (
             <div
               key={epoch.value}
-              className={`relative overflow-hidden rounded-xl border-2 transition-all cursor-pointer group
-                ${
-                  selectedEpoch === epoch.value
-                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                    : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
-                }`}
-              onClick={() => setSelectedEpoch(epoch.value)}
+              className={`relative overflow-hidden rounded-xl border-2 transition-all ${
+                isFreeUser ? "opacity-60" : "cursor-pointer group"
+              } ${
+                selectedEpoch === epoch.value
+                  ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                  : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+              }`}
+              onClick={() => !isFreeUser && setSelectedEpoch(epoch.value)}
             >
+              {/* Lock Overlay dla FREE users */}
+              {isFreeUser && (
+                <div className="absolute inset-0 bg-gray-900/10 dark:bg-gray-900/30 z-10 flex items-center justify-center">
+                  <div className="bg-white dark:bg-gray-800 rounded-full p-3 shadow-lg">
+                    <Lock className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+                  </div>
+                </div>
+              )}
+
               {/* Gradient Background */}
               <div
-                className={`absolute inset-0 bg-gradient-to-br ${epoch.color} opacity-5 group-hover:opacity-10 transition-opacity`}
+                className={`absolute inset-0 bg-gradient-to-br ${
+                  epoch.color
+                } opacity-5 ${
+                  !isFreeUser && "group-hover:opacity-10"
+                } transition-opacity`}
               />
 
               <div className="relative p-5">
@@ -181,7 +238,7 @@ export const EpochReview: React.FC = () => {
                 </p>
 
                 {/* Stats */}
-                {epochStats && (
+                {epochStats && !isFreeUser && (
                   <div className="space-y-2 mb-4">
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-gray-600 dark:text-gray-400">
@@ -212,16 +269,28 @@ export const EpochReview: React.FC = () => {
                     e.stopPropagation();
                     handleStartReview(epoch.value);
                   }}
+                  disabled={isFreeUser}
                   className={`w-full py-2.5 rounded-lg font-medium transition-all flex items-center justify-center gap-2
                     ${
-                      selectedEpoch === epoch.value
+                      isFreeUser
+                        ? "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                        : selectedEpoch === epoch.value
                         ? "bg-blue-600 text-white hover:bg-blue-700"
                         : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                     }`}
                 >
-                  <BookOpen className="w-4 h-4" />
-                  Rozpocznij powtórkę
-                  <ChevronRight className="w-4 h-4" />
+                  {isFreeUser ? (
+                    <>
+                      <Lock className="w-4 h-4" />
+                      Wymaga Premium
+                    </>
+                  ) : (
+                    <>
+                      <BookOpen className="w-4 h-4" />
+                      Rozpocznij powtórkę
+                      <ChevronRight className="w-4 h-4" />
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -241,6 +310,11 @@ export const EpochReview: React.FC = () => {
               System automatycznie dobierze dla Ciebie 20 zadań z wybranej
               epoki. Możesz w każdej chwili zmienić filtry lub zakończyć sesję.
               Zadania będą dostosowane do Twojego poziomu trudności.
+              {isFreeUser && (
+                <span className="block mt-2 font-semibold">
+                  ⚠️ Ta funkcja wymaga planu Premium.
+                </span>
+              )}
             </p>
           </div>
         </div>
