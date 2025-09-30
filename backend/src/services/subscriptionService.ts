@@ -241,6 +241,18 @@ export class SubscriptionService {
           event.data.object as Stripe.Subscription
         );
         break;
+      case "checkout.session.completed":
+        const session = event.data.object as Stripe.Checkout.Session;
+
+        // Sprawdź czy to zakup subskrypcji czy punktów
+        if (session.mode === "payment") {
+          // To zakup punktów!
+          await this.handlePointsPurchaseCompleted(session);
+        } else if (session.mode === "subscription") {
+          // To subskrypcja - istniejący handler
+          await this.handleCheckoutCompleted(session);
+        }
+        break;
 
       case "customer.subscription.deleted":
         await this.handleSubscriptionDeleted(
@@ -414,6 +426,45 @@ export class SubscriptionService {
       usage: stats,
       recentUsage: usage.slice(0, 10),
     };
+  }
+  private async handlePointsPurchaseCompleted(
+    session: Stripe.Checkout.Session
+  ) {
+    const userId = session.metadata?.userId;
+    const pointsAmount = parseInt(session.metadata?.pointsAmount || "0");
+
+    if (!userId || !pointsAmount) {
+      console.error("Missing userId or pointsAmount in session metadata");
+      return;
+    }
+
+    // Pobierz subskrypcję
+    const subscription = await this.getOrCreateSubscription(userId);
+
+    // DODAJ punkty do limitu (nie resetuj używanych!)
+    await prisma.subscription.update({
+      where: { id: subscription.id },
+      data: {
+        aiPointsLimit: { increment: pointsAmount },
+      },
+    });
+
+    // Opcjonalnie: zapisz historię zakupu
+    await prisma.pointsPurchase.create({
+      data: {
+        userId,
+        subscriptionId: subscription.id,
+        pointsAmount,
+        stripeSessionId: session.id,
+        amountPaid: session.amount_total || 0,
+      },
+    });
+
+    console.log(
+      `Added ${pointsAmount} AI points to user ${userId}. New limit: ${
+        subscription.aiPointsLimit + pointsAmount
+      }`
+    );
   }
 }
 

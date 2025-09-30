@@ -615,6 +615,7 @@ model Subscription {
   updatedAt       DateTime          @updatedAt
   
   aiUsage         AiUsage[]
+  pointsPurchases PointsPurchase[]  
   
   @@index([userId])
   @@index([stripeCustomerId])
@@ -653,6 +654,24 @@ model StripeEvent {
   
   @@index([stripeEventId])
 }
+
+model PointsPurchase {
+  id              String       @id @default(cuid())
+  userId          String
+  subscriptionId  String
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id])
+  
+  pointsAmount    Int          // ile punktów kupiono
+  amountPaid      Int          // kwota w groszach (np. 1900 = 19 zł)
+  
+  stripeSessionId String       @unique
+  
+  createdAt       DateTime     @default(now())
+  
+  @@index([userId, createdAt])
+  @@index([subscriptionId])
+}
+
 
 enum SubscriptionStatus {
   ACTIVE

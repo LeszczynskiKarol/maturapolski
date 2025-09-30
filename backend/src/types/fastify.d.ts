@@ -9,6 +9,13 @@ declare module "fastify" {
       role: "ADMIN" | "STUDENT";
     };
   }
+
+  interface FastifyInstance {
+    authenticate: (
+      request: FastifyRequest,
+      reply: FastifyReply
+    ) => Promise<void>;
+  }
 }
 
 declare module "@fastify/jwt" {

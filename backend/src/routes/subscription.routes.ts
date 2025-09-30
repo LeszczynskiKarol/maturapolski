@@ -1,6 +1,7 @@
 // backend/src/routes/subscription.routes.ts
 
 import { FastifyInstance } from "fastify";
+import { prisma } from "../lib/prisma";
 import { subscriptionService } from "../services/subscriptionService";
 import Stripe from "stripe";
 
@@ -152,6 +153,131 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
       });
 
       return reply.send({ url: session.url });
+    });
+
+    // Kup pakiet punktów AI (jednorazowo)
+    protectedRoutes.post("/buy-points", async (request, reply) => {
+      try {
+        const { pointsPackage } = request.body as {
+          pointsPackage: "SMALL" | "MEDIUM" | "LARGE";
+        };
+
+        const userId = (request.user as any).userId;
+
+        // Cennik pakietów punktów
+        const packages = {
+          SMALL: {
+            points: 50,
+            price: "price_small_package", // ID z Stripe Dashboard
+            priceAmount: 1900, // 19 zł
+          },
+          MEDIUM: {
+            points: 150,
+            price: "price_medium_package", // ID z Stripe Dashboard
+            priceAmount: 4900, // 49 zł (oszczędność!)
+          },
+          LARGE: {
+            points: 300,
+            price: "price_large_package", // ID z Stripe Dashboard
+            priceAmount: 7900, // 79 zł (największa oszczędność!)
+          },
+        };
+
+        const selectedPackage = packages[pointsPackage];
+        if (!selectedPackage) {
+          return reply.code(400).send({ error: "Invalid package" });
+        }
+
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+          include: { subscription: true },
+        });
+
+        if (!user) {
+          return reply.code(404).send({ error: "User not found" });
+        }
+
+        // Utwórz lub pobierz Stripe Customer
+        let customerId = user.subscription?.stripeCustomerId;
+
+        if (!customerId) {
+          const customer = await stripe.customers.create({
+            email: user.email,
+            metadata: { userId: user.id },
+          });
+          customerId = customer.id;
+
+          await prisma.subscription.update({
+            where: { userId },
+            data: { stripeCustomerId: customerId },
+          });
+        }
+
+        // Utwórz Checkout Session dla jednorazowej płatności
+        const session = await stripe.checkout.sessions.create({
+          customer: customerId,
+          mode: "payment", // PAYMENT zamiast SUBSCRIPTION!
+          payment_method_types: ["card", "blik", "p24"],
+          line_items: [
+            {
+              price: selectedPackage.price,
+              quantity: 1,
+            },
+          ],
+          success_url: `${process.env.FRONTEND_URL}/subscription?points_added=true`,
+          cancel_url: `${process.env.FRONTEND_URL}/subscription`,
+          metadata: {
+            userId: user.id,
+            pointsPackage: pointsPackage,
+            pointsAmount: selectedPackage.points.toString(),
+          },
+        });
+
+        return reply.send({
+          sessionId: session.id,
+          url: session.url,
+        });
+      } catch (error: any) {
+        console.error("Error creating points purchase:", error);
+        return reply.code(500).send({
+          error: "Failed to create checkout session",
+          details: error.message,
+        });
+      }
+    });
+
+    // Endpoint do sprawdzenia dostępnych pakietów
+    protectedRoutes.get("/points-packages", async (request, reply) => {
+      const packages = [
+        {
+          id: "SMALL",
+          name: "Pakiet Starter",
+          points: 50,
+          price: 19,
+          pricePerPoint: 0.38,
+          description: "Idealny do spróbowania",
+        },
+        {
+          id: "MEDIUM",
+          name: "Pakiet Standard",
+          points: 150,
+          price: 49,
+          pricePerPoint: 0.33,
+          description: "Najpopularniejszy wybór",
+          badge: "Polecany",
+        },
+        {
+          id: "LARGE",
+          name: "Pakiet Premium",
+          points: 300,
+          price: 79,
+          pricePerPoint: 0.26,
+          description: "Najlepsza wartość",
+          badge: "Najlepsza oferta",
+        },
+      ];
+
+      return reply.send(packages);
     });
   });
 }

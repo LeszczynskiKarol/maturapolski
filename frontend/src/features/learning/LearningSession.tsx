@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { UpgradePrompt } from "../../components/UpgradePrompt";
-import { AiPointsWidget } from "../../components/AiPointsWidget";
+import { AiPointsCost } from "../../components/AiPointsCost";
 import { ConfirmExitDialog } from "../../components/ConfirmExitDialog";
 import { useSessionExit } from "../../hooks/useSessionExit";
 import confetti from "canvas-confetti";
@@ -15,6 +15,8 @@ import {
   ChevronRight,
   Clock,
   Lock,
+  CreditCard,
+  Link,
   Filter,
   Play,
   SkipForward,
@@ -101,9 +103,16 @@ export const LearningSession: React.FC = () => {
   const [completedExercises, setCompletedExercises] = useState<
     Array<{ id: string; score: number }>
   >([]);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionResult, setSubmissionResult] = useState<any>(null);
   const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
   const [selectedRight, setSelectedRight] = useState<number | null>(null);
   const [matches, setMatches] = useState<Array<[number, number]>>([]);
+  const { data: subscription } = useQuery({
+    queryKey: ["subscription-status"],
+    queryFn: () => api.get("/api/subscription/status").then((r) => r.data),
+  });
 
   const [isPlanSession, setIsPlanSession] = useState(false);
   const { data: levelProgress } = useQuery({
@@ -114,11 +123,28 @@ export const LearningSession: React.FC = () => {
     staleTime: 5000,
   });
 
-  const { data: subscription } = useQuery({
-    queryKey: ["subscription-status"],
-    queryFn: () => api.get("/api/subscription/status").then((r) => r.data),
-    refetchInterval: 30000, // Co 30s
-  });
+  // Sprawdź czy user ma punkty na dane zadanie
+  const getAiPointsCost = (exerciseType: string): number => {
+    switch (exerciseType) {
+      case "CLOSED_SINGLE":
+      case "CLOSED_MULTIPLE":
+        return 0;
+      case "SHORT_ANSWER":
+      case "SYNTHESIS_NOTE":
+        return 1;
+      case "ESSAY":
+        return 3;
+      default:
+        return 1;
+    }
+  };
+
+  const hasEnoughPoints = (exerciseType: string): boolean => {
+    if (!subscription) return false;
+    const cost = getAiPointsCost(exerciseType);
+    if (cost === 0) return true; // Zadania zamknięte zawsze dostępne
+    return subscription.aiPointsLimit - subscription.aiPointsUsed >= cost;
+  };
 
   const pairColors = [
     {
@@ -178,6 +204,9 @@ export const LearningSession: React.FC = () => {
     }
     setSelectedLeft(null);
     setSelectedRight(null);
+    setHasSubmitted(false);
+    setSubmissionResult(null);
+    setShowFeedback(false);
   }, [currentExercise?.id]);
 
   // Funkcja łączenia
@@ -293,16 +322,6 @@ export const LearningSession: React.FC = () => {
     queryFn: () => api.get("/api/learning/stats").then((r) => r.data),
   });
 
-  // Funkcja do ustawiania filtrów na backendzie
-  const updateFilters = async (newFilters: SessionFilters) => {
-    try {
-      await api.post("/api/learning/session/filters", newFilters);
-      setSessionFilters(newFilters);
-    } catch (error) {
-      console.error("Error updating filters:", error);
-    }
-  };
-
   const fetchNextExercise = async (excludeId?: string) => {
     try {
       // Najpierw ustaw filtry na backendzie
@@ -320,11 +339,148 @@ export const LearningSession: React.FC = () => {
     }
   };
 
+  const handleSubmit = async () => {
+    if (!currentExercise || !answer) return;
+
+    // SPRAWDŹ PUNKTY PRZED SUBMITEM
+    const needsAi =
+      currentExercise.type === "SHORT_ANSWER" ||
+      currentExercise.type === "SYNTHESIS_NOTE" ||
+      currentExercise.type === "ESSAY";
+
+    if (needsAi && !hasEnoughPoints(currentExercise.type)) {
+      const cost = getAiPointsCost(currentExercise.type);
+      setUpgradePromptData({
+        pointsNeeded: cost,
+        currentPoints: subscription?.aiPointsUsed || 0,
+        totalPoints: subscription?.aiPointsLimit || 0,
+      });
+      setShowUpgradePrompt(true);
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await submitMutation.mutateAsync({ answer });
+    } catch (error) {
+      console.error("Submit error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleNext = async () => {
+    setHasSubmitted(false);
+    setSubmissionResult(null);
+    setShowFeedback(false);
+    await goToNextExercise();
+  };
+
+  const handleSkip = async () => {
+    setHasSubmitted(false);
+    setSubmissionResult(null);
+    await skipExercise();
+  };
+
+  const renderActionButtons = () => {
+    if (!currentExercise) {
+      return null; // Nie renderuj przycisków gdy brak zadania
+    }
+
+    const needsAi =
+      currentExercise.type === "SHORT_ANSWER" ||
+      currentExercise.type === "SYNTHESIS_NOTE" ||
+      currentExercise.type === "ESSAY";
+
+    const hasPoints = hasEnoughPoints(currentExercise.type);
+
+    if (hasSubmitted) {
+      // Po submicie - zawsze "Następne"
+      return (
+        <button
+          onClick={handleNext}
+          className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 
+                   text-white rounded-lg hover:from-blue-700 hover:to-purple-700 
+                   font-semibold flex items-center gap-2"
+        >
+          Następne
+          <ChevronRight className="w-5 h-5" />
+        </button>
+      );
+    }
+
+    // Przed submitem
+    if (needsAi && !hasPoints) {
+      // BRAK PUNKTÓW - pokaż Pomiń + Doładuj
+      return (
+        <div className="flex gap-3">
+          <button
+            onClick={handleSkip}
+            className="px-6 py-3 border-2 border-gray-300 dark:border-gray-600 
+                     text-gray-700 dark:text-gray-300 rounded-lg 
+                     hover:bg-gray-50 dark:hover:bg-gray-700 font-semibold"
+          >
+            Pomiń zadanie
+          </button>
+          <Link
+            to="/subscription"
+            className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 
+                     text-white rounded-lg hover:from-green-700 hover:to-emerald-700 
+                     font-semibold flex items-center gap-2"
+          >
+            <CreditCard className="w-5 h-5" />
+            Doładuj konto
+          </Link>
+        </div>
+      );
+    }
+
+    // MA PUNKTY - normalny przycisk Submit
+    return (
+      <div className="flex gap-3">
+        <button
+          onClick={handleSkip}
+          className="px-6 py-3 border-2 border-gray-300 dark:border-gray-600 
+                   text-gray-700 dark:text-gray-300 rounded-lg 
+                   hover:bg-gray-50 dark:hover:bg-gray-700 font-semibold"
+        >
+          Pomiń
+        </button>
+        <button
+          onClick={handleSubmit}
+          disabled={!answer || isSubmitting}
+          className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 
+                   text-white rounded-lg hover:from-blue-700 hover:to-purple-700 
+                   disabled:opacity-50 disabled:cursor-not-allowed 
+                   font-semibold flex items-center gap-2"
+        >
+          {isSubmitting ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              Sprawdzanie...
+            </>
+          ) : (
+            <>
+              Sprawdź
+              <CheckCircle className="w-5 h-5" />
+            </>
+          )}
+        </button>
+      </div>
+    );
+  };
+
   // Submit answer
   const submitMutation = useMutation({
     mutationFn: (data: any) =>
       api.post(`/api/exercises/${currentExercise.id}/submit`, data),
     onSuccess: async (response) => {
+      setIsSubmitting(false);
+      queryClient.invalidateQueries({ queryKey: ["subscription-status"] });
+
+      setSubmissionResult(response.data);
+      setHasSubmitted(true);
+
       const result = response.data;
 
       // KRYTYCZNE: Zapisz do sesji W BAZIE!
@@ -453,7 +609,7 @@ export const LearningSession: React.FC = () => {
       }
     },
     onError: (error: any) => {
-      // NOWY KOD - obsługa błędu braku punktów AI
+      setIsSubmitting(false);
       const errorMessage = error.response?.data?.error || error.message || "";
 
       if (errorMessage.includes("INSUFFICIENT_AI_POINTS")) {
@@ -1156,7 +1312,14 @@ export const LearningSession: React.FC = () => {
                   {currentExercise.question}
                 </h2>
               </div>
-
+              {currentExercise && (
+                <div className="mb-4">
+                  <AiPointsCost
+                    exerciseType={currentExercise.type}
+                    hasEnoughPoints={hasEnoughPoints(currentExercise.type)}
+                  />
+                </div>
+              )}
               <button
                 onClick={skipExercise}
                 disabled={sessionStats.completed >= SESSION_LIMIT - 1}
@@ -2195,6 +2358,9 @@ export const LearningSession: React.FC = () => {
             <div className="h-6 bg-gray-200 rounded w-3/4"></div>
             <div className="h-4 bg-gray-200 rounded w-1/2"></div>
             <div className="h-32 bg-gray-200 rounded"></div>
+          </div>
+          <div className="flex justify-between items-center mt-6">
+            {renderActionButtons()}
           </div>
         </div>
       )}

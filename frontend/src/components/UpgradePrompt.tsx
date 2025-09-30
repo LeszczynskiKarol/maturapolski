@@ -7,7 +7,8 @@ import { api } from "../services/api";
 import { loadStripe } from "@stripe/stripe-js";
 import { toast } from "react-hot-toast";
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY!);
+// Usunięty ! na końcu - TypeScript teraz wie o typach
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 interface UpgradePromptProps {
   isOpen: boolean;

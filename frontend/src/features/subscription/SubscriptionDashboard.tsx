@@ -7,7 +7,6 @@ import {
   Crown,
   Zap,
   TrendingUp,
-  Calendar,
   CreditCard,
   AlertCircle,
   CheckCircle,
