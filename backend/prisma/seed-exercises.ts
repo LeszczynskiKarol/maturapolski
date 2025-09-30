@@ -8,7 +8,452 @@ async function seedExercises() {
 
   const exercises = [
     // ========== LANGUAGE_USE - CLOSED_SINGLE (20 pytań) ==========
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 1,
+      points: 2,
+      question: "Które wyrazy są rzeczownikami?",
+      content: {
+        options: ["kot", "biegać", "dom", "szybko", "stół"],
+      },
+      correctAnswer: [0, 2, 4],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 1,
+      points: 2,
+      question: "Które litery są samogłoskami?",
+      content: {
+        options: ["a", "b", "e", "k", "i"],
+      },
+      correctAnswer: [0, 2, 4],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 1,
+      points: 2,
+      question: "Wybierz wyrazy oznaczające kolory.",
+      content: {
+        options: ["czerwony", "szybki", "zielony", "głośny", "niebieski"],
+      },
+      correctAnswer: [0, 2, 4],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      question: "Które postaci występują w bajkach?",
+      content: {
+        options: ["wilk", "komputer", "lis", "telewizor", "zając"],
+      },
+      correctAnswer: [0, 2, 4],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 1,
+      points: 2,
+      question: "Które zdania są pytaniami?",
+      content: {
+        options: [
+          "Jak masz na imię?",
+          "Idę do szkoły.",
+          "Gdzie mieszkasz?",
+          "To jest dom.",
+          "Czy lubisz lody?",
+        ],
+      },
+      correctAnswer: [0, 2, 4],
+    },
 
+    // POZIOM 2 - z uzupełnianiem luk
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 2,
+      points: 3,
+      question: "Uzupełnij luki w zdaniach.",
+      content: {
+        textWithGaps: "Jan [1] do szkoły. Tam [2] się z kolegami i [3] lekcje.",
+        gaps: [
+          {
+            id: 1,
+            options: ["chodzi", "chodzą", "chodzić", "chodził"],
+          },
+          {
+            id: 2,
+            options: ["spotyka", "spotkają", "spotkać", "spotkali"],
+          },
+          {
+            id: 3,
+            options: ["odrabiać", "odrabia", "odrabiają", "odrobił"],
+          },
+        ],
+      },
+      correctAnswer: [0, 0, 1],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 2,
+      points: 2,
+      question: "Które wyrazy są przysłówkami?",
+      content: {
+        options: ["szybko", "szybki", "wczoraj", "dom", "głośno"],
+      },
+      correctAnswer: [0, 2, 4],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      question: "Które utwory napisał Adam Mickiewicz?",
+      content: {
+        options: [
+          "Pan Tadeusz",
+          "Lalka",
+          "Dziady",
+          "Quo Vadis",
+          "Ballady i romanse",
+        ],
+      },
+      correctAnswer: [0, 2, 4],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 2,
+      points: 3,
+      question: "Dopasuj rodzaj do rzeczownika.",
+      content: {
+        matchingType: "gender_matching",
+        leftColumn: [
+          { id: "A", text: "stół" },
+          { id: "B", text: "książka" },
+          { id: "C", text: "okno" },
+        ],
+        rightColumn: [
+          { id: 1, text: "rodzaj męski" },
+          { id: 2, text: "rodzaj żeński" },
+          { id: 3, text: "rodzaj nijaki" },
+        ],
+      },
+      correctAnswer: [
+        [0, 0],
+        [1, 1],
+        [2, 2],
+      ],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 2,
+      points: 2,
+      question: "W których wyrazach występuje 'ó'?",
+      content: {
+        options: ["król", "suma", "góra", "kura", "róża"],
+      },
+      correctAnswer: [0, 2, 4],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 2,
+      points: 3,
+      question: "Uzupełnij tekst odpowiednimi formami.",
+      content: {
+        textWithGaps: "Wczoraj [1] do kina z [2]. Film był [3].",
+        gaps: [
+          {
+            id: 1,
+            options: ["poszedłem", "pójdę", "idę", "szedłem"],
+          },
+          {
+            id: 2,
+            options: [
+              "przyjaciele",
+              "przyjaciółmi",
+              "przyjaciel",
+              "przyjaciół",
+            ],
+          },
+          {
+            id: 3,
+            options: ["ciekawy", "ciekawa", "ciekawe", "ciekawi"],
+          },
+        ],
+      },
+      correctAnswer: [0, 1, 0],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 2,
+      points: 2,
+      question: "Które zdania są złożone?",
+      content: {
+        options: [
+          "Pada deszcz i wieje wiatr.",
+          "Mama gotuje.",
+          "Kiedy świeci słońce, jest ciepło.",
+          "Dzieci się bawią.",
+          "Czytam książkę, która jest ciekawa.",
+        ],
+      },
+      correctAnswer: [0, 2, 4],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 2,
+      points: 2,
+      question: "Które wyrazy zawierają przedrostek?",
+      content: {
+        options: ["napisać", "pisać", "przepisać", "pisarz", "dopisać"],
+      },
+      correctAnswer: [0, 2, 4],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      question: "Dopasuj autora do utworu.",
+      content: {
+        matchingType: "author_to_work",
+        leftColumn: [
+          { id: "A", text: "Henryk Sienkiewicz" },
+          { id: "B", text: "Bolesław Prus" },
+          { id: "C", text: "Władysław Reymont" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Quo Vadis" },
+          { id: 2, text: "Lalka" },
+          { id: 3, text: "Chłopi" },
+        ],
+      },
+      correctAnswer: [
+        [0, 0],
+        [1, 1],
+        [2, 2],
+      ],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 2,
+      points: 2,
+      question: "Które wyrazy są czasownikami?",
+      content: {
+        options: ["czytać", "książka", "biegać", "szybki", "pisać"],
+      },
+      correctAnswer: [0, 2, 4],
+    },
+
+    // POZIOM 3 - bardziej złożone
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 3,
+      question: "Uzupełnij luki w tekście literackim.",
+      content: {
+        textWithGaps:
+          "Romantyzm był epoką, która [1] rozum, a wywyższała [2]. Poeci romantyczni wierzyli w [3] narodu.",
+        gaps: [
+          {
+            id: 1,
+            options: ["gloryfikowała", "odrzucała", "analizowała", "badała"],
+          },
+          {
+            id: 2,
+            options: ["naukę", "uczucia", "pieniądze", "władzę"],
+          },
+          {
+            id: 3,
+            options: ["bogactwo", "siłę", "mesjanizm", "racjonalizm"],
+          },
+        ],
+      },
+      correctAnswer: [1, 1, 2],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 2,
+      question: "Które środki stylistyczne są tropami?",
+      content: {
+        options: ["metafora", "anafora", "metonimia", "epifora", "synekdocha"],
+      },
+      correctAnswer: [0, 2, 4],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      question: "Dopasuj epokę do jej cech charakterystycznych.",
+      content: {
+        matchingType: "epoch_features",
+        leftColumn: [
+          { id: "A", text: "Romantyzm" },
+          { id: "B", text: "Pozytywizm" },
+          { id: "C", text: "Młoda Polska" },
+        ],
+        rightColumn: [
+          { id: 1, text: "uczucia, indywidualizm" },
+          { id: 2, text: "praca organiczna" },
+          { id: 3, text: "sztuka dla sztuki" },
+        ],
+      },
+      correctAnswer: [
+        [0, 0],
+        [1, 1],
+        [2, 2],
+      ],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 2,
+      question: "W których zdaniach występuje metafora?",
+      content: {
+        options: [
+          "Czas płynie jak rzeka.",
+          "Jego serce jest z kamienia.",
+          "Słońce zachodzi.",
+          "Morze wspomnień zalewa mnie.",
+          "On jest wysoki.",
+        ],
+      },
+      correctAnswer: [1, 3],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 3,
+      question: "Przyporządkuj funkcje języka do przykładów.",
+      content: {
+        matchingType: "language_functions",
+        leftColumn: [
+          { id: "A", text: "Halo? Słyszysz mnie?" },
+          { id: "B", text: "Jestem bardzo szczęśliwy!" },
+          { id: "C", text: "Woda wrze w 100°C" },
+        ],
+        rightColumn: [
+          { id: 1, text: "funkcja fatyczna" },
+          { id: 2, text: "funkcja emotywna" },
+          { id: 3, text: "funkcja poznawcza" },
+        ],
+      },
+      correctAnswer: [
+        [0, 0],
+        [1, 1],
+        [2, 2],
+      ],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 2,
+      question: "Które zdania zawierają podmiot domyślny?",
+      content: {
+        options: [
+          "Czytam książkę.",
+          "Pada deszcz.",
+          "Idziemy do kina.",
+          "Jest zimno.",
+          "Lubię czekoladę.",
+        ],
+      },
+      correctAnswer: [0, 2, 4],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      question: "Które motywy są wspólne dla romantyzmu i Młodej Polski?",
+      content: {
+        options: [
+          "indywidualizm",
+          "praca organiczna",
+          "mistycyzm",
+          "realizm",
+          "pesymizm",
+        ],
+      },
+      correctAnswer: [0, 2, 4],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 3,
+      question: "Uzupełnij analizę stylistyczną.",
+      content: {
+        textWithGaps:
+          "W zdaniu 'Złote liście spadały z drzew' epitet [1] określa rzeczownik [2] i pełni funkcję [3].",
+        gaps: [
+          {
+            id: 1,
+            options: ["'spadały'", "'złote'", "'drzew'", "'z'"],
+          },
+          {
+            id: 2,
+            options: ["'złote'", "'spadały'", "'liście'", "'drzew'"],
+          },
+          {
+            id: 3,
+            options: ["podmiotu", "orzeczenia", "przydawki", "dopełnienia"],
+          },
+        ],
+      },
+      correctAnswer: [1, 2, 2],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 2,
+      question: "W których zdaniach występuje apostrofa?",
+      content: {
+        options: [
+          "O Muzo! Wspomóż mnie!",
+          "Pada deszcz.",
+          "Litwo! Ojczyzno moja!",
+          "Czytam książkę.",
+          "Boże, pomóż nam!",
+        ],
+      },
+      correctAnswer: [0, 2, 4],
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 2,
+      question: "Które wyrażenia są frazeologizmami?",
+      content: {
+        options: [
+          "rzucać słowa na wiatr",
+          "iść do domu",
+          "mieć muchy w nosie",
+          "czytać książkę",
+          "robić z igły widły",
+        ],
+      },
+      correctAnswer: [0, 2, 4],
+    },
     {
       type: "CLOSED_SINGLE",
       category: "LANGUAGE_USE",
@@ -2148,6 +2593,387 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
     },
 
     // ========== LANGUAGE_USE - SHORT_ANSWER (15 pytań) ==========
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 1,
+      points: 1,
+      question: "Podaj przeciwieństwo wyrazu 'duży'.",
+      content: {
+        expectedAnswer: "mały",
+        acceptableAnswers: ["mały", "malutki", "niewielki"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 1,
+      points: 1,
+      question: "Ile sylab ma wyraz 'mama'?",
+      content: {
+        expectedAnswer: "2",
+        acceptableAnswers: ["2", "dwie", "dwa"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      question: "Jak nazywał się smok z Wawelu?",
+      content: {
+        expectedAnswer: "Smok Wawelski",
+        acceptableAnswers: ["Smok Wawelski", "smok wawelski", "wawelski"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 1,
+      points: 1,
+      question: "Dokończ przysłowie: 'Bez pracy nie ma...'",
+      content: {
+        expectedAnswer: "kołaczy",
+        acceptableAnswers: ["kołaczy"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 1,
+      points: 1,
+      question: "Jaki znak interpunkcyjny stawiamy na końcu pytania?",
+      content: {
+        expectedAnswer: "pytajnik",
+        acceptableAnswers: ["pytajnik", "znak zapytania", "?"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 1,
+      points: 1,
+      question: "Podaj liczbę mnogą wyrazu 'kot'.",
+      content: {
+        expectedAnswer: "koty",
+        acceptableAnswers: ["koty"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      question: "Kto napisał 'Lokomotywę'? (podaj nazwisko)",
+      content: {
+        expectedAnswer: "Tuwim",
+        acceptableAnswers: ["Tuwim", "Julian Tuwim"],
+      },
+    },
+
+    // POZIOM 2 - Łatwe
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 2,
+      points: 2,
+      question: "Wyjaśnij znaczenie frazeologizmu 'mieć węża w kieszeni'.",
+      content: {
+        requirements: ["znaczenie", "skąpstwo"],
+        expectedElements: ["skąpy", "nie wydawać pieniędzy", "oszczędny"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 2,
+      points: 2,
+      question: "Przekształć zdanie na stronę bierną: 'Jan czyta książkę.'",
+      content: {
+        originalSentence: "Jan czyta książkę.",
+        expectedAnswer: "Książka jest czytana przez Jana.",
+        acceptableAnswers: [
+          "Książka jest czytana przez Jana",
+          "Książka jest czytana",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      question: "Wymień trzy gatunki epickie.",
+      content: {
+        requirements: ["3 gatunki", "epika"],
+        expectedElements: [
+          "powieść",
+          "nowela",
+          "opowiadanie",
+          "bajka",
+          "baśń",
+          "legenda",
+          "mit",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 2,
+      points: 2,
+      question: "Co to jest synonim? Podaj przykład.",
+      content: {
+        requirements: ["definicja", "przykład"],
+        expectedElements: ["podobne znaczenie", "bliskoznaczny"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 2,
+      points: 2,
+      question: "Rozwiń skrót 'np.' i użyj go w zdaniu.",
+      content: {
+        requirements: ["rozwinięcie skrótu", "zdanie"],
+        expectedElements: ["na przykład"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 2,
+      points: 2,
+      question: "Podaj trzy części mowy.",
+      content: {
+        requirements: ["3 części mowy"],
+        expectedElements: [
+          "rzeczownik",
+          "czasownik",
+          "przymiotnik",
+          "przysłówek",
+          "liczebnik",
+          "zaimek",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      question: "W której epoce tworzył Adam Mickiewicz?",
+      content: {
+        expectedAnswer: "romantyzm",
+        acceptableAnswers: ["romantyzm", "Romantyzm", "w romantyzmie"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 2,
+      points: 2,
+      question: "Wyjaśnij różnicę między zdaniem pojedynczym a złożonym.",
+      content: {
+        requirements: ["różnica", "orzeczenia"],
+        expectedElements: [
+          "jedno orzeczenie",
+          "więcej orzeczeń",
+          "kilka orzeczeń",
+        ],
+      },
+    },
+
+    // POZIOM 3 - Średnie
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 2,
+      question: "Przekształć mowę niezależną na zależną.",
+      content: {
+        originalSentence: "Anna powiedziała: 'Idę do kina.'",
+        transformation: "Zamień na mowę zależną.",
+        expectedAnswer: "Anna powiedziała, że idzie do kina.",
+        acceptableAnswers: [
+          "Anna powiedziała, że idzie do kina",
+          "Anna powiedziała, iż idzie do kina",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 3,
+      question: "Analizuj budowę słowotwórczą wyrazu 'nauczycielka'.",
+      content: {
+        requirements: ["rdzeń", "przyrostki", "przedrostek"],
+        expectedElements: ["na-", "ucz", "-yciel", "-ka"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      question: "Wyjaśnij pojęcie 'katharsis' w kontekście teatru.",
+      content: {
+        requirements: ["oczyszczenie", "emocje", "tragedia"],
+        expectedElements: [
+          "oczyszczenie",
+          "uczucia",
+          "współczucie",
+          "tragedia",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 3,
+      question: "Podaj i wyjaśnij trzy funkcje języka według Jakobsona.",
+      content: {
+        requirements: ["3 funkcje", "wyjaśnienie"],
+        expectedElements: [
+          "emotywna",
+          "poznawcza",
+          "fatyczna",
+          "poetycka",
+          "metajęzykowa",
+          "konatywna",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 2,
+      question: "Czym różni się metafora od porównania? Podaj przykłady.",
+      content: {
+        requirements: ["różnica", "przykłady"],
+        expectedElements: ["jak", "przenośnia", "bezpośrednie"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      question: "Wymień i krótko scharakteryzuj trzy cechy romantyzmu.",
+      content: {
+        requirements: ["3 cechy", "charakterystyka"],
+        expectedElements: [
+          "uczucia",
+          "indywidualizm",
+          "ludowość",
+          "mistycyzm",
+          "natura",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 2,
+      question: "Przekształć zdanie złożone na pojedyncze.",
+      content: {
+        originalSentence: "Kiedy przyszedłem do domu, zobaczyłem gości.",
+        transformation: "Przekształć na zdanie pojedyncze z imiesłowem.",
+        expectedAnswer: "Przyszedłszy do domu, zobaczyłem gości.",
+        hints: ["użyj imiesłowu przysłówkowego"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 3,
+      question: "Oceń poprawność zdania i uzasadnij.",
+      content: {
+        statement: "Włosy mi się jeżą na głowie.",
+        requiresJustification: true,
+        expectedElements: ["poprawne", "frazeologizm", "przenośnia"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      question: "Wyjaśnij symbolikę lalki w 'Lalce' B. Prusa.",
+      content: {
+        requirements: ["symbol", "znaczenie", "interpretacja"],
+        expectedElements: ["sztuczność", "pozory", "społeczeństwo", "relacje"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 2,
+      question:
+        "Podaj przykład zdania z orzeczeniem imiennym i wyjaśnij jego budowę.",
+      content: {
+        requirements: ["przykład", "wyjaśnienie"],
+        expectedElements: ["być", "orzecznik", "łącznik"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 3,
+      question:
+        "Wyjaśnij zjawisko alternacji w języku polskim. Podaj przykłady.",
+      content: {
+        requirements: ["definicja", "przykłady"],
+        expectedElements: ["wymiana", "głoski", "odmiana"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      question: "Porównaj bohatera romantycznego i pozytywistycznego.",
+      content: {
+        requirements: ["cechy romantyka", "cechy pozytywisty", "różnice"],
+        expectedElements: [
+          "indywidualista",
+          "społecznik",
+          "uczucia",
+          "rozum",
+          "praca",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 2,
+      question: "Co to jest elipsa składniowa? Podaj przykład.",
+      content: {
+        requirements: ["definicja", "przykład"],
+        expectedElements: ["wyrzutnia", "pominięcie", "domyślny"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 3,
+      question:
+        "Wyjaśnij różnicę między stylem oficjalnym a potocznym. Podaj przykłady.",
+      content: {
+        requirements: ["różnice", "przykłady"],
+        expectedElements: ["formalny", "nieformalny", "słownictwo", "składnia"],
+      },
+    },
     {
       type: "SHORT_ANSWER",
       category: "LANGUAGE_USE",

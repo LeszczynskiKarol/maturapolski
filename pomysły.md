@@ -1,0 +1,1 @@
+- Zrobić tak, żeby odpowiedzi PRZEMIESZYWAŁY SIĘ, a nie tak, że zawsze mam te samą kolejność odpowiedzi. za każdym razem ma się losować inna
