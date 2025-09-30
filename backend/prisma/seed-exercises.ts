@@ -8,6 +8,116 @@ async function seedExercises() {
 
   const exercises = [
     // ========== LANGUAGE_USE - CLOSED_SINGLE (20 pytań) ==========
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 1,
+      question: "Przeczytaj fragment i odpowiedz na pytanie.",
+      content: {
+        sourceText: {
+          author: "Czesław Miłosz",
+          title: "Który skrzywdziłeś",
+          text: `Który skrzywdziłeś człowieka prostego
+Śmiechem nad krzywdą jego wybuchając,
+Gromadę błaznów koło siebie mając
+Na pomieszanie dobrego i złego...`,
+        },
+        question: "Jaki środek stylistyczny dominuje w tym fragmencie?",
+        options: ["apostrofa", "metafora", "porównanie", "symbol"],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation: "Apostrofa - zwrot do osoby 'który skrzywdziłeś'",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 1,
+      question: "Przeczytaj fragment i określ dominujący środek stylistyczny.",
+      content: {
+        sourceText: {
+          author: "Wisława Szymborska",
+          title: "Nic dwa razy",
+          text: `Nic dwa razy się nie zdarza
+i nie zdarzy. Z tej przyczyny
+zrodziliśmy się bez wprawy
+i pomrzemy bez rutyny.`,
+        },
+        question: "Jaki środek stylistyczny dominuje w tym fragmencie?",
+        options: ["paradoks", "metafora", "porównanie", "hiperbola"],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation: "Paradoks - sprzeczność pozorna: 'bez wprawy/bez rutyny'",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      question: "Przeczytaj fragment i określ epokę literacką.",
+      content: {
+        sourceText: {
+          author: "nieznany",
+          text: `Biada temu, kto żyw będąc, śmierci wzywa,
+Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
+        },
+        question: "Z której epoki pochodzi ten fragment?",
+        options: ["renesans", "barok", "oświecenie", "romantyzm"],
+      },
+      correctAnswer: 1,
+      metadata: { explanation: "Barok - motyw vanitas, śmierci" },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "LANGUAGE_USE",
+      difficulty: 2,
+      points: 1,
+      question: "Określ typ zdania.",
+      content: {
+        sentence: "Gdyby nie padało, poszlibyśmy na spacer.",
+        question: "Jakie to zdanie?",
+        options: [
+          "pojedyncze rozwinięte",
+          "złożone współrzędnie",
+          "złożone podrzędnie",
+          "wielokrotnie złożone",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation: "Zdanie złożone podrzędnie okolicznikowe warunku",
+      },
+    },
+
+    // INTERPRETACJA SYMBOLI (50 pytań)
+    {
+      type: "CLOSED_SINGLE",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 1,
+      question: "Zinterpretuj symbol w kontekście.",
+      content: {
+        context: "W 'Lalce' Prusa motyw lalki pojawia się wielokrotnie.",
+        question: "Co symbolizuje lalka w powieści?",
+        options: [
+          "dzieciństwo bohatera",
+          "sztuczność relacji społecznych",
+          "zabawkę",
+          "przemysł",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Lalka symbolizuje sztuczność i pustkę relacji społecznych",
+      },
+    },
     {
       type: "CLOSED_SINGLE",
       category: "LANGUAGE_USE",
@@ -636,10 +746,9 @@ async function seedExercises() {
       },
       correctAnswer: 0,
     },
-  ];
 
-  // ========== MEGA PACK: HISTORICAL_LITERARY - CLOSED_SINGLE (50 pytań) ==========
-  const closedSingleHistorical = [
+    // ========== MEGA PACK: HISTORICAL_LITERARY - CLOSED_SINGLE (50 pytań) ==========
+
     {
       type: "CLOSED_SINGLE",
       category: "HISTORICAL_LITERARY",
@@ -963,6 +1072,29 @@ async function seedExercises() {
         ],
       },
       correctAnswer: 1, // B - dźwięczność
+    },
+    {
+      type: "SYNTHESIS_NOTE",
+      category: "LANGUAGE_USE",
+      difficulty: 4,
+      points: 5,
+      question: "Porównaj dwa fragmenty pod względem stylu i przesłania.",
+      content: {
+        text1: {
+          author: "Mickiewicz",
+          fragment: "Ojczyzno moja! Ty jesteś jak zdrowie...",
+        },
+        text2: {
+          author: "Norwid",
+          fragment: "Ojczyzna to wielki zbiorowy obowiązek...",
+        },
+        requirements: [
+          "porównanie stylu",
+          "różnice w pojmowaniu ojczyzny",
+          "kontekst epok",
+          "80-100 słów",
+        ],
+      },
     },
 
     {
@@ -1397,6 +1529,144 @@ async function seedExercises() {
     },
 
     // ========== LANGUAGE_USE - CLOSED_MULTIPLE (15 pytań) ==========
+
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 4,
+      question: "Dopasuj pierwsze wersy do tytułów utworów.",
+      content: {
+        matchingType: "first_lines_to_titles",
+        leftColumn: [
+          { id: "A", text: "Litwo! Ojczyzno moja!" },
+          { id: "B", text: "Nam strzelać nie kazano" },
+          { id: "C", text: "Wlazł kotek na płotek" },
+          { id: "D", text: "Bogurodzica dziewica" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Pan Tadeusz" },
+          { id: 2, text: "Reduta Ordona" },
+          { id: 3, text: "Bajki i przypowieści" },
+          { id: 4, text: "Bogurodzica" },
+        ],
+        instruction: "Wybierz poprawne pary (np. A-1, B-2)",
+      },
+      correctAnswer: [
+        [0, 0],
+        [1, 1],
+        [2, 2],
+        [3, 3],
+      ],
+    },
+
+    // UZUPEŁNIANIE LUK GRAMATYCZNYCH (25 pytań)
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 2,
+      points: 3,
+      question: "Uzupełnij luki poprawnymi formami wyrazów.",
+      content: {
+        textWithGaps:
+          "Mickiewicz [1] największym poetą polskiego [2]. Jego utwory [3] do dziś.",
+        gaps: [
+          { id: 1, options: ["był", "jest", "będzie", "bywa"] },
+          {
+            id: 2,
+            options: ["romantyzm", "romantyzmu", "romantyzmie", "romantyzmem"],
+          },
+          { id: 3, options: ["czytane są", "czyta się", "czytają", "czytano"] },
+        ],
+      },
+      correctAnswer: [1, 1, 0],
+      metadata: {
+        explanation:
+          "jest (czas teraźniejszy), romantyzmu (dopełniacz), czytane są (strona bierna)",
+      },
+    },
+
+    // TABELE DO UZUPEŁNIENIA (25 pytań)
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 5,
+      question: "Uzupełnij tabelę - przyporządkuj cechy do epok.",
+      content: {
+        tableType: "epochs_characteristics",
+        headers: ["Epoka", "Hasło", "Gatunek", "Przedstawiciel"],
+        rows: [
+          { epoch: "Renesans", gaps: [1, 2, 3] },
+          { epoch: "Romantyzm", gaps: [4, 5, 6] },
+          { epoch: "Pozytywizm", gaps: [7, 8, 9] },
+        ],
+        options: {
+          slogans: ["humanizm", "mesjanizm", "praca organiczna"],
+          genres: ["sonet", "ballada", "nowela"],
+          authors: ["Kochanowski", "Mickiewicz", "Prus"],
+        },
+      },
+      correctAnswer: [0, 0, 0, 1, 1, 1, 2, 2, 2],
+    },
+
+    // PRZYPORZĄDKOWANIE POSTACI DO UTWORÓW (25 pytań)
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 4,
+      question: "Dopasuj postacie do utworów, w których występują.",
+      content: {
+        options: [
+          "Wokulski - Lalka",
+          "Konrad - Dziady",
+          "Judym - Ludzie bezdomni",
+          "Kmicic - Potop",
+          "Wokulski - Dziady",
+          "Konrad - Potop",
+          "Judym - Lalka",
+          "Kmicic - Ludzie bezdomni",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 3], // Poprawne dopasowania
+      metadata: {
+        explanation:
+          "Wokulski to bohater 'Lalki', Konrad - 'Dziadów', Judym - 'Ludzi bezdomnych', Kmicic - 'Potopu'",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "LANGUAGE_USE",
+      difficulty: 2,
+      points: 3,
+      question: "Uzupełnij luki w tekście odpowiednimi formami wyrazów.",
+      content: {
+        textWithGaps:
+          "Jan Kochanowski był [1] poetą polskiego [2]. Jego [3] to arcydzieło literatury.",
+        gaps: [
+          {
+            id: 1,
+            options: [
+              "najważniejszy",
+              "najważniejszym",
+              "najważniejszego",
+              "najważniejszemu",
+            ],
+          },
+          {
+            id: 2,
+            options: ["renesansu", "renesansie", "renesansem", "renesansowi"],
+          },
+          { id: 3, options: ["Trenów", "Trenami", "Treny", "Trenom"] },
+        ],
+      },
+      correctAnswer: [1, 0, 2], // indeksy poprawnych odpowiedzi dla każdej luki
+      metadata: {
+        explanation:
+          "Poprawne formy: najważniejszym (narzędnik), renesansu (dopełniacz), Treny (mianownik)",
+      },
+    },
     {
       type: "CLOSED_MULTIPLE",
       category: "LANGUAGE_USE",
@@ -1881,6 +2151,133 @@ async function seedExercises() {
     {
       type: "SHORT_ANSWER",
       category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 2,
+      question: "Przekształć zdania według polecenia.",
+      content: {
+        sentences: [
+          {
+            original: "Kiedy przyszedłem, oni już wyszli.",
+            instruction: "Zamień na imiesłowowy równoważnik zdania",
+            expected: "Przyszedłszy, zastałem ich nieobecność.",
+          },
+          {
+            original: "Książka, którą czytam, jest ciekawa.",
+            instruction: "Zamień na zdanie z imiesłowem przymiotnikowym",
+            expected: "Czytana przeze mnie książka jest ciekawa.",
+          },
+        ],
+      },
+    },
+
+    // PRAWDA/FAŁSZ Z UZASADNIENIEM (25 pytań)
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      question: "Oceń prawdziwość stwierdzeń i uzasadnij.",
+      content: {
+        statements: [
+          "Pozytywizm był reakcją na klęskę powstania styczniowego.",
+          "Jan Kochanowski napisał pierwszą polską tragedię.",
+          "Lalka Prusa to powieść naturalistyczna.",
+        ],
+        instruction:
+          "Dla każdego zdania napisz P (prawda) lub F (fałsz) i krótko uzasadnij",
+      },
+    },
+
+    // ANALIZA WIELOETAPOWA (25 pytań)
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 4,
+      points: 4,
+      question:
+        "Przeprowadź analizę językową fragmentu - zadanie wieloetapowe.",
+      content: {
+        text: "Mała ojczyzna to azyl, to miejsce, z którego patrzy się na świat.",
+        steps: [
+          { task: "Określ typ zdania", expected: "złożone współrzędnie" },
+          {
+            task: "Wskaż środki stylistyczne",
+            expected: "metafora, powtórzenie",
+          },
+          { task: "Określ funkcję 'to'", expected: "orzecznik" },
+          {
+            task: "Wyjaśnij znaczenie metafory",
+            expected: "bezpieczne miejsce",
+          },
+        ],
+      },
+    },
+
+    // INTERPRETACJA PLAKATU/GRAFIKI (20 pytań)
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 3,
+      question: "Zinterpretuj elementy plakatu społecznego.",
+      content: {
+        description:
+          "Plakat przedstawia drzewo, którego korzenie tworzą litery alfabetu, a korona składa się z książek.",
+        questions: [
+          "Co symbolizują korzenie?",
+          "Jakie jest przesłanie plakatu?",
+          "Do jakiego odbiorcy jest skierowany?",
+        ],
+        expectedElements: [
+          "podstawa wiedzy",
+          "rozwój przez czytanie",
+          "młodzież/uczniowie",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 5,
+      points: 4,
+      question: "Wykonaj analizę językową fragmentu - zadanie wieloetapowe.",
+      content: {
+        text: "Nie dość na tem: wszak Rzym, co świat posiadał...",
+        steps: [
+          {
+            id: 1,
+            instruction: "Określ rodzaj zdania",
+            expectedAnswer: "złożone współrzędnie",
+          },
+          {
+            id: 2,
+            instruction: "Wskaż środki stylistyczne",
+            expectedAnswer: "metafora, symbol",
+          },
+          {
+            id: 3,
+            instruction: "Określ funkcję dwukropka",
+            expectedAnswer: "zapowiedź wyjaśnienia",
+          },
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      question: "Oceń prawdziwość zdania i uzasadnij swoją odpowiedź.",
+      content: {
+        statement:
+          "Romantyzm w Polsce rozpoczął się wraz z publikacją 'Ballad i romansów' Mickiewicza.",
+        requiresJustification: true,
+        expectedElements: ["prawda", "1822", "manifest romantyzmu"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
       difficulty: 2,
       points: 2,
       question:
@@ -2023,6 +2420,73 @@ async function seedExercises() {
     },
 
     // ========== LANGUAGE_USE - SYNTHESIS_NOTE (10 pytań) ==========
+    {
+      type: "SYNTHESIS_NOTE",
+      category: "LANGUAGE_USE",
+      difficulty: 4,
+      points: 5,
+      question: "Porównaj style dwóch fragmentów.",
+      content: {
+        text1: {
+          author: "Prus",
+          fragment:
+            "Wokulski siedział nieruchomo, wpatrzony w jedną bryłę węgla.",
+        },
+        text2: {
+          author: "Żeromski",
+          fragment: "Dusza jego rwała się ku wyżynom, ku ideałom!",
+        },
+        requirements: [
+          "różnice stylistyczne",
+          "realizm vs modernizm",
+          "środki wyrazu",
+          "80-100 słów",
+        ],
+      },
+    },
+
+    // SYNTEZA INFORMACJI Z KILKU ŹRÓDEŁ (25 pytań)
+    {
+      type: "SYNTHESIS_NOTE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 5,
+      question: "Na podstawie fragmentów napisz notatkę o motywie.",
+      content: {
+        sources: [
+          { work: "Lalka", fragment: "Wokulski marzył o lataniu..." },
+          { work: "Ikarus", fragment: "Wzniósł się ponad chmury..." },
+          { work: "Lot", fragment: "Pragnienie wzniesienia się..." },
+        ],
+        topic: "Motyw lotu w literaturze",
+        requirements: ["symbolika", "różne ujęcia", "90-110 słów"],
+      },
+    },
+
+    // STRESZCZENIE Z ELEMENTAMI ANALIZY (25 pytań)
+    {
+      type: "SYNTHESIS_NOTE",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 5,
+      question: "Streść artykuł i dodaj własny komentarz.",
+      content: {
+        article: {
+          title: "Język w dobie internetu",
+          main_points: [
+            "skrótowość komunikacji",
+            "emotikony jako nowy język",
+            "zanik interpunkcji",
+          ],
+        },
+        requirements: [
+          "streszczenie głównych tez",
+          "własna ocena",
+          "przykłady",
+          "100-120 słów",
+        ],
+      },
+    },
     {
       type: "SYNTHESIS_NOTE",
       category: "LANGUAGE_USE",
@@ -2215,6 +2679,35 @@ async function seedExercises() {
       type: "CLOSED_MULTIPLE",
       category: "HISTORICAL_LITERARY",
       difficulty: 2,
+      points: 4,
+      question: "Dopasuj cytaty do utworów.",
+      content: {
+        matchingType: "quotes_to_works",
+        leftColumn: [
+          { id: "A", text: "Litwo! Ojczyzno moja!" },
+          { id: "B", text: "Kochanowski czarnolas" },
+          { id: "C", text: "Bądź zdrów, ojcze mój!" },
+          { id: "D", text: "Szatan z wielkim hukiem" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Pan Tadeusz" },
+          { id: 2, text: "Treny" },
+          { id: 3, text: "Bogurodzica" },
+          { id: 4, text: "Tren XI" },
+        ],
+      },
+      correctAnswer: [
+        [0, 0],
+        [1, 3],
+        [2, 1],
+        [3, 2],
+      ], // pary [lewy_index, prawy_index]
+    },
+
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
       points: 2,
       epoch: "ROMANTICISM",
       question:
@@ -2260,6 +2753,20 @@ async function seedExercises() {
     },
 
     // ========== HISTORICAL_LITERARY - SHORT_ANSWER (15 pytań) ==========
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 2,
+      question: "Przekształć zdanie zgodnie z poleceniem.",
+      content: {
+        originalSentence: "Mama upiekła ciasto, które było pyszne.",
+        transformation:
+          "Przekształć na zdanie pojedyncze z imiesłowem przymiotnikowym.",
+        expectedAnswer: "Mama upiekła pyszne ciasto.",
+        hints: ["imiesłów przymiotnikowy", "zdanie pojedyncze"],
+      },
+    },
     {
       type: "SHORT_ANSWER",
       category: "HISTORICAL_LITERARY",
@@ -2322,6 +2829,99 @@ async function seedExercises() {
     },
 
     // ========== WRITING - ESSAY (20 pytań) ==========
+    {
+      type: "ESSAY",
+      category: "WRITING",
+      difficulty: 4,
+      points: 35,
+      question: "Napisz rozprawkę rozważającą problem z dwóch perspektyw.",
+      content: {
+        thesis: "Sztuczna inteligencja w edukacji - szansa czy zagrożenie?",
+        structure: {
+          introduction: "Przedstawienie problemu",
+          arguments_for: [
+            "indywidualizacja nauczania",
+            "dostępność 24/7",
+            "obiektywna ocena",
+          ],
+          arguments_against: [
+            "brak empatii",
+            "uzależnienie od technologii",
+            "zanik relacji uczeń-nauczyciel",
+          ],
+          conclusion: "Własne stanowisko",
+        },
+        requirements: ["450-500 słów", "przykłady", "cytaty"],
+      },
+      metadata: { wordLimit: { min: 450, max: 500 } },
+    },
+
+    // ESEJE INTERPRETACYJNE (25 pytań)
+    {
+      type: "ESSAY",
+      category: "WRITING",
+      difficulty: 5,
+      points: 40,
+      question: "Zinterpretuj sentencję w kontekście literackim.",
+      content: {
+        quote:
+          "Granice mojego języka oznaczają granice mojego świata - Wittgenstein",
+        requirements: [
+          "interpretacja filozoficzna",
+          "2 przykłady z literatury",
+          "własna refleksja",
+          "500-600 słów",
+        ],
+        suggestedWorks: ["1984 Orwella", "Ferdydurke"],
+      },
+      metadata: { wordLimit: { min: 500, max: 600 } },
+    },
+
+    // ROZPRAWKI PORÓWNAWCZE (25 pytań)
+    {
+      type: "ESSAY",
+      category: "WRITING",
+      difficulty: 4,
+      points: 35,
+      question: "Porównaj ujęcie tematu w różnych epokach.",
+      content: {
+        topic: "Motyw miłości nieszczęśliwej",
+        epochs: ["romantyzm", "pozytywizm", "współczesność"],
+        requirements: [
+          "charakterystyka w każdej epoce",
+          "przykłady utworów",
+          "ewolucja motywu",
+          "400-500 słów",
+        ],
+      },
+      metadata: { wordLimit: { min: 400, max: 500 } },
+    },
+    {
+      type: "ESSAY",
+      category: "WRITING",
+      difficulty: 4,
+      points: 35,
+      question: "Napisz rozprawkę typu 'za i przeciw'.",
+      content: {
+        thesis:
+          "Technologia cyfrowa pomaga czy szkodzi w nauce języka polskiego?",
+        structure: {
+          introduction: "Przedstaw problem",
+          arguments_for: "Minimum 2 argumenty ZA",
+          arguments_against: "Minimum 2 argumenty PRZECIW",
+          conclusion: "Własne stanowisko",
+        },
+        requirements: [
+          "400-500 słów",
+          "argumentacja",
+          "przykłady",
+          "własna opinia",
+        ],
+      },
+      metadata: {
+        wordLimit: { min: 400, max: 500 },
+      },
+    },
     {
       type: "ESSAY",
       category: "WRITING",
