@@ -495,38 +495,72 @@ export async function learningRoutes(fastify: FastifyInstance) {
         // FREE LEARNING - inteligentna adaptacja Z OGRANICZENIEM
         if (filters.category) baseWhere.category = filters.category;
 
+        // DODAJ TO: Respektuj również epoch w FREE LEARNING!
+        if (filters.epoch) {
+          baseWhere.epoch = filters.epoch;
+          console.log(`FREE LEARNING with epoch filter: ${filters.epoch}`);
+        }
+
         let targetDifficulty: number[];
 
-        // Chcemy trudniejsze zadania, ale tylko do odblokowanego poziomu
-        if (currentStreak >= 5 && currentAccuracy > 0.8) {
-          targetDifficulty = [
-            Math.min(3, maxAllowedDifficulty),
-            Math.min(4, maxAllowedDifficulty),
-            Math.min(5, maxAllowedDifficulty),
-          ].filter((d) => d >= 1 && d <= maxAllowedDifficulty);
-        }
-        // Słabo idzie - łatwiejsze zadania
-        else if (currentAccuracy < 0.4) {
-          targetDifficulty = [1, 2, 3].filter((d) => d <= maxAllowedDifficulty);
-        }
-        // Normalny zakres
-        else {
-          const base = Math.min(
-            maxAllowedDifficulty,
-            Math.max(1, Math.round(userLevel / 2))
+        // PRIORYTET: Jeśli user RĘCZNIE wybrał poziomy, użyj ich!
+        if (filters.difficulty && filters.difficulty.length > 0) {
+          console.log(
+            `User manually selected difficulties: ${filters.difficulty}`
           );
-          targetDifficulty = [
-            Math.max(1, base - 1),
-            base,
-            Math.min(maxAllowedDifficulty, base + 1),
-          ].filter((d) => d >= 1 && d <= maxAllowedDifficulty);
+
+          // Filtruj tylko odblokowane poziomy
+          targetDifficulty = filters.difficulty.filter(
+            (d) => d <= maxAllowedDifficulty
+          );
+
+          if (targetDifficulty.length === 0) {
+            return reply.send({
+              error: "DIFFICULTY_LOCKED",
+              message: `Wybrane poziomy są zablokowane. Maksymalny dostępny poziom: ${maxAllowedDifficulty}`,
+              currentMaxLevel: maxAllowedDifficulty,
+            });
+          }
+
+          console.log(`After filtering locked levels: ${targetDifficulty}`);
+        }
+        // Jeśli NIE wybrał ręcznie, użyj inteligentnej logiki
+        else {
+          console.log(`Using intelligent difficulty selection`);
+
+          // Chcemy trudniejsze zadania, ale tylko do odblokowanego poziomu
+          if (currentStreak >= 5 && currentAccuracy > 0.8) {
+            targetDifficulty = [
+              Math.min(3, maxAllowedDifficulty),
+              Math.min(4, maxAllowedDifficulty),
+              Math.min(5, maxAllowedDifficulty),
+            ].filter((d) => d >= 1 && d <= maxAllowedDifficulty);
+          }
+          // Słabo idzie - łatwiejsze zadania
+          else if (currentAccuracy < 0.4) {
+            targetDifficulty = [1, 2, 3].filter(
+              (d) => d <= maxAllowedDifficulty
+            );
+          }
+          // Normalny zakres
+          else {
+            const base = Math.min(
+              maxAllowedDifficulty,
+              Math.max(1, Math.round(userLevel / 2))
+            );
+            targetDifficulty = [
+              Math.max(1, base - 1),
+              base,
+              Math.min(maxAllowedDifficulty, base + 1),
+            ].filter((d) => d >= 1 && d <= maxAllowedDifficulty);
+          }
         }
 
         // Usuń duplikaty i posortuj
         targetDifficulty = [...new Set(targetDifficulty)].sort();
 
         console.log(
-          `Free learning difficulties: ${targetDifficulty} (max allowed: ${maxAllowedDifficulty})`
+          `Final difficulties: ${targetDifficulty} (max allowed: ${maxAllowedDifficulty}, user selected: ${!!filters.difficulty})`
         );
         baseWhere.difficulty = { in: targetDifficulty };
       }
@@ -835,53 +869,98 @@ export async function learningRoutes(fastify: FastifyInstance) {
       const { sessionId, stats, completedExercises = [] } = request.body as any;
 
       console.log("=== SESSION COMPLETE ===");
+      console.log(`Session ID: ${sessionId}`);
       console.log(`Completed: ${stats?.completed || 0} exercises`);
+      console.log(`User ID: ${userId}`);
 
-      // NIE CZYŚĆ cache.shown - to historia użytkownika!
+      // Wyczyść cache
       const cache = getUserSessionCache(userId);
       cache.completed.clear();
       cache.skipped.clear();
-      // cache.shown POZOSTAJE!
 
-      // Zapisz ukończone do ExerciseUsage
+      // WALIDACJA - sprawdź czy sessionId istnieje
+      if (!sessionId) {
+        console.log("No sessionId provided, skipping save");
+        return reply.send({
+          success: true,
+          message: "No active session to complete",
+        });
+      }
+
+      // Sprawdź czy sesja istnieje w bazie
+      const existingSession = await prisma.learningSession.findUnique({
+        where: { id: sessionId },
+      });
+
+      if (!existingSession) {
+        console.log(`Session ${sessionId} not found in database`);
+        return reply.send({
+          success: true,
+          message: "Session not found",
+        });
+      }
+
+      // Zapisz ukończone do ExerciseUsage (tylko jeśli są jakieś)
       if (completedExercises && completedExercises.length > 0) {
+        console.log(
+          `Saving ${completedExercises.length} exercises to usage history`
+        );
+
         for (const ex of completedExercises) {
           if (ex.id) {
-            await prisma.exerciseUsage.upsert({
-              where: {
-                userId_exerciseId: {
+            try {
+              await prisma.exerciseUsage.upsert({
+                where: {
+                  userId_exerciseId: {
+                    userId,
+                    exerciseId: ex.id,
+                  },
+                },
+                update: {
+                  lastUsedAt: new Date(),
+                  usageCount: { increment: 1 },
+                },
+                create: {
                   userId,
                   exerciseId: ex.id,
+                  context: "LEARNING",
+                  usageCount: 1,
                 },
-              },
-              update: {
-                lastUsedAt: new Date(),
-                usageCount: { increment: 1 },
-              },
-              create: {
-                userId,
-                exerciseId: ex.id,
-                context: "LEARNING",
-                usageCount: 1,
-              },
-            });
+              });
+            } catch (error) {
+              console.error(
+                `Failed to save usage for exercise ${ex.id}:`,
+                error
+              );
+              // Kontynuuj mimo błędu
+            }
           }
         }
       }
 
-      // Reszta kodu bez zmian...
-      if (sessionId && stats && stats.completed > 0) {
-        await prisma.learningSession.update({
-          where: { id: sessionId },
-          data: {
-            status: "COMPLETED",
-            finishedAt: new Date(),
-            completed: stats.completed,
-            correct: stats.correct,
-            maxStreak: stats.maxStreak,
-            points: stats.points,
-            timeSpent: stats.timeSpent,
-          },
+      // Aktualizuj sesję - ZAWSZE, nawet jeśli completed = 0
+      console.log("Updating session status to COMPLETED");
+      await prisma.learningSession.update({
+        where: { id: sessionId },
+        data: {
+          status: "COMPLETED",
+          finishedAt: new Date(),
+          completed: stats?.completed || 0,
+          correct: stats?.correct || 0,
+          maxStreak: stats?.maxStreak || 0,
+          points: stats?.points || 0,
+          timeSpent: stats?.timeSpent || 0,
+        },
+      });
+
+      // Jeśli completed = 0, zakończ tutaj - nie ma sensu aktualizować profilu
+      if (!stats || stats.completed === 0) {
+        console.log(
+          "No exercises completed, skipping profile/progress updates"
+        );
+        return reply.send({
+          success: true,
+          message: "Session closed without exercises",
         });
       }
 
@@ -891,12 +970,15 @@ export async function learningRoutes(fastify: FastifyInstance) {
           ? Math.round((stats.correct / stats.completed) * 100)
           : 0;
 
+      console.log(`Session average score: ${sessionAverageScore}%`);
+
       // Pobierz aktualny profil
       const currentProfile = await prisma.userProfile.findUnique({
         where: { userId },
       });
 
       if (!currentProfile) {
+        console.log("Creating new user profile");
         await prisma.userProfile.create({
           data: {
             userId,
@@ -922,6 +1004,10 @@ export async function learningRoutes(fastify: FastifyInstance) {
                   newTotalExercises
               )
             : sessionAverageScore;
+
+        console.log(
+          `Updating profile: new average ${newAverage}%, +${stats.points} points`
+        );
 
         // Update user profile
         await prisma.userProfile.update({
@@ -957,6 +1043,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
       });
 
       if (existingProgress) {
+        console.log("Updating existing daily progress");
         await prisma.dailyProgress.update({
           where: {
             userId_date: {
@@ -976,6 +1063,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
           },
         });
       } else {
+        console.log("Creating new daily progress entry");
         await prisma.dailyProgress.create({
           data: {
             userId,
@@ -987,22 +1075,33 @@ export async function learningRoutes(fastify: FastifyInstance) {
         });
       }
 
-      // Update spaced repetition
+      // Update spaced repetition - tylko dla zadań z score
       if (completedExercises && Array.isArray(completedExercises)) {
         for (const exerciseData of completedExercises) {
           if (exerciseData.id && exerciseData.score !== undefined) {
-            await spacedRepetition.updateRepetitionData(
-              userId,
-              exerciseData.id,
-              exerciseData.score
-            );
+            try {
+              await spacedRepetition.updateRepetitionData(
+                userId,
+                exerciseData.id,
+                exerciseData.score
+              );
+            } catch (error) {
+              console.error(
+                `Failed to update spaced repetition for ${exerciseData.id}:`,
+                error
+              );
+              // Kontynuuj mimo błędu
+            }
           }
         }
       }
 
+      // Pobierz finalny profil
       const finalProfile = await prisma.userProfile.findUnique({
         where: { userId },
       });
+
+      console.log("Session completed successfully");
 
       return reply.send({
         success: true,
@@ -1016,7 +1115,17 @@ export async function learningRoutes(fastify: FastifyInstance) {
       });
     } catch (error) {
       console.error("Error completing session:", error);
-      return reply.code(500).send({ error: "Failed to complete session" });
+
+      // Loguj szczegóły błędu
+      if (error instanceof Error) {
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
+      }
+
+      return reply.code(500).send({
+        error: "Failed to complete session",
+        details: error instanceof Error ? error.message : "Unknown error",
+      });
     }
   });
 
@@ -1543,6 +1652,80 @@ export async function learningRoutes(fastify: FastifyInstance) {
     } catch (error) {
       console.error("Error getting session details:", error);
       return reply.code(500).send({ error: "Failed to get session details" });
+    }
+  });
+
+  // Statystyki dla epok (dla modułu powtórek)
+  fastify.get("/epoch-stats", async (request, reply) => {
+    try {
+      const userId = (request.user as any).userId;
+
+      const epochs = [
+        "ANTIQUITY",
+        "MIDDLE_AGES",
+        "RENAISSANCE",
+        "BAROQUE",
+        "ENLIGHTENMENT",
+        "ROMANTICISM",
+        "POSITIVISM",
+        "YOUNG_POLAND",
+        "INTERWAR",
+        "CONTEMPORARY",
+      ];
+
+      const stats: Record<string, any> = {};
+
+      for (const epoch of epochs) {
+        // Policz wszystkie zadania z epoki
+        const totalExercises = await prisma.exercise.count({
+          where: {
+            category: "HISTORICAL_LITERARY",
+            epoch: epoch as any,
+          },
+        });
+
+        // Policz ukończone zadania (unique exercises)
+        const completedSubmissions = await prisma.submission.findMany({
+          where: {
+            userId,
+            exercise: {
+              category: "HISTORICAL_LITERARY",
+              epoch: epoch as any,
+            },
+          },
+          select: {
+            exerciseId: true,
+            score: true,
+            exercise: {
+              select: {
+                points: true,
+              },
+            },
+          },
+          distinct: ["exerciseId"],
+        });
+
+        const completed = completedSubmissions.length;
+        const avgScore =
+          completed > 0
+            ? completedSubmissions.reduce((sum, sub) => {
+                const percentage =
+                  ((sub.score || 0) / sub.exercise.points) * 100;
+                return sum + percentage;
+              }, 0) / completed
+            : 0;
+
+        stats[epoch] = {
+          total: totalExercises,
+          completed,
+          avgScore: Math.round(avgScore),
+        };
+      }
+
+      return reply.send(stats);
+    } catch (error) {
+      console.error("Error getting epoch stats:", error);
+      return reply.code(500).send({ error: "Failed to get epoch stats" });
     }
   });
 }

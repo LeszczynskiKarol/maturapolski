@@ -1,6 +1,8 @@
 // frontend/src/features/learning/LearningSession.tsx
 
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { ConfirmExitDialog } from "../../components/ConfirmExitDialog";
+import { useSessionExit } from "../../hooks/useSessionExit";
 import confetti from "canvas-confetti";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -69,6 +71,11 @@ const CATEGORIES = [
 ];
 
 export const LearningSession: React.FC = () => {
+  const [showExitDialog, setShowExitDialog] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState<string | null>(
+    null
+  );
+
   const [isChangingExercise, setIsChangingExercise] = useState(false);
   const lastExerciseId = useRef<string | null>(null);
   const navigate = useNavigate();
@@ -199,6 +206,31 @@ export const LearningSession: React.FC = () => {
     }
   };
 
+  // Hook do obsługi wyjścia z sesji
+  const sessionExit = useSessionExit({
+    isActive: sessionActive && !sessionComplete,
+    onExit: async () => {
+      console.log("=== SESSION EXIT TRIGGERED ===");
+      await endSession();
+    },
+    shouldBlock: sessionActive && !sessionComplete,
+  });
+
+  // Obsługa pokazania dialogu gdy nawigacja zostanie zablokowana
+  useEffect(() => {
+    if (sessionExit.isBlocked) {
+      setShowExitDialog(true);
+    }
+  }, [sessionExit.isBlocked]);
+
+  // Obsługa blokera nawigacji
+  useEffect(() => {
+    if (sessionExit.isBlocked) {
+      setShowExitDialog(true);
+      setPendingNavigation(sessionExit.nextLocation?.pathname || null);
+    }
+  }, [sessionExit.isBlocked, sessionExit.nextLocation]);
+
   // SPRAWDŹ CZY SĄ FILTRY Z PLANU TYGODNIOWEGO
   const [sessionFilters, setSessionFilters] = useState<SessionFilters>(() => {
     const storedFilters = localStorage.getItem("sessionFilters");
@@ -225,9 +257,21 @@ export const LearningSession: React.FC = () => {
     timeSpent: 0,
   });
 
-  // Sprawdź czy sesja została uruchomiona z planu tygodniowego
-  const isWeekPlanSession =
-    sessionFilters && Object.keys(sessionFilters).length > 0;
+  const getEpochLabel = (epochValue: string): string => {
+    const epochMap: Record<string, string> = {
+      ANTIQUITY: "Starożytność",
+      MIDDLE_AGES: "Średniowiecze",
+      RENAISSANCE: "Renesans",
+      BAROQUE: "Barok",
+      ENLIGHTENMENT: "Oświecenie",
+      ROMANTICISM: "Romantyzm",
+      POSITIVISM: "Pozytywizm",
+      YOUNG_POLAND: "Młoda Polska",
+      INTERWAR: "Dwudziestolecie międzywojenne",
+      CONTEMPORARY: "Współczesność",
+    };
+    return epochMap[epochValue] || epochValue;
+  };
 
   // Fetch user stats
   const { data: userStats, refetch: refetchStats } = useQuery({
@@ -417,38 +461,118 @@ export const LearningSession: React.FC = () => {
 
   const startSession = async () => {
     try {
+      // ZAWSZE sprawdź czy są aktywne sesje
+      console.log("=== STARTING NEW SESSION ===");
+
+      try {
+        const activeSessions = await api.get("/api/learning/active-sessions");
+
+        if (activeSessions.data && activeSessions.data.length > 0) {
+          console.log(
+            `Found ${activeSessions.data.length} active sessions to close`
+          );
+
+          for (const oldSession of activeSessions.data) {
+            // Zamknij każdą aktywną sesję
+            if (oldSession.completed > 0) {
+              console.log(
+                `Closing session ${oldSession.id} with ${oldSession.completed} exercises`
+              );
+              try {
+                await api.post("/api/learning/session/complete", {
+                  sessionId: oldSession.id,
+                  stats: {
+                    completed: oldSession.completed || 0,
+                    correct: oldSession.correct || 0,
+                    streak: oldSession.maxStreak || 0,
+                    maxStreak: oldSession.maxStreak || 0,
+                    points: oldSession.points || 0,
+                    timeSpent: 0,
+                  },
+                  completedExercises: oldSession.completedExercises || [],
+                });
+              } catch (error) {
+                console.error(
+                  `Failed to close session ${oldSession.id}:`,
+                  error
+                );
+              }
+            } else {
+              // Pusta sesja - po prostu oznacz jako zakończoną
+              try {
+                await api.post("/api/learning/session/complete", {
+                  sessionId: oldSession.id,
+                  stats: {
+                    completed: 0,
+                    correct: 0,
+                    streak: 0,
+                    maxStreak: 0,
+                    points: 0,
+                    timeSpent: 0,
+                  },
+                  completedExercises: [],
+                });
+              } catch (error) {
+                console.error(
+                  `Failed to mark empty session ${oldSession.id}:`,
+                  error
+                );
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error closing active sessions:", error);
+      }
+
+      // Wyczyść localStorage
       localStorage.removeItem("sessionFilters");
       localStorage.removeItem("isStudyPlanSession");
-      setSessionFilters({}); // Wyczyść filtry
-      setIsPlanSession(false);
+      localStorage.removeItem("isEpochReview");
 
       // Wyczyść filtry na backendzie
       await api.post("/api/learning/session/filters", {});
 
+      // Rozpocznij NOWĄ sesję
       const response = await api.post("/api/learning/session/start");
-      const { sessionId: newSessionId, isResumed, state } = response.data;
+      const { sessionId: newSessionId } = response.data;
 
       setSessionId(newSessionId);
 
-      if (isResumed) {
-        // Wznów sesję
-        setSessionStats(state);
-        setCompletedExercises(state.completedExercises || []);
-        setSessionFilters(state.filters || {});
+      // ZAWSZE nowa sesja, NIGDY nie wznawiaj
+      console.log("Starting fresh session");
+      setSessionStats({
+        completed: 0,
+        correct: 0,
+        streak: 0,
+        maxStreak: 0,
+        points: 0,
+        timeSpent: 0,
+      });
+      setCompletedExercises([]);
 
-        // Pokaż komunikat
-        toast.success("Wznowiono poprzednią sesję nauki");
+      // Sprawdź czy są filtry z Epoch Review lub StudyPlan
+      const hasFilters = Object.keys(sessionFilters).length > 0;
+
+      if (hasFilters) {
+        // Ustaw filtry NA BACKENDZIE
+        await api.post("/api/learning/session/filters", sessionFilters);
+        setIsPlanSession(true);
+
+        // Toast z informacją o typie sesji
+        if (sessionFilters.weekNumber) {
+          toast.success(
+            `📚 Rozpoczęto plan tygodniowy: Tydzień ${sessionFilters.weekNumber}`
+          );
+        } else if (sessionFilters.epoch) {
+          toast.success(
+            `🔄 Rozpoczęto powtórkę z epoki: ${getEpochLabel(
+              sessionFilters.epoch
+            )}`
+          );
+        }
       } else {
-        // Nowa sesja
-        setSessionStats({
-          completed: 0,
-          correct: 0,
-          streak: 0,
-          maxStreak: 0,
-          points: 0,
-          timeSpent: 0,
-        });
-        setCompletedExercises([]);
+        setIsPlanSession(false);
       }
 
       setSessionActive(true);
@@ -456,9 +580,15 @@ export const LearningSession: React.FC = () => {
 
       // Pobierz pierwsze zadanie
       setIsLoadingNext(true);
-      const { data } = await fetchNextExercise();
-      setCurrentExercise(data);
-      setIsLoadingNext(false);
+      try {
+        const { data } = await fetchNextExercise();
+        setCurrentExercise(data);
+      } catch (error) {
+        console.error("Error fetching first exercise:", error);
+        toast.error("Nie udało się pobrać pierwszego zadania");
+      } finally {
+        setIsLoadingNext(false);
+      }
     } catch (error) {
       console.error("Failed to start session:", error);
       toast.error("Nie udało się rozpocząć sesji");
@@ -627,48 +757,39 @@ export const LearningSession: React.FC = () => {
     console.log("=== useEffect CHECK ===");
     const storedFilters = localStorage.getItem("sessionFilters");
     const isStudyPlanSession = localStorage.getItem("isStudyPlanSession");
+    const isEpochReview = localStorage.getItem("isEpochReview");
 
     console.log("Raw localStorage filters:", storedFilters);
     console.log("Is StudyPlan session:", isStudyPlanSession);
+    console.log("Is Epoch Review:", isEpochReview);
 
-    if (storedFilters && !sessionActive && !sessionComplete) {
+    if (
+      storedFilters &&
+      !sessionActive &&
+      !sessionComplete &&
+      !hasAutoStarted.current
+    ) {
       hasAutoStarted.current = true;
       try {
         const filters = JSON.parse(storedFilters);
         console.log("Parsed filters:", filters);
 
-        if (filters.weekNumber) {
-          console.log(
-            "📚 STARTING STUDY PLAN SESSION FOR WEEK",
-            filters.weekNumber
-          );
-          console.log("Week focus:", filters.weekFocus);
-        }
-
         setSessionFilters(filters);
-        setIsPlanSession(!!isStudyPlanSession);
+        setIsPlanSession(!!isStudyPlanSession || !!isEpochReview);
 
+        // Opóźnienie dla pewności
         setTimeout(async () => {
-          console.log("Starting session with filters:", filters);
-
-          // Najpierw ustaw filtry na backendzie
-          await api.post("/api/learning/session/filters", filters);
-
-          // Potem wystartuj sesję
+          console.log("Auto-starting session with filters:", filters);
           await startSession();
-
-          // Wyczyść localStorage
-          localStorage.removeItem("sessionFilters");
-          localStorage.removeItem("isStudyPlanSession");
-          console.log("Session started successfully");
         }, 100);
       } catch (error) {
         console.error("Error parsing session filters:", error);
         localStorage.removeItem("sessionFilters");
         localStorage.removeItem("isStudyPlanSession");
+        localStorage.removeItem("isEpochReview");
       }
     }
-  }, []);
+  }, []); // WAŻNE: Pusta deps array!
 
   // Timer
   useEffect(() => {
@@ -696,36 +817,6 @@ export const LearningSession: React.FC = () => {
 
     return () => clearInterval(saveInterval);
   }, [sessionActive, sessionId, sessionStats]);
-
-  // Zapisz stan przed zamknięciem strony
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (sessionActive && sessionId) {
-        // Zapisz stan synchronicznie
-        navigator.sendBeacon(
-          "/api/learning/session/save-state",
-          JSON.stringify({
-            sessionId,
-            state: {
-              ...sessionStats,
-              completedExercises,
-              skippedExercises: [], // Pusta tablica zamiast błędnego kodu
-              filters: sessionFilters,
-            },
-          })
-        );
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [
-    sessionActive,
-    sessionId,
-    sessionStats,
-    completedExercises,
-    sessionFilters,
-  ]);
 
   // Session complete screen
   if (sessionComplete) {
@@ -1047,10 +1138,39 @@ export const LearningSession: React.FC = () => {
                 {/* CLOSED SINGLE */}
                 {currentExercise.type === "CLOSED_SINGLE" && (
                   <>
+                    {/* Autor */}
+                    {currentExercise.content?.author && (
+                      <div className="mb-3 p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-200 dark:border-indigo-800">
+                        <p className="text-sm font-medium text-indigo-700 dark:text-indigo-300">
+                          ✍️ Autor: {currentExercise.content.author}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Dzieło literackie jako kontekst */}
+                    {currentExercise.content?.work && (
+                      <div className="mb-4 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                        <p className="text-sm font-medium text-purple-700 dark:text-purple-300">
+                          📚 Dzieło: {currentExercise.content.work}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Technika/strategia narracyjna */}
+                    {currentExercise.content?.technique && (
+                      <div className="mb-4 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                        <p className="text-sm font-medium text-amber-700 dark:text-amber-300 mb-1">
+                          🎨 Technika narracyjna:
+                        </p>
+                        <p className="text-sm text-amber-800 dark:text-amber-200">
+                          {currentExercise.content.technique}
+                        </p>
+                      </div>
+                    )}
+
                     {/* Wyświetl tekst źródłowy jeśli istnieje */}
                     {currentExercise.content?.sourceText && (
                       <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                        {/* Nagłówek z autorem i tytułem */}
                         <div className="mb-3 pb-2 border-b border-gray-200 dark:border-gray-600">
                           <p className="text-sm text-gray-600 dark:text-gray-400">
                             {currentExercise.content.sourceText.author && (
@@ -1067,8 +1187,6 @@ export const LearningSession: React.FC = () => {
                             )}
                           </p>
                         </div>
-
-                        {/* Tekst fragmentu */}
                         <div className="text-gray-900 dark:text-gray-100">
                           <p className="whitespace-pre-wrap italic">
                             {currentExercise.content.sourceText.text}
@@ -1077,7 +1195,25 @@ export const LearningSession: React.FC = () => {
                       </div>
                     )}
 
-                    {/* Dodatkowe pytanie jeśli istnieje */}
+                    {/* Zdanie do analizy */}
+                    {currentExercise.content?.sentence && (
+                      <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                        <p className="text-gray-900 dark:text-gray-100 italic">
+                          "{currentExercise.content.sentence}"
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Kontekst */}
+                    {currentExercise.content?.context && (
+                      <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                        <p className="text-sm text-blue-800 dark:text-blue-200">
+                          {currentExercise.content.context}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Dodatkowe pytanie w kontekście */}
                     {currentExercise.content?.question && (
                       <div className="mb-4">
                         <p className="font-medium text-gray-800 dark:text-gray-200">
@@ -1415,34 +1551,80 @@ export const LearningSession: React.FC = () => {
                       </div>
                     )}
 
-                    {currentExercise.content?.hints &&
-                      currentExercise.content.hints.length > 0 && (
-                        <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-                          <p className="font-medium text-sm text-yellow-700 dark:text-yellow-300 mb-1">
-                            💡 Wskazówki:
-                          </p>
-                          <div className="text-sm text-yellow-800 dark:text-yellow-200">
-                            {currentExercise.content.hints.map(
-                              (hint: string, idx: number) => (
-                                <span key={idx} className="mr-3">
-                                  • {hint}
+                    {/* NOWE: Obsługa zadań wieloetapowych */}
+                    {currentExercise.content?.steps &&
+                    currentExercise.content.steps.length > 0 ? (
+                      <div className="space-y-4">
+                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                          Odpowiedz na każdy z poniższych kroków:
+                        </p>
+                        {currentExercise.content.steps.map(
+                          (step: any, index: number) => (
+                            <div key={step.id || index} className="space-y-2">
+                              <label className="block">
+                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                  Krok {step.id || index + 1}:{" "}
+                                  {step.instruction || step.task}
                                 </span>
-                              )
-                            )}
-                          </div>
-                        </div>
-                      )}
+                                <textarea
+                                  value={answer?.[index] || ""}
+                                  onChange={(e) => {
+                                    const newAnswer = [
+                                      ...(answer ||
+                                        Array(
+                                          currentExercise.content.steps.length
+                                        ).fill("")),
+                                    ];
+                                    newAnswer[index] = e.target.value;
+                                    setAnswer(newAnswer);
+                                  }}
+                                  className="mt-2 w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
+                  rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
+                  bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
+                  placeholder-gray-500 dark:placeholder-gray-400"
+                                  rows={2}
+                                  placeholder={`Odpowiedź na krok ${
+                                    step.id || index + 1
+                                  }...`}
+                                />
+                              </label>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    ) : (
+                      // Standardowe pojedyncze pole tekstowe dla zwykłych SHORT_ANSWER
+                      <>
+                        {currentExercise.content?.hints &&
+                          currentExercise.content.hints.length > 0 && (
+                            <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                              <p className="font-medium text-sm text-yellow-700 dark:text-yellow-300 mb-1">
+                                💡 Wskazówki:
+                              </p>
+                              <div className="text-sm text-yellow-800 dark:text-yellow-200">
+                                {currentExercise.content.hints.map(
+                                  (hint: string, idx: number) => (
+                                    <span key={idx} className="mr-3">
+                                      • {hint}
+                                    </span>
+                                  )
+                                )}
+                              </div>
+                            </div>
+                          )}
 
-                    <textarea
-                      value={answer || ""}
-                      onChange={(e) => setAnswer(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
-               rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
-               bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
-               placeholder-gray-500 dark:placeholder-gray-400"
-                      rows={4}
-                      placeholder="Wpisz swoją odpowiedź..."
-                    />
+                        <textarea
+                          value={answer || ""}
+                          onChange={(e) => setAnswer(e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
+            rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
+            bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
+            placeholder-gray-500 dark:placeholder-gray-400"
+                          rows={4}
+                          placeholder="Wpisz swoją odpowiedź..."
+                        />
+                      </>
+                    )}
                   </>
                 )}
 
@@ -1470,20 +1652,174 @@ export const LearningSession: React.FC = () => {
 
                 {/* ESSAY */}
                 {currentExercise.type === "ESSAY" && (
-                  <div>
+                  <div className="space-y-4">
+                    {/* Wyświetl tezę jeśli istnieje */}
+                    {currentExercise.content?.thesis && (
+                      <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                        <p className="font-medium text-sm text-purple-700 dark:text-purple-300 mb-1">
+                          📝 Temat rozprawki:
+                        </p>
+                        <p className="text-purple-900 dark:text-purple-100 font-medium">
+                          {currentExercise.content.thesis}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Wyświetl strukturę jeśli istnieje */}
+                    {currentExercise.content?.structure && (
+                      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <p className="font-medium text-sm text-blue-700 dark:text-blue-300 mb-2">
+                          📋 Wymagana struktura:
+                        </p>
+                        <div className="space-y-2 text-sm">
+                          {currentExercise.content.structure.introduction && (
+                            <div className="flex items-start gap-2">
+                              <span className="font-semibold text-blue-900 dark:text-blue-100 min-w-[120px]">
+                                Wstęp:
+                              </span>
+                              <span className="text-blue-800 dark:text-blue-200">
+                                {currentExercise.content.structure.introduction}
+                              </span>
+                            </div>
+                          )}
+                          {currentExercise.content.structure.arguments_for && (
+                            <div className="flex items-start gap-2">
+                              <span className="font-semibold text-blue-900 dark:text-blue-100 min-w-[120px]">
+                                Argumenty ZA:
+                              </span>
+                              <span className="text-blue-800 dark:text-blue-200">
+                                {
+                                  currentExercise.content.structure
+                                    .arguments_for
+                                }
+                              </span>
+                            </div>
+                          )}
+                          {currentExercise.content.structure
+                            .arguments_against && (
+                            <div className="flex items-start gap-2">
+                              <span className="font-semibold text-blue-900 dark:text-blue-100 min-w-[120px]">
+                                Argumenty PRZECIW:
+                              </span>
+                              <span className="text-blue-800 dark:text-blue-200">
+                                {
+                                  currentExercise.content.structure
+                                    .arguments_against
+                                }
+                              </span>
+                            </div>
+                          )}
+                          {currentExercise.content.structure.conclusion && (
+                            <div className="flex items-start gap-2">
+                              <span className="font-semibold text-blue-900 dark:text-blue-100 min-w-[120px]">
+                                Zakończenie:
+                              </span>
+                              <span className="text-blue-800 dark:text-blue-200">
+                                {currentExercise.content.structure.conclusion}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Wyświetl wymagania jeśli istnieją */}
+                    {currentExercise.content?.requirements &&
+                      currentExercise.content.requirements.length > 0 && (
+                        <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                          <p className="font-medium text-sm text-yellow-700 dark:text-yellow-300 mb-2">
+                            ✅ Wymagania:
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {currentExercise.content.requirements.map(
+                              (req: string, idx: number) => (
+                                <span
+                                  key={idx}
+                                  className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-200 
+                rounded text-xs font-medium"
+                                >
+                                  {req}
+                                </span>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                    {/* Główne pole tekstowe */}
                     <textarea
                       value={answer || ""}
                       onChange={(e) => setAnswer(e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
-               rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
-               bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
-               placeholder-gray-500 dark:placeholder-gray-400"
-                      rows={12}
-                      placeholder="Napisz wypracowanie..."
+        rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
+        bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
+        placeholder-gray-500 dark:placeholder-gray-400"
+                      rows={15}
+                      placeholder="Napisz wypracowanie zgodnie z wymaganiami..."
                     />
-                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                      Liczba słów:{" "}
-                      {(answer || "").split(/\s+/).filter(Boolean).length}
+
+                    {/* Licznik słów z walidacją */}
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="text-gray-500 dark:text-gray-400">
+                        Liczba słów:{" "}
+                        {(() => {
+                          const wordCount = (answer || "")
+                            .split(/\s+/)
+                            .filter(Boolean).length;
+                          const minWords =
+                            currentExercise.content?.wordLimit?.min ||
+                            currentExercise.metadata?.wordLimit?.min;
+                          const maxWords =
+                            currentExercise.content?.wordLimit?.max ||
+                            currentExercise.metadata?.wordLimit?.max;
+
+                          let colorClass = "text-gray-600 dark:text-gray-400";
+                          if (minWords && maxWords) {
+                            if (wordCount < minWords) {
+                              colorClass = "text-red-600 dark:text-red-400";
+                            } else if (wordCount > maxWords) {
+                              colorClass =
+                                "text-orange-600 dark:text-orange-400";
+                            } else {
+                              colorClass = "text-green-600 dark:text-green-400";
+                            }
+                          }
+
+                          return (
+                            <span className={`font-semibold ${colorClass}`}>
+                              {wordCount}
+                              {minWords &&
+                                maxWords &&
+                                ` / ${minWords}-${maxWords}`}
+                            </span>
+                          );
+                        })()}
+                      </div>
+
+                      {/* Wskaźnik postępu */}
+                      {currentExercise.content?.wordLimit?.min && (
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          {(() => {
+                            const wordCount = (answer || "")
+                              .split(/\s+/)
+                              .filter(Boolean).length;
+                            const minWords =
+                              currentExercise.content.wordLimit.min;
+                            const progress = Math.min(
+                              100,
+                              (wordCount / minWords) * 100
+                            );
+
+                            if (wordCount < minWords) {
+                              return `Jeszcze ${
+                                minWords - wordCount
+                              } słów do minimum`;
+                            } else {
+                              return "✓ Wymóg spełniony";
+                            }
+                          })()}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -1818,6 +2154,21 @@ export const LearningSession: React.FC = () => {
           </div>
         </div>
       )}
+      {/* Exit Confirmation Dialog */}
+      <ConfirmExitDialog
+        isOpen={showExitDialog}
+        sessionStats={sessionStats}
+        onConfirm={async () => {
+          setShowExitDialog(false);
+          await sessionExit.confirmAndExit(
+            sessionExit.nextLocation || undefined
+          );
+        }}
+        onCancel={() => {
+          setShowExitDialog(false);
+          sessionExit.cancelExit();
+        }}
+      />
     </div>
   );
 };
