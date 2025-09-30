@@ -86,6 +86,10 @@ export const LearningSession: React.FC = () => {
   const [completedExercises, setCompletedExercises] = useState<
     Array<{ id: string; score: number }>
   >([]);
+  const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
+  const [selectedRight, setSelectedRight] = useState<number | null>(null);
+  const [matches, setMatches] = useState<Array<[number, number]>>([]);
+
   const [isPlanSession, setIsPlanSession] = useState(false);
   const { data: levelProgress } = useQuery({
     queryKey: ["difficulty-progress"],
@@ -94,6 +98,87 @@ export const LearningSession: React.FC = () => {
     refetchInterval: 10000, // Co 10 sekund
     staleTime: 5000,
   });
+
+  const pairColors = [
+    {
+      border: "border-green-500",
+      bg: "bg-green-50 dark:bg-green-900/20",
+      text: "text-green-600",
+    },
+    {
+      border: "border-purple-500",
+      bg: "bg-purple-50 dark:bg-purple-900/20",
+      text: "text-purple-600",
+    },
+    {
+      border: "border-orange-500",
+      bg: "bg-orange-50 dark:bg-orange-900/20",
+      text: "text-orange-600",
+    },
+    {
+      border: "border-pink-500",
+      bg: "bg-pink-50 dark:bg-pink-900/20",
+      text: "text-pink-600",
+    },
+    {
+      border: "border-indigo-500",
+      bg: "bg-indigo-50 dark:bg-indigo-900/20",
+      text: "text-indigo-600",
+    },
+    {
+      border: "border-teal-500",
+      bg: "bg-teal-50 dark:bg-teal-900/20",
+      text: "text-teal-600",
+    },
+    {
+      border: "border-amber-500",
+      bg: "bg-amber-50 dark:bg-amber-900/20",
+      text: "text-amber-600",
+    },
+    {
+      border: "border-cyan-500",
+      bg: "bg-cyan-50 dark:bg-cyan-900/20",
+      text: "text-cyan-600",
+    },
+  ];
+
+  // Funkcja pomocnicza do pobrania koloru pary
+  const getPairColor = (leftIndex: number) => {
+    const pairIndex = matches.findIndex(([l, _]) => l === leftIndex);
+    return pairIndex !== -1 ? pairColors[pairIndex % pairColors.length] : null;
+  };
+
+  // Resetuj przy nowym pytaniu
+  useEffect(() => {
+    if (currentExercise?.content?.matchingType === "quotes_to_works") {
+      setMatches(answer || []);
+    } else {
+      setMatches([]);
+    }
+    setSelectedLeft(null);
+    setSelectedRight(null);
+  }, [currentExercise?.id]);
+
+  // Funkcja łączenia
+  const handleMatch = () => {
+    if (selectedLeft !== null && selectedRight !== null) {
+      const newMatches = matches.filter(
+        ([l, r]) => l !== selectedLeft && r !== selectedRight
+      );
+      newMatches.push([selectedLeft, selectedRight]);
+      setMatches(newMatches);
+      setAnswer(newMatches);
+      setSelectedLeft(null);
+      setSelectedRight(null);
+    }
+  };
+
+  // Auto-łącz
+  useEffect(() => {
+    if (selectedLeft !== null && selectedRight !== null) {
+      handleMatch();
+    }
+  }, [selectedLeft, selectedRight]);
 
   // Funkcja zapisywania stanu
   const saveSessionState = async () => {
@@ -181,8 +266,33 @@ export const LearningSession: React.FC = () => {
   const submitMutation = useMutation({
     mutationFn: (data: any) =>
       api.post(`/api/exercises/${currentExercise.id}/submit`, data),
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       const result = response.data;
+
+      // KRYTYCZNE: Zapisz do sesji W BAZIE!
+      await api.post("/api/learning/session/update-completed", {
+        sessionId: sessionId,
+        exerciseId: currentExercise.id,
+        score: result.score,
+      });
+
+      // Dopiero potem lokalne state
+      setCompletedExercises((prev) => [
+        ...prev,
+        {
+          id: currentExercise.id,
+          score: result.score || 0,
+        },
+      ]);
+
+      console.log("=== SUBMIT SUCCESS ===");
+      console.log("Exercise ID:", currentExercise.id);
+      console.log("Before update - completed:", completedExercises);
+      // Sprawdź czy już nie ma tego pytania
+      if (completedExercises.some((ex) => ex.id === currentExercise.id)) {
+        console.error("DUPLICATE! Exercise already in completed!");
+      }
+
       const isCorrect = result.score > 0;
 
       console.log("=== SUBMIT SUCCESS ===");
@@ -193,12 +303,9 @@ export const LearningSession: React.FC = () => {
       setCompletedExercises((prev) => {
         const updated = [
           ...prev,
-          {
-            id: currentExercise.id,
-            score: result.score || 0,
-          },
+          { id: currentExercise.id, score: result.score },
         ];
-        console.log("Updated completedExercises:", updated);
+        console.log("After update - completed:", updated);
         return updated;
       });
 
@@ -939,79 +1046,404 @@ export const LearningSession: React.FC = () => {
               <div className="space-y-4">
                 {/* CLOSED SINGLE */}
                 {currentExercise.type === "CLOSED_SINGLE" && (
-                  <div className="space-y-2">
-                    {(currentExercise.content?.options || []).map(
-                      (option: string, index: number) => (
-                        <label
-                          key={index}
-                          className="flex items-center p-3 border border-gray-300 dark:border-gray-600 
+                  <>
+                    {/* Wyświetl tekst źródłowy jeśli istnieje */}
+                    {currentExercise.content?.sourceText && (
+                      <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                        {/* Nagłówek z autorem i tytułem */}
+                        <div className="mb-3 pb-2 border-b border-gray-200 dark:border-gray-600">
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            {currentExercise.content.sourceText.author && (
+                              <span className="font-medium">
+                                {currentExercise.content.sourceText.author}
+                              </span>
+                            )}
+                            {currentExercise.content.sourceText.title && (
+                              <span className="italic">
+                                {currentExercise.content.sourceText.author &&
+                                  " — "}
+                                "{currentExercise.content.sourceText.title}"
+                              </span>
+                            )}
+                          </p>
+                        </div>
+
+                        {/* Tekst fragmentu */}
+                        <div className="text-gray-900 dark:text-gray-100">
+                          <p className="whitespace-pre-wrap italic">
+                            {currentExercise.content.sourceText.text}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Dodatkowe pytanie jeśli istnieje */}
+                    {currentExercise.content?.question && (
+                      <div className="mb-4">
+                        <p className="font-medium text-gray-800 dark:text-gray-200">
+                          {currentExercise.content.question}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Opcje odpowiedzi */}
+                    <div className="space-y-2">
+                      {(currentExercise.content?.options || []).map(
+                        (option: string, index: number) => (
+                          <label
+                            key={index}
+                            className="flex items-center p-3 border border-gray-300 dark:border-gray-600 
                      rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700 
                      cursor-pointer transition-colors"
-                        >
-                          <input
-                            type="radio"
-                            name="answer"
-                            value={index}
-                            checked={answer === index}
-                            onChange={() => setAnswer(index)}
-                            className="mr-3"
-                          />
-                          <span className="text-gray-900 dark:text-white">
-                            {option}
-                          </span>
-                        </label>
-                      )
-                    )}
-                  </div>
+                          >
+                            <input
+                              type="radio"
+                              name="answer"
+                              value={index}
+                              checked={answer === index}
+                              onChange={() => setAnswer(index)}
+                              className="mr-3"
+                            />
+                            <span className="text-gray-900 dark:text-white">
+                              {option}
+                            </span>
+                          </label>
+                        )
+                      )}
+                    </div>
+                  </>
                 )}
 
+                {currentExercise.type === "CLOSED_MULTIPLE" &&
+                  currentExercise.content?.textWithGaps && (
+                    <div className="space-y-4">
+                      <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                        <p className="text-gray-900 dark:text-gray-100 mb-4">
+                          {currentExercise.content.textWithGaps}
+                        </p>
+                      </div>
+
+                      {currentExercise.content.gaps?.map((gap: any) => (
+                        <div key={gap.id} className="space-y-2">
+                          <p className="font-medium text-sm text-gray-700 dark:text-gray-300">
+                            Luka {gap.id}:
+                          </p>
+                          {gap.options.map(
+                            (option: string, optionIndex: number) => (
+                              <label
+                                key={optionIndex}
+                                className="flex items-center p-2 border border-gray-300 dark:border-gray-600 
+                     rounded hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer"
+                              >
+                                <input
+                                  type="radio"
+                                  name={`gap-${gap.id}`}
+                                  value={optionIndex}
+                                  checked={answer?.[gap.id - 1] === optionIndex}
+                                  onChange={() => {
+                                    const newAnswer = [...(answer || [])];
+                                    newAnswer[gap.id - 1] = optionIndex;
+                                    setAnswer(newAnswer);
+                                  }}
+                                  className="mr-2"
+                                />
+                                <span className="text-gray-900 dark:text-white">
+                                  {option}
+                                </span>
+                              </label>
+                            )
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                {/* MATCHING QUESTIONS */}
+                {currentExercise.type === "CLOSED_MULTIPLE" &&
+                  currentExercise.content?.matchingType &&
+                  currentExercise.content?.leftColumn &&
+                  currentExercise.content?.rightColumn && (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-6">
+                        {/* Lewa kolumna */}
+                        <div className="space-y-2">
+                          <h3 className="font-medium text-sm mb-3 text-gray-700 dark:text-gray-300">
+                            Kliknij element z lewej:
+                          </h3>
+                          {currentExercise.content.leftColumn?.map(
+                            (item: any, index: number) => {
+                              const matchedRight =
+                                matches.find(([l, _]) => l === index)?.[1] ??
+                                null;
+                              const isSelected = selectedLeft === index;
+                              const isMatched = matchedRight !== null;
+                              const pairColor = getPairColor(index);
+
+                              return (
+                                <button
+                                  key={item.id}
+                                  onClick={() => {
+                                    if (isMatched) {
+                                      const newMatches = matches.filter(
+                                        ([l, _]) => l !== index
+                                      );
+                                      setMatches(newMatches);
+                                      setAnswer(newMatches);
+                                    } else {
+                                      setSelectedLeft(
+                                        isSelected ? null : index
+                                      );
+                                    }
+                                  }}
+                                  className={`w-full p-3 rounded-lg border-2 text-left transition-all
+                    ${
+                      isSelected
+                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                        : isMatched && pairColor
+                        ? `${pairColor.border} ${pairColor.bg}`
+                        : "border-gray-300 dark:border-gray-600 hover:border-gray-400"
+                    }`}
+                                >
+                                  <span
+                                    className={`font-bold mr-2 
+                    ${
+                      isSelected
+                        ? "text-blue-600"
+                        : isMatched && pairColor
+                        ? pairColor.text
+                        : "text-gray-600"
+                    }`}
+                                  >
+                                    {item.id}.
+                                  </span>
+                                  <span
+                                    className={isMatched ? "font-medium" : ""}
+                                  >
+                                    {item.text}
+                                  </span>
+                                  {isMatched && (
+                                    <span
+                                      className={`ml-2 ${
+                                        pairColor?.text || "text-green-600"
+                                      }`}
+                                    >
+                                      →{" "}
+                                      {
+                                        currentExercise.content.rightColumn[
+                                          matchedRight
+                                        ].id
+                                      }
+                                    </span>
+                                  )}
+                                </button>
+                              );
+                            }
+                          )}
+                        </div>
+
+                        {/* Prawa kolumna */}
+                        <div className="space-y-2">
+                          <h3 className="font-medium text-sm mb-3 text-gray-700 dark:text-gray-300">
+                            Kliknij element z prawej:
+                          </h3>
+                          {currentExercise.content.rightColumn?.map(
+                            (item: any, index: number) => {
+                              const matchedLeft =
+                                matches.find(([_, r]) => r === index)?.[0] ??
+                                null;
+                              const isSelected = selectedRight === index;
+                              const isMatched = matchedLeft !== null;
+                              const pairColor =
+                                matchedLeft !== null
+                                  ? getPairColor(matchedLeft)
+                                  : null;
+
+                              return (
+                                <button
+                                  key={item.id}
+                                  onClick={() => {
+                                    if (isMatched) {
+                                      const newMatches = matches.filter(
+                                        ([_, r]) => r !== index
+                                      );
+                                      setMatches(newMatches);
+                                      setAnswer(newMatches);
+                                    } else {
+                                      setSelectedRight(
+                                        isSelected ? null : index
+                                      );
+                                    }
+                                  }}
+                                  className={`w-full p-3 rounded-lg border-2 text-left transition-all
+                    ${
+                      isSelected
+                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                        : isMatched && pairColor
+                        ? `${pairColor.border} ${pairColor.bg}`
+                        : "border-gray-300 dark:border-gray-600 hover:border-gray-400"
+                    }`}
+                                >
+                                  <span
+                                    className={`font-bold mr-2 
+                    ${
+                      isSelected
+                        ? "text-blue-600"
+                        : isMatched && pairColor
+                        ? pairColor.text
+                        : "text-gray-600"
+                    }`}
+                                  >
+                                    {item.id}.
+                                  </span>
+                                  <span
+                                    className={isMatched ? "font-medium" : ""}
+                                  >
+                                    {item.text}
+                                  </span>
+                                  {isMatched && (
+                                    <span
+                                      className={`ml-2 ${
+                                        pairColor?.text || "text-green-600"
+                                      }`}
+                                    >
+                                      ←{" "}
+                                      {
+                                        currentExercise.content.leftColumn[
+                                          matchedLeft
+                                        ].id
+                                      }
+                                    </span>
+                                  )}
+                                </button>
+                              );
+                            }
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Podsumowanie z kolorowymi kropkami */}
+                      {matches.length > 0 && (
+                        <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Dopasowane pary: {matches.length}/
+                            {currentExercise.content.leftColumn.length}
+                          </p>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {matches.map(([l, r], idx) => {
+                              const color = pairColors[idx % pairColors.length];
+                              return (
+                                <span
+                                  key={`${l}-${r}`}
+                                  className={`px-2 py-1 rounded text-xs font-medium ${color.bg} ${color.text} ${color.border} border`}
+                                >
+                                  {currentExercise.content.leftColumn[l].id} ↔{" "}
+                                  {currentExercise.content.rightColumn[r].id}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="text-center text-sm text-gray-500 dark:text-gray-400">
+                        💡 Kliknij element z lewej, potem z prawej aby połączyć.
+                        Każda para ma swój kolor.
+                      </div>
+                    </div>
+                  )}
+
                 {/* CLOSED MULTIPLE */}
-                {currentExercise.type === "CLOSED_MULTIPLE" && (
-                  <div className="space-y-2">
-                    {(currentExercise.content?.options || []).map(
-                      (option: string, index: number) => (
-                        <label
-                          key={index}
-                          className="flex items-center p-3 border border-gray-300 dark:border-gray-600 
-                     rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-700 
-                     cursor-pointer transition-colors"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={(answer || []).includes(index)}
-                            onChange={(e) => {
-                              const current = answer || [];
-                              if (e.target.checked) {
-                                setAnswer([...current, index]);
-                              } else {
-                                setAnswer(
-                                  current.filter((i: number) => i !== index)
-                                );
-                              }
-                            }}
-                            className="mr-3"
-                          />
-                          <span className="text-gray-900 dark:text-white">
-                            {option}
-                          </span>
-                        </label>
-                      )
-                    )}
-                  </div>
-                )}
+                {currentExercise.type === "CLOSED_MULTIPLE" &&
+                  !currentExercise.content?.textWithGaps &&
+                  !currentExercise.content?.matchingType && (
+                    <div className="space-y-2">
+                      {(currentExercise.content?.options || []).map(
+                        (option: string, index: number) => (
+                          <label
+                            key={index}
+                            className="flex items-center p-3 border border-gray-300 dark:border-gray-600 
+                   rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-700 
+                   cursor-pointer transition-colors"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={(answer || []).includes(index)}
+                              onChange={(e) => {
+                                const current = answer || [];
+                                if (e.target.checked) {
+                                  setAnswer([...current, index]);
+                                } else {
+                                  setAnswer(
+                                    current.filter((i: number) => i !== index)
+                                  );
+                                }
+                              }}
+                              className="mr-3"
+                            />
+                            <span className="text-gray-900 dark:text-white">
+                              {option}
+                            </span>
+                          </label>
+                        )
+                      )}
+                    </div>
+                  )}
 
                 {/* SHORT ANSWER */}
                 {currentExercise.type === "SHORT_ANSWER" && (
-                  <textarea
-                    value={answer || ""}
-                    onChange={(e) => setAnswer(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
-             rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
-             bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
-             placeholder-gray-500 dark:placeholder-gray-400"
-                    rows={4}
-                    placeholder="Wpisz swoją odpowiedź..."
-                  />
+                  <>
+                    {/* Wyświetl dodatkowe informacje jeśli istnieją */}
+                    {currentExercise.content?.originalSentence && (
+                      <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                        <p className="font-medium text-sm text-gray-700 dark:text-gray-300 mb-2">
+                          Zdanie wyjściowe:
+                        </p>
+                        <p className="text-gray-900 dark:text-gray-100">
+                          {currentExercise.content.originalSentence}
+                        </p>
+                      </div>
+                    )}
+
+                    {currentExercise.content?.transformation && (
+                      <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <p className="font-medium text-sm text-blue-700 dark:text-blue-300 mb-1">
+                          Polecenie:
+                        </p>
+                        <p className="text-blue-900 dark:text-blue-100">
+                          {currentExercise.content.transformation}
+                        </p>
+                      </div>
+                    )}
+
+                    {currentExercise.content?.hints &&
+                      currentExercise.content.hints.length > 0 && (
+                        <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                          <p className="font-medium text-sm text-yellow-700 dark:text-yellow-300 mb-1">
+                            💡 Wskazówki:
+                          </p>
+                          <div className="text-sm text-yellow-800 dark:text-yellow-200">
+                            {currentExercise.content.hints.map(
+                              (hint: string, idx: number) => (
+                                <span key={idx} className="mr-3">
+                                  • {hint}
+                                </span>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                    <textarea
+                      value={answer || ""}
+                      onChange={(e) => setAnswer(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
+               rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
+               bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
+               placeholder-gray-500 dark:placeholder-gray-400"
+                      rows={4}
+                      placeholder="Wpisz swoją odpowiedź..."
+                    />
+                  </>
                 )}
 
                 {/* SYNTHESIS NOTE */}

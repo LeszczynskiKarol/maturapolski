@@ -220,10 +220,67 @@ export async function learningRoutes(fastify: FastifyInstance) {
     return reply.send(filters);
   });
 
+  fastify.get("/debug/session-state", async (request, reply) => {
+    const userId = (request.user as any).userId;
+
+    // Pobierz aktywną sesję
+    const session = await prisma.learningSession.findFirst({
+      where: { userId, status: "IN_PROGRESS" },
+      orderBy: { lastActiveAt: "desc" },
+    });
+
+    // Pobierz ostatnie 10 użyć
+    const recentUsage = await prisma.exerciseUsage.findMany({
+      where: { userId },
+      orderBy: { lastUsedAt: "desc" },
+      take: 10,
+      include: { exercise: { select: { question: true, type: true } } },
+    });
+
+    // Pobierz ostatnie 10 submissions
+    const recentSubmissions = await prisma.submission.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+      include: { exercise: { select: { question: true } } },
+    });
+
+    const sessionExercises = (session?.completedExercises as any[]) || [];
+    const completedIds = sessionExercises.map((ex) => ex.id);
+
+    return reply.send({
+      sessionId: session?.id,
+      completedInSession: completedIds,
+      completedCount: completedIds.length,
+      sessionStats: {
+        completed: session?.completed,
+        correct: session?.correct,
+      },
+      recentUsage: recentUsage.map((u) => ({
+        id: u.exerciseId,
+        question: u.exercise.question.substring(0, 50),
+        lastUsed: u.lastUsedAt,
+        count: u.usageCount,
+      })),
+      recentSubmissions: recentSubmissions.map((s) => ({
+        id: s.exerciseId,
+        question: s.exercise.question.substring(0, 50),
+        time: s.createdAt,
+        score: s.score,
+      })),
+      // Sprawdź duplikaty
+      duplicatesInSession: completedIds.filter(
+        (id, index) => completedIds.indexOf(id) !== index
+      ),
+    });
+  });
+
   fastify.get("/next", async (request, reply) => {
     try {
       const userId = (request.user as any).userId;
       const { excludeId } = request.query as { excludeId?: string };
+
+      console.log("\n=== NEXT EXERCISE REQUEST ===");
 
       // NOWE: Pobierz maksymalny dostępny poziom trudności
       const userProgress = await levelProgress.getOrCreateProgress(userId);
@@ -235,7 +292,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
       const [
         userProfile,
         recentSubmissions,
-        currentSession,
+        currentSession, // TO ZOSTAJE TAK JAK BYŁO
         usageHistory,
         lastExercises,
       ] = await Promise.all([
@@ -307,6 +364,21 @@ export async function learningRoutes(fastify: FastifyInstance) {
         }),
       ]);
 
+      // DODAJ DEBUGOWANIE - wyciągnij ID z completedExercises
+      const sessionCompletedIds: string[] = [];
+      if (currentSession?.completedExercises) {
+        const exercises = currentSession.completedExercises as any[];
+        exercises.forEach((ex) => {
+          if (ex.id) {
+            sessionCompletedIds.push(ex.id);
+          }
+        });
+        console.log(
+          `Session has ${sessionCompletedIds.length} completed exercises`
+        );
+        console.log(`Completed IDs:`, sessionCompletedIds);
+      }
+
       // Statystyki sesji
       const currentAccuracy =
         currentSession && currentSession.completed > 0
@@ -372,8 +444,19 @@ export async function learningRoutes(fastify: FastifyInstance) {
       );
       console.log(`Recent types:`, Object.fromEntries(recentTypeCount));
 
-      // BUDUJ ZAPYTANIE
+      // BUDUJ ZAPYTANIE - TYLKO JEDNO baseWhere!
       const baseWhere: any = {};
+
+      // KLUCZOWE: Wyklucz pytania z sesji ZANIM dodasz inne filtry!
+      const toExclude = [...sessionCompletedIds];
+      if (excludeId) toExclude.push(excludeId);
+
+      if (toExclude.length > 0) {
+        baseWhere.id = { notIn: toExclude };
+        console.log(
+          `EXCLUDING ${toExclude.length} exercises from current session`
+        );
+      }
 
       if (isStudyPlanSession) {
         // StudyPlan - respektuj filtry tygodnia ALE ogranicz do odblokowanych
@@ -448,6 +531,8 @@ export async function learningRoutes(fastify: FastifyInstance) {
         baseWhere.difficulty = { in: targetDifficulty };
       }
 
+      console.log("Final WHERE clause:", JSON.stringify(baseWhere, null, 2));
+
       // Pobierz kandydatów
       const allCandidates = await prisma.exercise.findMany({
         where: baseWhere,
@@ -462,7 +547,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
       });
 
       console.log(
-        `Found ${allCandidates.length} candidates within difficulty limits`
+        `Found ${allCandidates.length} candidates after all exclusions`
       );
 
       // Wyklucz używane
@@ -933,6 +1018,86 @@ export async function learningRoutes(fastify: FastifyInstance) {
       console.error("Error completing session:", error);
       return reply.code(500).send({ error: "Failed to complete session" });
     }
+  });
+
+  fastify.get("/active-sessions", async (request, reply) => {
+    const userId = (request.user as any).userId;
+
+    const activeSessions = await prisma.learningSession.findMany({
+      where: {
+        userId,
+        status: "IN_PROGRESS",
+        lastActiveAt: {
+          gte: new Date(Date.now() - 48 * 60 * 60 * 1000), // ostatnie 48h
+        },
+      },
+      orderBy: { lastActiveAt: "desc" },
+      take: 3,
+    });
+
+    return reply.send(
+      activeSessions.map((s) => ({
+        id: s.id,
+        startedAt: s.startedAt,
+        completed: s.completed,
+        correct: s.correct,
+        points: s.points,
+      }))
+    );
+  });
+
+  fastify.post("/session/update-completed", async (request, reply) => {
+    const userId = (request.user as any).userId;
+    const { sessionId, exerciseId, score } = request.body as any;
+
+    console.log(`=== UPDATING SESSION ${sessionId} ===`);
+    console.log(`Adding exercise: ${exerciseId} with score: ${score}`);
+
+    // Pobierz aktualną sesję
+    const session = await prisma.learningSession.findFirst({
+      where: {
+        id: sessionId,
+        userId,
+        status: "IN_PROGRESS",
+      },
+    });
+
+    if (!session) {
+      return reply.code(404).send({ error: "Session not found" });
+    }
+
+    // Pobierz obecne completedExercises
+    const currentCompleted = (session.completedExercises as any[]) || [];
+
+    // Sprawdź czy już nie ma
+    if (currentCompleted.some((ex) => ex.id === exerciseId)) {
+      console.error(`DUPLICATE! Exercise ${exerciseId} already in session!`);
+      return reply.send({ success: false, error: "Already completed" });
+    }
+
+    // Dodaj nowe
+    currentCompleted.push({ id: exerciseId, score });
+
+    // Zapisz do bazy
+    await prisma.learningSession.update({
+      where: { id: sessionId },
+      data: {
+        completedExercises: currentCompleted,
+        completed: { increment: 1 },
+        correct: score > 0 ? { increment: 1 } : undefined,
+        points: { increment: score || 0 },
+        lastActiveAt: new Date(),
+      },
+    });
+
+    console.log(
+      `Session now has ${currentCompleted.length} completed exercises`
+    );
+
+    return reply.send({
+      success: true,
+      completedCount: currentCompleted.length,
+    });
   });
 
   // Get learning stats
