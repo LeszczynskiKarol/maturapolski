@@ -1,6 +1,8 @@
 // frontend/src/features/learning/LearningSession.tsx
 
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { UpgradePrompt } from "../../components/UpgradePrompt";
+import { AiPointsWidget } from "../../components/AiPointsWidget";
 import { ConfirmExitDialog } from "../../components/ConfirmExitDialog";
 import { useSessionExit } from "../../hooks/useSessionExit";
 import confetti from "canvas-confetti";
@@ -85,6 +87,12 @@ export const LearningSession: React.FC = () => {
   const queryClient = useQueryClient();
   const [sessionActive, setSessionActive] = useState(false);
   const [currentExercise, setCurrentExercise] = useState<any>(null);
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
+  const [upgradePromptData, setUpgradePromptData] = useState({
+    pointsNeeded: 1,
+    currentPoints: 0,
+    totalPoints: 20,
+  });
   const [isLoadingNext, setIsLoadingNext] = useState(false);
   const [answer, setAnswer] = useState<any>(null);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -104,6 +112,12 @@ export const LearningSession: React.FC = () => {
       api.get("/api/learning/difficulty-progress").then((r) => r.data),
     refetchInterval: 10000, // Co 10 sekund
     staleTime: 5000,
+  });
+
+  const { data: subscription } = useQuery({
+    queryKey: ["subscription-status"],
+    queryFn: () => api.get("/api/subscription/status").then((r) => r.data),
+    refetchInterval: 30000, // Co 30s
   });
 
   const pairColors = [
@@ -436,6 +450,28 @@ export const LearningSession: React.FC = () => {
           ["difficulty-progress"],
           response.data.levelProgress
         );
+      }
+    },
+    onError: (error: any) => {
+      // NOWY KOD - obsługa błędu braku punktów AI
+      const errorMessage = error.response?.data?.error || error.message || "";
+
+      if (errorMessage.includes("INSUFFICIENT_AI_POINTS")) {
+        // Wyciągnij dane z error message
+        const match = errorMessage.match(/(\d+)\/(\d+) punktów.*(\d+) punkt/);
+
+        if (match && subscription) {
+          setUpgradePromptData({
+            pointsNeeded: parseInt(match[3]),
+            currentPoints: subscription.aiPointsUsed,
+            totalPoints: subscription.aiPointsLimit,
+          });
+          setShowUpgradePrompt(true);
+        } else {
+          toast.error("Brak punktów AI! Ulepsz plan aby kontynuować.");
+        }
+      } else {
+        toast.error(errorMessage || "Błąd podczas sprawdzania odpowiedzi");
       }
     },
   });
@@ -953,6 +989,14 @@ export const LearningSession: React.FC = () => {
             </button>
           </div>
         </motion.div>
+
+        <UpgradePrompt
+          isOpen={showUpgradePrompt}
+          onClose={() => setShowUpgradePrompt(false)}
+          pointsNeeded={upgradePromptData.pointsNeeded}
+          currentPoints={upgradePromptData.currentPoints}
+          totalPoints={upgradePromptData.totalPoints}
+        />
       </div>
     );
   }

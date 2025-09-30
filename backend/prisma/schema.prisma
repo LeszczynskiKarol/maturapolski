@@ -33,6 +33,7 @@ model User {
   examSessions  ExamSession[]
   exerciseUsage ExerciseUsage[]
   learningSessions LearningSession[]
+  subscription    Subscription?
 }
 
 model UserLevelProgress {
@@ -582,6 +583,88 @@ model LearningSession {
   skippedExercises   Json? // [id1, id2...]
   
   @@index([userId, status])
+}
+
+model Subscription {
+  id              String            @id @default(cuid())
+  userId          String            @unique
+  user            User              @relation(fields: [userId], references: [id])
+  
+  // Stripe
+  stripeCustomerId      String?       @unique
+  stripeSubscriptionId  String?       @unique
+  stripePriceId         String?
+  stripeCurrentPeriodEnd DateTime?
+  
+  // Plan
+  status          SubscriptionStatus @default(INACTIVE)
+  plan            SubscriptionPlan   @default(FREE)
+  
+  // Punkty AI
+  aiPointsLimit   Int               @default(20)    // FREE: 20, PREMIUM: 300
+  aiPointsUsed    Int               @default(0)
+  aiPointsReset   DateTime          @default(now()) // data ostatniego resetu
+  
+  // Daty
+  startDate       DateTime?
+  endDate         DateTime?
+  cancelAt        DateTime?
+  canceledAt      DateTime?
+  
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  aiUsage         AiUsage[]
+  
+  @@index([userId])
+  @@index([stripeCustomerId])
+  @@index([stripeSubscriptionId])
+}
+
+model AiUsage {
+  id              String       @id @default(cuid())
+  userId          String
+  subscriptionId  String
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id])
+  
+  exerciseId      String
+  exerciseType    ExerciseType
+  
+  pointsCost      Int          // 1 dla SHORT_ANSWER, 3 dla ESSAY
+  tokensUsed      Json         // {input: X, output: Y}
+  
+  success         Boolean      @default(true)
+  errorMessage    String?
+  
+  createdAt       DateTime     @default(now())
+  
+  @@index([userId, createdAt])
+  @@index([subscriptionId])
+}
+
+model StripeEvent {
+  id              String   @id @default(cuid())
+  stripeEventId   String   @unique
+  type            String
+  data            Json
+  processed       Boolean  @default(false)
+  
+  createdAt       DateTime @default(now())
+  
+  @@index([stripeEventId])
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  PAST_DUE
+  CANCELED
+  TRIALING
+}
+
+enum SubscriptionPlan {
+  FREE
+  PREMIUM
 }
 
 enum LearningSessionStatus {

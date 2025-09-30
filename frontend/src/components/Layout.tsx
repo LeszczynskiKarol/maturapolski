@@ -5,6 +5,7 @@ import {
   BookOpen,
   Brain,
   ChevronLeft,
+  CreditCard,
   Clock,
   FileText,
   Home,
@@ -23,6 +24,7 @@ import { useAuthStore } from "../store/authStore";
 import { ThemeToggle } from "./ThemeSwitcher";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../services/api";
+import { AiPointsWidget } from "./AiPointsWidget";
 
 export const Layout: React.FC = () => {
   const location = useLocation();
@@ -45,7 +47,7 @@ export const Layout: React.FC = () => {
     { name: "Zadania", href: "/exercises", icon: BookOpen },
     { name: "Postępy", href: "/progress", icon: TrendingUp },
     { name: "Egzamin", href: "/exams", icon: FileText },
-    //{ name: "Ranking", href: "/leaderboard", icon: Trophy },
+    { name: "Subskcypcja", href: "/subscription", icon: CreditCard },
   ];
 
   const handleLogout = () => {
@@ -73,6 +75,7 @@ export const Layout: React.FC = () => {
             Matura Polski
           </h1>
           <div className="flex items-center gap-2">
+            <AiPointsWidget />
             <ThemeToggle />
             <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
               <Bell className="w-5 h-5 text-gray-600 dark:text-gray-400" />
@@ -139,6 +142,13 @@ export const Layout: React.FC = () => {
             );
           })}
         </nav>
+
+        {/* AI Points Widget - TUTAJ, POZA PĘTLĄ! */}
+        {!isSidebarCollapsed && (
+          <div className="px-6 py-3 border-t dark:border-gray-700">
+            <AiPointsWidget />
+          </div>
+        )}
 
         {/* Quick Stats - only when expanded */}
         {!isSidebarCollapsed && (

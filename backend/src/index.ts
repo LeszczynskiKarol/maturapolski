@@ -9,6 +9,7 @@ import Fastify from "fastify";
 import { initializeAI } from "./ai/aiService";
 import { adminRoutes } from "./routes/admin.routes";
 import { examStructureRoutes } from "./routes/examStructure.routes";
+import { subscriptionRoutes } from "./routes/subscription.routes";
 import { authRoutes } from "./routes/auth.routes";
 import { exerciseRoutes } from "./routes/exercise.routes";
 import { learningRoutes } from "./routes/learning.routes";
@@ -30,6 +31,24 @@ initializeAI();
 
 console.log("Initializing queue system...");
 initializeQueue();
+
+fastify.addContentTypeParser(
+  "application/json",
+  { parseAs: "buffer" },
+  function (req, body, done) {
+    if (req.url === "/api/subscription/webhook") {
+      // Upewnij się, że body jest Buffer
+      req.rawBody = Buffer.isBuffer(body) ? body : Buffer.from(body);
+    }
+    try {
+      const json = JSON.parse(body.toString());
+      done(null, json);
+    } catch (err: any) {
+      err.statusCode = 400;
+      done(err, undefined);
+    }
+  }
+);
 
 // Register plugins
 fastify.register(cors, {
@@ -76,6 +95,9 @@ console.log("✓ Study Plan routes registered at /api/study/*");
 // Exam routes
 fastify.register(examRoutes, { prefix: "/api/exams" });
 console.log("✓ Exam routes registered at /api/exams/*");
+
+fastify.register(subscriptionRoutes, { prefix: "/api/subscription" });
+console.log("✓ SubscriptionRoutes routes registered at /api/subscription/*");
 
 // Exam Structure routes (dla admina)
 fastify.register(examStructureRoutes, { prefix: "/api/admin/exam-structures" });

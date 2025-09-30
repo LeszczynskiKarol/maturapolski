@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { UserSessionsTable } from "./features/admin/UserSessionsTable";
+import { SubscriptionDashboard } from "./features/subscription/SubscriptionDashboard";
 import React, { useEffect } from "react";
 import { MatureExamViewer } from "./features/exams/MatureExamViewer";
 // UŻYWAMY KOMPONENTÓW KTÓRE JUŻ STWORZYLIŚMY!
@@ -92,6 +93,7 @@ export const App: React.FC = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/subscription" element={<SubscriptionDashboard />} />
 
             {/* Public Materials routes */}
             <Route path="/materialy" element={<MaterialsPage />} />

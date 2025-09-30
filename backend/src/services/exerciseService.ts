@@ -2,6 +2,7 @@
 
 import { assessEssayWithAI, assessShortAnswerWithAI } from "../ai/aiService";
 import { prisma } from "../lib/prisma";
+import { subscriptionService } from "./subscriptionService";
 
 export class ExerciseService {
   constructor() {}
@@ -106,6 +107,40 @@ export class ExerciseService {
       throw new Error("Exercise not found");
     }
 
+    // ========================================
+    // SPRAWDZENIE PUNKTÓW AI
+    // ========================================
+    const requiresAI = ["SHORT_ANSWER", "SYNTHESIS_NOTE", "ESSAY"].includes(
+      exercise.type
+    );
+    let pointsCost = 0;
+
+    if (requiresAI) {
+      // Oblicz koszt w punktach
+      pointsCost = exercise.type === "ESSAY" ? 3 : 1;
+
+      // Sprawdź dostępność punktów
+      const hasPoints = await subscriptionService.hasAiPoints(
+        userId,
+        pointsCost
+      );
+
+      if (!hasPoints) {
+        const subscription = await subscriptionService.getOrCreateSubscription(
+          userId
+        );
+        throw new Error(
+          `INSUFFICIENT_AI_POINTS|Brak punktów AI! Masz ${
+            subscription.aiPointsLimit - subscription.aiPointsUsed
+          }/${
+            subscription.aiPointsLimit
+          } punktów. To zadanie wymaga ${pointsCost} ${
+            pointsCost === 1 ? "punktu" : "punktów"
+          }. Ulepsz plan aby kontynuować.`
+        );
+      }
+    }
+
     const submission = await prisma.submission.create({
       data: {
         userId,
@@ -153,7 +188,7 @@ export class ExerciseService {
             correct: isCorrect,
             correctAnswer: exercise.correctAnswer,
             correctAnswerText,
-            explanation: explanation || null, // Użyj null jeśli brak
+            explanation: explanation || null,
           },
         },
       });
@@ -165,7 +200,7 @@ export class ExerciseService {
           correct: isCorrect,
           correctAnswer: exercise.correctAnswer,
           correctAnswerText,
-          explanation: explanation || null, // Użyj null jeśli brak
+          explanation: explanation || null,
         },
         message: isCorrect
           ? `Świetnie! Zdobyłeś ${score} punktów!`
@@ -177,6 +212,9 @@ export class ExerciseService {
     if (exercise.type === "SHORT_ANSWER") {
       try {
         console.log("Starting AI assessment for SHORT_ANSWER:", submission.id);
+
+        // Zapisz użycie AI PRZED oceną (na wypadek błędu)
+        const startTime = Date.now();
 
         // Extract expected concepts from exercise content/rubric
         const content = exercise.content as any;
@@ -197,11 +235,20 @@ export class ExerciseService {
           exercise.points
         );
 
+        const endTime = Date.now();
+
+        // Oszacuj tokeny (przybliżenie)
+        const estimatedTokens = {
+          input: Math.ceil((exercise.question.length + answer.length) / 4),
+          output: Math.ceil(JSON.stringify(aiAssessment).length / 4),
+        };
+
         console.log("AI Assessment result:", aiAssessment);
+        console.log("Estimated tokens:", estimatedTokens);
 
         // Update submission with AI score
         const finalScore = Math.min(
-          Math.max(0, Math.round(aiAssessment.score * 10) / 10), // Round to 1 decimal
+          Math.max(0, Math.round(aiAssessment.score * 10) / 10),
           exercise.points
         );
 
@@ -231,6 +278,17 @@ export class ExerciseService {
           },
         });
 
+        // ========================================
+        // ZAPISZ UŻYCIE PUNKTÓW AI
+        // ========================================
+        await subscriptionService.useAiPoints(
+          userId,
+          exerciseId,
+          exercise.type,
+          pointsCost,
+          estimatedTokens
+        );
+
         const responseData = {
           ...submission,
           score: finalScore,
@@ -245,7 +303,7 @@ export class ExerciseService {
             isPartiallyCorrect: aiAssessment.isPartiallyCorrect,
             score: finalScore,
             maxScore: exercise.points,
-            feedback: aiAssessment.feedback, // zmienione z explanation na feedback
+            feedback: aiAssessment.feedback,
             correctAnswer: aiAssessment.correctAnswer,
             missingElements: aiAssessment.missingElements,
             correctElements: aiAssessment.correctElements,
@@ -294,6 +352,14 @@ export class ExerciseService {
           contexts: contexts || [],
         });
 
+        // Oszacuj tokeny
+        const estimatedTokens = {
+          input: Math.ceil(
+            (exercise.question.length + answer.length + 1000) / 4
+          ),
+          output: Math.ceil(JSON.stringify(assessment).length / 4),
+        };
+
         // Calculate total score
         const totalScore = Math.min(
           assessment.totalScore || 0,
@@ -324,6 +390,17 @@ export class ExerciseService {
             improvements: assessment.improvements || [],
           },
         });
+
+        // ========================================
+        // ZAPISZ UŻYCIE PUNKTÓW AI (3 punkty!)
+        // ========================================
+        await subscriptionService.useAiPoints(
+          userId,
+          exerciseId,
+          exercise.type,
+          pointsCost,
+          estimatedTokens
+        );
 
         return {
           ...submission,
@@ -368,6 +445,14 @@ export class ExerciseService {
           exercise.points
         );
 
+        // Oszacuj tokeny
+        const estimatedTokens = {
+          input: Math.ceil(
+            (exercise.question.length + answer.length + 500) / 4
+          ),
+          output: Math.ceil(JSON.stringify(aiAssessment).length / 4),
+        };
+
         const finalScore = Math.min(
           Math.max(0, Math.round(aiAssessment.score * 10) / 10),
           exercise.points
@@ -381,6 +466,17 @@ export class ExerciseService {
             feedback: aiAssessment,
           },
         });
+
+        // ========================================
+        // ZAPISZ UŻYCIE PUNKTÓW AI
+        // ========================================
+        await subscriptionService.useAiPoints(
+          userId,
+          exerciseId,
+          exercise.type,
+          pointsCost,
+          estimatedTokens
+        );
 
         return {
           ...submission,
