@@ -601,7 +601,7 @@ model Subscription {
   plan            SubscriptionPlan   @default(FREE)
   
   // Punkty AI
-  aiPointsLimit   Int               @default(20)    // FREE: 20, PREMIUM: 300
+  aiPointsLimit   Int               @default(20)    // FREE: 0, PREMIUM: 300
   aiPointsUsed    Int               @default(0)
   aiPointsReset   DateTime          @default(now()) // data ostatniego resetu
   

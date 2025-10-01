@@ -52,7 +52,11 @@ fastify.addContentTypeParser(
 
 // Register plugins
 fastify.register(cors, {
-  origin: ["http://localhost:3000", "http://localhost:5173"],
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "https://app-reactapp.ngrok.app",
+  ],
   credentials: true,
 });
 
