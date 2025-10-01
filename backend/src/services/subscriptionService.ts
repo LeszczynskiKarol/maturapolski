@@ -141,7 +141,7 @@ export class SubscriptionService {
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: "subscription",
-      payment_method_types: ["card", "blik", "p24"],
+      payment_method_types: ["card"], // ⚠️ TYLKO KARTY dla subskrypcji!
       line_items: [
         {
           price: priceId,

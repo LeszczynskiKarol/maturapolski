@@ -168,17 +168,20 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
         const packages = {
           SMALL: {
             points: 50,
-            price: "price_small_package", // ID z Stripe Dashboard
+            price: process.env.STRIPE_PRICE_ID_SMALL!,
+
             priceAmount: 1900, // 19 zł
           },
           MEDIUM: {
             points: 150,
-            price: "price_medium_package", // ID z Stripe Dashboard
+            price: process.env.STRIPE_PRICE_ID_MEDIUM!,
+
             priceAmount: 4900, // 49 zł (oszczędność!)
           },
           LARGE: {
             points: 300,
-            price: "price_large_package", // ID z Stripe Dashboard
+            price: process.env.STRIPE_PRICE_ID_LARGE!,
+
             priceAmount: 7900, // 79 zł (największa oszczędność!)
           },
         };

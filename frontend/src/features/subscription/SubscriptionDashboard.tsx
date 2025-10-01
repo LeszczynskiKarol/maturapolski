@@ -14,9 +14,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { loadStripe } from "@stripe/stripe-js";
-
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY!);
 
 interface SubscriptionStatus {
   plan: "FREE" | "PREMIUM";
@@ -55,10 +52,10 @@ export const SubscriptionDashboard: React.FC = () => {
       });
       return data;
     },
-    onSuccess: async (data) => {
-      const stripe = await stripePromise;
-      if (stripe && data.sessionId) {
-        await stripe.redirectToCheckout({ sessionId: data.sessionId });
+    onSuccess: (data) => {
+      // Proste przekierowanie - backend zwraca gotowy URL
+      if (data.url) {
+        window.location.href = data.url;
       }
     },
     onError: (error: any) => {
