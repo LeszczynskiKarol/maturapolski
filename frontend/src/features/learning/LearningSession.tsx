@@ -437,7 +437,7 @@ export const LearningSession: React.FC = () => {
 
   const renderActionButtons = () => {
     if (!currentExercise) {
-      return null; // Nie renderuj przycisków gdy brak zadania
+      return null;
     }
 
     const needsAi =
@@ -447,14 +447,14 @@ export const LearningSession: React.FC = () => {
 
     const hasPoints = hasEnoughPoints(currentExercise.type);
 
+    // PO SUBMICIE - zawsze tylko "Następne"
     if (hasSubmitted) {
-      // Po submicie - zawsze "Następne"
       return (
         <button
           onClick={handleNext}
           className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 
-                   text-white rounded-lg hover:from-blue-700 hover:to-purple-700 
-                   font-semibold flex items-center gap-2"
+                 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 
+                 font-semibold flex items-center gap-2"
         >
           Następne
           <ChevronRight className="w-5 h-5" />
@@ -462,50 +462,18 @@ export const LearningSession: React.FC = () => {
       );
     }
 
-    // Przed submitem
-    if (needsAi && !hasPoints) {
-      // BRAK PUNKTÓW - pokaż Pomiń + Doładuj
-      return (
-        <div className="flex gap-3">
-          <button
-            onClick={handleSkip}
-            className="px-6 py-3 border-2 border-gray-300 dark:border-gray-600 
-                     text-gray-700 dark:text-gray-300 rounded-lg 
-                     hover:bg-gray-50 dark:hover:bg-gray-700 font-semibold"
-          >
-            Pomiń zadanie
-          </button>
-          <Link
-            to="/subscription"
-            className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 
-                     text-white rounded-lg hover:from-green-700 hover:to-emerald-700 
-                     font-semibold flex items-center gap-2"
-          >
-            <CreditCard className="w-5 h-5" />
-            Doładuj konto
-          </Link>
-        </div>
-      );
-    }
+    // PRZED SUBMITEM
 
-    // MA PUNKTY - normalny przycisk Submit
-    return (
-      <div className="flex gap-3">
-        <button
-          onClick={handleSkip}
-          className="px-6 py-3 border-2 border-gray-300 dark:border-gray-600 
-                   text-gray-700 dark:text-gray-300 rounded-lg 
-                   hover:bg-gray-50 dark:hover:bg-gray-700 font-semibold"
-        >
-          Pomiń
-        </button>
+    // Zadania zamknięte (CLOSED_*) - zawsze tylko "Sprawdź"
+    if (!needsAi) {
+      return (
         <button
           onClick={handleSubmit}
-          disabled={!answer || isSubmitting}
+          disabled={!canSubmit || isSubmitting}
           className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 
-                   text-white rounded-lg hover:from-blue-700 hover:to-purple-700 
-                   disabled:opacity-50 disabled:cursor-not-allowed 
-                   font-semibold flex items-center gap-2"
+                 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 
+                 disabled:opacity-50 disabled:cursor-not-allowed 
+                 font-semibold flex items-center gap-2"
         >
           {isSubmitting ? (
             <>
@@ -519,7 +487,58 @@ export const LearningSession: React.FC = () => {
             </>
           )}
         </button>
-      </div>
+      );
+    }
+
+    // Zadania pisemne (SHORT_ANSWER, SYNTHESIS_NOTE, ESSAY) BEZ punktów
+    if (!hasPoints) {
+      return (
+        <div className="flex gap-3">
+          <button
+            onClick={handleSkip}
+            className="px-6 py-3 border-2 border-gray-300 dark:border-gray-600 
+                   text-gray-700 dark:text-gray-300 rounded-lg 
+                   hover:bg-gray-50 dark:hover:bg-gray-700 font-semibold
+                   flex items-center gap-2"
+          >
+            <SkipForward className="w-4 h-4" />
+            Pomiń zadanie
+          </button>
+          <button
+            onClick={() => navigate("/subscription")}
+            className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 
+                   text-white rounded-lg hover:from-green-700 hover:to-emerald-700 
+                   font-semibold flex items-center gap-2"
+          >
+            <CreditCard className="w-5 h-5" />
+            Doładuj konto
+          </button>
+        </div>
+      );
+    }
+
+    // Zadania pisemne Z punktami - tylko "Sprawdź"
+    return (
+      <button
+        onClick={handleSubmit}
+        disabled={!canSubmit || isSubmitting}
+        className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 
+               text-white rounded-lg hover:from-blue-700 hover:to-purple-700 
+               disabled:opacity-50 disabled:cursor-not-allowed 
+               font-semibold flex items-center gap-2"
+      >
+        {isSubmitting ? (
+          <>
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            Sprawdzanie...
+          </>
+        ) : (
+          <>
+            Sprawdź
+            <CheckCircle className="w-5 h-5" />
+          </>
+        )}
+      </button>
     );
   };
 
@@ -1000,6 +1019,7 @@ export const LearningSession: React.FC = () => {
     const storedFilters = localStorage.getItem("sessionFilters");
     const isStudyPlanSession = localStorage.getItem("isStudyPlanSession");
     const isEpochReview = localStorage.getItem("isEpochReview");
+    const autoStart = localStorage.getItem("autoStartSession");
 
     console.log("Raw localStorage filters:", storedFilters);
     console.log("Is StudyPlan session:", isStudyPlanSession);
@@ -1030,8 +1050,20 @@ export const LearningSession: React.FC = () => {
         localStorage.removeItem("isStudyPlanSession");
         localStorage.removeItem("isEpochReview");
       }
+    } else if (
+      autoStart &&
+      !sessionActive &&
+      !sessionComplete &&
+      !hasAutoStarted.current
+    ) {
+      hasAutoStarted.current = true;
+      localStorage.removeItem("autoStartSession");
+
+      setTimeout(async () => {
+        await startSession();
+      }, 100);
     }
-  }, []); // WAŻNE: Pusta deps array!
+  }, []);
 
   // Timer
   useEffect(() => {
@@ -1374,7 +1406,7 @@ export const LearningSession: React.FC = () => {
               <button
                 onClick={skipExercise}
                 disabled={sessionStats.completed >= SESSION_LIMIT - 1}
-                className="flex items-center gap-1 text-gray-500 dark:text-gray-400 
+                className="flex ml-2 items-center gap-1 text-gray-500 dark:text-gray-400 
                      hover:text-gray-700 dark:hover:text-gray-200 
                      disabled:opacity-50 transition-colors"
               >
@@ -2081,25 +2113,8 @@ export const LearningSession: React.FC = () => {
                     </div>
                   </div>
                 )}
-
-                <div className="flex justify-end">
-                  {!hasEnoughPoints ? (
-                    <button
-                      onClick={handleSkip} // Ta sama funkcja co "Pomiń"
-                      className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition-colors flex items-center gap-2"
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                      Kolejne pytanie
-                    </button>
-                  ) : (
-                    <button
-                      onClick={handleSubmit}
-                      disabled={!canSubmit || isSubmitting}
-                      className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                    >
-                      {isSubmitting ? "Sprawdzanie..." : "Sprawdź odpowiedź"}
-                    </button>
-                  )}
+                <div className="flex justify-end mt-6">
+                  {renderActionButtons()}
                 </div>
               </div>
             )}

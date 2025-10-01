@@ -36,7 +36,7 @@ export const AiPointsCost: React.FC<AiPointsCostProps> = ({
   // Gdy NIE MA punktów
   if (!hasEnoughPoints) {
     return (
-      <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-lg p-4">
+      <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-lg p-4 ml-4">
         <div className="flex items-start gap-3 mb-3">
           <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5" />
           <div className="flex-1">
@@ -44,8 +44,7 @@ export const AiPointsCost: React.FC<AiPointsCostProps> = ({
               Brak punktów AI!
             </p>
             <p className="text-xs text-red-800 dark:text-red-200">
-              Potrzebujesz {cost} {cost === 1 ? "punktu" : "punktów"} aby
-              otrzymać ocenę AI dla tego zadania.
+              Doładuj konto i odblokuj zadania pisemne
             </p>
           </div>
         </div>
@@ -55,7 +54,7 @@ export const AiPointsCost: React.FC<AiPointsCostProps> = ({
           className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 font-semibold transition-all"
         >
           <ShoppingCart className="w-4 h-4" />
-          {isPremium ? "Dokup punkty AI" : "Wykup subskrypcję Premium"}
+          {isPremium ? "Dokup punkty\u00A0AI" : "Wykup subskrypcję Premium"}
         </Link>
       </div>
     );

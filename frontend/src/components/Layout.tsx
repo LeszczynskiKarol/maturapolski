@@ -94,12 +94,12 @@ export const Layout: React.FC = () => {
 
       {/* Desktop Sidebar */}
       <div
-        className={`hidden lg:block fixed inset-y-0 left-0 bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 ${
+        className={`hidden lg:flex flex-col fixed inset-y-0 left-0 bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 ${
           isSidebarCollapsed ? "w-16" : "w-64"
         }`}
       >
         {/* Logo Section */}
-        <div className="p-6 border-b dark:border-gray-700">
+        <div className="flex-shrink-0 p-6 border-b dark:border-gray-700">
           <div className="flex items-center justify-between">
             <h1
               className={`text-2xl font-bold text-blue-600 dark:text-blue-400 transition-opacity ${
@@ -120,82 +120,85 @@ export const Layout: React.FC = () => {
             </button>
           </div>
         </div>
+        <div className="flex-1 overflow-y-auto min-h-0">
+          {/* Navigation */}
+          <nav className="px-3 py-4">
+            {navigation.map((item) => {
+              const isActive = location.pathname === item.href;
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`flex items-center gap-3 px-3 py-2.5 mb-1 rounded-lg transition-all ${
+                    isActive
+                      ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  }`}
+                  title={isSidebarCollapsed ? item.name : undefined}
+                >
+                  <item.icon className="w-5 h-5 flex-shrink-0" />
+                  {!isSidebarCollapsed && (
+                    <span className="font-medium">{item.name}</span>
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
 
-        {/* Navigation */}
-        <nav className="px-3 py-4">
-          {navigation.map((item) => {
-            const isActive = location.pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 mb-1 rounded-lg transition-all ${
-                  isActive
-                    ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
-                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-                }`}
-                title={isSidebarCollapsed ? item.name : undefined}
-              >
-                <item.icon className="w-5 h-5 flex-shrink-0" />
-                {!isSidebarCollapsed && (
-                  <span className="font-medium">{item.name}</span>
-                )}
-              </Link>
-            );
-          })}
-        </nav>
+          {/* AI Points Widget */}
+          {!isSidebarCollapsed && (
+            <div className="px-6 py-3 border-t dark:border-gray-700">
+              <AiPointsWidget />
+            </div>
+          )}
 
-        {/* AI Points Widget */}
-        {!isSidebarCollapsed && (
-          <div className="px-6 py-3 border-t dark:border-gray-700">
-            <AiPointsWidget />
-          </div>
-        )}
-
-        {/* Quick Stats - only when expanded */}
-        {!isSidebarCollapsed && (
-          <div className="px-6 py-4 border-t dark:border-gray-700">
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  Twój poziom
-                </span>
-                <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                  {levelProgress?.currentMaxDifficulty || 2}/5
-                </span>
-              </div>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                <div
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full transition-all duration-500"
-                  style={{ width: `${levelProgress?.nextLevelProgress || 0}%` }}
-                />
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  Do poziomu {levelProgress?.nextLevel || 3}
-                </span>
-                <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                  {levelProgress?.pointsNeeded || 100} pkt
-                </span>
+          {/* Quick Stats - only when expanded */}
+          {!isSidebarCollapsed && (
+            <div className="px-6 py-4 border-t dark:border-gray-700">
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    Twój poziom
+                  </span>
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                    {levelProgress?.currentMaxDifficulty || 2}/5
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full transition-all duration-500"
+                    style={{
+                      width: `${levelProgress?.nextLevelProgress || 0}%`,
+                    }}
+                  />
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    Do poziomu {levelProgress?.nextLevel || 3}
+                  </span>
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                    {levelProgress?.pointsNeeded || 100} pkt
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Desktop Theme Switcher */}
-        {!isSidebarCollapsed && (
-          <div className="px-6 py-2 border-t dark:border-gray-700">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                Motyw
-              </span>
-              <ThemeToggle />
+          {/* Desktop Theme Switcher */}
+          {!isSidebarCollapsed && (
+            <div className="px-6 py-2 border-t dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Motyw
+                </span>
+                <ThemeToggle />
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* User Section */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t dark:border-gray-700">
+        <div className="flex-shrink-0 p-4 border-t dark:border-gray-700 bg-white dark:bg-gray-800">
           <div
             className={`flex items-center gap-3 mb-3 ${
               isSidebarCollapsed ? "justify-center" : ""
