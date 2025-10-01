@@ -1,10 +1,10 @@
 // frontend/src/features/admin/UserManager.tsx
 
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
+import { SubscriptionEditor } from "./SubscriptionEditor";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Search,
-  Filter,
   UserPlus,
   Edit2,
   Trash2,
@@ -13,10 +13,8 @@ import {
   Eye,
   Download,
   RefreshCw,
-  AlertCircle,
-  TrendingUp,
-  TrendingDown,
-  Minus,
+  CreditCard,
+  Zap,
   Clock,
   Award,
   BookOpen,
@@ -29,7 +27,6 @@ import {
   Lock,
   Unlock,
   Settings,
-  X,
 } from "lucide-react";
 import { api } from "../../services/api";
 import { UserDetailsModal } from "./UserDetailsModal";
@@ -61,6 +58,15 @@ interface UserData {
     difficulty4Points: number;
     difficulty5Points: number;
   };
+  subscription?: {
+    // DODAJ TO
+    id: string;
+    plan: "FREE" | "PREMIUM";
+    status: string;
+    aiPointsUsed: number;
+    aiPointsLimit: number;
+    aiPointsReset: string;
+  };
   stats: {
     totalSubmissions: number;
     totalSessions: number;
@@ -80,6 +86,11 @@ export const UserManager: React.FC = () => {
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
+
+  const [subscriptionEditorUser, setSubscriptionEditorUser] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   // Modals
   const [detailsModalUser, setDetailsModalUser] = useState<string | null>(null);
@@ -110,29 +121,6 @@ export const UserManager: React.FC = () => {
         },
       });
       return response.data;
-    },
-  });
-
-  // Update user role mutation
-  const updateRoleMutation = useMutation({
-    mutationFn: async ({
-      userId,
-      role,
-    }: {
-      userId: string;
-      role: "ADMIN" | "STUDENT";
-    }) => {
-      const response = await api.put(`/api/admin/users/${userId}/role`, {
-        role,
-      });
-      return response.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
-      toast.success("Rola użytkownika została zaktualizowana");
-    },
-    onError: () => {
-      toast.error("Błąd podczas aktualizacji roli");
     },
   });
 
@@ -197,18 +185,6 @@ export const UserManager: React.FC = () => {
       setSelectedUsers(new Set());
     } else {
       setSelectedUsers(new Set(users.map((u: UserData) => u.id)));
-    }
-  };
-
-  // Get trend icon
-  const getTrendIcon = (direction: string) => {
-    switch (direction) {
-      case "up":
-        return <TrendingUp className="w-4 h-4 text-green-500" />;
-      case "down":
-        return <TrendingDown className="w-4 h-4 text-red-500" />;
-      default:
-        return <Minus className="w-4 h-4 text-gray-400" />;
     }
   };
 
@@ -454,6 +430,9 @@ export const UserManager: React.FC = () => {
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Odblokowane poziomy
                 </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Subskrypcja i AI
+                </th>
                 <th
                   onClick={() => handleSort("createdAt")}
                   className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
@@ -596,6 +575,42 @@ export const UserManager: React.FC = () => {
                         ))}
                       </div>
                     </td>
+                    <td className="px-4 py-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <CreditCard className="w-4 h-4 text-gray-400" />
+                          <span
+                            className={`text-sm font-medium ${
+                              user.subscription?.plan === "PREMIUM"
+                                ? "text-yellow-600"
+                                : "text-gray-600"
+                            }`}
+                          >
+                            {user.subscription?.plan || "FREE"}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Zap className="w-4 h-4 text-yellow-500" />
+                          <span className="text-sm">
+                            {user.subscription?.aiPointsUsed || 0} /{" "}
+                            {user.subscription?.aiPointsLimit || 20}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() =>
+                            setSubscriptionEditorUser({
+                              id: user.id,
+                              name: `${user.firstName} ${user.lastName}`,
+                            })
+                          }
+                          className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                        >
+                          <Settings className="w-3 h-3" />
+                          Zarządzaj
+                        </button>
+                      </div>
+                    </td>
+
                     <td className="px-4 py-4">
                       <div className="space-y-2 text-sm">
                         <div className="flex items-center gap-2">
@@ -750,6 +765,17 @@ export const UserManager: React.FC = () => {
           onSuccess={() => {
             queryClient.invalidateQueries({ queryKey: ["admin-users"] });
             setEditProgressUser(null);
+          }}
+        />
+      )}
+      {subscriptionEditorUser && (
+        <SubscriptionEditor
+          userId={subscriptionEditorUser.id}
+          userName={subscriptionEditorUser.name}
+          onClose={() => setSubscriptionEditorUser(null)}
+          onSuccess={() => {
+            queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+            setSubscriptionEditorUser(null);
           }}
         />
       )}

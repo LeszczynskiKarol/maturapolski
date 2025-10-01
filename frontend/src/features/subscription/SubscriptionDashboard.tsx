@@ -11,9 +11,12 @@ import {
   AlertCircle,
   CheckCircle,
   ExternalLink,
+  ShoppingCart,
+  Sparkles,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 interface SubscriptionStatus {
   plan: "FREE" | "PREMIUM";
@@ -26,10 +29,46 @@ interface SubscriptionStatus {
   endDate?: string;
 }
 
+interface PointsPackage {
+  id: string;
+  name: string;
+  points: number;
+  price: number;
+  pricePerPoint: number;
+  description: string;
+  badge?: string;
+}
+
 export const SubscriptionDashboard: React.FC = () => {
   const [isUpgrading, setIsUpgrading] = useState(false);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
-  // Pobierz status subskrypcji
+  // Sprawdź czy wróciliśmy z Stripe
+  useEffect(() => {
+    const sessionId = searchParams.get("session_id");
+    const pointsAdded = searchParams.get("points_added");
+
+    if (sessionId) {
+      api
+        .get(`/api/subscription/verify-session/${sessionId}`)
+        .then(() => {
+          toast.success("Płatność zakończona pomyślnie!");
+          refetch();
+          refetchAiUsage();
+          navigate("/subscription", { replace: true });
+        })
+        .catch((error) => {
+          toast.error("Błąd weryfikacji płatności");
+          console.error(error);
+        });
+    } else if (pointsAdded) {
+      toast.success("Punkty AI zostały doładowane!");
+      refetch();
+      navigate("/subscription", { replace: true });
+    }
+  }, [searchParams]);
+
   const { data: subscription, refetch } = useQuery({
     queryKey: ["subscription-status"],
     queryFn: () =>
@@ -38,13 +77,17 @@ export const SubscriptionDashboard: React.FC = () => {
         .then((r) => r.data as SubscriptionStatus),
   });
 
-  // Pobierz statystyki użycia AI
-  const { data: aiUsage } = useQuery({
+  const { data: aiUsage, refetch: refetchAiUsage } = useQuery({
     queryKey: ["ai-usage"],
     queryFn: () => api.get("/api/subscription/ai-usage").then((r) => r.data),
   });
 
-  // Mutation do upgrade'u
+  const { data: pointsPackages } = useQuery<PointsPackage[]>({
+    queryKey: ["points-packages"],
+    queryFn: () =>
+      api.get("/api/subscription/points-packages").then((r) => r.data),
+  });
+
   const upgradeMutation = useMutation({
     mutationFn: async () => {
       const { data } = await api.post("/api/subscription/create-checkout", {
@@ -53,7 +96,6 @@ export const SubscriptionDashboard: React.FC = () => {
       return data;
     },
     onSuccess: (data) => {
-      // Proste przekierowanie - backend zwraca gotowy URL
       if (data.url) {
         window.location.href = data.url;
       }
@@ -65,7 +107,23 @@ export const SubscriptionDashboard: React.FC = () => {
     },
   });
 
-  // Mutation do anulowania
+  const buyPointsMutation = useMutation({
+    mutationFn: async (packageId: string) => {
+      const { data } = await api.post("/api/subscription/buy-points", {
+        pointsPackage: packageId,
+      });
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.error || "Błąd podczas zakupu punktów");
+    },
+  });
+
   const cancelMutation = useMutation({
     mutationFn: () => api.post("/api/subscription/cancel"),
     onSuccess: () => {
@@ -76,7 +134,6 @@ export const SubscriptionDashboard: React.FC = () => {
     },
   });
 
-  // Mutation do wznowienia
   const resumeMutation = useMutation({
     mutationFn: () => api.post("/api/subscription/resume"),
     onSuccess: () => {
@@ -85,7 +142,6 @@ export const SubscriptionDashboard: React.FC = () => {
     },
   });
 
-  // Portal zarządzania Stripe
   const openPortalMutation = useMutation({
     mutationFn: () => api.post("/api/subscription/create-portal-session"),
     onSuccess: (response: any) => {
@@ -102,9 +158,17 @@ export const SubscriptionDashboard: React.FC = () => {
     }
   };
 
+  const handleBuyPoints = async (packageId: string) => {
+    try {
+      await buyPointsMutation.mutateAsync(packageId);
+    } catch (error) {
+      console.error("Error buying points:", error);
+    }
+  };
+
   if (!subscription) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex items-center justify-center h-screen">
         <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full" />
       </div>
     );
@@ -141,13 +205,13 @@ export const SubscriptionDashboard: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         className={`rounded-2xl p-6 ${
           isPremium
-            ? "bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-2 border-yellow-400"
+            ? "bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-2 border-yellow-400 dark:border-yellow-600"
             : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
         }`}
       >
         <div className="flex items-start justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold mb-2">
+            <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">
               {isPremium ? "Plan Premium" : "Plan Free"}
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
@@ -159,14 +223,18 @@ export const SubscriptionDashboard: React.FC = () => {
 
           {isPremium ? (
             <div className="text-right">
-              <p className="text-3xl font-bold">49 zł</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                49 zł
+              </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 /miesiąc
               </p>
             </div>
           ) : (
             <div className="text-right">
-              <p className="text-3xl font-bold">0 zł</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                0 zł
+              </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">zawsze</p>
             </div>
           )}
@@ -177,7 +245,9 @@ export const SubscriptionDashboard: React.FC = () => {
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <Zap className="w-5 h-5 text-yellow-500" />
-              <span className="font-semibold">Punkty AI</span>
+              <span className="font-semibold text-gray-900 dark:text-white">
+                Punkty AI
+              </span>
             </div>
             <span className="text-sm text-gray-600 dark:text-gray-400">
               {subscription.aiPointsUsed} / {subscription.aiPointsLimit} (
@@ -218,19 +288,25 @@ export const SubscriptionDashboard: React.FC = () => {
             <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
               Krótkie odpowiedzi
             </p>
-            <p className="text-lg font-bold">1 pkt</p>
+            <p className="text-lg font-bold text-gray-900 dark:text-white">
+              1 pkt
+            </p>
           </div>
           <div className="text-center p-3 bg-white/50 dark:bg-gray-700/50 rounded-lg">
             <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
               Notatki
             </p>
-            <p className="text-lg font-bold">1 pkt</p>
+            <p className="text-lg font-bold text-gray-900 dark:text-white">
+              1 pkt
+            </p>
           </div>
           <div className="text-center p-3 bg-white/50 dark:bg-gray-700/50 rounded-lg">
             <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
               Wypracowania
             </p>
-            <p className="text-lg font-bold">3 pkt</p>
+            <p className="text-lg font-bold text-gray-900 dark:text-white">
+              3 pkt
+            </p>
           </div>
         </div>
 
@@ -246,8 +322,7 @@ export const SubscriptionDashboard: React.FC = () => {
                 <p className="text-sm text-orange-800 dark:text-orange-200">
                   Pozostało tylko{" "}
                   {subscription.aiPointsLimit - subscription.aiPointsUsed}{" "}
-                  punktów. Rozważ upgrade do Premium, aby kontynuować naukę bez
-                  ograniczeń.
+                  punktów. Rozważ upgrade do Premium lub kup dodatkowe punkty.
                 </p>
               </div>
             </div>
@@ -328,10 +403,92 @@ export const SubscriptionDashboard: React.FC = () => {
         </div>
       </motion.div>
 
+      {/* Pakiety punktów */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-2 mb-4">
+          <ShoppingCart className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+            Kup dodatkowe punkty AI
+          </h3>
+        </div>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          Potrzebujesz więcej punktów? Kup jednorazowy pakiet bez zobowiązań.
+        </p>
+
+        <div className="grid md:grid-cols-3 gap-4">
+          {pointsPackages?.map((pkg) => (
+            <motion.div
+              key={pkg.id}
+              whileHover={{ scale: 1.02 }}
+              className={`relative p-6 rounded-xl border-2 ${
+                pkg.badge
+                  ? "border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20"
+                  : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+              }`}
+            >
+              {pkg.badge && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full">
+                  {pkg.badge}
+                </div>
+              )}
+
+              <div className="text-center mb-4">
+                <Sparkles className="w-8 h-8 mx-auto mb-2 text-yellow-500" />
+                <h4 className="text-lg font-bold text-gray-900 dark:text-white">
+                  {pkg.name}
+                </h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  {pkg.description}
+                </p>
+              </div>
+
+              <div className="text-center mb-4">
+                <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                  {pkg.points}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  punktów AI
+                </p>
+              </div>
+
+              <div className="text-center mb-4">
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                  {pkg.price} zł
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  ({pkg.pricePerPoint.toFixed(2)} zł/punkt)
+                </p>
+              </div>
+
+              <button
+                onClick={() => handleBuyPoints(pkg.id)}
+                disabled={buyPointsMutation.isPending}
+                className={`w-full px-4 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 ${
+                  pkg.badge
+                    ? "bg-blue-600 hover:bg-blue-700 text-white"
+                    : "bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 text-white"
+                } disabled:opacity-50 transition-colors`}
+              >
+                {buyPointsMutation.isPending ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <ShoppingCart className="w-4 h-4" />
+                    Kup teraz
+                  </>
+                )}
+              </button>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
       {/* Usage Stats */}
       {aiUsage && (
         <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-          <h3 className="text-xl font-bold mb-4">Statystyki użycia AI</h3>
+          <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+            Statystyki użycia AI
+          </h3>
 
           <div className="grid grid-cols-4 gap-4 mb-6">
             <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
@@ -368,9 +525,10 @@ export const SubscriptionDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Recent usage */}
           <div>
-            <h4 className="font-semibold mb-3">Ostatnie użycia AI</h4>
+            <h4 className="font-semibold mb-3 text-gray-900 dark:text-white">
+              Ostatnie użycia AI
+            </h4>
             <div className="space-y-2">
               {aiUsage.recentUsage.slice(0, 5).map((usage: any) => (
                 <div
@@ -379,7 +537,7 @@ export const SubscriptionDashboard: React.FC = () => {
                 >
                   <div className="flex items-center gap-3">
                     <Zap className="w-4 h-4 text-yellow-500" />
-                    <span className="text-sm font-medium">
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
                       {usage.exerciseType}
                     </span>
                   </div>
@@ -399,12 +557,16 @@ export const SubscriptionDashboard: React.FC = () => {
       {/* Benefits comparison */}
       {!isPremium && (
         <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-6 border-2 border-blue-200 dark:border-blue-800">
-          <h3 className="text-xl font-bold mb-4">Dlaczego Premium?</h3>
+          <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+            Dlaczego Premium?
+          </h3>
           <div className="grid md:grid-cols-2 gap-4">
             <div className="flex items-start gap-3">
               <CheckCircle className="w-5 h-5 text-green-500 mt-1" />
               <div>
-                <p className="font-semibold">300 punktów AI miesięcznie</p>
+                <p className="font-semibold text-gray-900 dark:text-white">
+                  300 punktów AI miesięcznie
+                </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   15x więcej niż w planie Free
                 </p>
@@ -413,7 +575,7 @@ export const SubscriptionDashboard: React.FC = () => {
             <div className="flex items-start gap-3">
               <CheckCircle className="w-5 h-5 text-green-500 mt-1" />
               <div>
-                <p className="font-semibold">
+                <p className="font-semibold text-gray-900 dark:text-white">
                   Nieograniczone zadania zamknięte
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -424,7 +586,9 @@ export const SubscriptionDashboard: React.FC = () => {
             <div className="flex items-start gap-3">
               <CheckCircle className="w-5 h-5 text-green-500 mt-1" />
               <div>
-                <p className="font-semibold">Szczegółowy feedback AI</p>
+                <p className="font-semibold text-gray-900 dark:text-white">
+                  Szczegółowy feedback AI
+                </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Dla wszystkich typów zadań
                 </p>
@@ -433,7 +597,9 @@ export const SubscriptionDashboard: React.FC = () => {
             <div className="flex items-start gap-3">
               <CheckCircle className="w-5 h-5 text-green-500 mt-1" />
               <div>
-                <p className="font-semibold">Priorytetowe wsparcie</p>
+                <p className="font-semibold text-gray-900 dark:text-white">
+                  Priorytetowe wsparcie
+                </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Szybsza pomoc techniczna
                 </p>

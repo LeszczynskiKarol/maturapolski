@@ -478,6 +478,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
           include: {
             profile: true,
             levelProgress: true,
+            subscription: true,
             submissions: {
               take: 5,
               orderBy: { createdAt: "desc" },
@@ -655,6 +656,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
             where: { userId },
             _avg: { score: true },
             _count: true,
+            orderBy: { exerciseId: "asc" },
           }),
           // Postępy w epokach
           prisma.exercise.findMany({
@@ -1007,9 +1009,13 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
       // Process level distribution - FIXED TYPE ISSUE
       const levelDistributionMap: Record<number, number> = {};
       levelDistribution.forEach((item) => {
-        // _count is either a number or an object with field counts
-        const count =
-          typeof item._count === "number" ? item._count : item._count._all || 0;
+        // Poprawna obsługa _count
+        let count = 0;
+        if (typeof item._count === "number") {
+          count = item._count;
+        } else if (item._count && typeof item._count === "object") {
+          count = "_all" in item._count ? item._count._all || 0 : 0;
+        }
         levelDistributionMap[item.level] = count;
       });
 
@@ -1149,7 +1155,11 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
           results.push(result);
         } catch (error) {
           console.error(`Error updating user ${userId}:`, error);
-          results.push({ userId, success: false, error: error.message });
+          results.push({
+            userId,
+            success: false,
+            error: error instanceof Error ? error.message : String(error),
+          });
         }
       }
 
@@ -1426,4 +1436,202 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
       percentage: Math.round(Math.abs(change)),
     };
   }
+  // GET subscription details for user
+  fastify.get<{ Params: { userId: string } }>(
+    "/users/:userId/subscription",
+    async (request, reply) => {
+      try {
+        const { userId } = request.params;
+
+        const subscription = await prisma.subscription.findUnique({
+          where: { userId },
+          include: {
+            _count: {
+              select: {
+                aiUsage: true,
+              },
+            },
+          },
+        });
+
+        if (!subscription) {
+          return reply.send({
+            userId,
+            plan: "FREE",
+            status: "INACTIVE",
+            aiPointsUsed: 0,
+            aiPointsLimit: 20,
+            aiPointsReset: new Date(),
+            totalAiCalls: 0,
+          });
+        }
+
+        return reply.send({
+          ...subscription,
+          totalAiCalls: subscription._count.aiUsage,
+        });
+      } catch (error) {
+        console.error("Error fetching subscription:", error);
+        return reply.code(500).send({ error: "Failed to fetch subscription" });
+      }
+    }
+  );
+
+  // PUT update subscription for user
+  fastify.put<{
+    Params: { userId: string };
+    Body: {
+      plan?: "FREE" | "PREMIUM";
+      status?: "ACTIVE" | "INACTIVE" | "CANCELED" | "PAST_DUE";
+      aiPointsLimit?: number;
+      aiPointsUsed?: number;
+      resetPoints?: boolean;
+    };
+  }>("/users/:userId/subscription", async (request, reply) => {
+    try {
+      const { userId } = request.params;
+      const { plan, status, aiPointsLimit, aiPointsUsed, resetPoints } =
+        request.body;
+
+      // Get or create subscription
+      let subscription = await prisma.subscription.findUnique({
+        where: { userId },
+      });
+
+      if (!subscription) {
+        subscription = await prisma.subscription.create({
+          data: {
+            userId,
+            status: status || "INACTIVE",
+            plan: plan || "FREE",
+            aiPointsLimit: aiPointsLimit || 20,
+            aiPointsUsed: 0,
+            aiPointsReset: new Date(),
+          },
+        });
+      } else {
+        const updateData: any = {};
+
+        if (plan !== undefined) {
+          updateData.plan = plan;
+          // Auto-set limits based on plan
+          if (plan === "FREE") {
+            updateData.aiPointsLimit = 20;
+            updateData.status = "INACTIVE";
+          } else if (plan === "PREMIUM") {
+            updateData.aiPointsLimit = 300;
+            updateData.status = "ACTIVE";
+          }
+        }
+
+        if (status !== undefined) updateData.status = status;
+        if (aiPointsLimit !== undefined)
+          updateData.aiPointsLimit = aiPointsLimit;
+        if (aiPointsUsed !== undefined) updateData.aiPointsUsed = aiPointsUsed;
+
+        if (resetPoints) {
+          updateData.aiPointsUsed = 0;
+          updateData.aiPointsReset = new Date();
+        }
+
+        subscription = await prisma.subscription.update({
+          where: { id: subscription.id },
+          data: updateData,
+        });
+      }
+
+      return reply.send({
+        success: true,
+        subscription,
+      });
+    } catch (error) {
+      console.error("Error updating subscription:", error);
+      return reply.code(500).send({ error: "Failed to update subscription" });
+    }
+  });
+
+  // POST add AI points to user
+  fastify.post<{
+    Params: { userId: string };
+    Body: {
+      pointsToAdd: number;
+      reason?: string;
+    };
+  }>("/users/:userId/add-points", async (request, reply) => {
+    try {
+      const { userId } = request.params;
+      const { pointsToAdd, reason } = request.body;
+
+      if (!pointsToAdd || pointsToAdd < 0) {
+        return reply.code(400).send({ error: "Invalid points amount" });
+      }
+
+      const subscription = await prisma.subscription.findUnique({
+        where: { userId },
+      });
+
+      if (!subscription) {
+        return reply.code(404).send({ error: "Subscription not found" });
+      }
+
+      // Add points to limit
+      const updated = await prisma.subscription.update({
+        where: { id: subscription.id },
+        data: {
+          aiPointsLimit: { increment: pointsToAdd },
+        },
+      });
+
+      // Create notification
+      await prisma.notification.create({
+        data: {
+          userId,
+          type: "ADMIN_MESSAGE",
+          title: "Dodano punkty AI",
+          message:
+            reason ||
+            `Administrator dodał ${pointsToAdd} punktów AI do Twojego konta.`,
+        },
+      });
+
+      return reply.send({
+        success: true,
+        subscription: updated,
+        pointsAdded: pointsToAdd,
+      });
+    } catch (error) {
+      console.error("Error adding points:", error);
+      return reply.code(500).send({ error: "Failed to add points" });
+    }
+  });
+
+  // GET AI usage history for user
+  fastify.get<{ Params: { userId: string } }>(
+    "/users/:userId/ai-usage",
+    async (request, reply) => {
+      try {
+        const { userId } = request.params;
+
+        const usage = await prisma.aiUsage.findMany({
+          where: { userId },
+          orderBy: { createdAt: "desc" },
+          take: 50,
+          include: {
+            exercise: {
+              select: {
+                question: true,
+                type: true,
+                difficulty: true,
+              },
+            },
+          },
+        });
+
+        return reply.send(usage);
+      } catch (error) {
+        console.error("Error fetching AI usage:", error);
+        return reply.code(500).send({ error: "Failed to fetch AI usage" });
+      }
+    }
+  );
 }

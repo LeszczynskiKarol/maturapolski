@@ -60,6 +60,43 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
       }
     });
 
+    protectedRoutes.get(
+      "/verify-session/:sessionId",
+      async (request, reply) => {
+        const { sessionId } = request.params as { sessionId: string };
+        const userId = (request.user as any).userId;
+
+        try {
+          const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+          if (session.metadata?.userId !== userId) {
+            return reply.code(403).send({ error: "Unauthorized" });
+          }
+
+          // Jeśli sesja zakończona pomyślnie, odśwież subskrypcję
+          if (session.payment_status === "paid") {
+            const subscription =
+              await subscriptionService.getOrCreateSubscription(userId);
+            return reply.send({
+              success: true,
+              subscription: {
+                plan: subscription.plan,
+                status: subscription.status,
+                aiPointsLimit: subscription.aiPointsLimit,
+              },
+            });
+          }
+
+          return reply.send({
+            success: false,
+            message: "Payment not completed",
+          });
+        } catch (error: any) {
+          return reply.code(500).send({ error: error.message });
+        }
+      }
+    );
+
     // Pobierz status subskrypcji
     protectedRoutes.get("/status", async (request, reply) => {
       const userId = (request.user as any).userId;

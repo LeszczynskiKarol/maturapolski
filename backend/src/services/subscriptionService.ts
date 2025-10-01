@@ -230,9 +230,14 @@ export class SubscriptionService {
 
     switch (event.type) {
       case "checkout.session.completed":
-        await this.handleCheckoutCompleted(
-          event.data.object as Stripe.Checkout.Session
-        );
+        const session = event.data.object as Stripe.Checkout.Session;
+
+        // Sprawdź czy to zakup subskrypcji czy punktów
+        if (session.mode === "payment") {
+          await this.handlePointsPurchaseCompleted(session);
+        } else if (session.mode === "subscription") {
+          await this.handleCheckoutCompleted(session);
+        }
         break;
 
       case "customer.subscription.updated":
@@ -240,18 +245,6 @@ export class SubscriptionService {
         await this.handleSubscriptionUpdated(
           event.data.object as Stripe.Subscription
         );
-        break;
-      case "checkout.session.completed":
-        const session = event.data.object as Stripe.Checkout.Session;
-
-        // Sprawdź czy to zakup subskrypcji czy punktów
-        if (session.mode === "payment") {
-          // To zakup punktów!
-          await this.handlePointsPurchaseCompleted(session);
-        } else if (session.mode === "subscription") {
-          // To subskrypcja - istniejący handler
-          await this.handleCheckoutCompleted(session);
-        }
         break;
 
       case "customer.subscription.deleted":

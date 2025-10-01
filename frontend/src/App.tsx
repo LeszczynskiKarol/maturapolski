@@ -93,7 +93,6 @@ export const App: React.FC = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/subscription" element={<SubscriptionDashboard />} />
 
             {/* Public Materials routes */}
             <Route path="/materialy" element={<MaterialsPage />} />
@@ -112,7 +111,6 @@ export const App: React.FC = () => {
               <Route path="exercises" element={<ExerciseManager />} />
               <Route path="users" element={<UserManager />} />
               <Route path="materials" element={<AdminMaterialsEditor />} />
-              {/* UŻYWAMY KOMPONENTÓW Z INTELIGENTNYM DOBOREM! */}
               <Route path="exams" element={<ExamStructureManager />} />
               <Route path="user-sessions" element={<UserSessionsTable />} />
             </Route>
@@ -131,6 +129,17 @@ export const App: React.FC = () => {
                   </ProtectedRoute>
                 }
               />
+
+              {/* ⚠️ PRZENIEŚ SUBSCRIPTION TUTAJ! */}
+              <Route
+                path="/subscription"
+                element={
+                  <ProtectedRoute>
+                    <SubscriptionDashboard />
+                  </ProtectedRoute>
+                }
+              />
+
               <Route
                 path="/exercises"
                 element={
@@ -155,7 +164,6 @@ export const App: React.FC = () => {
                   </ProtectedRoute>
                 }
               />
-              {/* EXAM ROUTES */}
               <Route
                 path="/exams"
                 element={
@@ -180,7 +188,6 @@ export const App: React.FC = () => {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/learn"
                 element={
