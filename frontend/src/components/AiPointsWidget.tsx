@@ -67,10 +67,6 @@ export const AiPointsWidget = () => {
           <span className="text-sm font-bold text-gray-900 dark:text-white">
             49 zł/miesiąc
           </span>
-          <div className="flex items-center gap-1 text-blue-600 dark:text-blue-400 text-xs font-semibold">
-            <span>Wykup Premium</span>
-            <TrendingUp className="w-3 h-3" />
-          </div>
         </div>
       </Link>
     );
