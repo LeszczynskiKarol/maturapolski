@@ -46,7 +46,7 @@ export const Layout: React.FC = () => {
     { name: "Nauka", href: "/learn", icon: Brain },
     { name: "Powtórki z epok", href: "/epoch-review", icon: Repeat }, // NOWY LINK
     { name: "Historia sesji", href: "/sessions", icon: Clock },
-    { name: "Zadania", href: "/exercises", icon: BookOpen },
+    //{ name: "Zadania", href: "/exercises", icon: BookOpen },
     //{ name: "Postępy", href: "/progress", icon: TrendingUp },
     //{ name: "Egzamin", href: "/exams", icon: FileText },
     { name: "Subskcypcja", href: "/subscription", icon: CreditCard },

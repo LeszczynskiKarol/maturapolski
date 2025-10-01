@@ -141,16 +141,6 @@ export const EpochReview: React.FC = () => {
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-6">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          Powtórki z epok literackich
-        </h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          Wybierz epokę, którą chcesz powtórzyć. System przygotuje dla Ciebie
-          sesję zadań z wybranego okresu.
-        </p>
-      </div>
-
       {/* OSTRZEŻENIE DLA FREE USERS */}
       {isFreeUser && (
         <div className="mb-6 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-2 border-yellow-400 dark:border-yellow-600 rounded-xl">

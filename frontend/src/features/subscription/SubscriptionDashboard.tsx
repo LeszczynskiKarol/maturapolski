@@ -11,6 +11,7 @@ import {
   AlertCircle,
   CheckCircle,
   ExternalLink,
+  AlertTriangle,
   ShoppingCart,
   Sparkles,
 } from "lucide-react";
@@ -202,6 +203,44 @@ export const SubscriptionDashboard: React.FC = () => {
           </div>
         )}
       </div>
+      {/* ALERT dla niskich punktów - NOWY */}
+      {isPremium && subscription.percentUsed >= 90 && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl p-6 shadow-lg"
+        >
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-white/20 rounded-lg">
+              <AlertTriangle className="w-8 h-8" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-xl font-bold mb-2">
+                Punkty AI prawie wyczerpane!
+              </h3>
+              <p className="text-white/90 mb-4">
+                Zostało tylko{" "}
+                {subscription.aiPointsLimit - subscription.aiPointsUsed}{" "}
+                punktów. Dokup pakiet aby kontynuować korzystanie z oceny AI dla
+                zadań pisemnych.
+              </p>
+              <button
+                onClick={() => {
+                  document
+                    .getElementById("buy-points-section")
+                    ?.scrollIntoView({
+                      behavior: "smooth",
+                    });
+                }}
+                className="px-6 py-3 bg-white text-red-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors flex items-center gap-2"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                Dokup punkty teraz
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Current Plan Card */}
       <motion.div
@@ -409,7 +448,10 @@ export const SubscriptionDashboard: React.FC = () => {
 
       {/* Pakiety punktów - TYLKO DLA PREMIUM */}
       {isPremium && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+        <div
+          id="buy-points-section"
+          className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700"
+        >
           <div className="flex items-center gap-2 mb-4">
             <ShoppingCart className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             <h3 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -488,7 +530,7 @@ export const SubscriptionDashboard: React.FC = () => {
             ))}
           </div>
 
-          <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg">
+          {/*<div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg">
             <div className="flex items-start gap-2">
               <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5" />
               <div className="text-sm text-gray-700 dark:text-gray-300">

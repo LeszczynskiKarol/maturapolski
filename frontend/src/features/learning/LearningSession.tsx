@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { UpgradePrompt } from "../../components/UpgradePrompt";
+import { useMemo } from "react";
 import { AiPointsCost } from "../../components/AiPointsCost";
 import { ConfirmExitDialog } from "../../components/ConfirmExitDialog";
 import { useSessionExit } from "../../hooks/useSessionExit";
@@ -98,6 +99,7 @@ export const LearningSession: React.FC = () => {
   });
   const [isLoadingNext, setIsLoadingNext] = useState(false);
   const [answer, setAnswer] = useState<any>(null);
+
   const [showFeedback, setShowFeedback] = useState(false);
   const [sessionComplete, setSessionComplete] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -224,6 +226,56 @@ export const LearningSession: React.FC = () => {
     }
   };
 
+  const canSubmit = useMemo(() => {
+    if (!currentExercise || !answer) return false;
+
+    switch (currentExercise.type) {
+      case "CLOSED_SINGLE":
+        return answer !== null && answer !== undefined;
+
+      case "CLOSED_MULTIPLE":
+        if (currentExercise.content?.matchingType) {
+          // Matching questions - sprawdź czy wszystkie połączone
+          return matches.length === currentExercise.content.leftColumn?.length;
+        }
+        if (currentExercise.content?.textWithGaps) {
+          // Gap-fill - sprawdź czy wszystkie luki wypełnione
+          return (
+            Array.isArray(answer) &&
+            answer.length === currentExercise.content.gaps?.length
+          );
+        }
+        // Regular multiple choice
+        return Array.isArray(answer) && answer.length > 0;
+
+      case "SHORT_ANSWER":
+        if (currentExercise.content?.steps) {
+          // Multi-step - sprawdź czy wszystkie kroki wypełnione
+          return (
+            Array.isArray(answer) &&
+            answer.length === currentExercise.content.steps.length &&
+            answer.every((a: string) => a && a.trim().length > 0)
+          );
+        }
+        // Regular short answer
+        return typeof answer === "string" && answer.trim().length > 0;
+
+      case "SYNTHESIS_NOTE":
+        return typeof answer === "string" && answer.trim().length > 10;
+
+      case "ESSAY":
+        const wordCount = (answer || "").split(/\s+/).filter(Boolean).length;
+        const minWords =
+          currentExercise.content?.wordLimit?.min ||
+          currentExercise.metadata?.wordLimit?.min ||
+          50;
+        return wordCount >= minWords;
+
+      default:
+        return false;
+    }
+  }, [currentExercise, answer, matches]);
+
   // Auto-łącz
   useEffect(() => {
     if (selectedLeft !== null && selectedRight !== null) {
@@ -271,7 +323,7 @@ export const LearningSession: React.FC = () => {
   useEffect(() => {
     if (sessionExit.isBlocked) {
       setShowExitDialog(true);
-      setPendingNavigation(sessionExit.nextLocation?.pathname || null);
+      setPendingNavigation(sessionExit.nextLocation || null);
     }
   }, [sessionExit.isBlocked, sessionExit.nextLocation]);
 
@@ -748,21 +800,18 @@ export const LearningSession: React.FC = () => {
       const hasFilters = Object.keys(sessionFilters).length > 0;
 
       if (hasFilters) {
-        // Ustaw filtry NA BACKENDZIE
         await api.post("/api/learning/session/filters", sessionFilters);
         setIsPlanSession(true);
 
         // Toast z informacją o typie sesji
-        if (sessionFilters.weekNumber) {
+        if (sessionFilters.epoch) {
           toast.success(
-            `📚 Rozpoczęto plan tygodniowy: Tydzień ${sessionFilters.weekNumber}`
-          );
-        } else if (sessionFilters.epoch) {
-          toast.success(
-            `🔄 Rozpoczęto powtórkę z epoki: ${getEpochLabel(
+            `🔄 Rozpoczęto sesję z filtrami: ${getEpochLabel(
               sessionFilters.epoch
             )}`
           );
+        } else {
+          toast.success(`📚 Rozpoczęto sesję z filtrami`);
         }
       } else {
         setIsPlanSession(false);
@@ -1317,6 +1366,7 @@ export const LearningSession: React.FC = () => {
                 <div className="mb-4">
                   <AiPointsCost
                     exerciseType={currentExercise.type}
+                    isPremium={subscription?.plan === "PREMIUM"}
                     hasEnoughPoints={hasEnoughPoints(currentExercise.type)}
                   />
                 </div>
@@ -2033,28 +2083,27 @@ export const LearningSession: React.FC = () => {
                 )}
 
                 <div className="flex justify-end">
-                  <button
-                    onClick={() => submitMutation.mutate({ answer })}
-                    disabled={
-                      answer === null ||
-                      answer === undefined ||
-                      answer === "" ||
-                      (Array.isArray(answer) && answer.length === 0) ||
-                      submitMutation.isPending
-                    }
-                    className="px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white rounded-lg 
-             hover:bg-blue-700 dark:hover:bg-blue-600 
-             disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {submitMutation.isPending
-                      ? "Sprawdzanie..."
-                      : "Sprawdź odpowiedź"}
-                  </button>
+                  {!hasEnoughPoints ? (
+                    <button
+                      onClick={handleSkip} // Ta sama funkcja co "Pomiń"
+                      className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition-colors flex items-center gap-2"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                      Kolejne pytanie
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleSubmit}
+                      disabled={!canSubmit || isSubmitting}
+                      className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    >
+                      {isSubmitting ? "Sprawdzanie..." : "Sprawdź odpowiedź"}
+                    </button>
+                  )}
                 </div>
               </div>
             )}
 
-            {/* Feedback section */}
             {/* Feedback section */}
             {showFeedback && submitMutation.data && (
               <motion.div
@@ -2781,7 +2830,7 @@ const SessionStart: React.FC<{
         )}
       </div>
 
-      {!isFreeUser && stats?.activeSessions?.length > 0 && (
+      {/*!isFreeUser && stats?.activeSessions?.length > 0 && (
         <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4 mb-4">
           <h3 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-3">
             Nieukończone sesje
@@ -2814,7 +2863,7 @@ const SessionStart: React.FC<{
             ))}
           </div>
         </div>
-      )}
+      )}*/}
 
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-6">
         <div className="flex justify-between items-center mb-4">

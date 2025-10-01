@@ -9,12 +9,9 @@ interface UseSessionExitProps {
   shouldBlock?: boolean;
 }
 
-/**
- * Hook obsługujący wyjście z aktywnej sesji
- * - Przechwytuje kliknięcia w linki i pokazuje dialog
- * - Obsługuje zamykanie karty/okna przeglądarki
- * - Działa z BrowserRouter (nie wymaga data router)
- */
+// ✅ DODAJ TO NA GÓRZE - ścieżki bez potwierdzenia
+const ALLOWED_PATHS = ["/subscription"];
+
 export const useSessionExit = ({
   isActive,
   onExit,
@@ -50,7 +47,6 @@ export const useSessionExit = ({
     if (!isActive || !shouldBlock || isExitingRef.current) return;
 
     const handleClick = (e: MouseEvent) => {
-      // Sprawdź czy kliknięto w link
       const target = e.target as HTMLElement;
       const link = target.closest("a");
 
@@ -58,14 +54,20 @@ export const useSessionExit = ({
 
       const href = link.getAttribute("href");
 
-      // Ignoruj zewnętrzne linki i akcje specjalne
       if (!href || href.startsWith("http") || href.startsWith("#")) return;
 
-      // Sprawdź czy to nawigacja do innej strony
       const currentPath = location.pathname;
       const targetPath = href;
 
       if (targetPath !== currentPath) {
+        // ✅ DODAJ TO - sprawdź whitelist
+        if (ALLOWED_PATHS.some((path) => targetPath.startsWith(path))) {
+          console.log("=== NAVIGATION ALLOWED (whitelist) ===");
+          console.log("To:", targetPath);
+          // Nie blokuj - pozwól na normalną nawigację
+          return;
+        }
+
         console.log("=== NAVIGATION BLOCKED ===");
         console.log("From:", currentPath, "To:", targetPath);
 
@@ -77,7 +79,6 @@ export const useSessionExit = ({
       }
     };
 
-    // Dodaj listener z capture: true aby przechwycić przed React Router
     document.addEventListener("click", handleClick, true);
 
     return () => {
@@ -85,7 +86,6 @@ export const useSessionExit = ({
     };
   }, [isActive, shouldBlock, location.pathname]);
 
-  // Funkcja do wykonania wyjścia
   const executeExit = useCallback(async () => {
     isExitingRef.current = true;
     try {
@@ -95,7 +95,6 @@ export const useSessionExit = ({
     }
   }, [onExit]);
 
-  // Funkcja do potwierdzenia wyjścia i nawigacji
   const confirmAndExit = useCallback(
     async (destination?: string) => {
       console.log("=== CONFIRM EXIT ===");
@@ -113,7 +112,6 @@ export const useSessionExit = ({
     [executeExit, navigate, pendingNavigation]
   );
 
-  // Funkcja do anulowania wyjścia
   const cancelExit = useCallback(() => {
     console.log("=== CANCEL EXIT ===");
     setIsBlocked(false);

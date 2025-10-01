@@ -200,7 +200,7 @@ export const SessionHistory: React.FC = () => {
       </div>
 
       {/* Nieukończone sesje */}
-      {data?.active?.length > 0 && (
+      {/*{data?.active?.length > 0 && (
         <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4 mb-6">
           <h3 className="font-semibold text-lg text-yellow-900 dark:text-yellow-100 mb-3">
             Nieukończone sesje ({data.active.length})
@@ -250,7 +250,7 @@ export const SessionHistory: React.FC = () => {
             ))}
           </div>
         </div>
-      )}
+      )}*/}
 
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 overflow-hidden">
         <div className="space-y-0">

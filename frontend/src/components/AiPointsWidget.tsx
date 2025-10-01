@@ -1,7 +1,14 @@
 // frontend/src/components/AiPointsWidget.tsx
 
 import { useQuery } from "@tanstack/react-query";
-import { Zap, Crown, TrendingUp, Lock } from "lucide-react";
+import {
+  Zap,
+  Crown,
+  TrendingUp,
+  Lock,
+  AlertTriangle,
+  ShoppingCart,
+} from "lucide-react";
 import { api } from "../services/api";
 import { Link } from "react-router-dom";
 
@@ -74,6 +81,7 @@ export const AiPointsWidget = () => {
     (subscription.aiPointsUsed / subscription.aiPointsLimit) * 100
   );
   const remaining = subscription.aiPointsLimit - subscription.aiPointsUsed;
+  const isLow = percentUsed >= 90; // Niskie punkty = 90%+ wykorzystane
 
   const getColor = () => {
     if (percentUsed >= 90) return "text-red-600 dark:text-red-400";
@@ -90,11 +98,19 @@ export const AiPointsWidget = () => {
   return (
     <Link
       to="/subscription"
-      className="block p-3 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg border border-blue-200 dark:border-blue-800 hover:shadow-md transition-all"
+      className={`block p-3 rounded-lg border transition-all ${
+        isLow
+          ? "bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 border-2 border-red-300 dark:border-red-700 hover:shadow-lg"
+          : "bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800 hover:shadow-md"
+      }`}
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Zap className="w-4 h-4 text-yellow-500" />
+          {isLow ? (
+            <AlertTriangle className="w-4 h-4 text-red-500 animate-bounce" />
+          ) : (
+            <Zap className="w-4 h-4 text-yellow-500" />
+          )}
           <span className="text-sm font-semibold text-gray-900 dark:text-white">
             Punkty AI
           </span>
@@ -116,7 +132,24 @@ export const AiPointsWidget = () => {
         />
       </div>
 
-      {percentUsed >= 90 && (
+      {isLow && (
+        <div className="mt-2 p-2 bg-red-100 dark:bg-red-900/40 border-2 border-red-300 dark:border-red-600 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" />
+            <p className="text-xs font-bold text-red-900 dark:text-red-100">
+              Doładuj punkty AI
+            </p>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
+              <ShoppingCart className="w-3 h-3" />
+              <span>Zamów teraz</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!isLow && percentUsed >= 70 && (
         <div className="mt-2 p-2 bg-orange-50 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-700 rounded text-xs">
           <p className="text-orange-800 dark:text-orange-200">
             Zostało {remaining} pkt
@@ -130,10 +163,6 @@ export const AiPointsWidget = () => {
           </p>
         </div>
       )}
-
-      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-        Zarządzaj subskrypcją
-      </p>
     </Link>
   );
 };
