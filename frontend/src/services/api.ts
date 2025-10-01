@@ -2,7 +2,16 @@
 import axios from "axios";
 import { useAuthStore } from "../store/authStore";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+console.log("=== ENV VARIABLES ===");
+console.log("import.meta.env.VITE_API_URL:", import.meta.env.VITE_API_URL);
+console.log("import.meta.env.MODE:", import.meta.env.MODE);
+console.log("import.meta.env.DEV:", import.meta.env.DEV);
+console.log("All env:", import.meta.env);
+console.log("=====================");
+
+const API_URL =
+  import.meta.env.VITE_API_URL || "https://server-reactapp.ngrok.app/";
+console.log("FINAL API_URL:", API_URL);
 
 export const api = axios.create({
   baseURL: API_URL,

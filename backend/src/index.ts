@@ -56,6 +56,7 @@ fastify.register(cors, {
     "http://localhost:3000",
     "http://localhost:5173",
     "https://app-reactapp.ngrok.app",
+    "https://server-reactapp.ngrok.app",
   ],
   credentials: true,
 });
