@@ -142,6 +142,10 @@ export const SubscriptionDashboard: React.FC = () => {
     },
   });
 
+  const hasManyPoints =
+    subscription &&
+    subscription.aiPointsLimit - subscription.aiPointsUsed > 100;
+
   const openPortalMutation = useMutation({
     mutationFn: () => api.post("/api/subscription/create-portal-session"),
     onSuccess: (response: any) => {
@@ -403,154 +407,170 @@ export const SubscriptionDashboard: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Pakiety punktów */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center gap-2 mb-4">
-          <ShoppingCart className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-            Kup dodatkowe punkty AI
-          </h3>
-        </div>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
-          Potrzebujesz więcej punktów? Kup jednorazowy pakiet bez zobowiązań.
-        </p>
-
-        <div className="grid md:grid-cols-3 gap-4">
-          {pointsPackages?.map((pkg) => (
-            <motion.div
-              key={pkg.id}
-              whileHover={{ scale: 1.02 }}
-              className={`relative p-6 rounded-xl border-2 ${
-                pkg.badge
-                  ? "border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20"
-                  : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
-              }`}
-            >
-              {pkg.badge && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full">
-                  {pkg.badge}
-                </div>
-              )}
-
-              <div className="text-center mb-4">
-                <Sparkles className="w-8 h-8 mx-auto mb-2 text-yellow-500" />
-                <h4 className="text-lg font-bold text-gray-900 dark:text-white">
-                  {pkg.name}
-                </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  {pkg.description}
-                </p>
-              </div>
-
-              <div className="text-center mb-4">
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                  {pkg.points}
-                </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  punktów AI
-                </p>
-              </div>
-
-              <div className="text-center mb-4">
-                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                  {pkg.price} zł
-                </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">
-                  ({pkg.pricePerPoint.toFixed(2)} zł/punkt)
-                </p>
-              </div>
-
-              <button
-                onClick={() => handleBuyPoints(pkg.id)}
-                disabled={buyPointsMutation.isPending}
-                className={`w-full px-4 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 ${
-                  pkg.badge
-                    ? "bg-blue-600 hover:bg-blue-700 text-white"
-                    : "bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 text-white"
-                } disabled:opacity-50 transition-colors`}
-              >
-                {buyPointsMutation.isPending ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <ShoppingCart className="w-4 h-4" />
-                    Kup teraz
-                  </>
-                )}
-              </button>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
-      {/* Usage Stats */}
-      {aiUsage && (
+      {/* Pakiety punktów - TYLKO DLA PREMIUM */}
+      {isPremium && (
         <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-          <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
-            Statystyki użycia AI
-          </h3>
-
-          <div className="grid grid-cols-4 gap-4 mb-6">
-            <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                {aiUsage.usage.totalCalls}
-              </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Wywołań AI
-              </p>
-            </div>
-            <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-              <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                {aiUsage.usage.totalPoints}
-              </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Punktów użytych
-              </p>
-            </div>
-            <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-              <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                {aiUsage.usage.byType.SHORT_ANSWER}
-              </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Krótkie odp.
-              </p>
-            </div>
-            <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-              <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
-                {aiUsage.usage.byType.ESSAY}
-              </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Wypracowania
-              </p>
-            </div>
+          <div className="flex items-center gap-2 mb-4">
+            <ShoppingCart className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+              Kup dodatkowe punkty AI
+            </h3>
           </div>
 
-          <div>
-            <h4 className="font-semibold mb-3 text-gray-900 dark:text-white">
-              Ostatnie użycia AI
-            </h4>
-            <div className="space-y-2">
-              {aiUsage.recentUsage.slice(0, 5).map((usage: any) => (
-                <div
-                  key={usage.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
-                >
-                  <div className="flex items-center gap-3">
-                    <Zap className="w-4 h-4 text-yellow-500" />
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      {usage.exerciseType}
-                    </span>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            Potrzebujesz więcej punktów? Kup jednorazowy pakiet bez zobowiązań.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-4">
+            {pointsPackages?.map((pkg) => (
+              <motion.div
+                key={pkg.id}
+                whileHover={{ scale: 1.02 }}
+                className={`relative p-6 rounded-xl border-2 ${
+                  pkg.badge
+                    ? "border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20"
+                    : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+                }`}
+              >
+                {pkg.badge && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full">
+                    {pkg.badge}
                   </div>
-                  <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-                    <span>{usage.pointsCost} pkt</span>
-                    <span>
-                      {new Date(usage.createdAt).toLocaleString("pl-PL")}
-                    </span>
-                  </div>
+                )}
+
+                <div className="text-center mb-4">
+                  <Sparkles className="w-8 h-8 mx-auto mb-2 text-yellow-500" />
+                  <h4 className="text-lg font-bold text-gray-900 dark:text-white">
+                    {pkg.name}
+                  </h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    {pkg.description}
+                  </p>
                 </div>
-              ))}
+
+                <div className="text-center mb-4">
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                    {pkg.points}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    punktów AI
+                  </p>
+                </div>
+
+                <div className="text-center mb-4">
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    {pkg.price} zł
+                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    ({pkg.pricePerPoint.toFixed(2)} zł/punkt)
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => handleBuyPoints(pkg.id)}
+                  disabled={buyPointsMutation.isPending}
+                  className={`w-full px-4 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 ${
+                    pkg.badge
+                      ? "bg-blue-600 hover:bg-blue-700 text-white"
+                      : "bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 text-white"
+                  } disabled:opacity-50 transition-colors`}
+                >
+                  {buyPointsMutation.isPending ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <ShoppingCart className="w-4 h-4" />
+                      Kup teraz
+                    </>
+                  )}
+                </button>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg">
+            <div className="flex items-start gap-2">
+              <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5" />
+              <div className="text-sm text-gray-700 dark:text-gray-300">
+                <p className="font-semibold mb-1">Masz już Plan Premium!</p>
+                <p>
+                  Te pakiety są opcjonalne - możesz je kupić jeśli potrzebujesz
+                  dodatkowych punktów ponad miesięczny limit 300 pkt.
+                </p>
+              </div>
             </div>
           </div>
+
+          {/* Usage Stats */}
+          {aiUsage && (
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+                Statystyki użycia AI
+              </h3>
+
+              <div className="grid grid-cols-4 gap-4 mb-6">
+                <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    {aiUsage.usage.totalCalls}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    Wywołań AI
+                  </p>
+                </div>
+                <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    {aiUsage.usage.totalPoints}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    Punktów użytych
+                  </p>
+                </div>
+                <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                    {aiUsage.usage.byType.SHORT_ANSWER}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    Krótkie odp.
+                  </p>
+                </div>
+                <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                    {aiUsage.usage.byType.ESSAY}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    Wypracowania
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-3 text-gray-900 dark:text-white">
+                  Ostatnie użycia AI
+                </h4>
+                <div className="space-y-2">
+                  {aiUsage.recentUsage.slice(0, 5).map((usage: any) => (
+                    <div
+                      key={usage.id}
+                      className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Zap className="w-4 h-4 text-yellow-500" />
+                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                          {usage.exerciseType}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                        <span>{usage.pointsCost} pkt</span>
+                        <span>
+                          {new Date(usage.createdAt).toLocaleString("pl-PL")}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

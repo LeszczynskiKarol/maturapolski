@@ -16,6 +16,7 @@ import {
   Trophy,
   User,
   X,
+  Repeat, // Dodana ikona dla powtórek
 } from "lucide-react";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
@@ -43,10 +44,11 @@ export const Layout: React.FC = () => {
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: Home },
     { name: "Nauka", href: "/learn", icon: Brain },
+    { name: "Powtórki z epok", href: "/epoch-review", icon: Repeat }, // NOWY LINK
     { name: "Historia sesji", href: "/sessions", icon: Clock },
     { name: "Zadania", href: "/exercises", icon: BookOpen },
-    { name: "Postępy", href: "/progress", icon: TrendingUp },
-    { name: "Egzamin", href: "/exams", icon: FileText },
+    //{ name: "Postępy", href: "/progress", icon: TrendingUp },
+    //{ name: "Egzamin", href: "/exams", icon: FileText },
     { name: "Subskcypcja", href: "/subscription", icon: CreditCard },
   ];
 
@@ -143,7 +145,7 @@ export const Layout: React.FC = () => {
           })}
         </nav>
 
-        {/* AI Points Widget - TUTAJ, POZA PĘTLĄ! */}
+        {/* AI Points Widget */}
         {!isSidebarCollapsed && (
           <div className="px-6 py-3 border-t dark:border-gray-700">
             <AiPointsWidget />
@@ -264,13 +266,15 @@ export const Layout: React.FC = () => {
                     Poziom
                   </span>
                   <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                    12
+                    {levelProgress?.currentMaxDifficulty || 2}/5
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                   <div
                     className="bg-blue-600 dark:bg-blue-400 h-2 rounded-full"
-                    style={{ width: "65%" }}
+                    style={{
+                      width: `${levelProgress?.nextLevelProgress || 0}%`,
+                    }}
                   />
                 </div>
                 <div className="flex justify-between items-center">
@@ -278,7 +282,7 @@ export const Layout: React.FC = () => {
                     Punkty XP
                   </span>
                   <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                    3,250
+                    {levelProgress?.pointsNeeded || 100} pkt
                   </span>
                 </div>
               </div>

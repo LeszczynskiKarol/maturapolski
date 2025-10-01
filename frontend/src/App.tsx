@@ -5,7 +5,6 @@ import { UserSessionsTable } from "./features/admin/UserSessionsTable";
 import { SubscriptionDashboard } from "./features/subscription/SubscriptionDashboard";
 import React, { useEffect } from "react";
 import { MatureExamViewer } from "./features/exams/MatureExamViewer";
-// UŻYWAMY KOMPONENTÓW KTÓRE JUŻ STWORZYLIŚMY!
 import { ExamStructureManager } from "./features/admin/exams/ExamStructureManager";
 import { ExamList } from "./features/exams/ExamList";
 import { ExamResults } from "./features/exams/ExamResults";
@@ -33,6 +32,7 @@ import { ExerciseSolver } from "./features/exercises/ExerciseSolver";
 import { LeaderboardPage } from "./features/gamification/LeaderboardPage";
 import { StudentDashboard } from "./features/student/Dashboard";
 import { ProgressTracker } from "./features/student/ProgressTracker";
+import { EpochReviewPage } from "./features/student/EpochReviewPage";
 
 // Admin
 import { AdminDashboard } from "./features/admin/AdminDashboard";
@@ -130,12 +130,22 @@ export const App: React.FC = () => {
                 }
               />
 
-              {/* ⚠️ PRZENIEŚ SUBSCRIPTION TUTAJ! */}
+              {/* Subscription */}
               <Route
                 path="/subscription"
                 element={
                   <ProtectedRoute>
                     <SubscriptionDashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Epoch Review - NOWA STRONA */}
+              <Route
+                path="/epoch-review"
+                element={
+                  <ProtectedRoute>
+                    <EpochReviewPage />
                   </ProtectedRoute>
                 }
               />

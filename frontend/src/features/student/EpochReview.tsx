@@ -1,4 +1,4 @@
-// frontend/src/features/student/EpochReview.tsx - Z BLOKADĄ DLA FREE USERS
+// frontend/src/features/student/EpochReview.tsx
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
