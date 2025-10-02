@@ -1,31 +1,25 @@
 // frontend/src/components/Layout.tsx
 
+import { useQuery } from "@tanstack/react-query";
 import {
-  Bell,
-  BookOpen,
   Brain,
   ChevronLeft,
-  CreditCard,
   Clock,
-  FileText,
+  CreditCard,
   Home,
   LogOut,
   Menu,
-  Settings,
-  TrendingUp,
-  Trophy,
+  Repeat,
   User,
   X,
-  Repeat, // Dodana ikona dla powtórek
 } from "lucide-react";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/authStore";
-import { ThemeToggle } from "./ThemeSwitcher";
-import { useQuery } from "@tanstack/react-query";
 import { api } from "../services/api";
+import { useAuthStore } from "../store/authStore";
 import { AiPointsWidget } from "./AiPointsWidget";
+import { ThemeToggle } from "./ThemeSwitcher";
 
 export const Layout: React.FC = () => {
   const location = useLocation();
@@ -76,18 +70,9 @@ export const Layout: React.FC = () => {
           <h1 className="text-xl font-bold text-blue-600 dark:text-blue-400">
             Matura Polski
           </h1>
+          {/* ✅ POPRAWIONE - ukryłem AiPointsWidget z mobile header */}
           <div className="flex items-center gap-2">
-            <AiPointsWidget />
             <ThemeToggle />
-            <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-              <Bell className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            </button>
-            <button
-              onClick={() => navigate("/settings")}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            </button>
           </div>
         </div>
       </div>
@@ -242,60 +227,67 @@ export const Layout: React.FC = () => {
             className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          <div className="lg:hidden fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-800 shadow-lg z-50 pt-16">
-            <nav className="px-3 py-4">
-              {navigation.map((item) => {
-                const isActive = location.pathname === item.href;
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2.5 mb-1 rounded-lg transition-colors ${
-                      isActive
-                        ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-                    }`}
-                  >
-                    <item.icon className="w-5 h-5" />
-                    <span className="font-medium">{item.name}</span>
-                  </Link>
-                );
-              })}
-            </nav>
+          <div className="lg:hidden fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-800 shadow-lg z-50 pt-16 flex flex-col">
+            <div className="flex-1 overflow-y-auto">
+              <nav className="px-3 py-4">
+                {navigation.map((item) => {
+                  const isActive = location.pathname === item.href;
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 mb-1 rounded-lg transition-colors ${
+                        isActive
+                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      }`}
+                    >
+                      <item.icon className="w-5 h-5" />
+                      <span className="font-medium">{item.name}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
 
-            {/* Mobile Stats */}
-            <div className="px-6 py-4 border-t dark:border-gray-700">
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    Poziom
-                  </span>
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                    {levelProgress?.currentMaxDifficulty || 2}/5
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                  <div
-                    className="bg-blue-600 dark:bg-blue-400 h-2 rounded-full"
-                    style={{
-                      width: `${levelProgress?.nextLevelProgress || 0}%`,
-                    }}
-                  />
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    Punkty XP
-                  </span>
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                    {levelProgress?.pointsNeeded || 100} pkt
-                  </span>
+              {/* ✅ DODANE - AiPointsWidget w mobile sidebar */}
+              <div className="px-6 py-3 border-t dark:border-gray-700">
+                <AiPointsWidget />
+              </div>
+
+              {/* Mobile Stats */}
+              <div className="px-6 py-4 border-t dark:border-gray-700">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      Poziom
+                    </span>
+                    <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                      {levelProgress?.currentMaxDifficulty || 2}/5
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div
+                      className="bg-blue-600 dark:bg-blue-400 h-2 rounded-full"
+                      style={{
+                        width: `${levelProgress?.nextLevelProgress || 0}%`,
+                      }}
+                    />
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      Punkty XP
+                    </span>
+                    <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                      {levelProgress?.pointsNeeded || 100} pkt
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Mobile User Section */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 border-t dark:border-gray-700 bg-white dark:bg-gray-800">
+            <div className="flex-shrink-0 p-4 border-t dark:border-gray-700 bg-white dark:bg-gray-800">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
                   <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />

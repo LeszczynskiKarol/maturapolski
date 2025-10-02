@@ -1,23 +1,24 @@
 // frontend/src/features/subscription/SubscriptionDashboard.tsx
 
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { api } from "../../services/api";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
-  Crown,
-  Zap,
-  TrendingUp,
-  CreditCard,
   AlertCircle,
-  CheckCircle,
-  ExternalLink,
   AlertTriangle,
+  CheckCircle,
+  ChevronLeft,
+  CreditCard,
+  Crown,
+  ExternalLink,
   ShoppingCart,
   Sparkles,
+  TrendingUp,
+  Zap,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { api } from "../../services/api";
 
 interface SubscriptionStatus {
   plan: "FREE" | "PREMIUM";
@@ -186,6 +187,17 @@ export const SubscriptionDashboard: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       {/* Header */}
+      <div className="mb-6">
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 
+                             hover:text-gray-900 dark:hover:text-white transition-colors mb-4"
+        >
+          <ChevronLeft className="w-5 h-5" />
+          Powrót
+        </button>
+      </div>
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">

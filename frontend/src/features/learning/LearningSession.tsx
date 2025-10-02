@@ -1,11 +1,6 @@
 // frontend/src/features/learning/LearningSession.tsx
 
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { UpgradePrompt } from "../../components/UpgradePrompt";
-import { useMemo } from "react";
-import { AiPointsCost } from "../../components/AiPointsCost";
-import { ConfirmExitDialog } from "../../components/ConfirmExitDialog";
-import { useSessionExit } from "../../hooks/useSessionExit";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import confetti from "canvas-confetti";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -13,13 +8,13 @@ import {
   Award,
   CheckCircle,
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   Clock,
-  Crown,
-  Lock,
   CreditCard,
-  Link,
+  Crown,
   Filter,
+  Lock,
   Play,
   SkipForward,
   Target,
@@ -28,11 +23,14 @@ import {
   X,
   XCircle,
 } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
+import { AiPointsCost } from "../../components/AiPointsCost";
+import { ConfirmExitDialog } from "../../components/ConfirmExitDialog";
+import { UpgradePrompt } from "../../components/UpgradePrompt";
+import { useSessionExit } from "../../hooks/useSessionExit";
 import { api } from "../../services/api";
-import { useQueryClient } from "@tanstack/react-query";
 
 const SESSION_LIMIT = 20;
 
@@ -393,7 +391,7 @@ export const LearningSession: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    if (!currentExercise || !answer) return;
+    if (!currentExercise || answer === null || answer === undefined) return; // ✅ POPRAWIONE
 
     // SPRAWDŹ PUNKTY PRZED SUBMITEM
     const needsAi =
@@ -542,7 +540,6 @@ export const LearningSession: React.FC = () => {
     );
   };
 
-  // Submit answer
   const submitMutation = useMutation({
     mutationFn: (data: any) =>
       api.post(`/api/exercises/${currentExercise.id}/submit`, data),
@@ -550,72 +547,76 @@ export const LearningSession: React.FC = () => {
       setIsSubmitting(false);
       queryClient.invalidateQueries({ queryKey: ["subscription-status"] });
 
-      setSubmissionResult(response.data);
-      setHasSubmitted(true);
-
       const result = response.data;
-
-      // KRYTYCZNE: Zapisz do sesji W BAZIE!
-      await api.post("/api/learning/session/update-completed", {
-        sessionId: sessionId,
-        exerciseId: currentExercise.id,
-        score: result.score,
-      });
-
-      // Dopiero potem lokalne state
-      setCompletedExercises((prev) => [
-        ...prev,
-        {
-          id: currentExercise.id,
-          score: result.score || 0,
-        },
-      ]);
+      setSubmissionResult(result);
 
       console.log("=== SUBMIT SUCCESS ===");
-      console.log("Exercise ID:", currentExercise.id);
-      console.log("Before update - completed:", completedExercises);
-      // Sprawdź czy już nie ma tego pytania
-      if (completedExercises.some((ex) => ex.id === currentExercise.id)) {
-        console.error("DUPLICATE! Exercise already in completed!");
+      console.log("Exercise ID:", currentExercise.id, "Score:", result.score);
+
+      // Sprawdź czy sessionId istnieje
+      if (!sessionId) {
+        console.error("BRAK sessionId! Nie można zapisać wyniku.");
+        toast.error("Błąd sesji. Spróbuj rozpocząć nową sesję.");
+        setShowFeedback(true);
+        setHasSubmitted(true);
+        return;
       }
 
+      // Zapisz do bazy danych
+      try {
+        console.log("Zapisuję do sesji:", {
+          sessionId,
+          exerciseId: currentExercise.id,
+          score: result.score,
+        });
+
+        await api.post("/api/learning/session/update-completed", {
+          sessionId: sessionId,
+          exerciseId: currentExercise.id,
+          score: result.score,
+        });
+
+        console.log("Zapisano pomyślnie do sesji");
+        setHasSubmitted(true);
+      } catch (error: any) {
+        console.error("Błąd zapisu do sesji:", error);
+
+        if (error.response?.status === 404) {
+          toast.error(
+            "Sesja wygasła. Kliknij 'Pomiń' i rozpocznij nową sesję.",
+            { duration: 5000 }
+          );
+        } else {
+          toast.error("Błąd zapisu wyniku. Spróbuj ponownie.");
+        }
+
+        setShowFeedback(true);
+        return;
+      }
+
+      // Aktualizuj lokalne state
       const isCorrect = result.score > 0;
 
-      console.log("=== SUBMIT SUCCESS ===");
-      console.log("Result:", result);
-      console.log("Score:", result.score);
+      setCompletedExercises((prev) => [
+        ...prev,
+        { id: currentExercise.id, score: result.score || 0 },
+      ]);
 
-      // ZAWSZE dodaj do completed exercises, niezależnie od wyniku!
-      setCompletedExercises((prev) => {
-        const updated = [
-          ...prev,
-          { id: currentExercise.id, score: result.score },
-        ];
-        console.log("After update - completed:", updated);
-        return updated;
-      });
+      setSessionStats((prev) => ({
+        ...prev,
+        completed: prev.completed + 1,
+        correct: prev.correct + (isCorrect ? 1 : 0),
+        streak: isCorrect ? prev.streak + 1 : 0,
+        maxStreak: isCorrect
+          ? Math.max(prev.maxStreak, prev.streak + 1)
+          : prev.maxStreak,
+        points: prev.points + (result.score || 0),
+      }));
 
-      // ZAWSZE zwiększ completed, niezależnie od wyniku!
-      setSessionStats((prev) => {
-        const newStats = {
-          ...prev,
-          completed: prev.completed + 1, // ZAWSZE zwiększ
-          correct: prev.correct + (isCorrect ? 1 : 0),
-          streak: isCorrect ? prev.streak + 1 : 0,
-          maxStreak: isCorrect
-            ? Math.max(prev.maxStreak, prev.streak + 1)
-            : prev.maxStreak,
-          points: prev.points + (result.score || 0),
-        };
-        console.log("New session stats:", newStats);
-        return newStats;
-      });
-      // NATYCHMIASTOWA aktualizacja poziomów
+      // Aktualizuj poziomy trudności
       if (result.levelProgress) {
-        // Ręcznie zaktualizuj cache React Query
         queryClient.setQueryData(["difficulty-progress"], result.levelProgress);
 
-        // Sprawdź odblokowanie
         if (result.unlockedNewLevel) {
           confetti({
             particleCount: 300,
@@ -623,37 +624,20 @@ export const LearningSession: React.FC = () => {
             origin: { y: 0.5 },
           });
           toast.success(
-            `🎉 Odblokowano poziom ${result.levelProgress.currentMaxDifficulty}!`,
+            `Odblokowano poziom ${result.levelProgress.currentMaxDifficulty}!`,
             { duration: 5000 }
           );
         }
       }
 
-      // Odśwież też dla pewności
-      if (result.score > 0) {
+      // Odśwież poziomy po chwili
+      if (isCorrect) {
         setTimeout(() => {
           queryClient.invalidateQueries({ queryKey: ["difficulty-progress"] });
         }, 500);
       }
 
-      setShowFeedback(true);
-      if (result.score > 0) {
-        queryClient.invalidateQueries({ queryKey: ["difficulty-progress"] });
-
-        // Sprawdź czy odblokowano nowy poziom
-        if (result.levelProgress?.unlockedNewLevel) {
-          confetti({
-            particleCount: 300,
-            spread: 100,
-            origin: { y: 0.5 },
-          });
-          toast.success(
-            `🎉 Gratulacje! Odblokowano poziom ${result.levelProgress.newLevel}!`,
-            { duration: 5000 }
-          );
-        }
-      }
-
+      // Konfetti dla serii
       if (
         isCorrect &&
         sessionStats.streak > 0 &&
@@ -665,27 +649,14 @@ export const LearningSession: React.FC = () => {
           origin: { y: 0.6 },
         });
       }
-      if (
-        response.data.levelProgress &&
-        response.data.levelProgress.unlockedNewLevel
-      ) {
-        toast.success(
-          `🎉 Odblokowano poziom ${response.data.levelProgress.newLevel}!`
-        );
-      }
-      if (response.data.levelProgress) {
-        queryClient.setQueryData(
-          ["difficulty-progress"],
-          response.data.levelProgress
-        );
-      }
+
+      setShowFeedback(true);
     },
     onError: (error: any) => {
       setIsSubmitting(false);
       const errorMessage = error.response?.data?.error || error.message || "";
 
       if (errorMessage.includes("INSUFFICIENT_AI_POINTS")) {
-        // Wyciągnij dane z error message
         const match = errorMessage.match(/(\d+)\/(\d+) punktów.*(\d+) punkt/);
 
         if (match && subscription) {
@@ -1247,8 +1218,9 @@ export const LearningSession: React.FC = () => {
     <div className="max-w-4xl mx-auto p-6">
       {/* Session Header */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-4 mb-6">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          {/* Stats Grid - 2 kolumny na mobile, wszystkie w linii na desktop */}
+          <div className="grid grid-cols-2 xs:grid-cols-3 lg:flex lg:items-center gap-3 lg:gap-6 w-full sm:w-auto">
             <SessionStat
               icon={<Target className="w-5 h-5" />}
               label="Ukończone"
@@ -1277,13 +1249,16 @@ export const LearningSession: React.FC = () => {
             />
           </div>
 
+          {/* End Session Button */}
           <button
             onClick={async () => {
               console.log("=== ZAKOŃCZ SESJĘ BUTTON CLICKED ===");
               await endSession();
             }}
-            className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 
-                 dark:hover:text-white transition-colors"
+            className="w-full sm:w-auto px-4 py-2 text-gray-600 dark:text-gray-400 
+               hover:text-gray-900 dark:hover:text-white transition-colors
+               border border-gray-300 dark:border-gray-600 rounded-lg
+               hover:bg-gray-50 dark:hover:bg-gray-700"
           >
             Zakończ sesję
           </button>
@@ -1293,7 +1268,7 @@ export const LearningSession: React.FC = () => {
         <div className="mt-4 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           <motion.div
             className="h-full bg-gradient-to-r from-blue-500 to-purple-500 
-                 dark:from-blue-400 dark:to-purple-400"
+         dark:from-blue-400 dark:to-purple-400"
             initial={{ width: 0 }}
             animate={{
               width: `${(sessionStats.completed / SESSION_LIMIT) * 100}%`,
@@ -1301,29 +1276,52 @@ export const LearningSession: React.FC = () => {
             transition={{ duration: 0.5 }}
           />
         </div>
+
+        {/* ✅ POPRAWIONE - Krótszy tekst na mobile */}
         {levelProgress && (
-          <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Maksymalny poziom trudności: {levelProgress.currentMaxDifficulty}/5
-            {levelProgress.pointsNeeded > 0 &&
-              ` • ${levelProgress.pointsNeeded} pkt do poziomu ${levelProgress.nextLevel}`}
+          <div className="mt-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400 flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span>
+              <span className="sm:hidden">Poziom:</span>
+              <span className="hidden sm:inline">
+                Maksymalny poziom trudności:
+              </span>{" "}
+              {levelProgress.currentMaxDifficulty}/5
+            </span>
+            {levelProgress.pointsNeeded > 0 && (
+              <span className="flex items-center gap-1">
+                <span className="hidden sm:inline">•</span>
+                <span>
+                  {levelProgress.pointsNeeded} pkt do lvl{" "}
+                  {levelProgress.nextLevel}
+                </span>
+              </span>
+            )}
           </div>
         )}
 
-        <div className="flex justify-between items-center mt-1">
+        {/* ✅ POPRAWIONE - Lepsze zawijanie i layout */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mt-3">
           <p className="text-sm text-gray-600 dark:text-gray-400">
             Cel sesji: {sessionStats.completed}/{SESSION_LIMIT} zadań
           </p>
 
-          {/* PRZYCISK DO FILTRÓW */}
+          {/* PRZYCISK DO FILTRÓW - responsive */}
           <button
             onClick={() => setShowFilters(!showFilters)}
             className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 
-                 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
+         hover:text-blue-700 dark:hover:text-blue-300 font-medium 
+         px-3 py-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors
+         whitespace-nowrap"
           >
-            <Filter className="w-4 h-4" />
-            {showFilters ? "Ukryj filtry" : "Filtry zadań"}
+            <Filter className="w-4 h-4 flex-shrink-0" />
+            <span className="hidden xs:inline">
+              {showFilters ? "Ukryj filtry" : "Filtry zadań"}
+            </span>
+            <span className="xs:hidden">
+              {showFilters ? "Ukryj" : "Filtry"}
+            </span>
             <ChevronDown
-              className={`w-4 h-4 transition-transform ${
+              className={`w-4 h-4 flex-shrink-0 transition-transform ${
                 showFilters ? "rotate-180" : ""
               }`}
             />
@@ -1360,60 +1358,63 @@ export const LearningSession: React.FC = () => {
             className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-8"
           >
             {/* Exercise Header */}
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <span
-                    className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 
-                           dark:text-blue-300 rounded-full text-sm"
-                  >
+            <div className="flex flex-col gap-4 mb-6">
+              {/* Top row - Badges + Title */}
+              <div className="flex flex-col gap-3">
+                {/* Badges - wrap on mobile */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="px-2 sm:px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs sm:text-sm">
                     {currentExercise.category}
                   </span>
                   {currentExercise.epoch && (
-                    <span
-                      className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 
-                             text-purple-700 dark:text-purple-300 rounded-full text-sm"
-                    >
+                    <span className="px-2 sm:px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-xs sm:text-sm">
                       {
                         EPOCHS.find((e) => e.value === currentExercise.epoch)
                           ?.label
                       }
                     </span>
                   )}
-                  <span
-                    className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 
-                           text-yellow-700 dark:text-yellow-300 rounded-full text-sm"
-                  >
+                  <span className="px-2 sm:px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-full text-xs sm:text-sm">
                     Poziom {currentExercise.difficulty}
                   </span>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                     {currentExercise.points} pkt
                   </span>
                 </div>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+
+                {/* Title */}
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
                   {currentExercise.question}
                 </h2>
               </div>
-              {currentExercise && (
-                <div className="mb-4">
-                  <AiPointsCost
-                    exerciseType={currentExercise.type}
-                    isPremium={subscription?.plan === "PREMIUM"}
-                    hasEnoughPoints={hasEnoughPoints(currentExercise.type)}
-                  />
-                </div>
-              )}
-              <button
-                onClick={skipExercise}
-                disabled={sessionStats.completed >= SESSION_LIMIT - 1}
-                className="flex ml-2 items-center gap-1 text-gray-500 dark:text-gray-400 
-                     hover:text-gray-700 dark:hover:text-gray-200 
-                     disabled:opacity-50 transition-colors"
-              >
-                <SkipForward className="w-4 h-4" />
-                Pomiń
-              </button>
+
+              {/* Bottom row - AI Points + Skip button */}
+              <div className="flex items-center justify-between gap-3">
+                {currentExercise && (
+                  <div className="flex-shrink-0">
+                    <AiPointsCost
+                      exerciseType={currentExercise.type}
+                      isPremium={subscription?.plan === "PREMIUM"}
+                      hasEnoughPoints={hasEnoughPoints(currentExercise.type)}
+                    />
+                  </div>
+                )}
+
+                <button
+                  onClick={skipExercise}
+                  disabled={sessionStats.completed >= SESSION_LIMIT - 1}
+                  className="flex items-center gap-1 px-1 py-1 text-gray-500 dark:text-gray-400 
+             hover:text-gray-700 dark:hover:text-gray-200 
+             hover:bg-gray-100 dark:hover:bg-gray-700
+             disabled:opacity-50 transition-colors rounded-lg
+             whitespace-nowrap"
+                >
+                  <SkipForward className="w-4 h-4" />
+                  <span>Pomiń</span>
+                </button>
+              </div>
             </div>
+
             {/* Exercise Content */}
             {currentExercise.content?.text && (
               <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg mb-6">
@@ -2448,7 +2449,6 @@ export const LearningSession: React.FC = () => {
   );
 };
 
-// NOWY KOMPONENT - FILTRY W SESJI
 const InSessionFilters: React.FC<{
   currentFilters: SessionFilters;
   onFiltersChange: (filters: SessionFilters) => void;
@@ -2464,12 +2464,11 @@ const InSessionFilters: React.FC<{
 
   const hasFilters = Object.keys(localFilters).length > 0;
 
-  // query dla poziomów
   const { data: levelProgress } = useQuery({
     queryKey: ["difficulty-progress"],
     queryFn: () =>
       api.get("/api/learning/difficulty-progress").then((r) => r.data),
-    refetchInterval: 10000, // Co 10 sekund
+    refetchInterval: 10000,
     staleTime: 5000,
   });
 
@@ -2489,7 +2488,6 @@ const InSessionFilters: React.FC<{
     }
   }, [levelProgress]);
 
-  // Funkcja do pobierania liczby dostępnych ćwiczeń
   const fetchAvailableCount = async (filters: SessionFilters) => {
     setIsCountLoading(true);
     try {
@@ -2503,7 +2501,6 @@ const InSessionFilters: React.FC<{
     }
   };
 
-  // Automatycznie aplikuj filtry i policz dostępne ćwiczenia przy każdej zmianie
   useEffect(() => {
     onFiltersChange(localFilters);
     fetchAvailableCount(localFilters);
@@ -2513,7 +2510,6 @@ const InSessionFilters: React.FC<{
     const newFilters = {
       ...localFilters,
       category,
-      // Reset epoch if changing from HISTORICAL_LITERARY
       epoch:
         category === "HISTORICAL_LITERARY" ? localFilters.epoch : undefined,
     };
@@ -2531,7 +2527,6 @@ const InSessionFilters: React.FC<{
   };
 
   const handleDifficultyToggle = (level: number) => {
-    // Blokuj jeśli poziom zablokowany
     if (levelProgress && level > levelProgress.currentMaxDifficulty) {
       toast.error(`Poziom ${level} jest zablokowany! Zdobądź więcej punktów.`);
       return;
@@ -2562,7 +2557,6 @@ const InSessionFilters: React.FC<{
             Filtry zadań
           </h3>
 
-          {/* Licznik dostępnych ćwiczeń */}
           {isCountLoading || isLoading ? (
             <span className="text-xs text-gray-500 dark:text-gray-400">
               <span className="inline-block animate-pulse">Ładowanie...</span>
@@ -2594,7 +2588,7 @@ const InSessionFilters: React.FC<{
         )}
       </div>
 
-      {/* Kategorie - kompaktowy układ */}
+      {/* ✅ KATEGORIE - pełny dark mode */}
       <div className="grid grid-cols-3 gap-2 mb-3">
         {CATEGORIES.map((cat) => (
           <button
@@ -2607,8 +2601,8 @@ const InSessionFilters: React.FC<{
             disabled={isLoading}
             className={`px-3 py-2 text-xs rounded-lg border transition-colors ${
               localFilters.category === cat.value
-                ? "border-blue-500 bg-blue-50 text-blue-700"
-                : "border-gray-200 hover:border-gray-300"
+                ? "border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300"
             } disabled:opacity-50`}
           >
             {cat.label}
@@ -2616,10 +2610,10 @@ const InSessionFilters: React.FC<{
         ))}
       </div>
 
-      {/* Epoki - tylko dla HISTORICAL_LITERARY */}
+      {/* ✅ EPOKI - pełny dark mode */}
       {localFilters.category === "HISTORICAL_LITERARY" && (
-        <div className="mb-3 p-3 bg-purple-50 rounded-lg">
-          <p className="text-xs font-medium text-purple-700 mb-2">
+        <div className="mb-3 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+          <p className="text-xs font-medium text-purple-700 dark:text-purple-300 mb-2">
             Epoka literacka:
           </p>
           <div className="flex flex-wrap gap-1">
@@ -2634,8 +2628,8 @@ const InSessionFilters: React.FC<{
                 disabled={isLoading}
                 className={`px-2 py-1 text-xs rounded transition-colors ${
                   localFilters.epoch === epoch.value
-                    ? "bg-purple-600 text-white"
-                    : "bg-white hover:bg-purple-100"
+                    ? "bg-purple-600 dark:bg-purple-500 text-white"
+                    : "bg-white dark:bg-gray-700 hover:bg-purple-100 dark:hover:bg-purple-900/40 text-gray-700 dark:text-gray-300"
                 } disabled:opacity-50`}
               >
                 {epoch.label}
@@ -2645,9 +2639,11 @@ const InSessionFilters: React.FC<{
         </div>
       )}
 
-      {/* Typ zadania */}
+      {/* ✅ TYP ZADANIA - pełny dark mode */}
       <div className="mb-3">
-        <p className="text-xs font-medium text-gray-700 mb-2">Typ zadania:</p>
+        <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Typ zadania:
+        </p>
         <div className="flex flex-wrap gap-1">
           {EXERCISE_TYPES.map((type) => (
             <button
@@ -2660,8 +2656,8 @@ const InSessionFilters: React.FC<{
               disabled={isLoading}
               className={`px-2 py-1 text-xs rounded flex items-center gap-1 transition-colors ${
                 localFilters.type === type.value
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 hover:bg-gray-200"
+                  ? "bg-blue-600 dark:bg-blue-500 text-white"
+                  : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
               } disabled:opacity-50`}
             >
               <span>{type.icon}</span>
@@ -2671,9 +2667,9 @@ const InSessionFilters: React.FC<{
         </div>
       </div>
 
-      {/* Poziom trudności */}
+      {/* ✅ POZIOM TRUDNOŚCI - pełny dark mode */}
       <div>
-        <p className="text-xs font-medium text-gray-700 mb-2">
+        <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
           Poziom trudności:
         </p>
         <div className="flex gap-1">
@@ -2690,7 +2686,7 @@ const InSessionFilters: React.FC<{
                   isLocked
                     ? "bg-gray-200 dark:bg-gray-700 opacity-50 cursor-not-allowed"
                     : selectedDifficulties.includes(level)
-                    ? "bg-yellow-100 dark:bg-yellow-900/30 border-yellow-500"
+                    ? "bg-yellow-100 dark:bg-yellow-900/30 border-yellow-500 dark:border-yellow-400"
                     : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600"
                 } border`}
                 title={
@@ -2702,21 +2698,21 @@ const InSessionFilters: React.FC<{
                 }
               >
                 {isLocked && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-900/10 rounded">
-                    <Lock className="w-4 h-4 text-gray-500" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-900/10 dark:bg-black/20 rounded">
+                    <Lock className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                   </div>
                 )}
                 <div className={isLocked ? "opacity-30" : ""}>
                   <span
                     className={
                       selectedDifficulties.includes(level)
-                        ? "text-yellow-500"
-                        : "text-gray-400"
+                        ? "text-yellow-500 dark:text-yellow-400"
+                        : "text-gray-400 dark:text-gray-500"
                     }
                   >
                     {"⭐".repeat(level)}
                   </span>
-                  <div className="text-xs mt-1">
+                  <div className="text-xs mt-1 text-gray-700 dark:text-gray-300">
                     {level === 1 && "Bardzo łatwe"}
                     {level === 2 && "Łatwe"}
                     {level === 3 && "Średnie"}
@@ -2730,7 +2726,7 @@ const InSessionFilters: React.FC<{
         </div>
       </div>
 
-      {/* Aktualne filtry - podsumowanie */}
+      {/* ✅ AKTYWNE FILTRY - pełny dark mode */}
       {hasFilters && (
         <div className="mt-3 pt-3 border-t dark:border-gray-700">
           <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
@@ -2775,9 +2771,21 @@ const SessionStart: React.FC<{
   const isFreeUser = subscription?.plan === "FREE";
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-6">
+      <div className="mb-6">
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 
+                             hover:text-gray-900 dark:hover:text-white transition-colors mb-4"
+        >
+          <ChevronLeft className="w-5 h-5" />
+          Powrót
+        </button>
+      </div>
       <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-8 text-white mb-6">
-        <h1 className="text-3xl font-bold mb-4">Gotowy na dzisiejszą naukę?</h1>
+        <h1 className="text-3xl font-bold mb-4">
+          Zaczynajmy dzisiejszą naukę!
+        </h1>
         <p className="text-blue-100 mb-6">
           System dopasuje zadania do Twojego poziomu i postępów. Sesja zawiera{" "}
           {SESSION_LIMIT} zadań. Możesz zmieniać filtry w trakcie sesji!

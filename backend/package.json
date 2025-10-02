@@ -7,10 +7,10 @@
     "start": "node dist/index.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "seed": "ts-node src/seeds/examSeed.ts",
+    "seed": "ts-node prisma/seed.ts",
     "seed:exams": "tsx prisma/seed-exam.ts",
     "seed:reset": "npx prisma db push --force-reset && npm run seed",
-    "seed:all": "tsx prisma/seed-all.ts"
+    "seed:exercises": "tsx prisma/seed-exercises.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.3",

@@ -123,12 +123,12 @@ export const SessionHistory: React.FC = () => {
       {/* Header */}
       <div className="mb-6">
         <button
-          onClick={() => navigate("/learn")}
+          onClick={() => navigate("/dashboard")}
           className="flex items-center gap-2 text-gray-600 dark:text-gray-400 
                      hover:text-gray-900 dark:hover:text-white transition-colors mb-4"
         >
           <ChevronLeft className="w-5 h-5" />
-          Powrót do nauki
+          Powrót
         </button>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           Historia sesji nauki

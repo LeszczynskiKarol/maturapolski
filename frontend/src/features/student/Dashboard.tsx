@@ -1,31 +1,28 @@
 // frontend/src/features/student/Dashboard.tsx
 
-import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useAuthStore } from "../../store/authStore";
-import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  Play,
-  Target,
-  TrendingUp,
   Award,
-  Clock,
-  ChevronRight,
-  Zap,
   BookOpen,
-  RotateCcw,
-  Crown,
-  Lock,
-  Star,
-  Trophy,
-  Flame,
   CheckCircle,
+  ChevronRight,
+  Crown,
+  Flame,
+  Lock,
+  Play,
+  RotateCcw,
+  Target,
+  Trophy,
+  Zap,
 } from "lucide-react";
-import { api } from "../../services/api";
-import { DifficultyProgress } from "../../components/DifficultyProgress";
-import { AiPointsWidget } from "../../components/AiPointsWidget";
+import React from "react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { AiPointsWidget } from "../../components/AiPointsWidget";
+import { DifficultyProgress } from "../../components/DifficultyProgress";
+import { api } from "../../services/api";
+import { useAuthStore } from "../../store/authStore";
 
 const EPOCHS = [
   { value: "ANTIQUITY", label: "Starożytność", emoji: "🏛️" },
@@ -204,7 +201,7 @@ export const StudentDashboard: React.FC = () => {
             <StatCard
               icon={<Trophy className="w-6 h-6 text-yellow-500" />}
               label="Poziom"
-              value={stats?.level || 1}
+              value={levelProgress?.currentMaxDifficulty || 1}
               bgColor="from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20"
             />
             <StatCard
