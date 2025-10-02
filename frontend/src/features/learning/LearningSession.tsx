@@ -616,11 +616,6 @@ export const LearningSession: React.FC = () => {
         console.error("Błąd zapisu do sesji:", error);
 
         if (error.response?.status === 404) {
-          toast.error(
-            "Sesja wygasła. Kliknij 'Pomiń' i rozpocznij nową sesję.",
-            { duration: 5000 }
-          );
-        } else {
           toast.error("Błąd zapisu wyniku. Spróbuj ponownie.");
         }
 
