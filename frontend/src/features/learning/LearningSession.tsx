@@ -1912,6 +1912,30 @@ export const LearningSession: React.FC = () => {
                 {/* SHORT ANSWER */}
                 {currentExercise.type === "SHORT_ANSWER" && (
                   <>
+                    {/* NOWE: Wyświetl dzieło literackie */}
+                    {currentExercise.content?.work && (
+                      <div className="mb-4 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                        <p className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-1">
+                          📚 Dzieło literackie:
+                        </p>
+                        <p className="text-lg font-semibold text-purple-900 dark:text-purple-100">
+                          {currentExercise.content.work}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* NOWE: Wyświetl instrukcję */}
+                    {currentExercise.content?.instruction && (
+                      <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <p className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-2">
+                          📝 Instrukcja:
+                        </p>
+                        <div className="text-blue-900 dark:text-blue-100 whitespace-pre-wrap">
+                          {currentExercise.content.instruction}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Wyświetl dodatkowe informacje jeśli istnieją */}
                     {currentExercise.content?.originalSentence && (
                       <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
