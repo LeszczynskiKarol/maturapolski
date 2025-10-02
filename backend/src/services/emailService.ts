@@ -202,7 +202,7 @@ export class EmailService {
               <h1>🎓 Witaj w Matura Polski!</h1>
             </div>
             <div class="content">
-              <h2>Cześć ${displayName}!</h2>
+              <h2>Cześć, ${displayName}!</h2>
               <p>Gratulacje! Twoje konto zostało zweryfikowane.</p>
               <p>Możesz teraz korzystać ze wszystkich funkcji platformy.</p>
               <center>

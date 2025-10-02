@@ -1,6 +1,6 @@
 // frontend/src/features/auth/VerifyEmailPage.tsx
 
-import React, { useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../../services/api";
 import { useAuthStore } from "../../store/authStore";
@@ -16,12 +16,13 @@ export const VerifyEmailPage: React.FC = () => {
 
   const [status, setStatus] = useState<VerificationStatus>("loading");
   const [message, setMessage] = useState("");
+  const hasVerified = useRef(false);
 
   const token = searchParams.get("token");
 
   useEffect(() => {
-    // ✅ Czekaj aż token będzie dostępny
-    if (token) {
+    if (token && !hasVerified.current) {
+      hasVerified.current = true;
       verifyEmail();
     }
   }, [token]);
