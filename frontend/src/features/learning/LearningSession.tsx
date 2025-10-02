@@ -225,7 +225,8 @@ export const LearningSession: React.FC = () => {
   };
 
   const canSubmit = useMemo(() => {
-    if (!currentExercise || !answer) return false;
+    if (!currentExercise || answer === null || answer === undefined)
+      return false;
 
     switch (currentExercise.type) {
       case "CLOSED_SINGLE":
