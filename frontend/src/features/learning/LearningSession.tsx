@@ -3,6 +3,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import confetti from "canvas-confetti";
 import { AnimatePresence, motion } from "framer-motion";
+import { ExerciseBrowser } from "./ExerciseBrowser";
+
 import {
   AlertCircle,
   Award,
@@ -79,9 +81,11 @@ export const LearningSession: React.FC = () => {
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(
     null
   );
-
+  const [sequentialMode, setSequentialMode] = useState(false);
+  const [isAdminUser, setIsAdminUser] = useState(false);
   const [isChangingExercise, setIsChangingExercise] = useState(false);
   const lastExerciseId = useRef<string | null>(null);
+  const [showExerciseBrowser, setShowExerciseBrowser] = useState(false);
   const navigate = useNavigate();
   const hasAutoStarted = useRef(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -124,6 +128,14 @@ export const LearningSession: React.FC = () => {
     staleTime: 5000,
   });
 
+  const loadSelectedExercise = (exercise: any) => {
+    console.log("Loading selected exercise:", exercise.id);
+    setCurrentExercise(exercise);
+    setAnswer(null);
+    setShowFeedback(false);
+    setHasSubmitted(false);
+  };
+
   // Sprawdź czy user ma punkty na dane zadanie
   const getAiPointsCost = (exerciseType: string): number => {
     switch (exerciseType) {
@@ -146,6 +158,24 @@ export const LearningSession: React.FC = () => {
     if (cost === 0) return true; // Zadania zamknięte zawsze dostępne
     return subscription.aiPointsLimit - subscription.aiPointsUsed >= cost;
   };
+
+  // Sprawdź czy user jest adminem (kontakt@ecopywriting.pl)
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      try {
+        const response = await api.get("/api/learning/user/check-admin");
+        setIsAdminUser(response.data.isAdmin);
+
+        if (response.data.isAdmin) {
+          console.log("✅ Admin user detected - sequential mode available");
+        }
+      } catch (error) {
+        console.error("Failed to check admin status:", error);
+      }
+    };
+
+    checkAdminStatus();
+  }, []);
 
   const pairColors = [
     {
@@ -382,7 +412,10 @@ export const LearningSession: React.FC = () => {
       }
 
       const response = await api.get("/api/learning/next", {
-        params: excludeId ? { excludeId } : {},
+        params: {
+          excludeId: excludeId || undefined,
+          sequentialMode: sequentialMode ? "true" : "false", // DODANE
+        },
       });
       return { data: response.data };
     } catch (error) {
@@ -1297,6 +1330,65 @@ export const LearningSession: React.FC = () => {
                 </span>
               </span>
             )}
+          </div>
+        )}
+
+        {isAdminUser && sessionActive && (
+          <div className="mb-3 p-3 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="sequentialMode"
+                    checked={sequentialMode}
+                    onChange={(e) => {
+                      const newMode = e.target.checked;
+                      setSequentialMode(newMode);
+
+                      toast.success(
+                        newMode
+                          ? "🔄 Tryb sekwencyjny włączony - pytania od najstarszego do najnowszego"
+                          : "🧠 Tryb inteligentny włączony - algorytm adaptacyjny",
+                        { duration: 4000 }
+                      );
+                    }}
+                    className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 cursor-pointer"
+                  />
+                  <label
+                    htmlFor="sequentialMode"
+                    className="text-sm font-semibold text-gray-800 dark:text-gray-200 cursor-pointer select-none"
+                  >
+                    Tryb sekwencyjny (A→Z)
+                  </label>
+                </div>
+
+                {sequentialMode && (
+                  <span className="px-3 py-1 bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 text-xs font-medium rounded-full flex items-center gap-1">
+                    <span>📋</span>
+                    Pytania chronologicznie (od najstarszego)
+                  </span>
+                )}
+
+                {isAdminUser && sessionActive && (
+                  <button
+                    onClick={() => setShowExerciseBrowser(true)}
+                    className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 
+             text-white rounded-lg hover:from-purple-700 hover:to-pink-700
+             font-medium flex items-center justify-center gap-2 transition-all
+             shadow-lg hover:shadow-xl"
+                  >
+                    <span className="text-lg">📚</span>
+                    Przeglądaj wszystkie pytania
+                    <span className="text-xs opacity-80">(Admin)</span>
+                  </button>
+                )}
+              </div>
+
+              <span className="text-xs text-gray-500 dark:text-gray-400 italic">
+                Tylko dla konta admin
+              </span>
+            </div>
           </div>
         )}
 
@@ -2446,6 +2538,13 @@ export const LearningSession: React.FC = () => {
           sessionExit.cancelExit();
         }}
       />
+      {/* Exercise Browser Modal */}
+      {showExerciseBrowser && (
+        <ExerciseBrowser
+          onSelectExercise={loadSelectedExercise}
+          onClose={() => setShowExerciseBrowser(false)}
+        />
+      )}
     </div>
   );
 };

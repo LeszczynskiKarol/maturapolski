@@ -2,8 +2,8 @@
 
 import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
-import { SpacedRepetitionService } from "../services/spacedRepetitionService";
 import { LevelProgressService } from "../services/levelProgressService";
+import { SpacedRepetitionService } from "../services/spacedRepetitionService";
 
 const levelProgress = new LevelProgressService();
 const spacedRepetition = new SpacedRepetitionService();
@@ -275,10 +275,167 @@ export async function learningRoutes(fastify: FastifyInstance) {
     });
   });
 
+  fastify.get("/exercises/browse", async (request, reply) => {
+    const userId = (request.user as any).userId;
+
+    // Sprawdź czy to admin
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true },
+    });
+
+    if (user?.email !== "kontakt@ecopywriting.pl") {
+      return reply.code(403).send({ error: "Admin only" });
+    }
+
+    const {
+      sortBy = "question",
+      sortOrder = "asc",
+      type,
+      category,
+      epoch,
+      difficulty,
+      search,
+      page = 1,
+      limit = 50,
+    } = request.query as any;
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    // WHERE clause
+    const where: any = {};
+    if (type) where.type = type;
+    if (category) where.category = category;
+    if (epoch) where.epoch = epoch;
+    if (difficulty) where.difficulty = parseInt(difficulty);
+    if (search) {
+      where.question = { contains: search, mode: "insensitive" };
+    }
+
+    // ORDER BY
+    const orderBy: any = {};
+    if (sortBy === "question") orderBy.question = sortOrder;
+    if (sortBy === "createdAt") orderBy.createdAt = sortOrder;
+    if (sortBy === "difficulty") orderBy.difficulty = sortOrder;
+    if (sortBy === "type") orderBy.type = sortOrder;
+
+    const [exercises, total] = await Promise.all([
+      prisma.exercise.findMany({
+        where,
+        orderBy,
+        skip,
+        take: parseInt(limit),
+        select: {
+          id: true,
+          question: true,
+          type: true,
+          category: true,
+          epoch: true,
+          difficulty: true,
+          points: true,
+          createdAt: true,
+          tags: true,
+          content: true,
+          correctAnswer: true,
+        },
+      }),
+      prisma.exercise.count({ where }),
+    ]);
+
+    return reply.send({
+      exercises,
+      total,
+      page: parseInt(page),
+      totalPages: Math.ceil(total / parseInt(limit)),
+    });
+  });
+
   fastify.get("/next", async (request, reply) => {
     try {
       const userId = (request.user as any).userId;
-      const { excludeId } = request.query as { excludeId?: string };
+
+      const queryParams = request.query as {
+        excludeId?: string;
+        sequentialMode?: string; // z query string zawsze string
+      };
+
+      const excludeId = queryParams.excludeId;
+      const sequentialMode = queryParams.sequentialMode === "true";
+
+      console.log("\n=== NEXT EXERCISE REQUEST ===");
+      console.log("Sequential Mode:", sequentialMode);
+
+      // ===== NOWY TRYB SEKWENCYJNY =====
+      if (sequentialMode) {
+        console.log("🔄 SEQUENTIAL MODE ACTIVE - showing exercises A→Z");
+
+        const cache = getUserSessionCache(userId);
+
+        // Zbierz wszystkie ID do wykluczenia
+        const sessionCompletedIds: string[] = [];
+        const currentSession = await prisma.learningSession.findFirst({
+          where: { userId, status: "IN_PROGRESS" },
+          select: { completedExercises: true },
+        });
+
+        if (currentSession?.completedExercises) {
+          const exercises = currentSession.completedExercises as any[];
+          exercises.forEach((ex) => {
+            if (ex.id) sessionCompletedIds.push(ex.id);
+          });
+        }
+
+        const toExclude = [
+          ...sessionCompletedIds,
+          ...Array.from(cache.currentSession),
+          ...(excludeId ? [excludeId] : []),
+        ];
+
+        // Pobierz pytania od najstarszego (createdAt ASC)
+        const nextExercise = await prisma.exercise.findFirst({
+          where: {
+            id: { notIn: toExclude },
+          },
+          orderBy: {
+            createdAt: "asc", // Najstarsze pierwsze (chronologicznie)
+          },
+        });
+
+        if (!nextExercise) {
+          return reply.send({
+            error: "NO_EXERCISES",
+            message: "Przeszedłeś wszystkie pytania w trybie sekwencyjnym!",
+          });
+        }
+
+        // Zapisz użycie
+        await prisma.exerciseUsage.upsert({
+          where: {
+            userId_exerciseId: { userId, exerciseId: nextExercise.id },
+          },
+          update: {
+            lastUsedAt: new Date(),
+            usageCount: { increment: 1 },
+          },
+          create: {
+            userId,
+            exerciseId: nextExercise.id,
+            context: "LEARNING",
+            usageCount: 1,
+          },
+        });
+
+        cache.currentSession.add(nextExercise.id);
+
+        console.log(
+          `✅ Sequential: ${nextExercise.id} | ${nextExercise.type} | Created: ${nextExercise.createdAt}`
+        );
+        console.log(
+          `   Question: ${nextExercise.question.substring(0, 60)}...`
+        );
+
+        return reply.send(nextExercise);
+      }
 
       console.log("\n=== NEXT EXERCISE REQUEST ===");
 
@@ -1653,6 +1810,19 @@ export async function learningRoutes(fastify: FastifyInstance) {
       console.error("Error getting session details:", error);
       return reply.code(500).send({ error: "Failed to get session details" });
     }
+  });
+
+  fastify.get("/user/check-admin", async (request, reply) => {
+    const userId = (request.user as any).userId;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true },
+    });
+
+    return reply.send({
+      isAdmin: user?.email === "kontakt@ecopywriting.pl",
+    });
   });
 
   // Statystyki dla epok (dla modułu powtórek)
