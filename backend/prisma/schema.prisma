@@ -10,19 +10,30 @@ datasource db {
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
+  username      String    @unique
   password      String
-  firstName     String
-  lastName      String
   role          UserRole  @default(STUDENT)
+  
+  // Relacje - MUSZĄ BYĆ!
   profile       UserProfile?
+  levelProgress UserLevelProgress?
+  
   refreshToken  String?
   lastLogin     DateTime?
-  levelProgress UserLevelProgress?
 
+  // Email verification
+  emailVerified           Boolean   @default(false)
+  emailVerificationToken  String?   @unique
+  emailVerificationExpiry DateTime?
+  
+  // Password reset
+  passwordResetToken      String?   @unique
+  passwordResetExpiry     DateTime?
   
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt  
   
+  // Wszystkie pozostałe relacje
   submissions   Submission[]
   assessments   Assessment[]
   notifications Notification[]

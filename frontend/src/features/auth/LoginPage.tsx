@@ -23,15 +23,18 @@ export const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { setAuth } = useAuthStore();
+  const [verificationError, setVerificationError] = useState<string | null>(
+    null
+  );
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
+    setVerificationError(null);
     try {
       const response = await api.post("/api/auth/login", data);
 
-      console.log("Login response:", response.data); // DEBUG
+      console.log("Login response:", response.data);
 
-      // Użyj nowej metody setAuth która ustawi wszystko na raz
       if (response.data.user && response.data.token) {
         setAuth({
           user: response.data.user,
@@ -41,7 +44,6 @@ export const LoginPage: React.FC = () => {
 
         toast.success("Zalogowano pomyślnie!");
 
-        // Przekieruj w zależności od roli
         setTimeout(() => {
           if (response.data.user.role === "ADMIN") {
             navigate("/admin");
@@ -55,7 +57,16 @@ export const LoginPage: React.FC = () => {
       }
     } catch (error: any) {
       console.error("Login error:", error);
-      toast.error(error.response?.data?.error || "Błąd logowania");
+      if (error.response?.data?.error === "EMAIL_NOT_VERIFIED") {
+        setVerificationError(data.email);
+        return;
+      }
+
+      // Inne błędy
+      const errorMessage =
+        error.response?.data?.message ||
+        "Błąd logowania. Sprawdź email i hasło.";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -64,6 +75,30 @@ export const LoginPage: React.FC = () => {
   return (
     <AuthLayout>
       <div className="w-full max-w-md">
+        {verificationError && (
+          <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div className="flex items-start gap-3">
+              <Mail className="w-5 h-5 text-yellow-600 mt-0.5" />
+              <div className="flex-1">
+                <h3 className="font-medium text-yellow-900 mb-1">
+                  Email niepotwierdzony
+                </h3>
+                <p className="text-sm text-yellow-800 mb-2">
+                  Musisz potwierdzić swój adres email przed zalogowaniem.
+                </p>
+                <Link
+                  to={`/check-email?email=${encodeURIComponent(
+                    verificationError
+                  )}`}
+                  className="text-sm text-yellow-900 underline font-medium"
+                >
+                  Wyślij ponownie email weryfikacyjny →
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <h2 className="text-3xl font-bold text-center mb-2">Zaloguj się</h2>
           <p className="text-gray-600 text-center mb-8">

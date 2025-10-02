@@ -1,6 +1,11 @@
 // frontend/src/App.tsx
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { VerifyEmailPage } from "./features/auth/VerifyEmailPage";
+import { ResendVerificationPage } from "./features/auth/ResendVerificationPage";
+import { ForgotPasswordPage } from "./features/auth/ForgotPasswordPage";
+import { ResetPasswordPage } from "./features/auth/ResetPasswordPage";
+import { CheckEmailPage } from "./features/auth/CheckEmailPage";
 import { UserSessionsTable } from "./features/admin/UserSessionsTable";
 import { SubscriptionDashboard } from "./features/subscription/SubscriptionDashboard";
 import React, { useEffect } from "react";
@@ -93,6 +98,14 @@ export const App: React.FC = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/check-email" element={<CheckEmailPage />} />
+            <Route
+              path="/resend-verification"
+              element={<ResendVerificationPage />}
+            />
 
             {/* Public Materials routes */}
             <Route path="/materialy" element={<MaterialsPage />} />

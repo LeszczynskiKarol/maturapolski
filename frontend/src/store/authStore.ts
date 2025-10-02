@@ -6,9 +6,9 @@ import { persist, createJSONStorage } from "zustand/middleware";
 interface User {
   id: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  username: string;
   role: string;
+  emailVerified?: boolean;
 }
 
 interface AuthState {

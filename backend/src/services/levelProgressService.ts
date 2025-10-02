@@ -14,18 +14,19 @@ export class LevelProgressService {
 
   // Pobierz lub utwórz postęp użytkownika
   async getOrCreateProgress(userId: string) {
-    let progress = await prisma.userLevelProgress.findUnique({
+    const progress = await prisma.userLevelProgress.upsert({
       where: { userId },
+      update: {}, // Nic nie zmieniaj jeśli istnieje
+      create: {
+        userId,
+        unlockedDifficulty: 2,
+        difficulty1Points: 0,
+        difficulty2Points: 0,
+        difficulty3Points: 0,
+        difficulty4Points: 0,
+        difficulty5Points: 0,
+      },
     });
-
-    if (!progress) {
-      progress = await prisma.userLevelProgress.create({
-        data: {
-          userId,
-          unlockedDifficulty: 2, // Start z poziomami 1-2
-        },
-      });
-    }
 
     return progress;
   }

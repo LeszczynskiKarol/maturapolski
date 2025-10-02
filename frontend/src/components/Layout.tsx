@@ -210,7 +210,10 @@ export const Layout: React.FC = () => {
             {!isSidebarCollapsed && (
               <div className="overflow-hidden">
                 <p className="font-medium text-gray-900 dark:text-white truncate">
-                  {user?.firstName} {user?.lastName}
+                  {user?.username
+                    ? user.username.charAt(0).toUpperCase() +
+                      user.username.slice(1)
+                    : "User"}
                 </p>
                 <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
                   {user?.email}
@@ -298,10 +301,13 @@ export const Layout: React.FC = () => {
                   <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    {user?.firstName} {user?.lastName}
+                  <p className="font-medium text-gray-900 dark:text-white truncate">
+                    {user?.username
+                      ? user.username.charAt(0).toUpperCase() +
+                        user.username.slice(1)
+                      : "User"}
                   </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
                     {user?.email}
                   </p>
                 </div>

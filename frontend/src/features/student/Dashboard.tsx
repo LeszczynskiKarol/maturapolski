@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useAuthStore } from "../../store/authStore";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -41,7 +42,7 @@ const EPOCHS = [
 
 export const StudentDashboard: React.FC = () => {
   const navigate = useNavigate();
-
+  const user = useAuthStore((state) => state.user);
   // ✅ POPRAWIONE ŚCIEŻKI API
   const { data: stats } = useQuery({
     queryKey: ["learning-stats"],
@@ -107,11 +108,17 @@ export const StudentDashboard: React.FC = () => {
     navigate("/learn");
   };
 
+  // frontend/src/features/student/Dashboard.tsx
+
   const greeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Dzień dobry";
-    if (hour < 18) return "Witaj";
-    return "Dobry wieczór";
+    const username = user?.username
+      ? user.username.charAt(0).toUpperCase() + user.username.slice(1)
+      : "";
+
+    if (hour < 12) return `Dzień dobry, ${username}`;
+    if (hour < 18) return `Witaj, ${username}`;
+    return `Dobry wieczór, ${username}`;
   };
 
   return (
@@ -120,10 +127,10 @@ export const StudentDashboard: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            {greeting()}! 👋
+            {greeting()} 👋
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Gotowy na dzisiejszą naukę?
+            Zaczynajmy dzisiejszą naukę!
           </p>
         </div>
 
