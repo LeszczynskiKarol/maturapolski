@@ -62,6 +62,8 @@ export class EmailService {
     verificationUrl: string,
     username: string
   ): string {
+    const displayName = username.charAt(0).toUpperCase() + username.slice(1);
+
     return `
       <!DOCTYPE html>
       <html>
@@ -132,7 +134,7 @@ export class EmailService {
               <h1>✉️ Potwierdź swój email</h1>
             </div>
             <div class="content">
-                  <h2>Cześć ${username}!</h2>
+                  <h2>Cześć, ${displayName}!</h2>
               <p>Dziękujemy za rejestrację w Matura Polski! Jeszcze jeden krok do rozpoczęcia nauki.</p>
               
               <p>Kliknij poniższy przycisk, aby potwierdzić swój adres email:</p>
@@ -167,7 +169,9 @@ export class EmailService {
     `;
   }
 
-  private getWelcomeEmailTemplate(firstName: string): string {
+  private getWelcomeEmailTemplate(username: string): string {
+    const displayName = username.charAt(0).toUpperCase() + username.slice(1);
+
     return `
       <!DOCTYPE html>
       <html>
@@ -198,7 +202,7 @@ export class EmailService {
               <h1>🎓 Witaj w Matura Polski!</h1>
             </div>
             <div class="content">
-              <h2>Cześć ${firstName}!</h2>
+              <h2>Cześć ${displayName}!</h2>
               <p>Gratulacje! Twoje konto zostało zweryfikowane.</p>
               <p>Możesz teraz korzystać ze wszystkich funkcji platformy.</p>
               <center>
