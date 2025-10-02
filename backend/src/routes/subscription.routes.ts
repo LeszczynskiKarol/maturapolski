@@ -19,22 +19,30 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
       },
     },
     async (request, reply) => {
+      console.log("🎯 Webhook endpoint hit!");
+      console.log("Headers:", request.headers);
+
       const sig = request.headers["stripe-signature"];
 
       if (!sig || typeof sig !== "string") {
+        console.error("❌ Missing stripe signature");
         return reply.code(400).send({ error: "Missing stripe signature" });
       }
+
+      console.log("✅ Stripe signature found:", sig.substring(0, 20) + "...");
 
       let event: Stripe.Event;
 
       try {
+        console.log("🔐 Verifying webhook signature...");
         event = stripe.webhooks.constructEvent(
           request.rawBody as Buffer,
           sig,
           process.env.STRIPE_WEBHOOK_SECRET!
         );
+        console.log("✅ Signature verified!");
       } catch (err: any) {
-        console.error("Webhook signature verification failed:", err.message);
+        console.error("❌ Webhook signature verification failed:", err.message);
         return reply.code(400).send({ error: `Webhook Error: ${err.message}` });
       }
 
@@ -42,9 +50,10 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
 
       try {
         await subscriptionService.handleStripeWebhook(event);
+        console.log("✅ Webhook processed successfully");
         return reply.send({ received: true });
       } catch (error) {
-        console.error("Error processing webhook:", error);
+        console.error("❌ Error processing webhook:", error);
         return reply.code(500).send({ error: "Webhook processing failed" });
       }
     }

@@ -21,8 +21,8 @@ export class EmailService {
     }
   }
 
-  async sendWelcomeEmail(to: string, firstName: string) {
-    const html = this.getWelcomeEmailTemplate(firstName);
+  async sendWelcomeEmail(to: string, userName: string) {
+    const html = this.getWelcomeEmailTemplate(userName);
 
     try {
       const result = await transporter.sendMail({

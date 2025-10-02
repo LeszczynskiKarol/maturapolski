@@ -95,8 +95,7 @@ export async function adminQuestionsRoutes(fastify: FastifyInstance) {
             createdAt: true,
             user: {
               select: {
-                firstName: true,
-                lastName: true,
+                username: true,
               },
             },
           },

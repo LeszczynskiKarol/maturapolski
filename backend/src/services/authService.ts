@@ -54,7 +54,7 @@ export class AuthService {
     await this.emailService.sendVerificationEmail(
       user.email,
       verificationToken,
-      user.username // Zamiast firstName
+      user.username
     );
 
     return {

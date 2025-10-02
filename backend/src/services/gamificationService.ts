@@ -220,8 +220,7 @@ export class GamificationService {
         where: { id: scores[i] },
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          username: true, // ✅ ZMIEŃ z userName
           profile: {
             select: {
               level: true,

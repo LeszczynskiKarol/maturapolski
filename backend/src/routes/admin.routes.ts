@@ -234,8 +234,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
         select: {
           id: true,
           email: true,
-          firstName: true,
-          lastName: true,
+          username: true,
           learningSessions: {
             orderBy: { startedAt: "desc" },
             select: {
@@ -461,8 +460,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
       if (search) {
         where.OR = [
           { email: { contains: search, mode: "insensitive" } },
-          { firstName: { contains: search, mode: "insensitive" } },
-          { lastName: { contains: search, mode: "insensitive" } },
+          { username: { contains: search, mode: "insensitive" } },
         ];
       }
 

@@ -111,6 +111,8 @@ export class SubscriptionService {
 
   // Utwórz Stripe Checkout Session
   async createCheckoutSession(userId: string, priceId: string) {
+    console.log("🛒 Creating checkout session for user:", userId);
+
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: { subscription: true },
@@ -118,10 +120,10 @@ export class SubscriptionService {
 
     if (!user) throw new Error("User not found");
 
-    // Utwórz lub pobierz Stripe Customer
     let customerId = user.subscription?.stripeCustomerId;
 
     if (!customerId) {
+      console.log("📝 Creating new Stripe customer...");
       const customer = await stripe.customers.create({
         email: user.email,
         metadata: {
@@ -129,30 +131,41 @@ export class SubscriptionService {
         },
       });
       customerId = customer.id;
+      console.log("✅ Customer created:", customerId);
 
-      // Zapisz w bazie
       await prisma.subscription.update({
         where: { userId },
         data: { stripeCustomerId: customerId },
       });
     }
 
-    // Utwórz Checkout Session
+    console.log("🎫 Creating checkout session with metadata:", {
+      userId: user.id,
+      email: user.email,
+      customerId,
+    });
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: "subscription",
-      payment_method_types: ["card"], // ⚠️ TYLKO KARTY dla subskrypcji!
+      payment_method_types: ["card"],
       line_items: [
         {
           price: priceId,
           quantity: 1,
         },
       ],
-      success_url: `${process.env.FRONTEND_URL}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.FRONTEND_URL}/subscription?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.FRONTEND_URL}/subscription`,
       metadata: {
-        userId: user.id,
+        userId: user.id, // ⚠️ KLUCZOWE!
       },
+    });
+
+    console.log("✅ Checkout session created:", {
+      id: session.id,
+      url: session.url,
+      metadata: session.metadata,
     });
 
     return { sessionId: session.id, url: session.url };
@@ -204,15 +217,16 @@ export class SubscriptionService {
     });
   }
 
-  // Webhook handler - aktualizuj status po płatności
   async handleStripeWebhook(event: Stripe.Event): Promise<void> {
+    console.log("🔔 Webhook received:", event.type, "ID:", event.id);
+
     // Sprawdź czy już przetworzono
     const existing = await prisma.stripeEvent.findUnique({
       where: { stripeEventId: event.id },
     });
 
     if (existing?.processed) {
-      console.log("Event already processed:", event.id);
+      console.log("⚠️ Event already processed:", event.id);
       return;
     }
 
@@ -228,38 +242,57 @@ export class SubscriptionService {
       update: {},
     });
 
+    console.log("📝 Event saved to database:", event.id);
+
     switch (event.type) {
       case "checkout.session.completed":
+        console.log("💳 Processing checkout.session.completed...");
         const session = event.data.object as Stripe.Checkout.Session;
 
-        // Sprawdź czy to zakup subskrypcji czy punktów
+        console.log("Session details:", {
+          mode: session.mode,
+          paymentStatus: session.payment_status,
+          customerId: session.customer,
+          subscriptionId: session.subscription,
+          metadata: session.metadata,
+        });
+
         if (session.mode === "payment") {
+          console.log("🛒 Processing points purchase...");
           await this.handlePointsPurchaseCompleted(session);
         } else if (session.mode === "subscription") {
+          console.log("👑 Processing subscription activation...");
           await this.handleCheckoutCompleted(session);
         }
         break;
 
       case "customer.subscription.updated":
       case "customer.subscription.created":
+        console.log("🔄 Processing subscription update/create...");
         await this.handleSubscriptionUpdated(
           event.data.object as Stripe.Subscription
         );
         break;
 
       case "customer.subscription.deleted":
+        console.log("❌ Processing subscription deletion...");
         await this.handleSubscriptionDeleted(
           event.data.object as Stripe.Subscription
         );
         break;
 
       case "invoice.payment_succeeded":
+        console.log("✅ Processing payment success...");
         await this.handlePaymentSucceeded(event.data.object as Stripe.Invoice);
         break;
 
       case "invoice.payment_failed":
+        console.log("⚠️ Processing payment failure...");
         await this.handlePaymentFailed(event.data.object as Stripe.Invoice);
         break;
+
+      default:
+        console.log("⏭️ Unhandled event type:", event.type);
     }
 
     // Oznacz jako przetworzone
@@ -267,28 +300,45 @@ export class SubscriptionService {
       where: { stripeEventId: event.id },
       data: { processed: true },
     });
+
+    console.log("✅ Event processed successfully:", event.id);
   }
 
   private async handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+    console.log("🔍 handleCheckoutCompleted called");
+
     const userId = session.metadata?.userId;
-    if (!userId) return;
+    console.log("User ID from metadata:", userId);
+
+    if (!userId) {
+      console.error("❌ No userId in session metadata!");
+      console.log("Available metadata:", session.metadata);
+      return;
+    }
 
     const subscriptionId = session.subscription as string;
+    console.log("Stripe subscription ID:", subscriptionId);
 
-    await prisma.subscription.update({
-      where: { userId },
-      data: {
-        stripeSubscriptionId: subscriptionId,
-        status: "ACTIVE",
-        plan: "PREMIUM",
-        aiPointsLimit: 300,
-        aiPointsUsed: 0,
-        aiPointsReset: new Date(),
-        startDate: new Date(),
-      },
-    });
+    try {
+      const updated = await prisma.subscription.update({
+        where: { userId },
+        data: {
+          stripeSubscriptionId: subscriptionId,
+          status: "ACTIVE",
+          plan: "PREMIUM",
+          aiPointsLimit: 300,
+          aiPointsUsed: 0,
+          aiPointsReset: new Date(),
+          startDate: new Date(),
+        },
+      });
 
-    console.log(`Subscription activated for user ${userId}`);
+      console.log("✅ Subscription activated for user:", userId);
+      console.log("Updated subscription:", updated);
+    } catch (error) {
+      console.error("❌ Error updating subscription:", error);
+      throw error;
+    }
   }
 
   private async handleSubscriptionUpdated(subscription: Stripe.Subscription) {
