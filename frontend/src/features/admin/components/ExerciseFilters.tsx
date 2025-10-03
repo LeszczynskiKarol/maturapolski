@@ -1,7 +1,7 @@
 // frontend/src/features/admin/components/ExerciseFilters.tsx
 
 import React from "react";
-import { Search, Filter } from "lucide-react";
+import { Search } from "lucide-react";
 
 interface ExerciseFiltersProps {
   filters: {

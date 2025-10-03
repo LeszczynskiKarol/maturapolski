@@ -11,6 +11,7 @@ interface ThemeState {
   setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
   initializeTheme: () => void;
+  applyTheme: (theme: Theme) => void;
 }
 
 export const useThemeStore = create<ThemeState>()(
@@ -75,7 +76,7 @@ export const useThemeStore = create<ThemeState>()(
 if (typeof window !== "undefined") {
   window
     .matchMedia("(prefers-color-scheme: dark)")
-    .addEventListener("change", (e) => {
+    .addEventListener("change", () => {
       const state = useThemeStore.getState();
       if (state.theme === "system") {
         state.applyTheme("system");

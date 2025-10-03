@@ -262,7 +262,7 @@ export const ProgressTracker: React.FC = () => {
                   dataKey="value"
                   label={({ name, value }) => `${name}: ${value}min`}
                 >
-                  {filteredTimeDistribution.map((entry: any, index: number) => (
+                  {filteredTimeDistribution.map((index: number) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={COLORS[index % COLORS.length]}

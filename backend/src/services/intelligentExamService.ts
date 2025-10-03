@@ -627,7 +627,7 @@ export class IntelligentExamService {
 
       // 9. RÓŻNORODNOŚĆ TAGÓW
       if (question.tags && question.tags.length > 0) {
-        const commonTags = question.tags.filter((tag) =>
+        const commonTags = question.tags.filter((tag: string) =>
           recentTagsSet.has(tag)
         ).length;
         if (commonTags > 3) {

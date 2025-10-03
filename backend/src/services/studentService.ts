@@ -1,7 +1,7 @@
 // backend/src/services/studentService.ts
 
 import { prisma } from "../lib/prisma";
-import { redis } from "../lib/redis";
+
 import { startOfWeek, endOfWeek, subDays } from "date-fns";
 
 interface WeekPlan {
@@ -14,30 +14,20 @@ interface WeekPlan {
 
 export class StudentService {
   async getDashboardData(userId: string) {
-    const [stats, recentActivity, upcomingDeadlines, weakPoints] =
-      await Promise.all([
-        this.getStats(userId),
-        this.getRecentActivity(userId),
-        this.getUpcomingDeadlines(userId),
-        this.getWeakPointsAnalysis(userId),
-      ]);
+    const [stats, recentActivity, weakPoints] = await Promise.all([
+      this.getStats(userId),
+      this.getRecentActivity(userId),
+      this.getWeakPointsAnalysis(userId),
+    ]);
 
     return {
       stats,
       recentActivity,
-      upcomingDeadlines,
       weakPoints,
     };
   }
 
   async getStats(userId: string) {
-    const cacheKey = `student:stats:${userId}`;
-    const cached = await redis.get(cacheKey);
-
-    if (cached) {
-      return JSON.parse(cached);
-    }
-
     const [
       totalExercises,
       completedExercises,
@@ -70,7 +60,6 @@ export class StudentService {
         : null,
     };
 
-    await redis.setex(cacheKey, 300, JSON.stringify(stats));
     return stats;
   }
 
@@ -207,12 +196,12 @@ export class StudentService {
     const weakPoints = await this.getWeakPointsAnalysis(userId);
 
     // Generate adaptive study plan
-    const plan = this.generateStudyPlan(daysLeft, weakPoints, profile);
+    const plan = this.generateStudyPlan(daysLeft, weakPoints);
 
     return plan;
   }
 
-  private generateStudyPlan(daysLeft: number, weakPoints: any[], profile: any) {
+  private generateStudyPlan(daysLeft: number, weakPoints: any[]) {
     const weeksLeft = Math.ceil(daysLeft / 7);
     const plan: WeekPlan[] = [];
 
@@ -328,11 +317,6 @@ export class StudentService {
       orderBy: { createdAt: "desc" },
       take: 5,
     });
-  }
-
-  private async getUpcomingDeadlines(userId: string) {
-    // This could be assignments, scheduled tests, etc.
-    return [];
   }
 
   async updatePreferences(userId: string, preferences: any) {

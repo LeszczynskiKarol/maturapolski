@@ -1,23 +1,7 @@
 // frontend/src/features/admin/AdminMaterialsEditor.tsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { materialsService } from "../../services/materialsService";
-import {
-  Plus,
-  Save,
-  Trash2,
-  Edit,
-  Eye,
-  EyeOff,
-  BookOpen,
-  FileText,
-  Upload,
-  X,
-  Check,
-  ChevronDown,
-  ChevronRight,
-  Tag,
-  Clock,
-} from "lucide-react";
+import { Plus, Save, Trash2, Edit, FileText, X } from "lucide-react";
 
 // Types
 interface Material {
@@ -153,7 +137,6 @@ export default function AdminMaterialsEditor() {
     isPublished: false,
   });
 
-  const [contentBlocks, setContentBlocks] = useState<any[]>([]);
   const [tagInput, setTagInput] = useState("");
   const handleSaveMaterial = async () => {
     try {
@@ -162,18 +145,14 @@ export default function AdminMaterialsEditor() {
         workId: null, // tymczasowo usuń workId
       };
 
-      let saved;
       if (isEditing && selectedMaterial?.id) {
         // Edycja istniejącego
-        saved = await materialsService.updateMaterial(
-          selectedMaterial.id,
-          dataToSave
-        );
+        await materialsService.updateMaterial(selectedMaterial.id, dataToSave);
         setIsEditing(false);
         setSelectedMaterial(null);
       } else {
         // Tworzenie nowego
-        saved = await materialsService.createMaterial(dataToSave);
+        await materialsService.createMaterial(dataToSave);
       }
 
       alert(isEditing ? "Materiał zaktualizowany!" : "Materiał zapisany!");

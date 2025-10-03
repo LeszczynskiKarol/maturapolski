@@ -56,8 +56,7 @@ export async function studyPlanRoutes(fastify: FastifyInstance) {
       const plan = await generateWeeklyPlan(
         userId,
         weeksUntilExam,
-        daysUntilExam,
-        currentWeek
+        daysUntilExam
       );
 
       return reply.send({
@@ -158,7 +157,7 @@ export async function studyPlanRoutes(fastify: FastifyInstance) {
           .reduce((acc, e) => acc + (e.bestScore / e.points) * 100, 0) /
         (completedExercises || 1);
 
-      const goals = getWeeklyGoals(focus, phase, currentWeek, weeksUntilExam);
+      const goals = getWeeklyGoals(focus, currentWeek, weeksUntilExam);
       const estimatedTime = getEstimatedHours(intensity);
 
       return reply.send({
@@ -222,8 +221,7 @@ export async function studyPlanRoutes(fastify: FastifyInstance) {
       const plan = await generateWeeklyPlan(
         userId,
         weeksUntilExam,
-        daysUntilExam,
-        currentWeek
+        daysUntilExam
       );
 
       return reply.send({
@@ -297,7 +295,6 @@ export async function studyPlanRoutes(fastify: FastifyInstance) {
       // Określ parametry tygodnia
       const phase = determinePhaseForWeek(week, weeksUntilExam, daysUntilExam);
       const focus = selectFocusForWeek(week, weeksUntilExam, phase);
-      const intensity = getIntensityForPhase(phase);
 
       // Ustaw filtry sesji dla tego tygodnia
       const filters = getFiltersForWeek(focus);
@@ -322,8 +319,7 @@ export async function studyPlanRoutes(fastify: FastifyInstance) {
 async function generateWeeklyPlan(
   userId: string,
   totalWeeks: number,
-  daysUntilExam: number,
-  currentWeek: number
+  daysUntilExam: number
 ) {
   const plans = [];
 
@@ -333,12 +329,12 @@ async function generateWeeklyPlan(
     const intensity = getIntensityForPhase(phase);
 
     // Pobierz liczbę ćwiczeń dla tego tygodnia (nie same ćwiczenia - to zrobimy w weekly-tasks)
-    const exerciseCount = await countWeekExercises(userId, focus, intensity);
+    const exerciseCount = await countWeekExercises(userId, focus);
 
     plans.push({
       week,
       focus: getCategoryDisplayName(focus),
-      goals: getWeeklyGoals(focus, phase, week, totalWeeks),
+      goals: getWeeklyGoals(focus, week, totalWeeks),
       exercises: Array(exerciseCount).fill({}), // Placeholder dla liczby
       estimatedTime: getEstimatedHours(intensity),
       completed: false,
@@ -443,11 +439,7 @@ async function getWeekExercises(
   return exercises;
 }
 
-async function countWeekExercises(
-  userId: string,
-  focus: string,
-  intensity: string
-) {
+async function countWeekExercises(focus: string, intensity: string) {
   const categories = mapFocusToCategories(focus);
   const difficulty = getDifficultyForIntensity(intensity);
 
@@ -612,7 +604,6 @@ function getCategoryDisplayName(category: string): string {
 
 function getWeeklyGoals(
   focus: string,
-  phase: string,
   week: number,
   totalWeeks: number
 ): string[] {

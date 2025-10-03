@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "../../../services/api";
-import { X, Plus, Trash2, Save, Info, Brain, AlertCircle } from "lucide-react";
+import { X, Plus, Trash2, Save, Info, Brain } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 interface ExamStructure {

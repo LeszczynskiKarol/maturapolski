@@ -12,7 +12,6 @@ import {
   BookOpen,
   BarChart3,
   ExternalLink,
-  Trophy,
   Flame,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";

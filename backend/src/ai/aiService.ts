@@ -103,7 +103,7 @@ Bądź sprawiedliwy ale wymagający. Doceniaj częściową wiedzę, ale wymagaj 
         .map((line) => line.trim())
         .join("\n")
         // Znajdź wartości w cudzysłowach i oczyść je
-        .replace(/"([^"\\]*(\\.[^"\\]*)*)"/g, (match, content) => {
+        .replace(/"([^"\\]*(\\.[^"\\]*)*)"/g, (content) => {
           // Oczyść zawartość string z niepotrzebnych znaków
           const cleaned = content
             .replace(/\n/g, " ") // Zamień nowe linie na spacje
@@ -312,7 +312,7 @@ Oceń rzetelnie według kryteriów maturalnych. Bądź wymagający ale sprawiedl
         // Oczyść JSON ze znaków kontrolnych w wartościach
         jsonString = jsonString.replace(
           /"([^"\\]*(\\.[^"\\]*)*)"/g,
-          (match, content) => {
+          (content) => {
             const cleaned = content
               .replace(/\n/g, " ")
               .replace(/\r/g, "")

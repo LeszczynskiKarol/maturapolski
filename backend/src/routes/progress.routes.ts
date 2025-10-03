@@ -5,7 +5,7 @@ import { prisma } from "../lib/prisma";
 
 export async function progressRoutes(fastify: FastifyInstance) {
   // Get user progress stats
-  fastify.get("/progress", async (request, reply) => {
+  fastify.get("/progress", async (request) => {
     const userId = (request.user as any).userId;
 
     const stats = await prisma.userProfile.findUnique({
@@ -77,7 +77,7 @@ export async function progressRoutes(fastify: FastifyInstance) {
   });
 
   // Get exercise history
-  fastify.get("/history", async (request, reply) => {
+  fastify.get("/history", async (request) => {
     const userId = (request.user as any).userId;
     const { limit = 20, offset = 0 } = request.query as any;
 

@@ -5,19 +5,14 @@ import { useQuery } from "@tanstack/react-query";
 import {
   Users,
   Activity,
-  TrendingUp,
   Award,
   Target,
   Clock,
   RefreshCw,
   Download,
-  Filter,
-  Calendar,
 } from "lucide-react";
 import { api } from "../../services/api";
 import {
-  LineChart,
-  Line,
   BarChart,
   Bar,
   PieChart,
@@ -27,11 +22,8 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
-import { format } from "date-fns";
-import { pl } from "date-fns/locale";
 
 const COLORS = [
   "#3B82F6",
@@ -226,7 +218,7 @@ export const UserStatistics: React.FC = () => {
                 fill="#8884d8"
                 dataKey="value"
               >
-                {levelDistributionData.map((entry, index) => (
+                {levelDistributionData.map((_entry, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}

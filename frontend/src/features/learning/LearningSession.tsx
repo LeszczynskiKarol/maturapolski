@@ -79,9 +79,7 @@ const CATEGORIES = [
 
 export const LearningSession: React.FC = () => {
   const [showExitDialog, setShowExitDialog] = useState(false);
-  const [pendingNavigation, setPendingNavigation] = useState<string | null>(
-    null
-  );
+  const [, setPendingNavigation] = useState<string | null>(null);
   const [sequentialMode, setSequentialMode] = useState(false);
   const [isAdminUser, setIsAdminUser] = useState(false);
   const [isChangingExercise, setIsChangingExercise] = useState(false);
@@ -90,7 +88,7 @@ export const LearningSession: React.FC = () => {
   const navigate = useNavigate();
   const hasAutoStarted = useRef(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [lastSaveTime, setLastSaveTime] = useState(Date.now());
+  const [, setLastSaveTime] = useState(Date.now());
   const queryClient = useQueryClient();
   const [sessionActive, setSessionActive] = useState(false);
   const [currentExercise, setCurrentExercise] = useState<any>(null);
@@ -111,7 +109,7 @@ export const LearningSession: React.FC = () => {
   >([]);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submissionResult, setSubmissionResult] = useState<any>(null);
+  const [, setSubmissionResult] = useState<any>(null);
   const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
   const [selectedRight, setSelectedRight] = useState<number | null>(null);
   const [matches, setMatches] = useState<Array<[number, number]>>([]);
@@ -120,7 +118,7 @@ export const LearningSession: React.FC = () => {
     queryFn: () => api.get("/api/subscription/status").then((r) => r.data),
   });
 
-  const [isPlanSession, setIsPlanSession] = useState(false);
+  const [, setIsPlanSession] = useState(false);
   const { data: levelProgress } = useQuery({
     queryKey: ["difficulty-progress"],
     queryFn: () =>
@@ -926,18 +924,6 @@ export const LearningSession: React.FC = () => {
     }, 500);
 
     console.log("✅ END SESSION COMPLETE");
-  };
-
-  const pauseSession = async () => {
-    if (!sessionId) return;
-
-    await api.post("/api/learning/session/pause", {
-      sessionId,
-      state: sessionStats,
-    });
-
-    navigate("/dashboard"); // navigate już jest zaimportowany w komponencie
-    toast("Sesja została wstrzymana. Możesz ją kontynuować później.");
   };
 
   // Next exercise with filters
@@ -2314,10 +2300,6 @@ export const LearningSession: React.FC = () => {
                               .filter(Boolean).length;
                             const minWords =
                               currentExercise.content.wordLimit.min;
-                            const progress = Math.min(
-                              100,
-                              (wordCount / minWords) * 100
-                            );
 
                             if (wordCount < minWords) {
                               return `Jeszcze ${
@@ -2991,7 +2973,7 @@ const SessionStart: React.FC<{
   stats: any;
 }> = ({ onStart, stats }) => {
   const navigate = useNavigate();
-  const [activeSessions, setActiveSessions] = useState<any[]>([]);
+  const [, setActiveSessions] = useState<any[]>([]);
 
   // POBIERZ STATUS SUBSKRYPCJI
   const { data: subscription } = useQuery({

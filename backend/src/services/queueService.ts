@@ -1,6 +1,5 @@
 // backend/src/services/queueService.ts
 import { Queue, Worker } from "bullmq";
-import { redis } from "../lib/redis";
 
 const connection = {
   host: process.env.REDIS_HOST || "localhost",
@@ -18,7 +17,7 @@ export function initializeQueue() {
   const assessmentWorker = new Worker(
     "assessment",
     async (job) => {
-      const { userId, content, topic, requirements, submissionId } = job.data;
+      const { submissionId } = job.data;
 
       console.log(`Processing assessment for submission ${submissionId}`);
 
@@ -36,17 +35,6 @@ export function initializeQueue() {
   assessmentWorker.on("failed", (job, err) => {
     console.error(`Assessment ${job?.id} failed:`, err);
   });
-
-  // Email worker
-  const emailWorker = new Worker(
-    "email",
-    async (job) => {
-      const { to, subject, html } = job.data;
-      console.log(`Sending email to ${to}: ${subject}`);
-      return { sent: true };
-    },
-    { connection }
-  );
 
   console.log("Queue workers initialized");
 }

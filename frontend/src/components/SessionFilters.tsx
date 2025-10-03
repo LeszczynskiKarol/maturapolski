@@ -1,16 +1,7 @@
 // frontend/src/components/SessionFilters.tsx
 
 import React, { useState } from "react";
-import {
-  Filter,
-  BookOpen,
-  Target,
-  Clock,
-  X,
-  ChevronDown,
-  ChevronRight,
-  Award,
-} from "lucide-react";
+import { Filter, X, ChevronDown, ChevronRight, Award } from "lucide-react";
 
 export interface SessionFilters {
   type?: string;

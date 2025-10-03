@@ -19,13 +19,13 @@ export const ThemeSwitcher: React.FC = () => {
     { value: "system", label: "System", icon: Monitor },
   ] as const;
 
-  const currentIcon =
+  const CurrentIcon =
     theme === "system" ? Monitor : effectiveTheme === "dark" ? Moon : Sun;
 
   return (
     <Menu as="div" className="relative">
       <Menu.Button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-        <currentIcon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+        <CurrentIcon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
       </Menu.Button>
 
       <Transition

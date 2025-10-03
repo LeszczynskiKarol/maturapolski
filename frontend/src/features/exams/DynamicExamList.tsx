@@ -10,10 +10,8 @@ import {
   Target,
   Play,
   RotateCw,
-  AlertCircle,
   Loader2,
   BarChart,
-  TrendingUp,
   Info,
 } from "lucide-react";
 import { toast } from "react-hot-toast";

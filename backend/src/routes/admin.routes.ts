@@ -227,7 +227,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
     }
   );
 
-  fastify.get("/users/detailed-sessions", async (request, reply) => {
+  fastify.get("/users/detailed-sessions", async (_request, reply) => {
     try {
       // Pobierz wszystkich użytkowników z sesjami
       const users = await prisma.user.findMany({

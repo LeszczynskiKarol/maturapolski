@@ -2,16 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { materialsService } from "../../services/materialsService";
-import {
-  ArrowLeft,
-  Clock,
-  Eye,
-  Tag,
-  BookOpen,
-  User,
-  Calendar,
-  Lock,
-} from "lucide-react";
+import { ArrowLeft, Clock, Eye, Tag, Calendar, Lock } from "lucide-react";
 
 export const MaterialDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();

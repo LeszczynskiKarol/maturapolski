@@ -19,7 +19,6 @@ import {
   MessageSquare,
   Sparkles,
   ChevronDown,
-  Play,
   Check,
   X,
   Repeat,
@@ -36,7 +35,7 @@ import {
   Flame,
   Calendar,
 } from "lucide-react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 
 export const LandingPage: React.FC = () => {
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
@@ -110,26 +109,26 @@ export const LandingPage: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            {/* Badge */}
+            {/* Badge 
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-full mb-6">
               <Sparkles className="w-4 h-4" />
               <span className="text-sm font-semibold">
                 Dołącz do 50,000+ maturzystów
               </span>
-            </div>
+            </div>*/}
 
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
               Zdaj maturę z polskiego
               <br />
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                łatwiej niż myślisz
+                łatwiej, niż myślisz
               </span>
             </h1>
 
             <p className="text-xl md:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
-              Inteligentna platforma z AI, która ocenia Twoje wypracowania,
-              dostosowuje zadania do Twojego poziomu i prowadzi Cię krok po
-              kroku do wymarzonego wyniku
+              Inteligentna platforma z testami i kursami maturalnymi z języka
+              polskiego, która ocenia Twoje wypracowania, dostosowuje zadania do
+              Twojego poziomu i prowadzi Cię krok po kroku do wymarzonego wyniku
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -156,11 +155,11 @@ export const LandingPage: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-green-500" />
-                <span>Anuluj kiedy chcesz</span>
+                <span>Ucz się, kiedy chcesz</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-green-500" />
-                <span>Gwarancja zwrotu pieniędzy</span>
+                <span>Zdobywaj punkty i poziomy</span>
               </div>
             </div>
           </motion.div>
@@ -199,9 +198,8 @@ export const LandingPage: React.FC = () => {
                 Czy to brzmi znajomo?
               </h3>
               <div className="space-y-4">
-                <ProblemItem text="Nie wiesz od czego zacząć i jak się uczyć skutecznie" />
-                <ProblemItem text="Korepetycje są drogie (150-200 zł/h)" />
-                <ProblemItem text="Nie dostajesz feedbacku na swoje wypracowania" />
+                <ProblemItem text="Nie wiesz, od czego zacząć i jak się uczyć skutecznie" />
+                <ProblemItem text="Korepetycje są drogie (150-200 zł/1 godz.)" />
                 <ProblemItem text="Materiały są rozrzucone po internecie" />
                 <ProblemItem text="Nie widzisz swoich postępów" />
                 <ProblemItem text="Brak motywacji i systematyczności" />
@@ -226,7 +224,7 @@ export const LandingPage: React.FC = () => {
                 <SolutionItem text="AI tworzy spersonalizowany plan nauki tylko dla Ciebie" />
                 <SolutionItem text="Koszt jak 1 godzina korepetycji miesięcznie" />
                 <SolutionItem text="AI ocenia wypracowania w 30 sekund" />
-                <SolutionItem text="15,000+ zadań uporządkowanych według epok" />
+                <SolutionItem text="Tysiące zadań uporządkowanych według epok" />
                 <SolutionItem text="Szczegółowe statystyki i analiza postępów" />
                 <SolutionItem text="System poziomów i nagród motywuje do nauki" />
               </div>
@@ -262,14 +260,14 @@ export const LandingPage: React.FC = () => {
             />
             <StepCard
               number="2"
-              title="Test poziomujący"
-              description="Rozwiąż krótki test, aby AI dopasowało zadania do Twojego poziomu"
+              title="Pisz i odpowiadaj"
+              description="Rozwiązuj testy maturalne z polskiego i pisz zadania oceniane przez AI"
               icon={<Target className="w-8 h-8" />}
             />
             <StepCard
               number="3"
               title="Ucz się systematycznie"
-              description="Rozwiązuj zadania, pisz wypracowania i zbieraj punkty doświadczenia"
+              description="Regularnie wykonuj ćwiczenia i zbieraj punkty doświadczenia"
               icon={<Brain className="w-8 h-8" />}
             />
             <StepCard
@@ -1501,86 +1499,4 @@ const FAQItem: React.FC<{
       </div>
     )}
   </div>
-);
-
-const PricingCard: React.FC<{
-  title: string;
-  price: string;
-  period: string;
-  description: string;
-  features: string[];
-  cta: string;
-  href: string;
-  popular: boolean;
-  badge?: string;
-  savings?: string;
-}> = ({
-  title,
-  price,
-  period,
-  description,
-  features,
-  cta,
-  href,
-  popular,
-  badge,
-  savings,
-}) => (
-  <motion.div
-    whileHover={{ y: -8 }}
-    className={`relative rounded-2xl p-8 ${
-      popular
-        ? "bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow-2xl scale-105 border-4 border-blue-400"
-        : "bg-white shadow-lg border-2 border-gray-200"
-    }`}
-  >
-    {badge && (
-      <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-yellow-400 text-yellow-900 text-xs font-bold rounded-full">
-        {badge}
-      </div>
-    )}
-    <div className="text-center mb-6">
-      <h3 className="text-2xl font-bold mb-2">{title}</h3>
-      <p
-        className={`text-sm mb-4 ${
-          popular ? "text-blue-100" : "text-gray-600"
-        }`}
-      >
-        {description}
-      </p>
-      <div className="mb-2">
-        <span className="text-5xl font-bold">{price}</span>
-        <span className="text-lg ml-1">{period}</span>
-      </div>
-      {savings && (
-        <div className="inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
-          {savings}
-        </div>
-      )}
-    </div>
-
-    <ul className="space-y-3 mb-8">
-      {features.map((feature, i) => (
-        <li key={i} className="flex items-start gap-3">
-          <CheckCircle
-            className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
-              popular ? "text-blue-200" : "text-green-500"
-            }`}
-          />
-          <span className="text-sm">{feature}</span>
-        </li>
-      ))}
-    </ul>
-
-    <Link
-      to={href}
-      className={`block text-center py-3 rounded-xl font-bold transition-all ${
-        popular
-          ? "bg-white text-blue-600 hover:bg-blue-50 shadow-lg hover:shadow-xl"
-          : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-xl hover:scale-105"
-      }`}
-    >
-      {cta}
-    </Link>
-  </motion.div>
 );

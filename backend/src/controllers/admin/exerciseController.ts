@@ -87,7 +87,7 @@ export async function exerciseRoutes(fastify: FastifyInstance) {
   });
 
   // GET all exercises
-  fastify.get("/exercises", async (request, reply) => {
+  fastify.get("/exercises", async (request) => {
     const query = request.query as any;
     const where: any = {};
 
@@ -126,7 +126,7 @@ export async function exerciseRoutes(fastify: FastifyInstance) {
   });
 
   // CREATE exercise
-  fastify.post("/exercises", async (request, reply) => {
+  fastify.post("/exercises", async (request) => {
     const body = CreateExerciseSchema.parse(request.body);
     const exercise = await prisma.exercise.create({
       data: body as any,
@@ -135,7 +135,7 @@ export async function exerciseRoutes(fastify: FastifyInstance) {
   });
 
   // UPDATE exercise
-  fastify.put("/exercises/:id", async (request, reply) => {
+  fastify.put("/exercises/:id", async (request) => {
     const { id } = request.params as { id: string };
     const body = CreateExerciseSchema.partial().parse(request.body);
 
@@ -148,7 +148,7 @@ export async function exerciseRoutes(fastify: FastifyInstance) {
   });
 
   // DELETE exercise
-  fastify.delete("/exercises/:id", async (request, reply) => {
+  fastify.delete("/exercises/:id", async (request) => {
     const { id } = request.params as { id: string };
 
     await prisma.exercise.delete({

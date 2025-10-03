@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   BookOpen,
   Clock,
@@ -124,7 +124,7 @@ export default function MaterialsPage() {
   const [materials, setMaterials] = useState<Material[]>(mockMaterials);
   const [loading, setLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-  const [pagination, setPagination] = useState<PaginationData>({
+  const [pagination] = useState<PaginationData>({
     page: 1,
     limit: 20,
     total: 60,

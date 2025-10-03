@@ -1,5 +1,5 @@
 // frontend/src/features/materials/MaterialsPage.tsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   BookOpen,
   Clock,
@@ -65,58 +65,6 @@ const EPOCHS = [
   { value: "YOUNG_POLAND", label: "Młoda Polska" },
   { value: "INTERWAR", label: "Dwudziestolecie" },
   { value: "CONTEMPORARY", label: "Współczesność" },
-];
-
-// Mock data - zastąp prawdziwym API
-const mockMaterials: Material[] = [
-  {
-    id: "1",
-    title: "Pan Tadeusz - Kompleksowe opracowanie",
-    slug: "pan-tadeusz-opracowanie",
-    type: "WORK_ANALYSIS",
-    category: "LITERATURE",
-    summary:
-      "Szczegółowa analiza epopei narodowej Adama Mickiewicza z uwzględnieniem wszystkich wątków, postaci i środków stylistycznych.",
-    epoch: "ROMANTICISM",
-    tags: ["Mickiewicz", "epopeja", "lektura obowiązkowa"],
-    readingTime: 45,
-    isPremium: false,
-    views: 15234,
-    work: {
-      title: "Pan Tadeusz",
-      author: "Adam Mickiewicz",
-    },
-    createdAt: "2024-01-15",
-  },
-  {
-    id: "2",
-    title: "Romantyzm - Charakterystyka epoki",
-    slug: "romantyzm-charakterystyka",
-    type: "EPOCH_OVERVIEW",
-    category: "EPOCHS",
-    summary:
-      "Pełne opracowanie epoki romantyzmu: filozofia, główne cechy, przedstawiciele, kontekst historyczny.",
-    epoch: "ROMANTICISM",
-    tags: ["romantyzm", "epoka", "mesjanizm"],
-    readingTime: 30,
-    isPremium: false,
-    views: 8921,
-    createdAt: "2024-01-10",
-  },
-  {
-    id: "3",
-    title: "Jak napisać rozprawkę maturalną - Poradnik",
-    slug: "rozprawka-maturalna-poradnik",
-    type: "WRITING_GUIDE",
-    category: "WRITING",
-    summary:
-      "Kompletny przewodnik po pisaniu rozprawki: struktura, argumentacja, przykłady, najczęstsze błędy.",
-    tags: ["rozprawka", "matura", "pisanie"],
-    readingTime: 20,
-    isPremium: true,
-    views: 23456,
-    createdAt: "2024-02-01",
-  },
 ];
 
 export default function MaterialsPage() {

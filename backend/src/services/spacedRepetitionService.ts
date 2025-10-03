@@ -102,7 +102,6 @@ export class SpacedRepetitionService {
 
     // 3. Znajdź zadania do powtórki (spaced repetition)
     const now = new Date();
-    const dueForReview: string[] = [];
 
     // Pobierz dane spaced repetition z bazy
     const repetitionData = await prisma.spacedRepetition.findMany({

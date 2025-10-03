@@ -1,17 +1,9 @@
 // frontend/src/components/AdminLayout.tsx
 
 import React, { useState } from "react";
-import { UserSessionsTable } from "../features/admin/UserSessionsTable";
+
 import { Link, Outlet, useLocation } from "react-router-dom";
-import {
-  HelpCircle,
-  BookOpen,
-  Users,
-  BarChart3,
-  FileText,
-  Menu,
-  X,
-} from "lucide-react";
+import { BookOpen, Users, BarChart3, FileText, Menu, X } from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: BarChart3 },

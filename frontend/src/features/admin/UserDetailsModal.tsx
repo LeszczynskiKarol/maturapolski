@@ -5,15 +5,11 @@ import { useQuery } from "@tanstack/react-query";
 import {
   X,
   User,
-  Mail,
-  Calendar,
   Award,
   Target,
   BookOpen,
-  Clock,
   TrendingUp,
   Activity,
-  ChevronRight,
   Download,
   RefreshCw,
 } from "lucide-react";
@@ -21,13 +17,8 @@ import { api } from "../../services/api";
 import { format, formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
 import {
-  LineChart,
-  Line,
   BarChart,
   Bar,
-  PieChart,
-  Pie,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -48,7 +39,6 @@ interface UserDetailsModalProps {
   onClose: () => void;
 }
 
-const COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"];
 const EPOCH_NAMES = {
   ANTIQUITY: "Starożytność",
   MIDDLE_AGES: "Średniowiecze",

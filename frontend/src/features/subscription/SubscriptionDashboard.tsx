@@ -144,10 +144,6 @@ export const SubscriptionDashboard: React.FC = () => {
     },
   });
 
-  const hasManyPoints =
-    subscription &&
-    subscription.aiPointsLimit - subscription.aiPointsUsed > 100;
-
   const openPortalMutation = useMutation({
     mutationFn: () => api.post("/api/subscription/create-portal-session"),
     onSuccess: (response: any) => {

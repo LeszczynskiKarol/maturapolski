@@ -17,7 +17,7 @@ export async function examStructureRoutes(fastify: FastifyInstance) {
   });
 
   // GET wszystkie struktury egzaminów
-  fastify.get("/", async (request, reply) => {
+  fastify.get("/", async (_request, reply) => {
     const exams = await prisma.mockExam.findMany({
       include: {
         sections: {

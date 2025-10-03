@@ -13,10 +13,8 @@ import {
   Play,
   RotateCcw,
   Target,
-  Trophy,
   Zap,
   BarChart3,
-  TrendingUp,
   Clock,
 } from "lucide-react";
 import React, { useState } from "react";

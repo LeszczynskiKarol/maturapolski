@@ -1,16 +1,12 @@
 // backend/src/services/adminService.ts
 
 import { prisma } from "../lib/prisma";
-import { redis } from "../lib/redis";
 
 export class AdminService {
   async createExercise(data: any) {
     const exercise = await prisma.exercise.create({
       data,
     });
-
-    // Clear cache
-    await redis.del("exercises:*");
 
     return exercise;
   }
@@ -21,10 +17,6 @@ export class AdminService {
       data,
     });
 
-    // Clear cache
-    await redis.del("exercises:*");
-    await redis.del(`exercise:${id}`);
-
     return exercise;
   }
 
@@ -32,19 +24,12 @@ export class AdminService {
     await prisma.exercise.delete({
       where: { id },
     });
-
-    // Clear cache
-    await redis.del("exercises:*");
-    await redis.del(`exercise:${id}`);
   }
 
   async bulkCreateExercises(exercises: any[]) {
     const created = await prisma.$transaction(
       exercises.map((exercise) => prisma.exercise.create({ data: exercise }))
     );
-
-    // Clear cache
-    await redis.del("exercises:*");
 
     return created;
   }

@@ -100,7 +100,7 @@ export const UserManager: React.FC = () => {
   const [bulkActionMenu, setBulkActionMenu] = useState(false);
 
   // Fetch users
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [
       "admin-users",
       searchTerm,

@@ -110,7 +110,9 @@ export const ExerciseList: React.FC = () => {
         if (selectedStatus === "solved") return hasSubmissions;
         if (selectedStatus === "to_improve") {
           if (!hasSubmissions) return false;
-          const best = Math.max(...ex.submissions.map((s) => s.score || 0));
+          const best = Math.max(
+            ...ex.submissions.map((s: any) => s.score || 0)
+          );
           return (best / ex.points) * 100 < 60;
         }
         return true;
