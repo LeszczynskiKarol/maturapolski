@@ -1,6 +1,6 @@
 // frontend/src/features/student/Dashboard.tsx
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
   Award,
@@ -16,7 +16,7 @@ import {
   Trophy,
   Zap,
 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { AiPointsWidget } from "../../components/AiPointsWidget";
@@ -38,6 +38,7 @@ const EPOCHS = [
 ];
 
 export const StudentDashboard: React.FC = () => {
+  const [isUpgrading, setIsUpgrading] = useState(false);
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   // ✅ POPRAWIONE ŚCIEŻKI API
@@ -64,6 +65,35 @@ export const StudentDashboard: React.FC = () => {
 
   const isPremium = subscription?.plan === "PREMIUM";
   const isFree = !isPremium;
+
+  const upgradeMutation = useMutation({
+    mutationFn: async () => {
+      const { data } = await api.post("/api/subscription/create-checkout", {
+        priceId: import.meta.env.VITE_STRIPE_PRICE_ID_PREMIUM,
+      });
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    },
+    onError: (error: any) => {
+      toast.error(
+        error.response?.data?.error || "Błąd podczas tworzenia płatności"
+      );
+      setIsUpgrading(false);
+    },
+  });
+
+  const handleUpgrade = async () => {
+    setIsUpgrading(true);
+    try {
+      await upgradeMutation.mutateAsync();
+    } catch (error) {
+      setIsUpgrading(false);
+    }
+  };
 
   // ✅ POPRAWIONA funkcja - autostart
   const startLearningSession = () => {
@@ -178,11 +208,19 @@ export const StudentDashboard: React.FC = () => {
                     </div>
                   </div>
                   <button
-                    onClick={() => navigate("/subscription")}
+                    onClick={handleUpgrade}
+                    disabled={isUpgrading}
                     className="px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50 
-                             font-semibold transition-colors"
+           font-semibold transition-colors disabled:opacity-50 flex items-center gap-2"
                   >
-                    Wykup Premium
+                    {isUpgrading ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                        Przekierowywanie...
+                      </>
+                    ) : (
+                      "Wykup Premium"
+                    )}
                   </button>
                 </div>
                 <Lock className="w-12 h-12 opacity-20" />
@@ -301,7 +339,7 @@ export const StudentDashboard: React.FC = () => {
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {EPOCHS.slice(0, 6).map((epoch) => {
+              {EPOCHS.slice(0, 20).map((epoch) => {
                 const stats = epochStats?.[epoch.value];
                 const progress = stats
                   ? Math.round((stats.completed / stats.total) * 100)

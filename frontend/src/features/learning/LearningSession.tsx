@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import confetti from "canvas-confetti";
+import { QuestionWithContextLinks } from "../../components/QuestionWithContextLinks";
 import { AnimatePresence, motion } from "framer-motion";
 import { ExerciseBrowser } from "./ExerciseBrowser";
 
@@ -1477,7 +1478,14 @@ export const LearningSession: React.FC = () => {
 
                 {/* Title */}
                 <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
-                  {currentExercise.question}
+                  {currentExercise.content?.contextLinks ? (
+                    <QuestionWithContextLinks
+                      question={currentExercise.question}
+                      contextLinks={currentExercise.content.contextLinks}
+                    />
+                  ) : (
+                    currentExercise.question
+                  )}
                 </h2>
               </div>
 
@@ -1924,6 +1932,30 @@ export const LearningSession: React.FC = () => {
                       </div>
                     )}
 
+                    {/* Hasło epoki (slogan) */}
+                    {currentExercise.content?.slogan && (
+                      <div className="mb-4 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                        <p className="font-medium text-sm text-purple-700 dark:text-purple-300 mb-1">
+                          📚 Hasło epoki:
+                        </p>
+                        <p className="text-lg font-semibold text-purple-900 dark:text-purple-100">
+                          "{currentExercise.content.slogan}"
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Szczegółowa instrukcja */}
+                    {currentExercise.content?.instruction && (
+                      <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <p className="font-medium text-sm text-blue-700 dark:text-blue-300 mb-1">
+                          ✍️ Instrukcja:
+                        </p>
+                        <p className="text-blue-900 dark:text-blue-100">
+                          {currentExercise.content.instruction}
+                        </p>
+                      </div>
+                    )}
+
                     {currentExercise.content?.transformation && (
                       <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                         <p className="font-medium text-sm text-blue-700 dark:text-blue-300 mb-1">
@@ -1935,7 +1967,7 @@ export const LearningSession: React.FC = () => {
                       </div>
                     )}
 
-                    {/* NOWE: Obsługa zadań wieloetapowych */}
+                    {/*  Obsługa zadań wieloetapowych */}
                     {currentExercise.content?.steps &&
                     currentExercise.content.steps.length > 0 ? (
                       <div className="space-y-4">
@@ -2014,7 +2046,45 @@ export const LearningSession: React.FC = () => {
 
                 {/* SYNTHESIS NOTE */}
                 {currentExercise.type === "SYNTHESIS_NOTE" && (
-                  <div>
+                  <div className="space-y-4">
+                    {/* Temat notatki */}
+                    {currentExercise.content?.topic && (
+                      <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-200 dark:border-indigo-800">
+                        <p className="font-medium text-sm text-indigo-700 dark:text-indigo-300 mb-1">
+                          📝 Temat do omówienia:
+                        </p>
+                        <p className="text-lg font-semibold text-indigo-900 dark:text-indigo-100">
+                          {currentExercise.content.topic}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Wymagania */}
+                    {currentExercise.content?.requirements &&
+                      currentExercise.content.requirements.length > 0 && (
+                        <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                          <p className="font-medium text-sm text-green-700 dark:text-green-300 mb-2">
+                            ✅ Wymagania - uwzględnij w notatce:
+                          </p>
+                          <ul className="space-y-1.5">
+                            {currentExercise.content.requirements.map(
+                              (req: string, idx: number) => (
+                                <li
+                                  key={idx}
+                                  className="flex items-start gap-2 text-sm text-green-800 dark:text-green-200"
+                                >
+                                  <span className="text-green-600 dark:text-green-400 mt-0.5">
+                                    •
+                                  </span>
+                                  <span>{req}</span>
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        </div>
+                      )}
+
+                    {/* Pole tekstowe */}
                     <textarea
                       value={answer || ""}
                       onChange={(e) => setAnswer(e.target.value)}
@@ -2022,15 +2092,17 @@ export const LearningSession: React.FC = () => {
                rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
                bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
                placeholder-gray-500 dark:placeholder-gray-400"
-                      rows={6}
-                      placeholder="Napisz notatkę syntetyzującą..."
+                      rows={8}
+                      placeholder="Napisz notatkę syntetyzującą zgodnie z wymaganiami..."
                     />
-                    {currentExercise.content?.requirements && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                        Wymagania:{" "}
-                        {currentExercise.content.requirements.join(", ")}
-                      </p>
-                    )}
+
+                    {/* Licznik słów */}
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      Liczba słów:{" "}
+                      <span className="font-semibold text-gray-700 dark:text-gray-300">
+                        {(answer || "").split(/\s+/).filter(Boolean).length}
+                      </span>
+                    </div>
                   </div>
                 )}
 

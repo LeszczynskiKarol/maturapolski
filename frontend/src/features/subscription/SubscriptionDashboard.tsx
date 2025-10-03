@@ -296,74 +296,77 @@ export const SubscriptionDashboard: React.FC = () => {
         </div>
 
         {/* AI Points Progress */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Zap className="w-5 h-5 text-yellow-500" />
-              <span className="font-semibold text-gray-900 dark:text-white">
-                Punkty AI
+        {isPremium && (
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Zap className="w-5 h-5 text-yellow-500" />
+                <span className="font-semibold text-gray-900 dark:text-white">
+                  Punkty AI
+                </span>
+              </div>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {subscription.aiPointsUsed} / {subscription.aiPointsLimit} (
+                {subscription.percentUsed}%)
               </span>
             </div>
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              {subscription.aiPointsUsed} / {subscription.aiPointsLimit} (
-              {subscription.percentUsed}%)
-            </span>
-          </div>
 
-          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <motion.div
-              className={`h-full ${
-                subscription.percentUsed > 90
-                  ? "bg-red-500"
-                  : subscription.percentUsed > 70
-                  ? "bg-orange-500"
-                  : "bg-green-500"
-              }`}
-              initial={{ width: 0 }}
-              animate={{ width: `${subscription.percentUsed}%` }}
-              transition={{ duration: 0.5 }}
-            />
-          </div>
+            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <motion.div
+                className={`h-full ${
+                  subscription.percentUsed > 90
+                    ? "bg-red-500"
+                    : subscription.percentUsed > 70
+                    ? "bg-orange-500"
+                    : "bg-green-500"
+                }`}
+                initial={{ width: 0 }}
+                animate={{ width: `${subscription.percentUsed}%` }}
+                transition={{ duration: 0.5 }}
+              />
+            </div>
 
-          <div className="flex items-center justify-between mt-2 text-xs text-gray-600 dark:text-gray-400">
-            <span>
-              Pozostało:{" "}
-              {subscription.aiPointsLimit - subscription.aiPointsUsed} punktów
-            </span>
-            <span>
-              Reset:{" "}
-              {new Date(subscription.resetDate).toLocaleDateString("pl-PL")}
-            </span>
+            <div className="flex items-center justify-between mt-2 text-xs text-gray-600 dark:text-gray-400">
+              <span>
+                Pozostało:{" "}
+                {subscription.aiPointsLimit - subscription.aiPointsUsed} punktów
+              </span>
+              <span>
+                Reset:{" "}
+                {new Date(subscription.resetDate).toLocaleDateString("pl-PL")}
+              </span>
+            </div>
           </div>
-        </div>
-
+        )}
         {/* Co dają punkty */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="text-center p-3 bg-white/50 dark:bg-gray-700/50 rounded-lg">
-            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-              Krótkie odpowiedzi
-            </p>
-            <p className="text-lg font-bold text-gray-900 dark:text-white">
-              1 pkt
-            </p>
+        {isPremium && (
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="text-center p-3 bg-white/50 dark:bg-gray-700/50 rounded-lg">
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                Krótkie odpowiedzi
+              </p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white">
+                1 pkt
+              </p>
+            </div>
+            <div className="text-center p-3 bg-white/50 dark:bg-gray-700/50 rounded-lg">
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                Notatki
+              </p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white">
+                1 pkt
+              </p>
+            </div>
+            <div className="text-center p-3 bg-white/50 dark:bg-gray-700/50 rounded-lg">
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                Wypracowania
+              </p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white">
+                3 pkt
+              </p>
+            </div>
           </div>
-          <div className="text-center p-3 bg-white/50 dark:bg-gray-700/50 rounded-lg">
-            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-              Notatki
-            </p>
-            <p className="text-lg font-bold text-gray-900 dark:text-white">
-              1 pkt
-            </p>
-          </div>
-          <div className="text-center p-3 bg-white/50 dark:bg-gray-700/50 rounded-lg">
-            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-              Wypracowania
-            </p>
-            <p className="text-lg font-bold text-gray-900 dark:text-white">
-              3 pkt
-            </p>
-          </div>
-        </div>
+        )}
 
         {/* Warnings */}
         {subscription.percentUsed > 80 && !isPremium && (

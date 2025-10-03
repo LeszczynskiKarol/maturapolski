@@ -65,7 +65,7 @@ export const AiPointsCost: React.FC<AiPointsCostProps> = ({
     <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
       <Zap className="w-4 h-4 text-yellow-500" />
       <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
-        Ocena AI: {cost} {cost === 1 ? "punkt" : "punkty"}
+        Ocena AI
       </span>
     </div>
   );
