@@ -1,0 +1,11 @@
+{
+  "Changes": [{
+    "Action": "CREATE",
+    "ResourceRecordSet": {
+      "Name": "api.maturapolski.pl",
+      "Type": "A",
+      "TTL": 300,
+      "ResourceRecords": [{"Value": "3.68.187.152"}]
+    }
+  }]
+}

@@ -66,14 +66,13 @@ fastify.register(jwt, {
 });
 
 // Health check
-fastify.get("/health", async (request, reply) => {
+fastify.get("/health", async () => {
   return {
     status: "OK",
     timestamp: new Date().toISOString(),
     services: {
       ai: !!process.env.ANTHROPIC_API_KEY,
       database: true,
-      redis: true,
     },
   };
 });
@@ -123,20 +122,8 @@ fastify.register(materialsRoutes, { prefix: "/api/materials" });
 console.log("✓ Materials routes registered at /api/materials/*");
 
 // Error handler
-fastify.setErrorHandler(async (error, request, reply) => {
+fastify.setErrorHandler(async (error) => {
   console.error("Server Error:", error);
-
-  if (error.statusCode) {
-    reply.status(error.statusCode).send({
-      error: error.message,
-      statusCode: error.statusCode,
-    });
-  } else {
-    reply.status(500).send({
-      error: "Internal Server Error",
-      message: error.message,
-    });
-  }
 });
 
 // 404 handler

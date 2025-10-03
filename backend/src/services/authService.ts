@@ -380,12 +380,4 @@ export class AuthService {
       throw new Error("PASSWORD_NO_LOWERCASE");
     }
   }
-
-  private generateTokens(userId: string) {
-    const user = { id: userId };
-    return {
-      token: this.generateToken(user),
-      refreshToken: this.generateRefreshToken(user),
-    };
-  }
 }

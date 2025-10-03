@@ -1,9 +1,8 @@
 // frontend/src/features/gamification/AchievementSystem.tsx
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import confetti from "canvas-confetti";
-import { Trophy, Star, Target, Flame, Award } from "lucide-react";
+import { Trophy, Star, Flame, Award } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../services/api";
 
@@ -32,14 +31,6 @@ export const AchievementSystem: React.FC = () => {
     queryFn: () => api.get("/api/student/stats").then((r) => r.data),
     refetchInterval: 30000,
   });
-
-  const celebrateAchievement = () => {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
-  };
 
   return (
     <div className="space-y-6">

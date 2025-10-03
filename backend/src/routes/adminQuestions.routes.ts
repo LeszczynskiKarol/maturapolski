@@ -53,7 +53,7 @@ export async function adminQuestionsRoutes(fastify: FastifyInstance) {
   });
 
   // Statystyki pytań
-  fastify.get("/stats", async (request, reply) => {
+  fastify.get("/stats", async (_request, reply) => {
     const [total, closed, shortAnswer, essays, recentlyUsed] =
       await Promise.all([
         prisma.exercise.count(),
@@ -283,7 +283,7 @@ export async function adminQuestionsRoutes(fastify: FastifyInstance) {
   });
 
   // Analiza wykorzystania pytań
-  fastify.get("/usage-analysis", async (request, reply) => {
+  fastify.get("/usage-analysis", async (_request, reply) => {
     const analysis = await prisma.$queryRaw`
       SELECT 
         e.id,
@@ -306,7 +306,7 @@ export async function adminQuestionsRoutes(fastify: FastifyInstance) {
   });
 
   // Rekomendacje dla nowych pytań
-  fastify.get("/recommendations", async (request, reply) => {
+  fastify.get("/recommendations", async (_request, reply) => {
     // Analiza luk w bazie pytań
     const gaps = await prisma.$queryRaw`
       SELECT 

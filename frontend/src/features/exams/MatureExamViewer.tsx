@@ -9,7 +9,6 @@ import {
   ChevronRight,
   ChevronLeft,
   Send,
-  FileText,
   Home,
   Brain,
   AlertCircle,

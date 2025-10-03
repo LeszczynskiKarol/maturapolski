@@ -29,7 +29,11 @@ async function seedExercises() {
   await prisma.examQuestion.deleteMany({});
   console.log("✅ Usunięto examQuestions");
 
-  // 6. Teraz możemy bezpiecznie usunąć Exercise
+  // 6. AiUsage (zależy od Exercise)
+  await prisma.aiUsage.deleteMany({});
+  console.log("✅ Usunięto aiUsage");
+
+  // 7. Teraz możemy bezpiecznie usunąć Exercise
   await prisma.exercise.deleteMany({});
   console.log("✅ Usunięto exercises");
 
@@ -86,7 +90,8 @@ async function seedExercises() {
       },
       correctAnswer: 0,
       metadata: {
-        explanation: "Poprawnie: Rzeczpospolita (wielka litera)",
+        explanation:
+          "Wyraz 'Rzeczpospolita' jako nazwa państwa polskiego musi być pisany wielką literą. Jest to nazwa własna, podobnie jak 'Polska' czy 'Niemcy'. Małą literą piszemy tylko gdy mówimy o rzeczpospolitej jako formie ustroju (np. 'rzeczpospolita rzymska').",
       },
     },
     {
@@ -95,8 +100,18 @@ async function seedExercises() {
       difficulty: 2,
       points: 1,
       epoch: "POSITIVISM",
-      question: "Która postać z 'Lalki' reprezentuje arystokrację?",
+      question: "Która postać z „Lalki” reprezentuje arystokrację?",
       content: {
+        contextLinks: [
+          {
+            trigger: "arystokrację",
+            title: "Arystokracja w 'Lalce' Prusa",
+            type: "text",
+            content:
+              "Arystokracja to warstwa społeczna najwyższego stanu, zazwyczaj szlachta rodowa posiadająca tytuły (hrabiów, baronów) i znaczny majątek. W 'Lalce' Bolesława Prusa arystokracja reprezentowana przez rodzinę Łęckich symbolizuje stare, konserwatywne elity, które w epoce kapitalizmu tracą znaczenie ekonomiczne, ale zachowują prestiż społeczny. Izabela Łęcka to córka arystokratycznej rodziny, w której zakochuje się kupiec Wokulski.",
+            moreInfoLink: "",
+          },
+        ],
         options: [
           "Stanisław Wokulski",
           "Ignacy Rzecki",
@@ -105,26 +120,9 @@ async function seedExercises() {
         ],
       },
       correctAnswer: 2,
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "LANGUAGE_USE",
-      difficulty: 3,
-      points: 2,
-      question:
-        "Jaki typ błędu występuje w zdaniu: 'Przyszedłem po to, żeby się z tobą spotkać'?",
-      content: {
-        options: [
-          "błąd ortograficzny",
-          "pleonazm (nadmiarowość)",
-          "brak błędu",
-          "błąd interpunkcyjny",
-        ],
-      },
-      correctAnswer: 1,
       metadata: {
         explanation:
-          "'Po to żeby' to pleonazm - wystarczy 'żeby' lub 'po to, by'",
+          "Izabela Łęcka jest córką arystokratycznej rodziny, reprezentującą stare elity szlacheckie. Wokulski to przedsiębiorca i kupiec (burżuazja), Rzecki to wierny subiekt (drobnomieszczanin), a Ochocki to dziennikarz. Konflikt między mieszczańskim Wokulskim a arystokratyczną Izabelą jest jednym z głównych wątków powieści.",
       },
     },
     {
@@ -134,6 +132,16 @@ async function seedExercises() {
       points: 1,
       question: "Co to jest antonim?",
       content: {
+        contextLinks: [
+          {
+            trigger: "antonim",
+            title: "Antonim - relacja znaczeniowa",
+            type: "text",
+            content:
+              "Antonim to wyraz o znaczeniu przeciwnym do innego wyrazu. Antonimy tworzą pary przeciwstawne: biały - czarny, dobry - zły, wysoki - niski, gorący - zimny. Rozróżniamy antonimy gradacyjne (dopuszczające stopniowanie: ciepły - zimny), komplementarne (wykluczające się: żywy - martwy) oraz konwersywne (relacyjne: kupić - sprzedać, dawać - brać).",
+            moreInfoLink: "",
+          },
+        ],
         options: [
           "słowo obce",
           "słowo podobne brzmieniem",
@@ -142,6 +150,10 @@ async function seedExercises() {
         ],
       },
       correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Antonim to słowo o przeciwnym znaczeniu (np. dobry - zły, gorący - zimny). Słowo obce to zapożyczenie z innego języka, słowa podobne brzmieniem to paronimy (np. efekt - afekt), a słowo wieloznaczne to polisem (np. zamek - budowla lub urządzenie).",
+      },
     },
     {
       type: "CLOSED_SINGLE",
@@ -151,11 +163,22 @@ async function seedExercises() {
       epoch: "ROMANTICISM",
       question: "Który utwór NIE jest dramatem?",
       content: {
+        contextLinks: [
+          {
+            trigger: "dramatem",
+            title: "Dramat jako rodzaj literacki",
+            type: "text",
+            content:
+              "Dramat to utwór literacki przeznaczony do wystawienia na scenie teatralnej. Charakteryzuje się dialogiem postaci, podziałem na akty i sceny, didaskaliami (wskazówkami scenicznymi) oraz brakiem narratora. W romantyzmie popularne były dramaty romantyczne (np. 'Dziady', 'Kordian'), łączące elementy realizmu z fantastyką i symboliką. Dramat różni się od epiki (opowiadanie, powieść) i liryki (wiersz).",
+            moreInfoLink: "",
+          },
+        ],
         options: ["Dziady", "Pan Tadeusz", "Kordian", "Nie-Boska komedia"],
       },
       correctAnswer: 1,
       metadata: {
-        explanation: "Pan Tadeusz to epopeja, nie dramat",
+        explanation:
+          "Pan Tadeusz to epopeja (gatunek epicki), nie dramat. Utwór Mickiewicza ma formę poematu narracyjnego z narratorem opowiadającym historię. Pozostałe utwory (Dziady, Kordian, Nie-Boska komedia) to dramaty - utwory dialogowe przeznaczone do wystawienia na scenie.",
       },
     },
     {
@@ -165,6 +188,16 @@ async function seedExercises() {
       points: 2,
       question: "Który środek stylistyczny dominuje?",
       content: {
+        contextLinks: [
+          {
+            trigger: "środek stylistyczny",
+            title: "Środki stylistyczne w języku",
+            type: "text",
+            content:
+              "Środki stylistyczne to zabiegi językowe służące upiększeniu wypowiedzi i wzmocnieniu jej wyrazu. Należą do nich m.in.: metafora (przenośnia bez słowa porównującego: 'czas to pieniądz'), porównanie (zestawienie z użyciem 'jak', 'jakby': 'biały jak śnieg'), personifikacja (nadanie cech ludzkich: 'wiatr szeptał'), epitet (określenie barwne: 'srebrny księżyc'). Środki te wzbogacają tekst i nadają mu artystyczny charakter.",
+            moreInfoLink: "",
+          },
+        ],
         text: "Życie to podróż bez mapy, gdzie każdy krok to zagadka.",
         options: [
           "personifikacja",
@@ -174,6 +207,10 @@ async function seedExercises() {
         ],
       },
       correctAnswer: 1,
+      metadata: {
+        explanation:
+          "To metafora rozbudowana - życie zostało porównane do podróży bez użycia słowa 'jak' czy 'jakby'. Metafora jest rozwinięta przez kolejne obrazy (brak mapy, kroki jako zagadki). Nie ma tu personifikacji (brak cech ludzkich nadanych rzeczom), porównania (brak 'jak') ani epitetu (brak przymiotnika określającego).",
+      },
     },
     {
       type: "CLOSED_SINGLE",
@@ -192,7 +229,7 @@ async function seedExercises() {
       category: "LANGUAGE_USE",
       difficulty: 1,
       points: 1,
-      question: "Ile samogłosek nosowych ma polski?",
+      question: "Ile samogłosek nosowych występuje w języku polskim?",
       content: {
         options: ["1", "2", "3", "4"],
       },
@@ -207,7 +244,7 @@ async function seedExercises() {
       difficulty: 3,
       points: 2,
       epoch: "YOUNG_POLAND",
-      question: "Który symbol pojawia się w 'Weselu' Wyspiańskiego?",
+      question: "Który symbol pojawia się w „Weselu” Wyspiańskiego?",
       content: {
         options: ["biały orzeł", "róża", "złoty róg", "krzyż"],
       },
@@ -268,7 +305,7 @@ async function seedExercises() {
       category: "LANGUAGE_USE",
       difficulty: 2,
       points: 1,
-      question: "Co oznacza 'mieć węża w kieszeni'?",
+      question: "Co oznacza „mieć węża w kieszeni”?",
       content: {
         options: [
           "nosić zwierzę",
@@ -312,7 +349,7 @@ async function seedExercises() {
       category: "LANGUAGE_USE",
       difficulty: 3,
       points: 2,
-      question: "Określ funkcję składniową: 'Mama dała *córce* prezent.'",
+      question: "Określ funkcję składniową: „Mama dała *córce* prezent.”",
       content: {
         options: [
           "dopełnienie bliższe",
@@ -345,7 +382,7 @@ async function seedExercises() {
       category: "LANGUAGE_USE",
       difficulty: 2,
       points: 1,
-      question: "W którym przypadku jest wyraz 'domem'?",
+      question: "W którym przypadku występuje wyraz „domem”?",
       content: {
         options: ["mianownik", "dopełniacz", "narzędnik", "miejscownik"],
       },
@@ -368,20 +405,7 @@ async function seedExercises() {
       },
       correctAnswer: 1,
     },
-    {
-      type: "CLOSED_SINGLE",
-      category: "LANGUAGE_USE",
-      difficulty: 1,
-      points: 1,
-      question: "Które słowo jest BŁĘDNE?",
-      content: {
-        options: ["wziąć", "wziąwszy", "wzięty", "wziął"],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation: "Poprawnie: wziąwszy nie istnieje, powinno być 'wziąwszy'",
-      },
-    },
+
     {
       type: "CLOSED_SINGLE",
       category: "LANGUAGE_USE",
@@ -430,7 +454,7 @@ async function seedExercises() {
       },
       correctAnswer: 1,
       metadata: {
-        explanation: "Np. 'żywy trup', 'głośna cisza'",
+        explanation: "Np. „żywy trup”, „głośna cisza”",
       },
     },
     {
@@ -477,7 +501,7 @@ async function seedExercises() {
       difficulty: 2,
       points: 1,
       epoch: "ROMANTICISM",
-      question: "Gdzie rozgrywa się akcja 'Dziadów' cz. III?",
+      question: "Gdzie rozgrywa się akcja „Dziadów” cz. III?",
       content: {
         options: ["w Wilnie", "w Warszawie", "w Paryżu", "w Petersburgu"],
       },
@@ -526,7 +550,7 @@ async function seedExercises() {
         sentence: "Ten film jest lepszy jak tamten.",
         options: [
           "brak błędu",
-          "błędny spójnik - powinno być 'niż'",
+          "błędny spójnik - powinno być „niż”",
           "błędny czas",
           "błędna liczba",
         ],
@@ -600,7 +624,7 @@ async function seedExercises() {
       category: "LANGUAGE_USE",
       difficulty: 3,
       points: 2,
-      question: "Określ typ błędu: 'Mama i tata jest w domu.'",
+      question: "Określ typ błędu: „Mama i tata jest w domu.”",
       content: {
         options: [
           "błąd ortograficzny",
@@ -611,20 +635,10 @@ async function seedExercises() {
       },
       correctAnswer: 1,
       metadata: {
-        explanation: "Powinno być: 'są w domu'",
+        explanation: "Powinno być: „są w domu”",
       },
     },
-    {
-      type: "CLOSED_SINGLE",
-      category: "LANGUAGE_USE",
-      difficulty: 1,
-      points: 1,
-      question: "Który wyraz jest w bierniku?",
-      content: {
-        options: ["dom", "domu", "domowi", "dom (czytam książkę)"],
-      },
-      correctAnswer: 3,
-    },
+
     {
       type: "CLOSED_SINGLE",
       category: "HISTORICAL_LITERARY",
@@ -834,7 +848,7 @@ async function seedExercises() {
       difficulty: 2,
       points: 3,
       epoch: "POSITIVISM",
-      question: "Dopasuj postać z 'Lalki' do jej roli społecznej.",
+      question: "Dopasuj postać z „Lalki” do jej roli społecznej.",
       content: {
         matchingType: "character_role",
         leftColumn: [
@@ -1161,7 +1175,7 @@ async function seedExercises() {
       category: "LANGUAGE_USE",
       difficulty: 1,
       points: 2,
-      question: "Które znaki to znaki INTERPUNKCYJNE?",
+      question: "Które znaki to znaki interpunkcyjne?",
       content: {
         options: [".", "a", "?", "5", ","],
       },
@@ -1632,7 +1646,7 @@ async function seedExercises() {
       type: "CLOSED_MULTIPLE",
       category: "LANGUAGE_USE",
       difficulty: 1,
-      points: 2,
+      points: 1,
       question: "Które zdania są pytaniami?",
       content: {
         options: [
@@ -2972,17 +2986,7 @@ async function seedExercises() {
       },
       correctAnswer: [0, 2, 4],
     },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 1,
-      points: 2,
-      question: "Które postaci występują w bajkach?",
-      content: {
-        options: ["wilk", "komputer", "lis", "telewizor", "zając"],
-      },
-      correctAnswer: [0, 2, 4],
-    },
+
     {
       type: "CLOSED_MULTIPLE",
       category: "LANGUAGE_USE",
@@ -4943,11 +4947,11 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 5,
       question: "Wyjaśnij zasady ortograficzne.",
       content: {
-        topic: "Kiedy piszemy 'rz' a kiedy 'ż'?",
+        topic: "Kiedy piszemy „rz” a kiedy „ż”?",
         requirements: [
           "zasada podstawowa",
-          "5 przykładów z 'rz'",
-          "5 przykładów z 'ż'",
+          "5 przykładów z „rz”",
+          "5 przykładów z „ż”",
           "wyjątki od reguły",
           "100-150 słów",
         ],
@@ -6143,19 +6147,18 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       content: {
         words: ["'rz' i 'ż'"],
         instruction:
-          "Podaj przykłady wyrazów z 'rz' i wyjaśnij kiedy piszemy 'rz' a kiedy 'ż'.",
+          "Podaj przykłady wyrazów z „rz” i wyjaśnij, kiedy piszemy „rz” a kiedy 'ż'.",
       },
     },
     {
       type: "SHORT_ANSWER",
       category: "LANGUAGE_USE",
       difficulty: 2,
-      points: 3,
-      question: "Przepisz zdanie poprawiając błędy.",
+      points: 2,
+      question: "Przepisz zdanie, poprawiając błędy.",
       content: {
         originalSentence:
           "Wczoraj poszłem z mamą do kina i obejżeliśmy ciekawy film o zwieżętach.",
-        instruction: "Przepisz zdanie poprawnie i podkreśl poprawione błędy.",
       },
     },
     {
@@ -6207,7 +6210,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       content: {
         slogan: "praca organiczna",
         instruction:
-          "Co oznaczało hasło 'praca organiczna' w pozytywizmie? Odpowiedz w 3-4 zdaniach.",
+          "Co oznaczało hasło „praca organiczna” w pozytywizmie? Odpowiedz w 3-4 zdaniach.",
       },
     },
     {
@@ -6254,7 +6257,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       question: "Określ funkcję interpunkcji.",
       content: {
         sentence: "Anna, która jest moją siostrą, studiuje medycynę.",
-        instruction: "Wyjaśnij po co służą przecinki w tym zdaniu.",
+        instruction: "Wyjaśnij, do czego służą przecinki w tym zdaniu.",
       },
     },
     {
@@ -7271,7 +7274,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 1,
       points: 1,
       epoch: "ROMANTICISM",
-      question: "Kto napisał 'Pan Tadeusz'?",
+      question: "Kto napisał „Pana Tadeusza”?",
       content: {
         options: [
           "Juliusz Słowacki",
@@ -7756,22 +7759,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       },
       correctAnswer: 2,
     },
-    {
-      type: "CLOSED_SINGLE",
-      category: "LANGUAGE_USE",
-      difficulty: 1,
-      points: 1,
-      question: "Które zdanie jest pytaniem?",
-      content: {
-        options: [
-          "Pada deszcz.",
-          "Czy pada deszcz?",
-          "Pada deszcz!",
-          "Niech pada deszcz.",
-        ],
-      },
-      correctAnswer: 1,
-    },
+
     {
       type: "CLOSED_SINGLE",
       category: "HISTORICAL_LITERARY",
@@ -8298,7 +8286,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 2,
       epoch: "ROMANTICISM",
       question:
-        "Wyjaśnij pojęcie 'koncepcji mesjanistycznej' w romantyzmie polskim.",
+        "Wyjaśnij pojęcie „koncepcji mesjanistycznej” w romantyzmie polskim.",
       content: {
         requirements: ["definicja mesjanizmu", "kontekst polski", "przykład"],
       },
@@ -8778,14 +8766,28 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       epoch: "BAROQUE",
       question: "Który motyw NIE jest typowy dla baroku?",
       content: {
+        contextLinks: [
+          {
+            trigger: "baroku",
+            title: "Barok - epoka XVII wieku",
+            type: "text",
+            content:
+              "Barok to epoka literacka i artystyczna XVII wieku, charakteryzująca się kontrastami, bogactwem form i pesymistyczną wizją świata. Główne motywy barokowe to vanitas (przemijanie), carpe diem (korzystaj z chwili), theatrum mundi (świat jako teatr) oraz memento mori (pamiętaj o śmierci). Barok przeciwstawia ziemskie i niebiańskie, piękno i brzydotę, życie i śmierć.",
+            moreInfoLink: "",
+          },
+        ],
         options: [
-          "vanitas - marność",
-          "memento mori - pamiętaj o śmierci",
-          "praca u podstaw",
-          "theatrum mundi - świat teatr",
+          "vanitas - przemijanie",
+          "carpe diem - chwytaj dzień",
+          "praca organiczna",
+          "theatrum mundi - świat jako teatr",
         ],
       },
       correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Praca organiczna to hasło pozytywizmu (XIX w.), nie baroku (XVII w.). Pozytywistyczne hasło 'pracy organicznej' oznaczało stopniową, systematyczną pracę u podstaw społeczeństwa - rozwój gospodarczy, edukację i samoorganizację. Pozostałe trzy motywy (vanitas, carpe diem, theatrum mundi) są kluczowymi ideami barokowymi, wyrażającymi przemijanie, zmysłowość i teatralność życia.",
+      },
     },
     {
       type: "SHORT_ANSWER",
@@ -9309,7 +9311,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       category: "LANGUAGE_USE",
       difficulty: 2,
       points: 2,
-      question: "Które frazeologizmy oznaczają 'być bardzo biednym'?",
+      question: "Które frazeologizmy oznaczają „być bardzo biednym”?",
       content: {
         options: [
           "nie mieć grosza przy duszy",
@@ -10757,9 +10759,25 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 2,
       points: 1,
       question:
-        "Czy obraz stworzenia Adama w Księdze Rodzaju jest taki sam jak na fresku Michała Anioła 'Stworzenie Adama'? Uzasadnij.",
+        "Czy opis stworzenia Adama w Księdze Rodzaju jest taki sam jak na fresku Michała Anioła „Stworzenie Adama”? Uzasadnij.",
       content: {
-        image: "michelangelo_creation.jpg",
+        // Definicje linków kontekstowych
+        contextLinks: [
+          {
+            trigger: "opis stworzenia Adama w Księdze Rodzaju",
+            title: "Księga Rodzaju - Stworzenie człowieka",
+            type: "text",
+            content:
+              'W ten sposób zostały ukończone niebo i ziemia oraz wszystkie jej zastępy [stworzeń]. **2**A gdy Bóg ukończył w dniu szóstym swe dzieło, nad którym pracował, odpoczął dnia siódmego po całym swym trudzie, jaki podjął. **3**Wtedy Bóg pobłogosławił ów siódmy dzień i uczynił go świętym; w tym bowiem dniu odpoczął po całej swej pracy, którą wykonał stwarzając. **4**Oto są dzieje początków po stworzeniu nieba i ziemi.\n\n###Drugi opis stworzenia człowieka\n\nGdy Pan Bóg uczynił ziemię i niebo, **5**nie było jeszcze żadnego krzewu polnego na ziemi, ani żadna trawa polna jeszcze nie wzeszła - bo Pan Bóg nie zsyłał deszczu na ziemię i nie było człowieka, który by uprawiał ziemię **6**i rów kopał w ziemi, aby w ten sposób nawadniać całą powierzchnię gleby - **7**wtedy to Pan Bóg ulepił człowieka z prochu ziemi i tchnął w jego nozdrza tchnienie życia, wskutek czego stał się człowiek istotą żywą.\n\n###Pierwotny stan szczęścia\n\n**8**A zasadziwszy ogród w Eden na wschodzie, Pan Bóg umieścił tam człowieka, którego ulepił. **9**Na rozkaz Pana Boga wyrosły z gleby wszelkie drzewa miłe z wyglądu i smaczny owoc rodzące oraz drzewo życia w środku tego ogrodu i drzewo poznania dobra i zła. **10**Z Edenu zaś wypływała rzeka, aby nawadniać ów ogród, i stamtąd się rozdzielała, dając początek czterem rzekom. **11**Nazwa pierwszej - Piszon; jest to ta, która okrąża cały kraj Chawila, gdzie się znajduje złoto. **12**A złoto owej krainy jest znakomite; tam jest także wonna żywica i kamień czerwony. **13**Nazwa drugiej rzeki - Gichon; okrąża ona cały kraj - Kusz. **14**Nazwa rzeki trzeciej - Chiddekel; płynie ona na wschód od Aszszuru. Rzeka czwarta - to Perat. **15**Pan Bóg wziął zatem człowieka i umieścił go w ogrodzie Eden, aby uprawiał go i doglądał. **16**A przy tym Pan Bóg dał człowiekowi taki rozkaz: «Z wszelkiego drzewa tego ogrodu możesz spożywać według upodobania; **17**ale z drzewa poznania dobra i zła nie wolno ci jeść, bo gdy z niego spożyjesz, niechybnie umrzesz». **18**Potem Pan Bóg rzekł: «Nie jest dobrze, żeby mężczyzna był sam, uczynię mu zatem odpowiednią dla niego pomoc». **19**Ulepiwszy z gleby wszelkie zwierzęta lądowe i wszelkie ptaki powietrzne, Pan Bóg przyprowadził je do mężczyzny, aby przekonać się, jaką on da im nazwę. Każde jednak zwierzę, które określił mężczyzna, otrzymało nazwę "istota żywa". **20**I tak mężczyzna dał nazwy wszelkiemu bydłu, ptakom powietrznym i wszelkiemu zwierzęciu polnemu, ale nie znalazła się pomoc odpowiednia dla mężczyzny. **21**Wtedy to Pan sprawił, że mężczyzna pogrążył się w głębokim śnie, i gdy spał wyjął jedno z jego żeber, a miejsce to zapełnił ciałem. **22**Po czym Pan Bóg z żebra, które wyjął z mężczyzny, zbudował niewiastę. A gdy ją przyprowadził do mężczyzny, **23**mężczyzna powiedział: «Ta dopiero jest kością z moich kości i ciałem z mego ciała! Ta będzie się zwała niewiastą, bo ta z mężczyzny została wzięta». **24**Dlatego to mężczyzna opuszcza ojca swego i matkę swoją i łączy się ze swą żoną tak ściśle, że stają się jednym ciałem. **25**Chociaż mężczyzna i jego żona byli nadzy, nie odczuwali wobec siebie wstydu.',
+          },
+          {
+            trigger: "na fresku Michała Anioła „Stworzenie Adama”",
+            title: "Michał Anioł - Stworzenie Adama",
+            type: "image",
+            imageUrl:
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg/1200px-Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg",
+          },
+        ],
         requirements: ["Porównanie tekstów kultury", "Uzasadnienie"],
       },
       tags: ["Biblia", "malarstwo", "Księga Rodzaju"],
@@ -10855,7 +10873,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 2,
       points: 1,
       question:
-        "Jaką funkcję języka pełni fragment 'Posłuchajcie, bracia miła' z Lamentu świętokrzyskiego?",
+        "Jaką funkcję języka pełni fragment „Posłuchajcie, bracia miła” z Lamentu świętokrzyskiego?",
       content: {
         options: ["ekspresywna", "impresywna", "informatywna"],
         hint: "Podmiot wyraża swoje uczucia",

@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import confetti from "canvas-confetti";
+import { QuestionWithContextLinks } from "../../components/QuestionWithContextLinks";
 import { AnimatePresence, motion } from "framer-motion";
 import { ExerciseBrowser } from "./ExerciseBrowser";
 
@@ -78,9 +79,7 @@ const CATEGORIES = [
 
 export const LearningSession: React.FC = () => {
   const [showExitDialog, setShowExitDialog] = useState(false);
-  const [pendingNavigation, setPendingNavigation] = useState<string | null>(
-    null
-  );
+  const [, setPendingNavigation] = useState<string | null>(null);
   const [sequentialMode, setSequentialMode] = useState(false);
   const [isAdminUser, setIsAdminUser] = useState(false);
   const [isChangingExercise, setIsChangingExercise] = useState(false);
@@ -89,7 +88,7 @@ export const LearningSession: React.FC = () => {
   const navigate = useNavigate();
   const hasAutoStarted = useRef(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [lastSaveTime, setLastSaveTime] = useState(Date.now());
+  const [, setLastSaveTime] = useState(Date.now());
   const queryClient = useQueryClient();
   const [sessionActive, setSessionActive] = useState(false);
   const [currentExercise, setCurrentExercise] = useState<any>(null);
@@ -110,7 +109,7 @@ export const LearningSession: React.FC = () => {
   >([]);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submissionResult, setSubmissionResult] = useState<any>(null);
+  const [, setSubmissionResult] = useState<any>(null);
   const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
   const [selectedRight, setSelectedRight] = useState<number | null>(null);
   const [matches, setMatches] = useState<Array<[number, number]>>([]);
@@ -119,7 +118,7 @@ export const LearningSession: React.FC = () => {
     queryFn: () => api.get("/api/subscription/status").then((r) => r.data),
   });
 
-  const [isPlanSession, setIsPlanSession] = useState(false);
+  const [, setIsPlanSession] = useState(false);
   const { data: levelProgress } = useQuery({
     queryKey: ["difficulty-progress"],
     queryFn: () =>
@@ -856,26 +855,45 @@ export const LearningSession: React.FC = () => {
     }
   };
 
-  // Zaktualizuj funkcję endSession
   const endSession = async () => {
-    if (sessionId && sessionStats.completed > 0) {
-      await saveSessionMutation.mutateAsync({
-        sessionId,
-        stats: sessionStats,
-        completedExercises: completedExercises,
-      });
+    console.log("=== END SESSION CALLED ===");
+    console.log("SessionId:", sessionId);
+    console.log("Stats:", sessionStats);
+    console.log("Completed exercises:", completedExercises.length);
+
+    // ✅ ZAWSZE zapisuj sesję, nawet jeśli completed = 0
+    if (sessionId) {
+      try {
+        console.log("Saving session to database...");
+
+        await saveSessionMutation.mutateAsync({
+          sessionId,
+          stats: sessionStats,
+          completedExercises: completedExercises,
+        });
+
+        console.log("✅ Session saved successfully");
+      } catch (error) {
+        console.error("❌ Failed to save session:", error);
+        // Kontynuuj mimo błędu
+      }
+    } else {
+      console.warn("⚠️ No sessionId - skipping save");
     }
 
     // Resetuj wszystko
     setSessionId(null);
-    setSessionComplete(true);
     setSessionActive(false);
     setSessionComplete(true);
-    setSessionActive(false);
-    setSessionFilters({});
     setCurrentExercise(null);
     setAnswer(null);
     setShowFeedback(false);
+
+    // Resetuj filtry
+    setSessionFilters({});
+    localStorage.removeItem("sessionFilters");
+    localStorage.removeItem("isStudyPlanSession");
+    localStorage.removeItem("isEpochReview");
 
     // Resetuj statystyki
     setSessionStats({
@@ -886,18 +904,21 @@ export const LearningSession: React.FC = () => {
       points: 0,
       timeSpent: 0,
     });
-  };
 
-  const pauseSession = async () => {
-    if (!sessionId) return;
+    setCompletedExercises([]);
 
-    await api.post("/api/learning/session/pause", {
-      sessionId,
-      state: sessionStats,
-    });
+    // ✅ KLUCZOWE: Odśwież wszystkie query
+    refetchStats();
+    queryClient.invalidateQueries({ queryKey: ["all-sessions"] });
+    queryClient.invalidateQueries({ queryKey: ["learning-stats"] });
 
-    navigate("/dashboard"); // navigate już jest zaimportowany w komponencie
-    toast("Sesja została wstrzymana. Możesz ją kontynuować później.");
+    // ✅ Dodatkowe opóźnienie dla pewności
+    setTimeout(() => {
+      queryClient.invalidateQueries({ queryKey: ["all-sessions"] });
+      console.log("🔄 Query invalidated with delay");
+    }, 500);
+
+    console.log("✅ END SESSION COMPLETE");
   };
 
   // Next exercise with filters
@@ -1157,7 +1178,7 @@ export const LearningSession: React.FC = () => {
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4">
                   <div
                     className="bg-gradient-to-r from-blue-500 to-green-500 dark:from-blue-400 dark:to-green-400 
-                         h-4 rounded-full transition-all duration-500"
+                       h-4 rounded-full transition-all duration-500"
                     style={{
                       width: `${
                         sessionStats.completed > 0
@@ -1182,18 +1203,30 @@ export const LearningSession: React.FC = () => {
             </div>
           )}
 
+          {/* ✅ POPRAWIONE PRZYCISKI */}
           <div className="flex gap-4">
             <button
-              onClick={pauseSession}
-              className="px-4 py-2 text-yellow-600 dark:text-yellow-400 hover:text-yellow-700 
-           dark:hover:text-yellow-300 transition-colors"
-            >
-              Wstrzymaj sesję
-            </button>
-            <button
-              onClick={() => {
-                setSessionActive(false);
+              onClick={async () => {
+                console.log("=== ZAKOŃCZ I WYJDŹ - MODAL ===");
+
+                // ✅ KLUCZOWE: Najpierw zapisz sesję do bazy
+                if (sessionId && sessionStats.completed > 0) {
+                  try {
+                    await saveSessionMutation.mutateAsync({
+                      sessionId,
+                      stats: sessionStats,
+                      completedExercises: completedExercises,
+                    });
+                    console.log("✅ Session saved successfully");
+                  } catch (error) {
+                    console.error("❌ Failed to save session:", error);
+                  }
+                }
+
+                // Resetuj state
+                setSessionId(null);
                 setSessionComplete(false);
+                setSessionActive(false);
                 setSessionFilters({});
                 setCompletedExercises([]);
                 setSessionStats({
@@ -1204,14 +1237,21 @@ export const LearningSession: React.FC = () => {
                   points: 0,
                   timeSpent: 0,
                 });
+
+                // ✅ Odśwież statystyki i historię
                 refetchStats();
+                queryClient.invalidateQueries({ queryKey: ["all-sessions"] });
+
+                // Nawiguj do dashboard
+                navigate("/dashboard");
               }}
               className="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 
-                   rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 
-                   text-gray-700 dark:text-gray-300 transition-colors"
+                 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 
+                 text-gray-700 dark:text-gray-300 transition-colors"
             >
-              Zakończ
+              Zakończ i wyjdź
             </button>
+
             <button
               onClick={() => {
                 setSessionComplete(false);
@@ -1219,8 +1259,8 @@ export const LearningSession: React.FC = () => {
                 startSession();
               }}
               className="flex-1 px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white 
-                   rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 
-                   transition-colors flex items-center justify-center gap-2"
+                 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 
+                 transition-colors flex items-center justify-center gap-2"
             >
               <Play className="w-5 h-5" />
               Nowa sesja
@@ -1285,9 +1325,9 @@ export const LearningSession: React.FC = () => {
               await endSession();
             }}
             className="w-full sm:w-auto px-4 py-2 text-gray-600 dark:text-gray-400 
-               hover:text-gray-900 dark:hover:text-white transition-colors
-               border border-gray-300 dark:border-gray-600 rounded-lg
-               hover:bg-gray-50 dark:hover:bg-gray-700"
+     hover:text-gray-900 dark:hover:text-white transition-colors
+     border border-gray-300 dark:border-gray-600 rounded-lg
+     hover:bg-gray-50 dark:hover:bg-gray-700"
           >
             Zakończ sesję
           </button>
@@ -1472,7 +1512,14 @@ export const LearningSession: React.FC = () => {
 
                 {/* Title */}
                 <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
-                  {currentExercise.question}
+                  {currentExercise.content?.contextLinks ? (
+                    <QuestionWithContextLinks
+                      question={currentExercise.question}
+                      contextLinks={currentExercise.content.contextLinks}
+                    />
+                  ) : (
+                    currentExercise.question
+                  )}
                 </h2>
               </div>
 
@@ -1578,7 +1625,7 @@ export const LearningSession: React.FC = () => {
                     {currentExercise.content?.sentence && (
                       <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                         <p className="text-gray-900 dark:text-gray-100 italic">
-                          "{currentExercise.content.sentence}"
+                          {currentExercise.content.sentence}
                         </p>
                       </div>
                     )}
@@ -1943,6 +1990,30 @@ export const LearningSession: React.FC = () => {
                       </div>
                     )}
 
+                    {/* Hasło epoki (slogan) */}
+                    {currentExercise.content?.slogan && (
+                      <div className="mb-4 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                        <p className="font-medium text-sm text-purple-700 dark:text-purple-300 mb-1">
+                          📚 Hasło epoki:
+                        </p>
+                        <p className="text-lg font-semibold text-purple-900 dark:text-purple-100">
+                          "{currentExercise.content.slogan}"
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Szczegółowa instrukcja */}
+                    {currentExercise.content?.instruction && (
+                      <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <p className="font-medium text-sm text-blue-700 dark:text-blue-300 mb-1">
+                          ✍️ Instrukcja:
+                        </p>
+                        <p className="text-blue-900 dark:text-blue-100">
+                          {currentExercise.content.instruction}
+                        </p>
+                      </div>
+                    )}
+
                     {currentExercise.content?.transformation && (
                       <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                         <p className="font-medium text-sm text-blue-700 dark:text-blue-300 mb-1">
@@ -1954,7 +2025,7 @@ export const LearningSession: React.FC = () => {
                       </div>
                     )}
 
-                    {/* NOWE: Obsługa zadań wieloetapowych */}
+                    {/*  Obsługa zadań wieloetapowych */}
                     {currentExercise.content?.steps &&
                     currentExercise.content.steps.length > 0 ? (
                       <div className="space-y-4">
@@ -2033,7 +2104,45 @@ export const LearningSession: React.FC = () => {
 
                 {/* SYNTHESIS NOTE */}
                 {currentExercise.type === "SYNTHESIS_NOTE" && (
-                  <div>
+                  <div className="space-y-4">
+                    {/* Temat notatki */}
+                    {currentExercise.content?.topic && (
+                      <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-200 dark:border-indigo-800">
+                        <p className="font-medium text-sm text-indigo-700 dark:text-indigo-300 mb-1">
+                          📝 Temat do omówienia:
+                        </p>
+                        <p className="text-lg font-semibold text-indigo-900 dark:text-indigo-100">
+                          {currentExercise.content.topic}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Wymagania */}
+                    {currentExercise.content?.requirements &&
+                      currentExercise.content.requirements.length > 0 && (
+                        <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                          <p className="font-medium text-sm text-green-700 dark:text-green-300 mb-2">
+                            ✅ Wymagania - uwzględnij w notatce:
+                          </p>
+                          <ul className="space-y-1.5">
+                            {currentExercise.content.requirements.map(
+                              (req: string, idx: number) => (
+                                <li
+                                  key={idx}
+                                  className="flex items-start gap-2 text-sm text-green-800 dark:text-green-200"
+                                >
+                                  <span className="text-green-600 dark:text-green-400 mt-0.5">
+                                    •
+                                  </span>
+                                  <span>{req}</span>
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        </div>
+                      )}
+
+                    {/* Pole tekstowe */}
                     <textarea
                       value={answer || ""}
                       onChange={(e) => setAnswer(e.target.value)}
@@ -2041,15 +2150,17 @@ export const LearningSession: React.FC = () => {
                rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
                bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
                placeholder-gray-500 dark:placeholder-gray-400"
-                      rows={6}
-                      placeholder="Napisz notatkę syntetyzującą..."
+                      rows={8}
+                      placeholder="Napisz notatkę syntetyzującą zgodnie z wymaganiami..."
                     />
-                    {currentExercise.content?.requirements && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                        Wymagania:{" "}
-                        {currentExercise.content.requirements.join(", ")}
-                      </p>
-                    )}
+
+                    {/* Licznik słów */}
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      Liczba słów:{" "}
+                      <span className="font-semibold text-gray-700 dark:text-gray-300">
+                        {(answer || "").split(/\s+/).filter(Boolean).length}
+                      </span>
+                    </div>
                   </div>
                 )}
 
@@ -2208,10 +2319,6 @@ export const LearningSession: React.FC = () => {
                               .filter(Boolean).length;
                             const minWords =
                               currentExercise.content.wordLimit.min;
-                            const progress = Math.min(
-                              100,
-                              (wordCount / minWords) * 100
-                            );
 
                             if (wordCount < minWords) {
                               return `Jeszcze ${
@@ -2547,16 +2654,29 @@ export const LearningSession: React.FC = () => {
         isOpen={showExitDialog}
         sessionStats={sessionStats}
         onConfirm={async () => {
+          console.log("=== CONFIRM EXIT DIALOG - ZAKOŃCZ I WYJDŹ ===");
+
           setShowExitDialog(false);
+
+          // Wywołaj sessionExit.confirmAndExit
           await sessionExit.confirmAndExit(
             sessionExit.nextLocation || undefined
           );
+
+          // ✅ DODAJ: Invaliduj query dla session history
+          queryClient.invalidateQueries({ queryKey: ["all-sessions"] });
+
+          // ✅ DODAJ: Małe opóźnienie aby backend zdążył zapisać
+          setTimeout(() => {
+            queryClient.invalidateQueries({ queryKey: ["all-sessions"] });
+          }, 500);
         }}
         onCancel={() => {
           setShowExitDialog(false);
           sessionExit.cancelExit();
         }}
       />
+
       {/* Exercise Browser Modal */}
       {showExerciseBrowser && (
         <ExerciseBrowser
@@ -2872,7 +2992,7 @@ const SessionStart: React.FC<{
   stats: any;
 }> = ({ onStart, stats }) => {
   const navigate = useNavigate();
-  const [activeSessions, setActiveSessions] = useState<any[]>([]);
+  const [, setActiveSessions] = useState<any[]>([]);
 
   // POBIERZ STATUS SUBSKRYPCJI
   const { data: subscription } = useQuery({

@@ -1,6 +1,6 @@
 // backend/src/middleware/optionalAuth.ts
 
-export const optionalAuth = async (request: any, reply: any) => {
+export const optionalAuth = async (request: any) => {
   try {
     if (request.headers.authorization) {
       await request.jwtVerify();

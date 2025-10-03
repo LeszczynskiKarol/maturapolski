@@ -4,16 +4,7 @@ import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../services/api";
-import {
-  Trophy,
-  Target,
-  TrendingUp,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
-  Home,
-  RefreshCw,
-} from "lucide-react";
+import { Trophy, Target, AlertCircle, Home, RefreshCw } from "lucide-react";
 
 export const ExamResults: React.FC = () => {
   const { sessionId } = useParams<{ sessionId: string }>();

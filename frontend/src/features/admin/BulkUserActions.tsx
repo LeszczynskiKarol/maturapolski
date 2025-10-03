@@ -6,7 +6,6 @@ import {
   X,
   Users,
   Award,
-  Lock,
   Unlock,
   RefreshCw,
   Send,
@@ -14,7 +13,6 @@ import {
   CheckCircle,
   Info,
   Settings,
-  Upload,
   Download,
 } from "lucide-react";
 import { api } from "../../services/api";

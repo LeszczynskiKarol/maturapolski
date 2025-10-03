@@ -66,10 +66,10 @@ async function seed() {
   });
 
   const student1 = await prisma.user.upsert({
-    where: { email: "jan.kowalski@example.com" },
+    where: { email: "kontakt@ecopywriting.pl" },
     update: {},
     create: {
-      email: "jan.kowalski@example.com",
+      email: "kontakt@ecopywriting.pl",
       password: studentPassword,
       username: "jan_kowalski",
       emailVerified: true,

@@ -3,22 +3,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { BookOpen, Users, FileText, Award } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
-import { api } from "../../services/api";
-import { toast } from "react-hot-toast";
 
 export const AdminDashboard: React.FC = () => {
-  // Mutation do tworzenia egzaminu maturalnego (tylko dla admina)
-  const createMatureExamMutation = useMutation({
-    mutationFn: () => api.post("/api/exams/create-mature-exam"),
-    onSuccess: (response) => {
-      toast.success(response.data.message || "Egzamin maturalny utworzony!");
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.error || "Błąd tworzenia egzaminu");
-    },
-  });
-
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">

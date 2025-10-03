@@ -153,7 +153,7 @@ export async function materialsRoutes(fastify: FastifyInstance) {
   });
 
   // Lista epok
-  fastify.get("/epochs", async (request, reply) => {
+  fastify.get("/epochs", async (_request, reply) => {
     try {
       const epochs = await materialService.getEpochs();
       return reply.send(epochs);

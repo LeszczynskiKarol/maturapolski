@@ -5,12 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { api } from "../../services/api";
 import {
-  FileText,
   Clock,
   Award,
   X,
   Play,
-  RotateCw,
   BookOpen,
   AlertCircle,
   Loader2,
@@ -41,7 +39,6 @@ export const ExamList: React.FC = () => {
   const {
     data: exams,
     isLoading,
-    refetch,
     error,
   } = useQuery<Exam[]>({
     queryKey: ["available-exams"],

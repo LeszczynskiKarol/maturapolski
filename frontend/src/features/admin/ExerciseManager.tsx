@@ -7,20 +7,16 @@ import {
   Trash,
   X,
   Search,
-  Filter,
   Upload,
   Download,
   Copy,
   Eye,
-  Check,
   AlertCircle,
   Save,
   ChevronLeft,
   ChevronRight,
   BookOpen,
   Hash,
-  Calendar,
-  Tag,
   BarChart,
   FileText,
 } from "lucide-react";
@@ -59,6 +55,7 @@ interface Exercise {
     requiredReadings?: string[];
     expectedConcepts?: string[];
     sampleAnswer?: string;
+    explanation?: string;
   };
   createdAt: string;
   submissions: number;

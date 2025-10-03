@@ -1,4 +1,4 @@
-// backend/src/routes/student.routes.ts
+// backend/src/routes/student.routes.ts - POPRAWIONA WERSJA
 
 import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
@@ -29,6 +29,11 @@ export async function studentRoutes(fastify: FastifyInstance) {
               userId,
               createdAt: { gte: today },
             },
+            include: {
+              exercise: {
+                select: { points: true },
+              },
+            },
           }),
 
           prisma.submission.count({
@@ -41,29 +46,46 @@ export async function studentRoutes(fastify: FastifyInstance) {
         ]);
 
       const todayExercises = todaySubmissions.length;
-      const todayCorrect = todaySubmissions.filter(
-        (s) => (s.score || 0) > 0
-      ).length;
 
-      // Calculate average score
-      const avgScoreResult = await prisma.submission.aggregate({
+      // Poprawione obliczenie dzisiejszych poprawnych (procent)
+      const todayCorrect = todaySubmissions.filter((s) => {
+        const percentage = ((s.score || 0) / s.exercise.points) * 100;
+        return percentage >= 50; // Uznajemy 50%+ za poprawne
+      }).length;
+
+      // ✅ POPRAWIONE: Oblicz średni wynik jako PROCENT
+      const allSubmissions = await prisma.submission.findMany({
         where: {
           userId,
           score: { not: null },
         },
-        _avg: { score: true },
-        _count: { score: true },
+        include: {
+          exercise: {
+            select: { points: true },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 100,
       });
+
+      const averageScore =
+        allSubmissions.length > 0
+          ? Math.round(
+              allSubmissions.reduce((sum, s) => {
+                return sum + ((s.score || 0) / s.exercise.points) * 100;
+              }, 0) / allSubmissions.length
+            )
+          : 0;
 
       const stats = {
         todayExercises,
         todayCorrect,
-        totalSubmissions: Number(totalSubmissions), // Convert BigInt
+        totalSubmissions: Number(totalSubmissions),
         streak: userProfile?.studyStreak || 0,
         level: userProfile?.level || 1,
         totalPoints: userProfile?.totalPoints || 0,
-        averageScore: avgScoreResult._avg.score || 0,
-        completedExercises: avgScoreResult._count.score || 0,
+        averageScore, // Teraz to jest procent!
+        completedExercises: allSubmissions.length,
       };
 
       return reply.send(stats);
@@ -73,27 +95,24 @@ export async function studentRoutes(fastify: FastifyInstance) {
     }
   });
 
-  // Get student progress
+  // Get student progress - ZUPEŁNIE PRZEPISANE
   fastify.get("/progress", async (request, reply) => {
     try {
       const userId = (request.user as any).userId;
 
-      // Pobierz profil użytkownika
       const userProfile = await prisma.userProfile.findUnique({
         where: { userId },
       });
 
-      // 1. STATYSTYKI OGÓLNE
-      const [totalExercises, completedExercises] = await Promise.all([
-        prisma.exercise.count(),
-        prisma.submission.count({ where: { userId } }),
-        prisma.examSession.count({
-          where: { userId, status: "COMPLETED" },
-        }),
-        prisma.learningSession.count({
-          where: { userId, status: "COMPLETED" },
-        }),
-      ]);
+      // 1. PODSTAWOWE STATYSTYKI
+      const totalExercises = await prisma.exercise.count();
+
+      // Policz unikalne ukończone zadania
+      const uniqueExercises = await prisma.submission.groupBy({
+        by: ["exerciseId"],
+        where: { userId },
+      });
+      const completedExercises = uniqueExercises.length;
 
       // 2. DANE DO WYKRESU POSTĘPU W CZASIE (ostatnie 30 dni)
       const thirtyDaysAgo = new Date();
@@ -122,22 +141,40 @@ export async function studentRoutes(fastify: FastifyInstance) {
               userId,
               exercise: { category: category as any },
             },
-            select: { score: true },
+            include: {
+              exercise: {
+                select: { points: true },
+              },
+            },
           });
 
+          // ✅ POPRAWIONE: Oblicz jako procent
           const avgScore =
             submissions.length > 0
-              ? submissions.reduce((sum, s) => sum + (s.score || 0), 0) /
-                submissions.length
+              ? submissions.reduce((sum, s) => {
+                  return sum + ((s.score || 0) / s.exercise.points) * 100;
+                }, 0) / submissions.length
               : 0;
 
           // Pobierz średnią globalną dla porównania
-          const globalAvg = await prisma.submission.aggregate({
+          const globalSubmissions = await prisma.submission.findMany({
             where: {
               exercise: { category: category as any },
             },
-            _avg: { score: true },
+            include: {
+              exercise: {
+                select: { points: true },
+              },
+            },
+            take: 1000, // Sample
           });
+
+          const globalAvg =
+            globalSubmissions.length > 0
+              ? globalSubmissions.reduce((sum, s) => {
+                  return sum + ((s.score || 0) / s.exercise.points) * 100;
+                }, 0) / globalSubmissions.length
+              : 0;
 
           return {
             category:
@@ -146,8 +183,8 @@ export async function studentRoutes(fastify: FastifyInstance) {
                 : category === "HISTORICAL_LITERARY"
                 ? "Test historycznoliteracki"
                 : "Pisanie",
-            score: Math.round(avgScore * 20), // Przekształć na skalę 0-100
-            average: Math.round((globalAvg._avg.score || 0) * 20),
+            score: Math.round(avgScore),
+            average: Math.round(globalAvg),
           };
         })
       );
@@ -160,12 +197,22 @@ export async function studentRoutes(fastify: FastifyInstance) {
               userId,
               exercise: { difficulty },
             },
+            include: {
+              exercise: {
+                select: { points: true },
+              },
+            },
           });
 
-          const completed = submissions.filter(
-            (s) => (s.score || 0) > 0
-          ).length;
-          const failed = submissions.filter((s) => s.score === 0).length;
+          const completed = submissions.filter((s) => {
+            const percentage = ((s.score || 0) / s.exercise.points) * 100;
+            return percentage >= 50;
+          }).length;
+
+          const failed = submissions.filter((s) => {
+            const percentage = ((s.score || 0) / s.exercise.points) * 100;
+            return percentage < 50;
+          }).length;
 
           return {
             difficulty: `Poziom ${difficulty}`,
@@ -175,21 +222,34 @@ export async function studentRoutes(fastify: FastifyInstance) {
         })
       );
 
-      // 5. ROZKŁAD CZASU NA KATEGORIE
-      const timeByCategory = await Promise.all(
+      // 5. ✅ POPRAWIONY ROZKŁAD CZASU - używam DailyProgress zamiast submissions
+      const dailyProgressByCategory = await Promise.all(
         categories.map(async (category) => {
-          const submissions = await prisma.submission.findMany({
+          // Oblicz czas z sesji nauki
+          const sessions = await prisma.learningSession.findMany({
+            where: {
+              userId,
+              status: "COMPLETED",
+            },
+          });
+
+          // Przybliżona kalkulacja - dzielimy czas proporcjonalnie do liczby zadań w kategorii
+          const categorySubmissions = await prisma.submission.count({
             where: {
               userId,
               exercise: { category: category as any },
             },
-            select: { timeSpent: true },
           });
 
-          const totalTime = submissions.reduce(
-            (sum, s) => sum + (s.timeSpent || 0),
-            0
-          );
+          const totalSubmissions = await prisma.submission.count({
+            where: { userId },
+          });
+
+          const totalTime = sessions.reduce((sum, s) => sum + s.timeSpent, 0);
+          const categoryTime =
+            totalSubmissions > 0
+              ? (totalTime * categorySubmissions) / totalSubmissions
+              : 0;
 
           return {
             name:
@@ -198,7 +258,7 @@ export async function studentRoutes(fastify: FastifyInstance) {
                 : category === "HISTORICAL_LITERARY"
                 ? "Test historycznoliteracki"
                 : "Pisanie",
-            value: Math.round(totalTime / 60), // minuty
+            value: Math.round(categoryTime / 60), // minuty
           };
         })
       );
@@ -223,17 +283,25 @@ export async function studentRoutes(fastify: FastifyInstance) {
         id: sub.id,
         exerciseName: sub.exercise.question.substring(0, 50) + "...",
         category: sub.exercise.category,
-        score: Math.round(((sub.score || 0) / sub.exercise.points) * 100),
+        question: sub.exercise.question,
+        score: sub.score || 0,
+        maxPoints: sub.exercise.points,
+        percentage: Math.round(((sub.score || 0) / sub.exercise.points) * 100),
+        date: sub.createdAt,
         timeAgo: getTimeAgo(sub.createdAt),
       }));
 
-      // 7. OBLICZ ŚREDNI WYNIK
+      // 7. ✅ POPRAWIONE OBLICZENIE ŚREDNIEGO WYNIKU
       const allScores = await prisma.submission.findMany({
         where: {
           userId,
           score: { not: null },
         },
-        select: { score: true },
+        include: {
+          exercise: {
+            select: { points: true },
+          },
+        },
         orderBy: { createdAt: "desc" },
         take: 100,
       });
@@ -241,28 +309,34 @@ export async function studentRoutes(fastify: FastifyInstance) {
       const averageScore =
         allScores.length > 0
           ? Math.round(
-              allScores.reduce((sum, s) => sum + (s.score || 0), 0) /
-                allScores.length
+              allScores.reduce((sum, s) => {
+                return sum + ((s.score || 0) / s.exercise.points) * 100;
+              }, 0) / allScores.length
             )
           : 0;
 
-      // Sprawdź zmianę wyniku
+      // Sprawdź zmianę wyniku (ostatnie 7 dni vs wcześniejsze)
       const lastWeekScores = await prisma.submission.findMany({
         where: {
           userId,
           createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
           score: { not: null },
         },
-        select: { score: true },
+        include: {
+          exercise: {
+            select: { points: true },
+          },
+        },
       });
 
       const lastWeekAvg =
         lastWeekScores.length > 0
-          ? lastWeekScores.reduce((sum, s) => sum + (s.score || 0), 0) /
-            lastWeekScores.length
+          ? lastWeekScores.reduce((sum, s) => {
+              return sum + ((s.score || 0) / s.exercise.points) * 100;
+            }, 0) / lastWeekScores.length
           : 0;
 
-      const scoreChange = averageScore - lastWeekAvg;
+      const scoreChange = Math.round(averageScore - lastWeekAvg);
 
       // 8. OBLICZ CAŁKOWITY CZAS NAUKI (w tym miesiącu)
       const thisMonth = new Date();
@@ -277,10 +351,13 @@ export async function studentRoutes(fastify: FastifyInstance) {
         _sum: { studyTime: true },
       });
 
+      // 9. ✅ NOWE: STATYSTYKI EPOK
+      const epochStats = await getEpochDetailedStats(userId);
+
       return reply.send({
         // Podstawowe statystyki
         averageScore,
-        scoreChange: Math.round(scoreChange),
+        scoreChange,
         totalPoints: userProfile?.totalPoints || 0,
         level: userProfile?.level || 1,
         completedExercises,
@@ -291,14 +368,146 @@ export async function studentRoutes(fastify: FastifyInstance) {
         progressData,
         categoryPerformance,
         difficultyStats,
-        timeDistribution: timeByCategory,
+        timeDistribution: dailyProgressByCategory, // Poprawione
 
         // Historia
         history,
+
+        // Nowe: Szczegółowe statystyki epok
+        epochStats,
       });
     } catch (error) {
       console.error("Error getting progress:", error);
       return reply.code(500).send({ error: "Failed to get progress data" });
+    }
+  });
+
+  // ✅ NOWY ENDPOINT: Szczegółowe statystyki
+  fastify.get("/detailed-stats", async (request, reply) => {
+    try {
+      const userId = (request.user as any).userId;
+
+      const [profile, submissions, sessions] = await Promise.all([
+        prisma.userProfile.findUnique({ where: { userId } }),
+        prisma.submission.findMany({
+          where: { userId },
+          include: {
+            exercise: {
+              select: {
+                points: true,
+                difficulty: true,
+                type: true,
+                category: true,
+              },
+            },
+          },
+        }),
+        prisma.learningSession.findMany({
+          where: { userId, status: "COMPLETED" },
+        }),
+      ]);
+
+      // Oblicz statystyki
+      const totalSessions = sessions.length;
+      const totalTime = sessions.reduce((sum, s) => sum + s.timeSpent, 0);
+      const avgSessionLength =
+        totalSessions > 0 ? totalTime / totalSessions : 0;
+
+      // Średni wynik jako procent
+      const averageScore =
+        submissions.length > 0
+          ? Math.round(
+              submissions.reduce((sum, s) => {
+                return sum + ((s.score || 0) / s.exercise.points) * 100;
+              }, 0) / submissions.length
+            )
+          : 0;
+
+      // Najlepsze kategorie
+      const categoryScores = {
+        LANGUAGE_USE: [] as number[],
+        HISTORICAL_LITERARY: [] as number[],
+        WRITING: [] as number[],
+      };
+
+      submissions.forEach((s) => {
+        const percentage = ((s.score || 0) / s.exercise.points) * 100;
+        if (s.exercise.category in categoryScores) {
+          categoryScores[
+            s.exercise.category as keyof typeof categoryScores
+          ].push(percentage);
+        }
+      });
+
+      const categoryAverages = Object.entries(categoryScores)
+        .map(([cat, scores]) => ({
+          category: cat,
+          average:
+            scores.length > 0
+              ? scores.reduce((a, b) => a + b, 0) / scores.length
+              : 0,
+          count: scores.length,
+        }))
+        .sort((a, b) => b.average - a.average);
+
+      // Najlepsze poziomy trudności
+      const difficultyScores: Record<number, number[]> = {};
+      submissions.forEach((s) => {
+        const percentage = ((s.score || 0) / s.exercise.points) * 100;
+        if (!difficultyScores[s.exercise.difficulty]) {
+          difficultyScores[s.exercise.difficulty] = [];
+        }
+        difficultyScores[s.exercise.difficulty].push(percentage);
+      });
+
+      const bestDifficulty = Object.entries(difficultyScores)
+        .map(([diff, scores]) => ({
+          difficulty: parseInt(diff),
+          average: scores.reduce((a, b) => a + b, 0) / scores.length,
+          count: scores.length,
+        }))
+        .sort((a, b) => b.average - a.average)[0];
+
+      // Streak stats
+      const last7Days = await prisma.dailyProgress.findMany({
+        where: {
+          userId,
+          date: {
+            gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          },
+        },
+        orderBy: { date: "desc" },
+      });
+
+      const activeDays = last7Days.filter((d) => d.exercisesCount > 0).length;
+
+      return reply.send({
+        profile: {
+          level: profile?.level || 1,
+          totalPoints: profile?.totalPoints || 0,
+          streak: profile?.studyStreak || 0,
+          averageScore,
+        },
+        sessions: {
+          total: totalSessions,
+          avgLength: Math.round(avgSessionLength / 60), // minuty
+          totalTime: Math.round(totalTime / 3600), // godziny
+        },
+        performance: {
+          totalSubmissions: submissions.length,
+          uniqueExercises: new Set(submissions.map((s) => s.exerciseId)).size,
+          bestCategory: categoryAverages[0],
+          categoryRanking: categoryAverages,
+          bestDifficulty,
+        },
+        activity: {
+          activeDaysLast7: activeDays,
+          consistency: Math.round((activeDays / 7) * 100),
+        },
+      });
+    } catch (error) {
+      console.error("Error getting detailed stats:", error);
+      return reply.code(500).send({ error: "Failed to get detailed stats" });
     }
   });
 
@@ -330,7 +539,7 @@ export async function studentRoutes(fastify: FastifyInstance) {
       const notification = await prisma.notification.update({
         where: {
           id,
-          userId, // Ensure user owns the notification
+          userId,
         },
         data: { read: true },
       });
@@ -348,7 +557,6 @@ export async function studentRoutes(fastify: FastifyInstance) {
     const { limit = 50, offset = 0 } = request.query as any;
 
     const [submissions, exams, sessions] = await Promise.all([
-      // Submissions z exercises
       prisma.submission.findMany({
         where: { userId },
         include: {
@@ -367,7 +575,6 @@ export async function studentRoutes(fastify: FastifyInstance) {
         skip: offset,
       }),
 
-      // Egzaminy
       prisma.examSession.findMany({
         where: { userId, status: "COMPLETED" },
         include: {
@@ -379,7 +586,6 @@ export async function studentRoutes(fastify: FastifyInstance) {
         take: 10,
       }),
 
-      // Sesje nauki
       prisma.learningSession.findMany({
         where: { userId, status: "COMPLETED" },
         orderBy: { finishedAt: "desc" },
@@ -419,6 +625,74 @@ export async function studentRoutes(fastify: FastifyInstance) {
       })),
     });
   });
+}
+
+// ✅ NOWA FUNKCJA: Szczegółowe statystyki epok
+async function getEpochDetailedStats(userId: string) {
+  const epochs = [
+    "ANTIQUITY",
+    "MIDDLE_AGES",
+    "RENAISSANCE",
+    "BAROQUE",
+    "ENLIGHTENMENT",
+    "ROMANTICISM",
+    "POSITIVISM",
+    "YOUNG_POLAND",
+    "INTERWAR",
+    "CONTEMPORARY",
+  ];
+
+  const stats = await Promise.all(
+    epochs.map(async (epoch) => {
+      const submissions = await prisma.submission.findMany({
+        where: {
+          userId,
+          exercise: {
+            category: "HISTORICAL_LITERARY",
+            epoch: epoch as any,
+          },
+        },
+        include: {
+          exercise: {
+            select: { points: true, id: true },
+          },
+        },
+      });
+
+      const totalExercises = await prisma.exercise.count({
+        where: {
+          category: "HISTORICAL_LITERARY",
+          epoch: epoch as any,
+        },
+      });
+
+      const uniqueCompleted = new Set(submissions.map((s) => s.exercise.id))
+        .size;
+
+      const avgScore =
+        submissions.length > 0
+          ? Math.round(
+              submissions.reduce((sum, s) => {
+                return sum + ((s.score || 0) / s.exercise.points) * 100;
+              }, 0) / submissions.length
+            )
+          : 0;
+
+      return {
+        epoch,
+        total: totalExercises,
+        completed: uniqueCompleted,
+        attempts: submissions.length,
+        avgScore,
+        progress:
+          totalExercises > 0
+            ? Math.round((uniqueCompleted / totalExercises) * 100)
+            : 0,
+      };
+    })
+  );
+
+  return stats.sort((a, b) => b.progress - a.progress);
 }
 
 function getTimeAgo(date: Date): string {

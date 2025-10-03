@@ -2,20 +2,10 @@
 
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Users,
-  FileText,
-  TrendingUp,
-  Activity,
-  Calendar,
-  Award,
-  AlertCircle,
-} from "lucide-react";
+import { Users, FileText, TrendingUp, Activity } from "lucide-react";
 import {
   LineChart,
   Line,
-  BarChart,
-  Bar,
   PieChart,
   Pie,
   XAxis,
@@ -112,14 +102,12 @@ export const Analytics: React.FC = () => {
                 fill="#8884d8"
                 dataKey="value"
               >
-                {(analytics?.exercisesByCategory || []).map(
-                  (entry: any, index: number) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  )
-                )}
+                {(analytics?.exercisesByCategory || []).map((index: number) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
               </Pie>
               <Tooltip />
             </PieChart>

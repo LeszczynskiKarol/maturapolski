@@ -3,15 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "../../../services/api";
-import {
-  X,
-  Plus,
-  Trash2,
-  ChevronUp,
-  ChevronDown,
-  Save,
-  FileText,
-} from "lucide-react";
+import { X, Plus, Trash2, Save } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 interface ExamEditorProps {
@@ -115,11 +107,13 @@ export const ExamEditor: React.FC<ExamEditorProps> = ({
   const removeQuestion = (sectionIndex: number, questionIndex: number) => {
     setFormData((prev) => ({
       ...prev,
-      sections: prev.sections.map((s, i) =>
+      sections: prev.sections.map((s: any, i: number) =>
         i === sectionIndex
           ? {
               ...s,
-              questions: s.questions.filter((_, qi) => qi !== questionIndex),
+              questions: s.questions.filter(
+                (_: any, qi: number) => qi !== questionIndex
+              ),
             }
           : s
       ),
@@ -137,7 +131,7 @@ export const ExamEditor: React.FC<ExamEditorProps> = ({
         i === sectionIndex
           ? {
               ...s,
-              questions: s.questions.map((q, qi) =>
+              questions: s.questions.map((q: any, qi: number) =>
                 qi === questionIndex ? { ...q, ...data } : q
               ),
             }

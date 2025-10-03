@@ -624,7 +624,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
         if (filters.difficulty?.length > 0) {
           // NOWE: Filtruj tylko dostępne poziomy
           const allowedDifficulties = filters.difficulty.filter(
-            (d) => d <= maxAllowedDifficulty
+            (d: number) => d <= maxAllowedDifficulty
           );
 
           if (allowedDifficulties.length === 0) {
@@ -668,7 +668,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
 
           // Filtruj tylko odblokowane poziomy
           targetDifficulty = filters.difficulty.filter(
-            (d) => d <= maxAllowedDifficulty
+            (d: number) => d <= maxAllowedDifficulty
           );
 
           if (targetDifficulty.length === 0) {

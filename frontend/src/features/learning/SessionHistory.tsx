@@ -20,7 +20,7 @@ import { api } from "../../services/api";
 
 export const SessionHistory: React.FC = () => {
   const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage] = useState(0);
   const [expandedSession, setExpandedSession] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({

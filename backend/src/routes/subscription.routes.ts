@@ -296,7 +296,7 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
     });
 
     // Endpoint do sprawdzenia dostępnych pakietów
-    protectedRoutes.get("/points-packages", async (request, reply) => {
+    protectedRoutes.get("/points-packages", async (_request, reply) => {
       const packages = [
         {
           id: "SMALL",

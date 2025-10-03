@@ -3,15 +3,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../services/api";
-import {
-  Trophy,
-  Medal,
-  Award,
-  TrendingUp,
-  Users,
-  Calendar,
-  Filter,
-} from "lucide-react";
+import { Trophy, Medal, Award } from "lucide-react";
 import { motion } from "framer-motion";
 
 export const LeaderboardPage: React.FC = () => {

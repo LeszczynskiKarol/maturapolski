@@ -139,19 +139,13 @@ export class StudyPlannerService {
       // Pobierz ćwiczenia tylko dla obecnego i przyszłych tygodni
       let exercises: any[] = [];
       if (week >= currentWeek) {
-        exercises = await this.selectExercisesForWeek(
-          focus,
-          intensity,
-          userId,
-          week,
-          totalWeeks
-        );
+        exercises = await this.selectExercisesForWeek(focus, intensity, userId);
       }
 
       plans.push({
         week,
         focus: this.getCategoryDisplayName(focus),
-        goals: this.getWeeklyGoals(focus, phase, week, totalWeeks),
+        goals: this.getWeeklyGoals(focus, week, totalWeeks),
         exercises,
         estimatedTime: this.getEstimatedHours(intensity),
         completed: false,
@@ -235,9 +229,7 @@ export class StudyPlannerService {
   private async selectExercisesForWeek(
     focus: string,
     intensity: string,
-    userId: string,
-    week: number,
-    totalWeeks: number
+    userId: string
   ): Promise<any[]> {
     const categories = this.mapFocusToCategories(focus);
     const difficulty = this.getDifficultyForIntensity(intensity);
@@ -327,7 +319,7 @@ export class StudyPlannerService {
   // Generowanie celów tygodniowych
   private getWeeklyGoals(
     focus: string,
-    phase: string,
+
     week: number,
     totalWeeks: number
   ): string[] {
@@ -601,12 +593,7 @@ export class StudyPlannerService {
   }
 
   // Aktualizacja postępu tygodniowego
-  async updateWeeklyProgress(
-    userId: string,
-    week: number,
-    exerciseId: string,
-    score: number
-  ): Promise<void> {
+  async updateWeeklyProgress(userId: string, week: number): Promise<void> {
     await prisma.weeklyProgress.upsert({
       where: {
         userId_week: { userId, week },

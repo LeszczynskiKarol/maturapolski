@@ -213,9 +213,6 @@ export class ExerciseService {
       try {
         console.log("Starting AI assessment for SHORT_ANSWER:", submission.id);
 
-        // Zapisz użycie AI PRZED oceną (na wypadek błędu)
-        const startTime = Date.now();
-
         // Extract expected concepts from exercise content/rubric
         const content = exercise.content as any;
         const rubric = exercise.rubric as any;
@@ -234,8 +231,6 @@ export class ExerciseService {
           expectedConcepts.length > 0 ? expectedConcepts : undefined,
           exercise.points
         );
-
-        const endTime = Date.now();
 
         // Oszacuj tokeny (przybliżenie)
         const estimatedTokens = {
