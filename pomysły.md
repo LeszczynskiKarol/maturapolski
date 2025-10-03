@@ -1,7 +1,5 @@
-- Zrobić tak, żeby odpowiedzi PRZEMIESZYWAŁY SIĘ, a nie tak, że zawsze mam te samą kolejność odpowiedzi. za każdym razem ma się losować inna
-- Naprawić dostęp usrerom do poziomów 4 i 5, które ustalam w panelu
 - przy streaku poprawnych odpowiedzi, gdy idzie confetti, dodać info o tym confetti, dlaczego się tak dzieje
-- podawać konteksty z zadań, któe się do czegoś odwołują
+- pododawać konteksty z zadań, któe się do czegoś odwołują
 - po pytaniu nr 19 pojawi się modal zakończenia sesji
 - zmienić modal zakończenia sesji naten sam co przy przerwaniu wyjsciu z sesji
 - sesja sie NIE KONCZY gdy klikam w modelu Zakończ sesję
