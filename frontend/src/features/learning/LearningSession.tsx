@@ -1591,7 +1591,7 @@ export const LearningSession: React.FC = () => {
                     {currentExercise.content?.sentence && (
                       <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                         <p className="text-gray-900 dark:text-gray-100 italic">
-                          "{currentExercise.content.sentence}"
+                          {currentExercise.content.sentence}
                         </p>
                       </div>
                     )}

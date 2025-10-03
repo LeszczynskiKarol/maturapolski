@@ -6,3 +6,4 @@
 - zmienić modal zakończenia sesji naten sam co przy przerwaniu wyjsciu z sesji
 - sesja sie NIE KONCZY gdy klikam w modelu Zakończ sesję
 - wdrożyć, rozbudować statystyki
+- w seedzie ćwiczeń zmienić cudzysłowy polskie na hardcodowane

@@ -848,7 +848,7 @@ async function seedExercises() {
       difficulty: 2,
       points: 3,
       epoch: "POSITIVISM",
-      question: "Dopasuj postać z 'Lalki' do jej roli społecznej.",
+      question: "Dopasuj postać z „Lalki” do jej roli społecznej.",
       content: {
         matchingType: "character_role",
         leftColumn: [
@@ -2986,17 +2986,7 @@ async function seedExercises() {
       },
       correctAnswer: [0, 2, 4],
     },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 1,
-      points: 2,
-      question: "Które postaci występują w bajkach?",
-      content: {
-        options: ["wilk", "komputer", "lis", "telewizor", "zając"],
-      },
-      correctAnswer: [0, 2, 4],
-    },
+
     {
       type: "CLOSED_MULTIPLE",
       category: "LANGUAGE_USE",
@@ -4957,7 +4947,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 5,
       question: "Wyjaśnij zasady ortograficzne.",
       content: {
-        topic: "Kiedy piszemy 'rz' a kiedy 'ż'?",
+        topic: "Kiedy piszemy „rz” a kiedy „ż”?",
         requirements: [
           "zasada podstawowa",
           "5 przykładów z „rz”",
@@ -6268,7 +6258,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       question: "Określ funkcję interpunkcji.",
       content: {
         sentence: "Anna, która jest moją siostrą, studiuje medycynę.",
-        instruction: "Wyjaśnij po co służą przecinki w tym zdaniu.",
+        instruction: "Wyjaśnij, do czego służą przecinki w tym zdaniu.",
       },
     },
     {
@@ -7770,22 +7760,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       },
       correctAnswer: 2,
     },
-    {
-      type: "CLOSED_SINGLE",
-      category: "LANGUAGE_USE",
-      difficulty: 1,
-      points: 1,
-      question: "Które zdanie jest pytaniem?",
-      content: {
-        options: [
-          "Pada deszcz.",
-          "Czy pada deszcz?",
-          "Pada deszcz!",
-          "Niech pada deszcz.",
-        ],
-      },
-      correctAnswer: 1,
-    },
+
     {
       type: "CLOSED_SINGLE",
       category: "HISTORICAL_LITERARY",
@@ -8312,7 +8287,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 2,
       epoch: "ROMANTICISM",
       question:
-        "Wyjaśnij pojęcie 'koncepcji mesjanistycznej' w romantyzmie polskim.",
+        "Wyjaśnij pojęcie „koncepcji mesjanistycznej” w romantyzmie polskim.",
       content: {
         requirements: ["definicja mesjanizmu", "kontekst polski", "przykład"],
       },
@@ -9337,7 +9312,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       category: "LANGUAGE_USE",
       difficulty: 2,
       points: 2,
-      question: "Które frazeologizmy oznaczają 'być bardzo biednym'?",
+      question: "Które frazeologizmy oznaczają „być bardzo biednym”?",
       content: {
         options: [
           "nie mieć grosza przy duszy",
@@ -10899,7 +10874,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 2,
       points: 1,
       question:
-        "Jaką funkcję języka pełni fragment 'Posłuchajcie, bracia miła' z Lamentu świętokrzyskiego?",
+        "Jaką funkcję języka pełni fragment „Posłuchajcie, bracia miła” z Lamentu świętokrzyskiego?",
       content: {
         options: ["ekspresywna", "impresywna", "informatywna"],
         hint: "Podmiot wyraża swoje uczucia",
