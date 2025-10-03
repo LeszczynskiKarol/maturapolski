@@ -6154,12 +6154,11 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       type: "SHORT_ANSWER",
       category: "LANGUAGE_USE",
       difficulty: 2,
-      points: 3,
-      question: "Przepisz zdanie poprawiając błędy.",
+      points: 2,
+      question: "Przepisz zdanie, poprawiając błędy.",
       content: {
         originalSentence:
           "Wczoraj poszłem z mamą do kina i obejżeliśmy ciekawy film o zwieżętach.",
-        instruction: "Przepisz zdanie poprawnie i podkreśl poprawione błędy.",
       },
     },
     {

@@ -307,38 +307,6 @@ export const StudentDashboard: React.FC = () => {
             </motion.div>
           )}
 
-          {/* Quick Stats - POPRAWIONE Z WŁAŚCIWYMI DANYMI */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <StatCard
-              icon={<Flame className="w-6 h-6 text-orange-500" />}
-              label="Passa"
-              value={`${stats?.streak || 0} dni`}
-              subtitle={stats?.streak > 0 ? "Trzymaj tempo!" : "Zacznij dziś!"}
-              bgColor="from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20"
-            />
-
-            <StatCard
-              icon={<Target className="w-6 h-6 text-blue-500" />}
-              label="Dzisiaj"
-              value={`${stats?.todayExercises || 0}/20`}
-              subtitle={
-                (stats?.todayExercises || 0) >= 10 ? "Świetnie!" : "Kontynuuj!"
-              }
-              bgColor="from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20"
-            />
-            <StatCard
-              icon={<Award className="w-6 h-6 text-purple-500" />}
-              label="Max trudność"
-              value={`Poziom ${levelProgress?.currentMaxDifficulty || 1}`}
-              subtitle={
-                pointsToNextDifficulty > 0
-                  ? `${pointsToNextDifficulty} pkt do lv3`
-                  : "Odblokowane"
-              }
-              bgColor="from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20"
-            />
-          </div>
-
           {/* Główny CTA */}
           <motion.div
             whileHover={!isFree ? { scale: 1.02 } : {}}
@@ -397,6 +365,37 @@ export const StudentDashboard: React.FC = () => {
             </div>
           </motion.div>
 
+          {/* Quick Stats - POPRAWIONE Z WŁAŚCIWYMI DANYMI */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <StatCard
+              icon={<Flame className="w-6 h-6 text-orange-500" />}
+              label="Twoja passa"
+              value={`${stats?.streak || 0} dni`}
+              subtitle={stats?.streak > 0 ? "Trzymaj tempo!" : "Zacznij dziś!"}
+              bgColor="from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20"
+            />
+
+            <StatCard
+              icon={<Target className="w-6 h-6 text-blue-500" />}
+              label="Rozwiązanych dzisiaj zadań"
+              value={`${stats?.todayExercises || 0}`}
+              subtitle={
+                (stats?.todayExercises || 0) >= 10 ? "Świetnie!" : "Kontynuuj!"
+              }
+              bgColor="from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20"
+            />
+            <StatCard
+              icon={<Award className="w-6 h-6 text-purple-500" />}
+              label="Max trudność pytań"
+              value={`Poziom ${levelProgress?.currentMaxDifficulty || 1}`}
+              subtitle={
+                pointsToNextDifficulty > 0
+                  ? `${pointsToNextDifficulty} pkt do lv3`
+                  : "Odblokowane"
+              }
+              bgColor="from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20"
+            />
+          </div>
           {/* Epoch Review */}
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">

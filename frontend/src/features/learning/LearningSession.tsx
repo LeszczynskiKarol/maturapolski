@@ -862,26 +862,45 @@ export const LearningSession: React.FC = () => {
     }
   };
 
-  // Zaktualizuj funkcję endSession
   const endSession = async () => {
-    if (sessionId && sessionStats.completed > 0) {
-      await saveSessionMutation.mutateAsync({
-        sessionId,
-        stats: sessionStats,
-        completedExercises: completedExercises,
-      });
+    console.log("=== END SESSION CALLED ===");
+    console.log("SessionId:", sessionId);
+    console.log("Stats:", sessionStats);
+    console.log("Completed exercises:", completedExercises.length);
+
+    // ✅ ZAWSZE zapisuj sesję, nawet jeśli completed = 0
+    if (sessionId) {
+      try {
+        console.log("Saving session to database...");
+
+        await saveSessionMutation.mutateAsync({
+          sessionId,
+          stats: sessionStats,
+          completedExercises: completedExercises,
+        });
+
+        console.log("✅ Session saved successfully");
+      } catch (error) {
+        console.error("❌ Failed to save session:", error);
+        // Kontynuuj mimo błędu
+      }
+    } else {
+      console.warn("⚠️ No sessionId - skipping save");
     }
 
     // Resetuj wszystko
     setSessionId(null);
-    setSessionComplete(true);
     setSessionActive(false);
     setSessionComplete(true);
-    setSessionActive(false);
-    setSessionFilters({});
     setCurrentExercise(null);
     setAnswer(null);
     setShowFeedback(false);
+
+    // Resetuj filtry
+    setSessionFilters({});
+    localStorage.removeItem("sessionFilters");
+    localStorage.removeItem("isStudyPlanSession");
+    localStorage.removeItem("isEpochReview");
 
     // Resetuj statystyki
     setSessionStats({
@@ -892,6 +911,21 @@ export const LearningSession: React.FC = () => {
       points: 0,
       timeSpent: 0,
     });
+
+    setCompletedExercises([]);
+
+    // ✅ KLUCZOWE: Odśwież wszystkie query
+    refetchStats();
+    queryClient.invalidateQueries({ queryKey: ["all-sessions"] });
+    queryClient.invalidateQueries({ queryKey: ["learning-stats"] });
+
+    // ✅ Dodatkowe opóźnienie dla pewności
+    setTimeout(() => {
+      queryClient.invalidateQueries({ queryKey: ["all-sessions"] });
+      console.log("🔄 Query invalidated with delay");
+    }, 500);
+
+    console.log("✅ END SESSION COMPLETE");
   };
 
   const pauseSession = async () => {
@@ -1163,7 +1197,7 @@ export const LearningSession: React.FC = () => {
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4">
                   <div
                     className="bg-gradient-to-r from-blue-500 to-green-500 dark:from-blue-400 dark:to-green-400 
-                         h-4 rounded-full transition-all duration-500"
+                       h-4 rounded-full transition-all duration-500"
                     style={{
                       width: `${
                         sessionStats.completed > 0
@@ -1188,18 +1222,30 @@ export const LearningSession: React.FC = () => {
             </div>
           )}
 
+          {/* ✅ POPRAWIONE PRZYCISKI */}
           <div className="flex gap-4">
             <button
-              onClick={pauseSession}
-              className="px-4 py-2 text-yellow-600 dark:text-yellow-400 hover:text-yellow-700 
-           dark:hover:text-yellow-300 transition-colors"
-            >
-              Wstrzymaj sesję
-            </button>
-            <button
-              onClick={() => {
-                setSessionActive(false);
+              onClick={async () => {
+                console.log("=== ZAKOŃCZ I WYJDŹ - MODAL ===");
+
+                // ✅ KLUCZOWE: Najpierw zapisz sesję do bazy
+                if (sessionId && sessionStats.completed > 0) {
+                  try {
+                    await saveSessionMutation.mutateAsync({
+                      sessionId,
+                      stats: sessionStats,
+                      completedExercises: completedExercises,
+                    });
+                    console.log("✅ Session saved successfully");
+                  } catch (error) {
+                    console.error("❌ Failed to save session:", error);
+                  }
+                }
+
+                // Resetuj state
+                setSessionId(null);
                 setSessionComplete(false);
+                setSessionActive(false);
                 setSessionFilters({});
                 setCompletedExercises([]);
                 setSessionStats({
@@ -1210,14 +1256,21 @@ export const LearningSession: React.FC = () => {
                   points: 0,
                   timeSpent: 0,
                 });
+
+                // ✅ Odśwież statystyki i historię
                 refetchStats();
+                queryClient.invalidateQueries({ queryKey: ["all-sessions"] });
+
+                // Nawiguj do dashboard
+                navigate("/dashboard");
               }}
               className="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 
-                   rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 
-                   text-gray-700 dark:text-gray-300 transition-colors"
+                 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 
+                 text-gray-700 dark:text-gray-300 transition-colors"
             >
-              Zakończ
+              Zakończ i wyjdź
             </button>
+
             <button
               onClick={() => {
                 setSessionComplete(false);
@@ -1225,8 +1278,8 @@ export const LearningSession: React.FC = () => {
                 startSession();
               }}
               className="flex-1 px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white 
-                   rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 
-                   transition-colors flex items-center justify-center gap-2"
+                 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 
+                 transition-colors flex items-center justify-center gap-2"
             >
               <Play className="w-5 h-5" />
               Nowa sesja
@@ -1291,9 +1344,9 @@ export const LearningSession: React.FC = () => {
               await endSession();
             }}
             className="w-full sm:w-auto px-4 py-2 text-gray-600 dark:text-gray-400 
-               hover:text-gray-900 dark:hover:text-white transition-colors
-               border border-gray-300 dark:border-gray-600 rounded-lg
-               hover:bg-gray-50 dark:hover:bg-gray-700"
+     hover:text-gray-900 dark:hover:text-white transition-colors
+     border border-gray-300 dark:border-gray-600 rounded-lg
+     hover:bg-gray-50 dark:hover:bg-gray-700"
           >
             Zakończ sesję
           </button>
@@ -2600,16 +2653,29 @@ export const LearningSession: React.FC = () => {
         isOpen={showExitDialog}
         sessionStats={sessionStats}
         onConfirm={async () => {
+          console.log("=== CONFIRM EXIT DIALOG - ZAKOŃCZ I WYJDŹ ===");
+
           setShowExitDialog(false);
+
+          // Wywołaj sessionExit.confirmAndExit
           await sessionExit.confirmAndExit(
             sessionExit.nextLocation || undefined
           );
+
+          // ✅ DODAJ: Invaliduj query dla session history
+          queryClient.invalidateQueries({ queryKey: ["all-sessions"] });
+
+          // ✅ DODAJ: Małe opóźnienie aby backend zdążył zapisać
+          setTimeout(() => {
+            queryClient.invalidateQueries({ queryKey: ["all-sessions"] });
+          }, 500);
         }}
         onCancel={() => {
           setShowExitDialog(false);
           sessionExit.cancelExit();
         }}
       />
+
       {/* Exercise Browser Modal */}
       {showExerciseBrowser && (
         <ExerciseBrowser
