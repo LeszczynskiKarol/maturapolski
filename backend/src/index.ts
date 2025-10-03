@@ -17,7 +17,6 @@ import { examRoutes } from "./routes/exam.routes";
 import { materialsRoutes } from "./routes/materials.routes";
 import { studentRoutes } from "./routes/student.routes";
 import { studyPlanRoutes } from "./routes/studyPlan.routes";
-import { initializeQueue } from "./services/queueService";
 
 const fastify = Fastify({
   logger: {
@@ -28,9 +27,6 @@ const fastify = Fastify({
 // Initialize services
 console.log("Initializing AI service...");
 initializeAI();
-
-console.log("Initializing queue system...");
-initializeQueue();
 
 fastify.addContentTypeParser(
   "application/json",

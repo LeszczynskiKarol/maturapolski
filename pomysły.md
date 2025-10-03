@@ -5,3 +5,5 @@
 - sesja sie NIE KONCZY gdy klikam w modelu Zakończ sesję
 - wdrożyć, rozbudować statystyki
 - w seedzie ćwiczeń zmienić cudzysłowy polskie na hardcodowane
+- przekierowanie z bez www na www
+- zmienić mechanizm werfyikacji konta z linku na kod
