@@ -53,9 +53,6 @@ fastify.register(cors, {
     "http://localhost:5173",
     "https://app-reactapp.ngrok.app",
     "https://server-reactapp.ngrok.app",
-    "https://www.maturapolski.pl",
-    "https://maturapolski.pl",
-    "https://api.maturapolski.pl",
   ],
   credentials: true,
 });
