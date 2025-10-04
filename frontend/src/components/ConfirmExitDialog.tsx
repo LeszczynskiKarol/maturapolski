@@ -13,6 +13,7 @@ interface ConfirmExitDialogProps {
     correct: number;
     points: number;
   };
+  isSessionComplete?: boolean;
 }
 
 export const ConfirmExitDialog: React.FC<ConfirmExitDialogProps> = ({
@@ -20,6 +21,7 @@ export const ConfirmExitDialog: React.FC<ConfirmExitDialogProps> = ({
   onConfirm,
   onCancel,
   sessionStats,
+  isSessionComplete = false,
 }) => {
   return (
     <AnimatePresence>
@@ -54,13 +56,16 @@ export const ConfirmExitDialog: React.FC<ConfirmExitDialogProps> = ({
 
               {/* Title */}
               <h3 className="text-xl font-bold text-center mb-2 text-gray-900 dark:text-white">
-                Zakończyć sesję nauki?
+                {isSessionComplete
+                  ? "Gratulacje! Sesja ukończona!"
+                  : "Zakończyć sesję nauki?"}
               </h3>
 
               {/* Description */}
               <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
-                Masz niezakończoną sesję. Jeśli wyjdziesz teraz, Twoje postępy
-                zostaną zapisane, ale sesja zostanie automatycznie zakończona.
+                {isSessionComplete
+                  ? `Świetna robota! Ukończyłeś wszystkie ${sessionStats.completed} zadań w tej sesji.`
+                  : "Masz niezakończoną sesję. Jeśli wyjdziesz teraz, Twoje postępy zostaną zapisane, ale sesja zostanie automatycznie zakończona."}
               </p>
 
               {/* Stats Summary */}
@@ -101,16 +106,18 @@ export const ConfirmExitDialog: React.FC<ConfirmExitDialogProps> = ({
                 <button
                   onClick={onCancel}
                   className="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 
-                           rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 font-medium transition-colors"
+           rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 font-medium transition-colors"
                 >
-                  Kontynuuj sesję
+                  {isSessionComplete ? "Nowa sesja" : "Kontynuuj sesję"}
                 </button>
                 <button
                   onClick={onConfirm}
                   className="flex-1 px-4 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 
-                           font-medium transition-colors"
+           font-medium transition-colors"
                 >
-                  Zakończ i wyjdź
+                  {isSessionComplete
+                    ? "Zakończ i zobacz wyniki"
+                    : "Zakończ i wyjdź"}
                 </button>
               </div>
 

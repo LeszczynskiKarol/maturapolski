@@ -1634,95 +1634,42 @@ export async function learningRoutes(fastify: FastifyInstance) {
   fastify.get("/sessions/all", async (request, reply) => {
     const userId = (request.user as any).userId;
 
-    // Pobierz aktywne sesje
-    const activeSessions = await prisma.learningSession.findMany({
+    // ✅ Pobierz WSZYSTKIE sesje z LearningSession (nie DailyProgress)
+    const allSessions = await prisma.learningSession.findMany({
       where: {
         userId,
-        status: "IN_PROGRESS",
+        status: "COMPLETED", // Tylko ukończone
+        completed: { gt: 0 }, // Tylko z zadaniami
       },
-      orderBy: { lastActiveAt: "desc" },
-    });
-
-    // Pobierz ukończone sesje z DailyProgress
-    const completedSessions = await prisma.dailyProgress.findMany({
-      where: {
-        userId,
-        exercisesCount: { gt: 0 },
-      },
-      orderBy: { date: "desc" },
+      orderBy: { finishedAt: "desc" },
       take: 50,
     });
 
-    // Dla każdej sesji sprawdź czy to StudyPlan
-    const sessionsWithType = await Promise.all(
-      completedSessions.map(async (session) => {
-        // Utwórz kopię daty aby nie mutować oryginału
-        const dateStart = new Date(session.date);
-        dateStart.setHours(0, 0, 0, 0);
-        const dateEnd = new Date(session.date);
-        dateEnd.setHours(23, 59, 59, 999);
+    const formattedCompleted = allSessions.map((session) => {
+      const filters = session.filters as any;
+      const averageScore =
+        session.completed > 0
+          ? Math.round((session.correct / session.completed) * 100)
+          : 0;
 
-        const learningSession = await prisma.learningSession.findFirst({
-          where: {
-            userId,
-            startedAt: {
-              // Używamy startedAt!
-              gte: dateStart,
-              lt: dateEnd,
-            },
-          },
-          select: {
-            filters: true,
-          },
-        });
-
-        const filters = learningSession?.filters as any;
-        return {
-          id: session.id,
-          date: session.date,
-          exercisesCount: session.exercisesCount,
-          studyTime: session.studyTime || 0,
-          averageScore: session.averageScore || 0,
-          sessionType: filters?.weekNumber ? "STUDY_PLAN" : "LEARNING",
-          weekNumber: filters?.weekNumber || null,
-        };
-      })
-    );
-
-    // Formatuj dane dla aktywnych sesji
-    const formattedActive = activeSessions.map((s) => {
-      const filters = s.filters as any;
       return {
-        id: s.id,
-        type: "active",
+        id: session.id,
+        type: "completed",
         sessionType: filters?.weekNumber ? "STUDY_PLAN" : "LEARNING",
         weekNumber: filters?.weekNumber || null,
-        date: s.startedAt,
-        completed: s.completed,
-        correct: s.correct,
-        points: s.points,
-        timeSpent: Math.round(s.timeSpent / 60),
-        status: "IN_PROGRESS",
+        date: session.finishedAt || session.startedAt,
+        exercisesCount: session.completed,
+        studyTime: Math.round(session.timeSpent / 60),
+        averageScore,
+        points: session.points,
+        status: "COMPLETED",
       };
     });
 
-    // Formatuj dane dla ukończonych sesji
-    const formattedCompleted = sessionsWithType.map((s) => ({
-      id: s.id,
-      type: "completed",
-      sessionType: s.sessionType,
-      weekNumber: s.weekNumber,
-      date: s.date,
-      exercisesCount: s.exercisesCount,
-      studyTime: s.studyTime,
-      averageScore: Math.round(s.averageScore),
-      points: Math.round((s.exercisesCount * s.averageScore) / 50),
-      status: "COMPLETED",
-    }));
-
     return reply.send({
-      active: formattedActive,
+      active: [], // Już nie pokazujemy aktywnych sesji
       completed: formattedCompleted,
+      total: formattedCompleted.length,
     });
   });
 
@@ -1731,22 +1678,26 @@ export async function learningRoutes(fastify: FastifyInstance) {
       const userId = (request.user as any).userId;
       const { id } = request.params as { id: string };
 
-      // Najpierw pobierz DailyProgress
-      const dailyProgressRecord = await prisma.dailyProgress.findUnique({
+      // ✅ Pobierz bezpośrednio LearningSession
+      const session = await prisma.learningSession.findUnique({
         where: { id },
       });
 
-      if (!dailyProgressRecord || dailyProgressRecord.userId !== userId) {
+      if (!session || session.userId !== userId) {
         return reply.code(404).send({ error: "Session not found" });
       }
 
-      // Teraz pobierz submissions dla tego dnia
+      // Pobierz submissions dla tej sesji
+      const completedExerciseIds =
+        (session.completedExercises as any[])?.map((ex) => ex.id) || [];
+
       const submissions = await prisma.submission.findMany({
         where: {
           userId,
+          exerciseId: { in: completedExerciseIds },
           createdAt: {
-            gte: new Date(dailyProgressRecord.date.setHours(0, 0, 0, 0)),
-            lt: new Date(dailyProgressRecord.date.setHours(23, 59, 59, 999)),
+            gte: session.startedAt,
+            lte: session.finishedAt || new Date(),
           },
         },
         include: {
@@ -1764,29 +1715,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
         orderBy: { createdAt: "asc" },
       });
 
-      // Sprawdź czy to była sesja StudyPlan
-      const learningSession = await prisma.learningSession.findFirst({
-        where: {
-          userId,
-          startedAt: {
-            // Używamy startedAt zamiast createdAt!
-            gte: new Date(
-              new Date(dailyProgressRecord.date).setHours(0, 0, 0, 0)
-            ),
-            lt: new Date(
-              new Date(dailyProgressRecord.date).setHours(23, 59, 59, 999)
-            ),
-          },
-        },
-        select: {
-          filters: true,
-        },
-      });
-
-      const isStudyPlanSession = !!(learningSession?.filters as any)
-        ?.weekNumber;
-      const weekNumber = (learningSession?.filters as any)?.weekNumber || null;
-
+      const filters = session.filters as any;
       const formattedSubmissions = submissions.map((sub) => ({
         id: sub.id,
         question: sub.exercise.question,
@@ -1794,7 +1723,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
         category: sub.exercise.category,
         difficulty: sub.exercise.difficulty,
         score: sub.score || 0,
-        maxPoints: 2, // domyślnie 2 punkty
+        maxPoints: 2,
         userAnswer: sub.answer,
         correctAnswer: sub.exercise.correctAnswer,
         exerciseContent: sub.exercise.content,
@@ -1802,8 +1731,8 @@ export async function learningRoutes(fastify: FastifyInstance) {
       }));
 
       return reply.send({
-        sessionType: isStudyPlanSession ? "STUDY_PLAN" : "LEARNING",
-        weekNumber,
+        sessionType: filters?.weekNumber ? "STUDY_PLAN" : "LEARNING",
+        weekNumber: filters?.weekNumber || null,
         submissions: formattedSubmissions,
       });
     } catch (error) {

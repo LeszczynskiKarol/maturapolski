@@ -6265,11 +6265,9 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       category: "LANGUAGE_USE",
       difficulty: 1,
       points: 2,
-      question: "Ułóż zdania z wyrazami.",
+      question: "Ułóż jedno poprawne zdanie, używając wszystkich tych wyrazów.",
       content: {
         words: ["książka", "czytać", "ciekawy"],
-        instruction:
-          "Ułóż jedno poprawne zdanie używając wszystkich tych wyrazów.",
       },
     },
     {

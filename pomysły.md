@@ -1,9 +1,9 @@
 - przy streaku poprawnych odpowiedzi, gdy idzie confetti, dodać info o tym confetti, dlaczego się tak dzieje
-- pododawać konteksty z zadań, któe się do czegoś odwołują
-- po pytaniu nr 19 pojawi się modal zakończenia sesji
-- zmienić modal zakończenia sesji naten sam co przy przerwaniu wyjsciu z sesji
+- pododawać konteksty z zadań, które się do czegoś odwołują
+  - po pytaniu nr 19 pojawi się modal zakończenia sesji
+  - zmienić modal zakończenia sesji naten sam co przy przerwaniu wyjsciu z sesji
 - sesja sie NIE KONCZY gdy klikam w modelu Zakończ sesję
-- wdrożyć, rozbudować statystyki
 - w seedzie ćwiczeń zmienić cudzysłowy polskie na hardcodowane
-- przekierowanie z bez www na www
 - zmienić mechanizm werfyikacji konta z linku na kod
+  - zrobić tak, żeby przycisk Pomiń nie wyswietlal sie gdy jest pzycisk Następne pytanie i odpowiedz
+- usunąc recapctcha badge z login, register i dashboard

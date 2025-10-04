@@ -77,6 +77,14 @@ export const RegisterPage: React.FC = () => {
     try {
       // Wykonaj reCAPTCHA
       const recaptchaToken = await executeRecaptcha("register");
+      console.log("=== FRONTEND DEBUG ===");
+      console.log("recaptchaToken:", recaptchaToken);
+      console.log("Sending data:", {
+        email: data.email,
+        username: data.username,
+        password: "***",
+        recaptchaToken: recaptchaToken ? "present" : "missing",
+      });
 
       // Wyślij dane rejestracji (bez zapisywania response)
       await api.post("/api/auth/register", {

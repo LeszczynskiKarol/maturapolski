@@ -1,4 +1,4 @@
-// frontend/src/features/student/Dashboard.tsx - OSTATECZNA WERSJA
+// frontend/src/features/student/Dashboard.tsx
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -228,12 +228,13 @@ export const StudentDashboard: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        {/* Przyciski ukryte na mobile */}
+        <div className="hidden md:flex items-center gap-3">
           <button
             onClick={() => setShowStatsModal(true)}
             className="px-4 py-2 text-sm font-medium text-blue-700 dark:text-blue-300 
-                     bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 
-                     rounded-lg transition-colors flex items-center gap-2"
+                 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 
+                 rounded-lg transition-colors flex items-center gap-2"
           >
             <BarChart3 className="w-4 h-4" />
             Szczegółowe statystyki
@@ -242,7 +243,7 @@ export const StudentDashboard: React.FC = () => {
           <button
             onClick={() => navigate("/sessions")}
             className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 
-                     hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           >
             Historia sesji
           </button>
@@ -257,42 +258,45 @@ export const StudentDashboard: React.FC = () => {
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-6 text-white"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-4 sm:p-6 text-white"
             >
-              <div className="flex items-start justify-between">
-                <div>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:justify-between">
+                <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <Crown className="w-6 h-6" />
-                    <h3 className="text-xl font-bold">Odblokuj sesje nauki</h3>
+                    <Crown className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <h3 className="text-lg sm:text-xl font-bold">
+                      Odblokuj sesje nauki
+                    </h3>
                   </div>
-                  <p className="text-blue-100 mb-4">
+                  <p className="text-sm sm:text-base text-blue-100 mb-3 sm:mb-4">
                     Plan FREE nie obejmuje sesji nauki. Wykup Premium aby
                     otrzymywać szczegółowe oceny AI, 300 punktów miesięcznie i
                     nielimitowany dostęp.
                   </p>
-                  <div className="flex items-center gap-6 text-sm mb-4">
+                  <div className="flex flex-col xs:flex-row xs:flex-wrap items-start xs:items-center gap-2 xs:gap-4 text-xs sm:text-sm mb-3 sm:mb-4">
                     <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4" />
+                      <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span>300 punktów AI/mies</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4" />
+                      <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span>Nielimitowane sesje</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4" />
+                      <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span>49 zł/miesiąc</span>
                     </div>
                   </div>
                   <button
                     onClick={handleUpgrade}
                     disabled={isUpgrading}
-                    className="px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50 
-           font-semibold transition-colors disabled:opacity-50 flex items-center gap-2"
+                    className="w-full xs:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50 
+                     font-semibold transition-colors disabled:opacity-50 flex items-center justify-center gap-2
+                     text-sm sm:text-base"
                   >
                     {isUpgrading ? (
                       <>
-                        <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                        <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
                         Przekierowywanie...
                       </>
                     ) : (
@@ -300,7 +304,7 @@ export const StudentDashboard: React.FC = () => {
                     )}
                   </button>
                 </div>
-                <Lock className="w-12 h-12 opacity-20" />
+                <Lock className="hidden sm:block w-12 h-12 opacity-20 flex-shrink-0" />
               </div>
             </motion.div>
           )}
@@ -308,21 +312,21 @@ export const StudentDashboard: React.FC = () => {
           {/* Główny CTA */}
           <motion.div
             whileHover={!isFree ? { scale: 1.02 } : {}}
-            className={`rounded-2xl p-8 text-white ${
+            className={`rounded-2xl p-4 sm:p-6 md:p-8 text-white ${
               isFree
                 ? "bg-gray-400 dark:bg-gray-700 cursor-not-allowed opacity-60"
                 : "bg-gradient-to-br from-blue-600 to-purple-600 cursor-pointer"
             }`}
             onClick={!isFree ? startLearningSession : undefined}
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
-                  {isFree && <Lock className="w-6 h-6" />}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-4">
+              <div className="flex-1">
+                <h2 className="text-xl sm:text-2xl font-bold mb-2 flex items-center gap-2">
+                  {isFree && <Lock className="w-5 h-5 sm:w-6 sm:h-6" />}
                   Rozpocznij naukę
                 </h2>
                 <p
-                  className={`mb-4 ${
+                  className={`mb-3 sm:mb-4 text-sm sm:text-base ${
                     isFree ? "text-gray-200" : "text-blue-100"
                   }`}
                 >
@@ -331,17 +335,17 @@ export const StudentDashboard: React.FC = () => {
                     : "Sesja adaptacyjna dostosowana do Twojego poziomu"}
                 </p>
                 {!isFree && (
-                  <div className="flex items-center gap-4 text-sm">
+                  <div className="flex flex-col xs:flex-row xs:flex-wrap items-start xs:items-center gap-2 xs:gap-4 text-xs sm:text-sm">
                     <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4" />
+                      <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span>20 zadań</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4" />
+                      <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span>Inteligentny dobór</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4" />
+                      <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span>
                         Poziomy 1-{levelProgress?.currentMaxDifficulty || 2}
                       </span>
@@ -350,14 +354,14 @@ export const StudentDashboard: React.FC = () => {
                 )}
               </div>
               <div
-                className={`p-6 rounded-full ${
+                className={`p-4 sm:p-6 rounded-full flex-shrink-0 ${
                   isFree ? "bg-gray-500/30" : "bg-white/20"
                 }`}
               >
                 {isFree ? (
-                  <Lock className="w-12 h-12" />
+                  <Lock className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
                 ) : (
-                  <Play className="w-12 h-12" />
+                  <Play className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
                 )}
               </div>
             </div>

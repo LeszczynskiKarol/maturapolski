@@ -14,18 +14,19 @@ import {
   Trophy,
   XCircle,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
 
 export const SessionHistory: React.FC = () => {
   const navigate = useNavigate();
-  const [currentPage] = useState(0);
+
   const [expandedSession, setExpandedSession] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["all-sessions", currentPage],
+    queryKey: ["all-sessions"], // ✅ Bez currentPage
     queryFn: () => api.get("/api/learning/sessions/all").then((r) => r.data),
+    staleTime: 0, // ✅ Zawsze odświeżaj
   });
 
   const formatUserAnswer = (submission: any) => {
@@ -87,6 +88,12 @@ export const SessionHistory: React.FC = () => {
 
     return "Brak odpowiedzi";
   };
+
+  useEffect(() => {
+    console.log("=== SESSION HISTORY DATA ===");
+    console.log("Completed sessions:", data?.completed?.length);
+    console.log("Data:", data);
+  }, [data]);
 
   // Hook do pobierania szczegółów rozwiniętej sesji
   const { data: sessionDetails } = useQuery({

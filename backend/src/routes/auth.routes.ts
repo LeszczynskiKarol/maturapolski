@@ -47,7 +47,13 @@ export async function authRoutes(fastify: FastifyInstance) {
   // REJESTRACJA
   fastify.post("/register", async (request, reply) => {
     try {
+      console.log("=== REGISTER REQUEST DEBUG ===");
+      console.log("Body:", JSON.stringify(request.body, null, 2));
+      console.log("Headers:", JSON.stringify(request.headers, null, 2));
+
       const data = RegisterSchema.parse(request.body);
+      console.log("Parsed data:", data);
+      console.log("recaptchaToken present:", !!data.recaptchaToken);
 
       // Weryfikacja reCAPTCHA
       const isHuman = await recaptchaService.verify(

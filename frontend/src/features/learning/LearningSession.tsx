@@ -31,7 +31,6 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { AiPointsCost } from "../../components/AiPointsCost";
 import { ConfirmExitDialog } from "../../components/ConfirmExitDialog";
-import { UpgradePrompt } from "../../components/UpgradePrompt";
 import { useSessionExit } from "../../hooks/useSessionExit";
 import { api } from "../../services/api";
 
@@ -92,8 +91,8 @@ export const LearningSession: React.FC = () => {
   const queryClient = useQueryClient();
   const [sessionActive, setSessionActive] = useState(false);
   const [currentExercise, setCurrentExercise] = useState<any>(null);
-  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
-  const [upgradePromptData, setUpgradePromptData] = useState({
+  const [, setShowUpgradePrompt] = useState(false);
+  const [, setUpgradePromptData] = useState({
     pointsNeeded: 1,
     currentPoints: 0,
     totalPoints: 20,
@@ -909,12 +908,16 @@ export const LearningSession: React.FC = () => {
 
     // ✅ KLUCZOWE: Odśwież wszystkie query
     refetchStats();
-    queryClient.invalidateQueries({ queryKey: ["all-sessions"] });
+    queryClient.invalidateQueries({
+      predicate: (query) => query.queryKey[0] === "all-sessions", // ✅ Dopasuj po pierwszym elemencie
+    });
     queryClient.invalidateQueries({ queryKey: ["learning-stats"] });
 
     // ✅ Dodatkowe opóźnienie dla pewności
     setTimeout(() => {
-      queryClient.invalidateQueries({ queryKey: ["all-sessions"] });
+      queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey[0] === "all-sessions", // ✅ Dopasuj po pierwszym elemencie
+      });
       console.log("🔄 Query invalidated with delay");
     }, 500);
 
@@ -923,8 +926,10 @@ export const LearningSession: React.FC = () => {
 
   // Next exercise with filters
   const goToNextExercise = async () => {
+    // ✅ SPRAWDŹ CZY TO BYŁO OSTATNIE PYTANIE
     if (sessionStats.completed >= SESSION_LIMIT) {
-      await endSession();
+      console.log("=== LAST EXERCISE COMPLETED - SHOWING EXIT DIALOG ===");
+      setShowExitDialog(true); // Pokaż dialog zamiast kończyć
       return;
     }
 
@@ -937,11 +942,11 @@ export const LearningSession: React.FC = () => {
       if (data) {
         setCurrentExercise(data);
       } else {
-        await endSession();
+        setShowExitDialog(true); // Brak pytań - pokaż dialog
       }
     } catch (error) {
       console.error("Error fetching next exercise:", error);
-      await endSession();
+      setShowExitDialog(true);
     } finally {
       setIsLoadingNext(false);
     }
@@ -1113,171 +1118,16 @@ export const LearningSession: React.FC = () => {
     return () => clearInterval(saveInterval);
   }, [sessionActive, sessionId, sessionStats]);
 
-  // Session complete screen
-  if (sessionComplete) {
-    return (
-      <div className="max-w-4xl mx-auto p-6">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl dark:shadow-gray-900/30 p-8"
-        >
-          <div className="text-center">
-            <Trophy className="w-20 h-20 text-yellow-500 dark:text-yellow-400 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
-              Sesja zakończona!
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              {sessionStats.completed > 0
-                ? "Oto Twoje wyniki:"
-                : "Nie ukończyłeś żadnych zadań w tej sesji."}
-            </p>
-          </div>
-
-          {sessionStats.completed > 0 ? (
-            <>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-4 rounded-xl">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Ukończone zadania
-                  </p>
-                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                    {sessionStats.completed}
-                  </p>
-                </div>
-                <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-4 rounded-xl">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Poprawne odpowiedzi
-                  </p>
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                    {sessionStats.correct}/{sessionStats.completed}
-                  </p>
-                </div>
-                <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 p-4 rounded-xl">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Najdłuższa seria
-                  </p>
-                  <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
-                    {sessionStats.maxStreak}
-                  </p>
-                </div>
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-4 rounded-xl">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Zdobyte punkty
-                  </p>
-                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                    +{sessionStats.points}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mb-6">
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                  Skuteczność
-                </p>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4">
-                  <div
-                    className="bg-gradient-to-r from-blue-500 to-green-500 dark:from-blue-400 dark:to-green-400 
-                       h-4 rounded-full transition-all duration-500"
-                    style={{
-                      width: `${
-                        sessionStats.completed > 0
-                          ? (sessionStats.correct / sessionStats.completed) *
-                            100
-                          : 0
-                      }%`,
-                    }}
-                  />
-                </div>
-                <p className="text-right text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  {Math.round(
-                    (sessionStats.correct / sessionStats.completed) * 100
-                  )}
-                  %
-                </p>
-              </div>
-            </>
-          ) : (
-            <div className="py-8 text-center text-gray-500 dark:text-gray-400">
-              <p>Rozpocznij nową sesję, aby zacząć naukę.</p>
-            </div>
-          )}
-
-          {/* ✅ POPRAWIONE PRZYCISKI */}
-          <div className="flex gap-4">
-            <button
-              onClick={async () => {
-                console.log("=== ZAKOŃCZ I WYJDŹ - MODAL ===");
-
-                // ✅ KLUCZOWE: Najpierw zapisz sesję do bazy
-                if (sessionId && sessionStats.completed > 0) {
-                  try {
-                    await saveSessionMutation.mutateAsync({
-                      sessionId,
-                      stats: sessionStats,
-                      completedExercises: completedExercises,
-                    });
-                    console.log("✅ Session saved successfully");
-                  } catch (error) {
-                    console.error("❌ Failed to save session:", error);
-                  }
-                }
-
-                // Resetuj state
-                setSessionId(null);
-                setSessionComplete(false);
-                setSessionActive(false);
-                setSessionFilters({});
-                setCompletedExercises([]);
-                setSessionStats({
-                  completed: 0,
-                  correct: 0,
-                  streak: 0,
-                  maxStreak: 0,
-                  points: 0,
-                  timeSpent: 0,
-                });
-
-                // ✅ Odśwież statystyki i historię
-                refetchStats();
-                queryClient.invalidateQueries({ queryKey: ["all-sessions"] });
-
-                // Nawiguj do dashboard
-                navigate("/dashboard");
-              }}
-              className="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 
-                 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 
-                 text-gray-700 dark:text-gray-300 transition-colors"
-            >
-              Zakończ i wyjdź
-            </button>
-
-            <button
-              onClick={() => {
-                setSessionComplete(false);
-                setCompletedExercises([]);
-                startSession();
-              }}
-              className="flex-1 px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white 
-                 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 
-                 transition-colors flex items-center justify-center gap-2"
-            >
-              <Play className="w-5 h-5" />
-              Nowa sesja
-            </button>
-          </div>
-        </motion.div>
-
-        <UpgradePrompt
-          isOpen={showUpgradePrompt}
-          onClose={() => setShowUpgradePrompt(false)}
-          pointsNeeded={upgradePromptData.pointsNeeded}
-          currentPoints={upgradePromptData.currentPoints}
-          totalPoints={upgradePromptData.totalPoints}
-        />
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (
+      sessionStats.completed >= SESSION_LIMIT &&
+      sessionActive &&
+      !showExitDialog
+    ) {
+      console.log("=== SESSION LIMIT REACHED - SHOWING EXIT DIALOG ===");
+      setShowExitDialog(true);
+    }
+  }, [sessionStats.completed, sessionActive]);
 
   if (!sessionActive) {
     return <SessionStart onStart={startSession} stats={userStats} />;
@@ -1320,9 +1170,9 @@ export const LearningSession: React.FC = () => {
 
           {/* End Session Button */}
           <button
-            onClick={async () => {
+            onClick={() => {
               console.log("=== ZAKOŃCZ SESJĘ BUTTON CLICKED ===");
-              await endSession();
+              setShowExitDialog(true); // Tylko pokaż dialog, nie zapisuj tutaj
             }}
             className="w-full sm:w-auto px-4 py-2 text-gray-600 dark:text-gray-400 
      hover:text-gray-900 dark:hover:text-white transition-colors
@@ -1535,18 +1385,21 @@ export const LearningSession: React.FC = () => {
                   </div>
                 )}
 
-                <button
-                  onClick={skipExercise}
-                  disabled={sessionStats.completed >= SESSION_LIMIT - 1}
-                  className="flex items-center gap-1 px-1 py-1 text-gray-500 dark:text-gray-400 
-             hover:text-gray-700 dark:hover:text-gray-200 
-             hover:bg-gray-100 dark:hover:bg-gray-700
-             disabled:opacity-50 transition-colors rounded-lg
-             whitespace-nowrap"
-                >
-                  <SkipForward className="w-4 h-4" />
-                  <span>Pomiń</span>
-                </button>
+                {/* ✅ DODAJ WARUNEK: Pokaż tylko gdy NIE MA feedbacku */}
+                {!showFeedback && (
+                  <button
+                    onClick={skipExercise}
+                    disabled={sessionStats.completed >= SESSION_LIMIT - 1}
+                    className="flex items-center gap-1 px-1 py-1 text-gray-500 dark:text-gray-400 
+         hover:text-gray-700 dark:hover:text-gray-200 
+         hover:bg-gray-100 dark:hover:bg-gray-700
+         disabled:opacity-50 transition-colors rounded-lg
+         whitespace-nowrap"
+                  >
+                    <SkipForward className="w-4 h-4" />
+                    <span>Pomiń</span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -1954,7 +1807,7 @@ export const LearningSession: React.FC = () => {
                 {/* SHORT ANSWER */}
                 {currentExercise.type === "SHORT_ANSWER" && (
                   <>
-                    {/* NOWE: Wyświetl dzieło literackie */}
+                    {/* DZIEŁO LITERACKIE */}
                     {currentExercise.content?.work && (
                       <div className="mb-4 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
                         <p className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-1">
@@ -1966,11 +1819,23 @@ export const LearningSession: React.FC = () => {
                       </div>
                     )}
 
-                    {/* NOWE: Wyświetl instrukcję */}
+                    {/* FRAZEOLOGIZM / PHRASE */}
+                    {currentExercise.content?.phrase && (
+                      <div className="mb-4 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                        <p className="text-sm font-medium text-amber-700 dark:text-amber-300 mb-1">
+                          💬 Frazeologizm:
+                        </p>
+                        <p className="text-xl font-bold text-amber-900 dark:text-amber-100">
+                          "{currentExercise.content.phrase}"
+                        </p>
+                      </div>
+                    )}
+
+                    {/* INSTRUKCJA */}
                     {currentExercise.content?.instruction && (
                       <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                         <p className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-2">
-                          📝 Instrukcja:
+                          📝 Polecenie:
                         </p>
                         <div className="text-blue-900 dark:text-blue-100 whitespace-pre-wrap">
                           {currentExercise.content.instruction}
@@ -2002,22 +1867,10 @@ export const LearningSession: React.FC = () => {
                       </div>
                     )}
 
-                    {/* Szczegółowa instrukcja */}
-                    {currentExercise.content?.instruction && (
-                      <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                        <p className="font-medium text-sm text-blue-700 dark:text-blue-300 mb-1">
-                          ✍️ Instrukcja:
-                        </p>
-                        <p className="text-blue-900 dark:text-blue-100">
-                          {currentExercise.content.instruction}
-                        </p>
-                      </div>
-                    )}
-
                     {currentExercise.content?.transformation && (
                       <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                         <p className="font-medium text-sm text-blue-700 dark:text-blue-300 mb-1">
-                          Polecenie:
+                          Polecenie transformacji:
                         </p>
                         <p className="text-blue-900 dark:text-blue-100">
                           {currentExercise.content.transformation}
@@ -2053,9 +1906,9 @@ export const LearningSession: React.FC = () => {
                                     setAnswer(newAnswer);
                                   }}
                                   className="mt-2 w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
-                  rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
-                  bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
-                  placeholder-gray-500 dark:placeholder-gray-400"
+          rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
+          placeholder-gray-500 dark:placeholder-gray-400"
                                   rows={2}
                                   placeholder={`Odpowiedź na krok ${
                                     step.id || index + 1
@@ -2091,9 +1944,9 @@ export const LearningSession: React.FC = () => {
                           value={answer || ""}
                           onChange={(e) => setAnswer(e.target.value)}
                           className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
-            rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
-            bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
-            placeholder-gray-500 dark:placeholder-gray-400"
+    rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
+    bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
+    placeholder-gray-500 dark:placeholder-gray-400"
                           rows={4}
                           placeholder="Wpisz swoją odpowiedź..."
                         />
@@ -2653,27 +2506,79 @@ export const LearningSession: React.FC = () => {
       <ConfirmExitDialog
         isOpen={showExitDialog}
         sessionStats={sessionStats}
+        isSessionComplete={sessionStats.completed >= SESSION_LIMIT}
         onConfirm={async () => {
           console.log("=== CONFIRM EXIT DIALOG - ZAKOŃCZ I WYJDŹ ===");
 
+          // ✅ 1. Najpierw zapisz sesję do bazy
+          if (sessionId && sessionStats.completed > 0) {
+            try {
+              await saveSessionMutation.mutateAsync({
+                sessionId,
+                stats: sessionStats,
+                completedExercises: completedExercises,
+              });
+              console.log("✅ Session saved successfully");
+            } catch (error) {
+              console.error("❌ Failed to save session:", error);
+            }
+          }
+
+          // ✅ 2. Resetuj state
+          setSessionId(null);
+          setSessionActive(false);
+          setSessionComplete(false);
           setShowExitDialog(false);
+          setCurrentExercise(null);
+          setAnswer(null);
+          setShowFeedback(false);
+          setSessionFilters({});
+          setCompletedExercises([]);
+          setSessionStats({
+            completed: 0,
+            correct: 0,
+            streak: 0,
+            maxStreak: 0,
+            points: 0,
+            timeSpent: 0,
+          });
 
-          // Wywołaj sessionExit.confirmAndExit
-          await sessionExit.confirmAndExit(
-            sessionExit.nextLocation || undefined
-          );
+          refetchStats();
 
-          // ✅ DODAJ: Invaliduj query dla session history
-          queryClient.invalidateQueries({ queryKey: ["all-sessions"] });
+          // Invaliduj wszystkie warianty query
+          await queryClient.invalidateQueries({
+            predicate: (query) => query.queryKey[0] === "all-sessions",
+          });
 
-          // ✅ DODAJ: Małe opóźnienie aby backend zdążył zapisać
-          setTimeout(() => {
-            queryClient.invalidateQueries({ queryKey: ["all-sessions"] });
-          }, 500);
+          // ✅ DODAJ: Force refetch po opóźnieniu
+          setTimeout(async () => {
+            await queryClient.invalidateQueries({
+              predicate: (query) => query.queryKey[0] === "all-sessions",
+            });
+            await queryClient.refetchQueries({
+              queryKey: ["all-sessions"],
+              type: "active",
+            });
+          }, 1000); // ✅ 1 sekunda aby backend zdążył zapisać
+
+          // 4. Nawiguj
+          if (sessionExit.nextLocation) {
+            await sessionExit.confirmAndExit(sessionExit.nextLocation);
+          } else {
+            navigate("/dashboard");
+          }
         }}
         onCancel={() => {
           setShowExitDialog(false);
-          sessionExit.cancelExit();
+
+          // Jeśli sesja była ukończona i user kliknął "Nowa sesja"
+          if (sessionStats.completed >= SESSION_LIMIT) {
+            setSessionComplete(false);
+            setCompletedExercises([]);
+            startSession();
+          } else {
+            sessionExit.cancelExit();
+          }
         }}
       />
 
