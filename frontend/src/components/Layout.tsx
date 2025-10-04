@@ -131,13 +131,6 @@ export const Layout: React.FC = () => {
             })}
           </nav>
 
-          {/* AI Points Widget */}
-          {!isSidebarCollapsed && (
-            <div className="px-6 py-3 border-t dark:border-gray-700">
-              <AiPointsWidget />
-            </div>
-          )}
-
           {/* Quick Stats - only when expanded */}
           {!isSidebarCollapsed && (
             <div className="px-6 py-4 border-t dark:border-gray-700">
@@ -167,6 +160,13 @@ export const Layout: React.FC = () => {
                   </span>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* AI Points Widget */}
+          {!isSidebarCollapsed && (
+            <div className="px-6 py-3 border-t dark:border-gray-700">
+              <AiPointsWidget />
             </div>
           )}
 

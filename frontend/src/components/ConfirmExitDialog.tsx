@@ -115,9 +115,7 @@ export const ConfirmExitDialog: React.FC<ConfirmExitDialogProps> = ({
                   className="flex-1 px-4 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 
            font-medium transition-colors"
                 >
-                  {isSessionComplete
-                    ? "Zakończ i zobacz wyniki"
-                    : "Zakończ i wyjdź"}
+                  {isSessionComplete ? "Zakończ i wyjdź" : "Zakończ i wyjdź"}
                 </button>
               </div>
 

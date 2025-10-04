@@ -76,7 +76,14 @@ const CATEGORIES = [
   { value: "WRITING", label: "Pisanie", color: "green" },
 ];
 
+// ✅ FUNKCJA POMOCNICZA DO MAPOWANIA KATEGORII
+const getCategoryLabel = (categoryValue: string): string => {
+  const category = CATEGORIES.find((c) => c.value === categoryValue);
+  return category?.label || categoryValue;
+};
+
 export const LearningSession: React.FC = () => {
+  const [isAutoStarting, setIsAutoStarting] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [, setPendingNavigation] = useState<string | null>(null);
   const [sequentialMode, setSequentialMode] = useState(false);
@@ -1058,6 +1065,7 @@ export const LearningSession: React.FC = () => {
       !hasAutoStarted.current
     ) {
       hasAutoStarted.current = true;
+      setIsAutoStarting(true); // ✅ DODANE
       try {
         const filters = JSON.parse(storedFilters);
         console.log("Parsed filters:", filters);
@@ -1069,12 +1077,14 @@ export const LearningSession: React.FC = () => {
         setTimeout(async () => {
           console.log("Auto-starting session with filters:", filters);
           await startSession();
+          setIsAutoStarting(false); // ✅ DODANE
         }, 100);
       } catch (error) {
         console.error("Error parsing session filters:", error);
         localStorage.removeItem("sessionFilters");
         localStorage.removeItem("isStudyPlanSession");
         localStorage.removeItem("isEpochReview");
+        setIsAutoStarting(false); // ✅ DODANE
       }
     } else if (
       autoStart &&
@@ -1083,10 +1093,12 @@ export const LearningSession: React.FC = () => {
       !hasAutoStarted.current
     ) {
       hasAutoStarted.current = true;
+      setIsAutoStarting(true); // ✅ DODANE
       localStorage.removeItem("autoStartSession");
 
       setTimeout(async () => {
         await startSession();
+        setIsAutoStarting(false); // ✅ DODANE
       }, 100);
     }
   }, []);
@@ -1129,201 +1141,38 @@ export const LearningSession: React.FC = () => {
     }
   }, [sessionStats.completed, sessionActive]);
 
+  if (isAutoStarting) {
+    return (
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="flex flex-col items-center justify-center min-h-[60vh]">
+          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
+            Przygotowuję sesję nauki...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (!sessionActive) {
     return <SessionStart onStart={startSession} stats={userStats} />;
   }
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      {/* Session Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-4 mb-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          {/* Stats Grid - 2 kolumny na mobile, wszystkie w linii na desktop */}
-          <div className="grid grid-cols-2 xs:grid-cols-3 lg:flex lg:items-center gap-3 lg:gap-6 w-full sm:w-auto">
-            <SessionStat
-              icon={<Target className="w-5 h-5" />}
-              label="Ukończone"
-              value={`${sessionStats.completed}/${SESSION_LIMIT}`}
-            />
-            <SessionStat
-              icon={<CheckCircle className="w-5 h-5" />}
-              label="Poprawne"
-              value={`${sessionStats.correct}/${sessionStats.completed}`}
-            />
-            <SessionStat
-              icon={<TrendingUp className="w-5 h-5" />}
-              label="Seria"
-              value={`${sessionStats.streak}`}
-              highlight={sessionStats.streak >= 5}
-            />
-            <SessionStat
-              icon={<Award className="w-5 h-5" />}
-              label="Punkty"
-              value={`+${sessionStats.points}`}
-            />
-            <SessionStat
-              icon={<Clock className="w-5 h-5" />}
-              label="Czas"
-              value={formatTime(sessionStats.timeSpent)}
-            />
-          </div>
-
-          {/* End Session Button */}
-          <button
-            onClick={() => {
-              console.log("=== ZAKOŃCZ SESJĘ BUTTON CLICKED ===");
-              setShowExitDialog(true); // Tylko pokaż dialog, nie zapisuj tutaj
-            }}
-            className="w-full sm:w-auto px-4 py-2 text-gray-600 dark:text-gray-400 
-     hover:text-gray-900 dark:hover:text-white transition-colors
-     border border-gray-300 dark:border-gray-600 rounded-lg
-     hover:bg-gray-50 dark:hover:bg-gray-700"
-          >
-            Zakończ sesję
-          </button>
-        </div>
-
-        {/* Progress bar */}
-        <div className="mt-4 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-          <motion.div
-            className="h-full bg-gradient-to-r from-blue-500 to-purple-500 
-         dark:from-blue-400 dark:to-purple-400"
-            initial={{ width: 0 }}
-            animate={{
-              width: `${(sessionStats.completed / SESSION_LIMIT) * 100}%`,
-            }}
-            transition={{ duration: 0.5 }}
-          />
-        </div>
-
-        {/* ✅ POPRAWIONE - Krótszy tekst na mobile */}
-        {levelProgress && (
-          <div className="mt-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400 flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span>
-              <span className="sm:hidden">Poziom:</span>
-              <span className="hidden sm:inline">
-                Maksymalny poziom trudności:
-              </span>{" "}
-              {levelProgress.currentMaxDifficulty}/5
-            </span>
-            {levelProgress.pointsNeeded > 0 && (
-              <span className="flex items-center gap-1">
-                <span className="hidden sm:inline">•</span>
-                <span>
-                  {levelProgress.pointsNeeded} pkt do lvl{" "}
-                  {levelProgress.nextLevel}
-                </span>
-              </span>
-            )}
-          </div>
-        )}
-
-        {isAdminUser && sessionActive && (
-          <div className="mb-3 p-3 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="sequentialMode"
-                    checked={sequentialMode}
-                    onChange={(e) => {
-                      const newMode = e.target.checked;
-                      setSequentialMode(newMode);
-
-                      toast.success(
-                        newMode
-                          ? "🔄 Tryb sekwencyjny włączony - pytania od najstarszego do najnowszego"
-                          : "🧠 Tryb inteligentny włączony - algorytm adaptacyjny",
-                        { duration: 4000 }
-                      );
-                    }}
-                    className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 cursor-pointer"
-                  />
-                  <label
-                    htmlFor="sequentialMode"
-                    className="text-sm font-semibold text-gray-800 dark:text-gray-200 cursor-pointer select-none"
-                  >
-                    Tryb sekwencyjny (A→Z)
-                  </label>
-                </div>
-
-                {sequentialMode && (
-                  <span className="px-3 py-1 bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 text-xs font-medium rounded-full flex items-center gap-1">
-                    <span>📋</span>
-                    Pytania chronologicznie (od najstarszego)
-                  </span>
-                )}
-
-                {isAdminUser && sessionActive && (
-                  <button
-                    onClick={() => setShowExerciseBrowser(true)}
-                    className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 
-             text-white rounded-lg hover:from-purple-700 hover:to-pink-700
-             font-medium flex items-center justify-center gap-2 transition-all
-             shadow-lg hover:shadow-xl"
-                  >
-                    <span className="text-lg">📚</span>
-                    Przeglądaj wszystkie pytania
-                    <span className="text-xs opacity-80">(Admin)</span>
-                  </button>
-                )}
-              </div>
-
-              <span className="text-xs text-gray-500 dark:text-gray-400 italic">
-                Tylko dla konta admin
-              </span>
+      {/* Loading state */}
+      {isLoadingNext && (
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-8 mb-6">
+          <div className="animate-pulse space-y-4">
+            <div className="flex gap-2">
+              <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-full w-24"></div>
+              <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-full w-32"></div>
             </div>
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+            <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
           </div>
-        )}
-
-        {/* ✅ POPRAWIONE - Lepsze zawijanie i layout */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mt-3">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Cel sesji: {sessionStats.completed}/{SESSION_LIMIT} zadań
-          </p>
-
-          {/* PRZYCISK DO FILTRÓW - responsive */}
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 
-         hover:text-blue-700 dark:hover:text-blue-300 font-medium 
-         px-3 py-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors
-         whitespace-nowrap"
-          >
-            <Filter className="w-4 h-4 flex-shrink-0" />
-            <span className="hidden xs:inline">
-              {showFilters ? "Ukryj filtry" : "Filtry zadań"}
-            </span>
-            <span className="xs:hidden">
-              {showFilters ? "Ukryj" : "Filtry"}
-            </span>
-            <ChevronDown
-              className={`w-4 h-4 flex-shrink-0 transition-transform ${
-                showFilters ? "rotate-180" : ""
-              }`}
-            />
-          </button>
         </div>
-      </div>
-
-      {/* SEKCJA FILTRÓW - POKAZYWANA POD NAGŁÓWKIEM */}
-      <AnimatePresence>
-        {showFilters && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mb-6 overflow-hidden"
-          >
-            <InSessionFilters
-              currentFilters={sessionFilters}
-              onFiltersChange={applyFiltersAndRefresh}
-              isLoading={isLoadingNext}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      )}
 
       {/* Exercise Content */}
       {currentExercise && !isLoadingNext && (
@@ -1342,7 +1191,7 @@ export const LearningSession: React.FC = () => {
                 {/* Badges - wrap on mobile */}
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="px-2 sm:px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs sm:text-sm">
-                    {currentExercise.category}
+                    {getCategoryLabel(currentExercise.category)}
                   </span>
                   {currentExercise.epoch && (
                     <span className="px-2 sm:px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-xs sm:text-sm">
@@ -1373,8 +1222,8 @@ export const LearningSession: React.FC = () => {
                 </h2>
               </div>
 
-              {/* Bottom row - AI Points + Skip button */}
-              <div className="flex items-center justify-between gap-3">
+              {/* Bottom row - AI Points + Skip button - wyrównane na desktop */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 {currentExercise && (
                   <div className="flex-shrink-0">
                     <AiPointsCost
@@ -2489,6 +2338,196 @@ export const LearningSession: React.FC = () => {
         </AnimatePresence>
       )}
 
+      {/* Session Header */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-4 mb-6 mt-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          {/* Stats Grid - 2 kolumny na mobile, wszystkie w linii na desktop */}
+          <div className="grid grid-cols-2 xs:grid-cols-3 lg:flex lg:items-center gap-3 lg:gap-6 w-full sm:w-auto">
+            <SessionStat
+              icon={<Target className="w-5 h-5" />}
+              label="Ukończone"
+              value={`${sessionStats.completed}/${SESSION_LIMIT}`}
+            />
+            <SessionStat
+              icon={<CheckCircle className="w-5 h-5" />}
+              label="Poprawne"
+              value={`${sessionStats.correct}/${sessionStats.completed}`}
+            />
+            <SessionStat
+              icon={<TrendingUp className="w-5 h-5" />}
+              label="Seria"
+              value={`${sessionStats.streak}`}
+              highlight={sessionStats.streak >= 5}
+            />
+            <SessionStat
+              icon={<Award className="w-5 h-5" />}
+              label="Punkty"
+              value={`+${sessionStats.points}`}
+            />
+            <SessionStat
+              icon={<Clock className="w-5 h-5" />}
+              label="Czas"
+              value={formatTime(sessionStats.timeSpent)}
+            />
+          </div>
+
+          {/* End Session Button */}
+          <button
+            onClick={() => {
+              console.log("=== ZAKOŃCZ SESJĘ BUTTON CLICKED ===");
+              setShowExitDialog(true); // Tylko pokaż dialog, nie zapisuj tutaj
+            }}
+            className="w-full sm:w-auto px-4 py-2 text-gray-600 dark:text-gray-400 
+     hover:text-gray-900 dark:hover:text-white transition-colors
+     border border-gray-300 dark:border-gray-600 rounded-lg
+     hover:bg-gray-50 dark:hover:bg-gray-700"
+          >
+            Zakończ sesję
+          </button>
+        </div>
+
+        {/* Progress bar */}
+        <div className="mt-4 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-blue-500 to-purple-500 
+         dark:from-blue-400 dark:to-purple-400"
+            initial={{ width: 0 }}
+            animate={{
+              width: `${(sessionStats.completed / SESSION_LIMIT) * 100}%`,
+            }}
+            transition={{ duration: 0.5 }}
+          />
+        </div>
+
+        {/* ✅ POPRAWIONE - Krótszy tekst na mobile */}
+        {levelProgress && (
+          <div className="mt-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400 flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span>
+              <span className="sm:hidden">Poziom:</span>
+              <span className="hidden sm:inline">
+                Maksymalny poziom trudności:
+              </span>{" "}
+              {levelProgress.currentMaxDifficulty}/5
+            </span>
+            {levelProgress.pointsNeeded > 0 && (
+              <span className="flex items-center gap-1">
+                <span className="hidden sm:inline">•</span>
+                <span>
+                  {levelProgress.pointsNeeded} pkt do lvl{" "}
+                  {levelProgress.nextLevel}
+                </span>
+              </span>
+            )}
+          </div>
+        )}
+
+        {isAdminUser && sessionActive && (
+          <div className="mb-3 p-3 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="sequentialMode"
+                    checked={sequentialMode}
+                    onChange={(e) => {
+                      const newMode = e.target.checked;
+                      setSequentialMode(newMode);
+
+                      toast.success(
+                        newMode
+                          ? "🔄 Tryb sekwencyjny włączony - pytania od najstarszego do najnowszego"
+                          : "🧠 Tryb inteligentny włączony - algorytm adaptacyjny",
+                        { duration: 4000 }
+                      );
+                    }}
+                    className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 cursor-pointer"
+                  />
+                  <label
+                    htmlFor="sequentialMode"
+                    className="text-sm font-semibold text-gray-800 dark:text-gray-200 cursor-pointer select-none"
+                  >
+                    Tryb sekwencyjny (A→Z)
+                  </label>
+                </div>
+
+                {sequentialMode && (
+                  <span className="px-3 py-1 bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 text-xs font-medium rounded-full flex items-center gap-1">
+                    <span>📋</span>
+                    Pytania chronologicznie (od najstarszego)
+                  </span>
+                )}
+
+                {isAdminUser && sessionActive && (
+                  <button
+                    onClick={() => setShowExerciseBrowser(true)}
+                    className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 
+             text-white rounded-lg hover:from-purple-700 hover:to-pink-700
+             font-medium flex items-center justify-center gap-2 transition-all
+             shadow-lg hover:shadow-xl"
+                  >
+                    <span className="text-lg">📚</span>
+                    Przeglądaj wszystkie pytania
+                    <span className="text-xs opacity-80">(Admin)</span>
+                  </button>
+                )}
+              </div>
+
+              <span className="text-xs text-gray-500 dark:text-gray-400 italic">
+                Tylko dla konta admin
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* ✅ POPRAWIONE - Lepsze zawijanie i layout */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mt-3">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Cel sesji: {sessionStats.completed}/{SESSION_LIMIT} zadań
+          </p>
+
+          {/* PRZYCISK DO FILTRÓW - responsive */}
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 
+         hover:text-blue-700 dark:hover:text-blue-300 font-medium 
+         px-3 py-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors
+         whitespace-nowrap"
+          >
+            <Filter className="w-4 h-4 flex-shrink-0" />
+            <span className="hidden xs:inline">
+              {showFilters ? "Ukryj filtry" : "Filtry zadań"}
+            </span>
+            <span className="xs:hidden">
+              {showFilters ? "Ukryj" : "Filtry"}
+            </span>
+            <ChevronDown
+              className={`w-4 h-4 flex-shrink-0 transition-transform ${
+                showFilters ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+        </div>
+      </div>
+
+      {/* SEKCJA FILTRÓW - POKAZYWANA POD NAGŁÓWKIEM */}
+      <AnimatePresence>
+        {showFilters && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mb-6 overflow-hidden"
+          >
+            <InSessionFilters
+              currentFilters={sessionFilters}
+              onFiltersChange={applyFiltersAndRefresh}
+              isLoading={isLoadingNext}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Loading state */}
       {isLoadingNext && (
         <div className="bg-white rounded-xl shadow-sm p-8">
@@ -2905,12 +2944,24 @@ const SessionStart: React.FC<{
     queryFn: () => api.get("/api/subscription/status").then((r) => r.data),
   });
 
+  // ✅ POBIERZ SZCZEGÓŁOWE STATYSTYKI (tak jak w Dashboard)
+  const { data: sessionsHistory } = useQuery({
+    queryKey: ["all-sessions"],
+    queryFn: () => api.get("/api/learning/sessions/all").then((r) => r.data),
+    staleTime: 0,
+  });
+
   // Pobierz aktywne sesje
   useEffect(() => {
     api.get("/api/learning/active-sessions").then((r) => {
       setActiveSessions(r.data);
     });
   }, []);
+
+  const { data: detailedStats } = useQuery({
+    queryKey: ["detailed-stats"],
+    queryFn: () => api.get("/api/student/detailed-stats").then((r) => r.data),
+  });
 
   const isFreeUser = subscription?.plan === "FREE";
 
@@ -2945,7 +2996,10 @@ const SessionStart: React.FC<{
             <p className="text-sm text-blue-100">Dni z rzędu</p>
           </div>
           <div className="bg-white/10 rounded-lg p-4">
-            <p className="text-3xl font-bold">{stats?.averageScore || 0}%</p>
+            <p className="text-3xl font-bold">
+              {" "}
+              {detailedStats?.profile?.averageScore || 0}%
+            </p>
             <p className="text-sm text-blue-100">Średni wynik</p>
           </div>
           <div className="bg-white/10 rounded-lg p-4">
@@ -3038,7 +3092,7 @@ const SessionStart: React.FC<{
             Twoje ostatnie sesje
           </h2>
 
-          {stats?.recentSessions?.length > 0 && (
+          {sessionsHistory?.completed?.length > 0 && (
             <button
               onClick={() => navigate("/sessions")}
               className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 
@@ -3049,7 +3103,9 @@ const SessionStart: React.FC<{
             </button>
           )}
         </div>
-        <RecentSessions sessions={stats?.recentSessions?.slice(0, 5) || []} />
+        <RecentSessions
+          sessions={sessionsHistory?.completed?.slice(0, 5) || []}
+        />
       </div>
     </div>
   );
@@ -3086,30 +3142,50 @@ const RecentSessions: React.FC<{ sessions: any[] }> = ({ sessions }) => (
         Brak poprzednich sesji. Rozpocznij pierwszą!
       </p>
     ) : (
-      sessions.map((session: any, index: number) => (
-        <div
-          key={`session-${index}`}
-          className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700/50 
+      sessions.map((session: any, index: number) => {
+        // Formatuj datę ładnie
+        const date = new Date(session.date);
+        const formattedDate = date.toLocaleDateString("pl-PL", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+        const formattedTime = date.toLocaleTimeString("pl-PL", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        return (
+          <div
+            key={session.id || `session-${index}`}
+            className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700/50 
                      rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-        >
-          <div>
-            <p className="font-medium text-gray-900 dark:text-white">
-              {session.date}
-            </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {session.completed} zadań, {session.correctRate}% poprawnych
-            </p>
+          >
+            <div>
+              <p className="font-medium text-gray-900 dark:text-white">
+                {formattedDate} o {formattedTime}
+              </p>
+              {session.exercisesCount !== undefined &&
+                session.averageScore !== undefined && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {session.exercisesCount} zadań, {session.averageScore}%
+                    poprawnych
+                  </p>
+                )}
+            </div>
+            <div className="text-right">
+              <p className="font-semibold text-green-600 dark:text-green-400">
+                +{session.points || 0} pkt
+              </p>
+              {session.studyTime !== undefined && (
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {session.studyTime} min
+                </p>
+              )}
+            </div>
           </div>
-          <div className="text-right">
-            <p className="font-semibold text-green-600 dark:text-green-400">
-              +{session.points} pkt
-            </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {session.duration} min
-            </p>
-          </div>
-        </div>
-      ))
+        );
+      })
     )}
   </div>
 );
