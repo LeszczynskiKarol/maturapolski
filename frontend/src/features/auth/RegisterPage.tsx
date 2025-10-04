@@ -1,7 +1,8 @@
 // frontend/src/features/auth/RegisterPage.tsx
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useAuthStore } from "../../store/authStore";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "../../services/api";
 import { useRecaptcha } from "../../hooks/useRecaptcha";
@@ -28,11 +29,18 @@ export const RegisterPage: React.FC = () => {
 
   const navigate = useNavigate();
   const { isReady, executeRecaptcha } = useRecaptcha(RECAPTCHA_SITE_KEY);
+  const user = useAuthStore((state) => state.user);
 
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const password = watch("password");
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
 
   // Walidacja siły hasła
   const getPasswordStrength = (pwd: string) => {
@@ -327,9 +335,26 @@ export const RegisterPage: React.FC = () => {
               )}
             </button>
 
-            {/* reCAPTCHA info */}
-            <p className="text-xs text-center text-gray-500">
-              Chronione przez reCAPTCHA
+            <p className="text-xs text-center text-gray-500 mt-6">
+              Ta strona jest chroniona przez reCAPTCHA. Obowiązują{" "}
+              <a
+                href="https://policies.google.com/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                Polityka prywatności
+              </a>{" "}
+              i{" "}
+              <a
+                href="https://policies.google.com/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                Warunki korzystania
+              </a>{" "}
+              Google.
             </p>
           </form>
 

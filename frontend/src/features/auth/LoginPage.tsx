@@ -1,6 +1,6 @@
 // frontend/src/features/auth/LoginPage.tsx
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "../../services/api";
@@ -22,10 +22,16 @@ export const LoginPage: React.FC = () => {
   } = useForm<LoginFormData>();
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { setAuth } = useAuthStore();
+  const { setAuth, user } = useAuthStore();
   const [verificationError, setVerificationError] = useState<string | null>(
     null
   );
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
@@ -217,9 +223,30 @@ export const LoginPage: React.FC = () => {
                 Zarejestruj się za darmo
               </Link>
             </p>
+            <p className="text-xs text-center text-gray-500 mt-4">
+              Ta strona jest chroniona przez reCAPTCHA. Obowiązują{" "}
+              <a
+                href="https://policies.google.com/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                Polityka prywatności
+              </a>{" "}
+              i{" "}
+              <a
+                href="https://policies.google.com/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                Warunki korzystania
+              </a>{" "}
+              Google.
+            </p>
           </div>
 
-          {/* Demo credentials */}
+          {/* Demo credentials 
           <div className="mt-4 p-4 bg-blue-50 rounded-lg">
             <p className="text-sm text-blue-800 font-medium mb-2">
               Dane testowe:
@@ -230,7 +257,8 @@ export const LoginPage: React.FC = () => {
             <p className="text-xs text-blue-700">
               Student: student@example.com / Student123!
             </p>
-          </div>
+          </div>*/}
+          {/* reCAPTCHA info */}
         </div>
       </div>
     </PublicLayout>

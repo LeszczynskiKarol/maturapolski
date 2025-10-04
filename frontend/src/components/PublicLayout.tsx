@@ -2,16 +2,20 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, ChevronDown } from "lucide-react";
+import { BookOpen, ChevronDown, ArrowLeft } from "lucide-react";
+import { useAuthStore } from "../store/authStore";
 
 interface PublicLayoutProps {
   children: React.ReactNode;
 }
 
 export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
+  const user = useAuthStore((state) => state.user);
+  const isLoggedIn = !!user;
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Navigation - taki sam jak na landing page */}
+      {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-lg z-50 border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
@@ -23,42 +27,57 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
             </Link>
 
             <div className="hidden md:flex items-center gap-8">
-              <a
-                href="/#jak-dziala"
-                className="text-gray-700 hover:text-blue-600 transition-colors"
-              >
-                Jak działa
-              </a>
-              <a
-                href="/#funkcje"
-                className="text-gray-700 hover:text-blue-600 transition-colors"
-              >
-                Funkcje
-              </a>
-              <a
-                href="/#cennik"
-                className="text-gray-700 hover:text-blue-600 transition-colors"
-              >
-                Cennik
-              </a>
-              <a
-                href="/#opinie"
-                className="text-gray-700 hover:text-blue-600 transition-colors"
-              >
-                Opinie
-              </a>
-              <Link
-                to="/login"
-                className="px-4 py-2 text-gray-700 hover:text-blue-600 transition-colors"
-              >
-                Zaloguj się
-              </Link>
-              <Link
-                to="/register"
-                className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all"
-              >
-                Zarejestruj się
-              </Link>
+              {!isLoggedIn ? (
+                <>
+                  <a
+                    href="/#jak-dziala"
+                    className="text-gray-700 hover:text-blue-600 transition-colors"
+                  >
+                    Jak działa
+                  </a>
+
+                  <a
+                    href="/#funkcje"
+                    className="text-gray-700 hover:text-blue-600 transition-colors"
+                  >
+                    Funkcje
+                  </a>
+
+                  <a
+                    href="/#cennik"
+                    className="text-gray-700 hover:text-blue-600 transition-colors"
+                  >
+                    Cennik
+                  </a>
+
+                  <a
+                    href="/#opinie"
+                    className="text-gray-700 hover:text-blue-600 transition-colors"
+                  >
+                    Opinie
+                  </a>
+                  <Link
+                    to="/login"
+                    className="px-4 py-2 text-gray-700 hover:text-blue-600 transition-colors"
+                  >
+                    Zaloguj się
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all"
+                  >
+                    Zarejestruj się
+                  </Link>
+                </>
+              ) : (
+                <Link
+                  to="/dashboard"
+                  className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Wróć do panelu
+                </Link>
+              )}
             </div>
 
             {/* Mobile menu button */}
@@ -69,10 +88,10 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
         </div>
       </nav>
 
-      {/* Main content - z paddingiem na górze żeby nie był pod navbar */}
+      {/* Main content */}
       <main className="flex-1 pt-20">{children}</main>
 
-      {/* Footer - taki sam jak na landing page */}
+      {/* Footer */}
       <footer className="bg-gray-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
@@ -93,6 +112,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                   <span className="sr-only">Facebook</span>
                   FB
                 </a>
+
                 <a
                   href="#"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
@@ -100,6 +120,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                   <span className="sr-only">Instagram</span>
                   IG
                 </a>
+
                 <a
                   href="#"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"

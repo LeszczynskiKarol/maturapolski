@@ -103,3 +103,10 @@
     @apply text-purple-600 dark:text-purple-400;
   }
 }
+
+/* Ukryj reCAPTCHA badge */
+.grecaptcha-badge {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
