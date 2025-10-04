@@ -6,6 +6,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { api } from "../../services/api";
 import { useAuthStore } from "../../store/authStore";
 import { PublicLayout } from "../../components/PublicLayout";
+import { useGoogleLogin } from "../../hooks/useGoogleLogin";
 import toast from "react-hot-toast";
 import { Mail, Lock, ArrowRight, Loader } from "lucide-react";
 
@@ -27,19 +28,30 @@ export const LoginPage: React.FC = () => {
     null
   );
 
+  // DODAJ TO - Google Login
+  const { renderGoogleButton } = useGoogleLogin();
+
   useEffect(() => {
     if (user) {
       navigate("/dashboard");
     }
   }, [user, navigate]);
 
+  // DODAJ TO - renderuj przycisk Google po załadowaniu strony
+  useEffect(() => {
+    renderGoogleButton("google-signin-button", {
+      theme: "outline",
+      size: "large",
+      text: "signin_with",
+      width: 400,
+    });
+  }, [renderGoogleButton]);
+
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     setVerificationError(null);
     try {
       const response = await api.post("/api/auth/login", data);
-
-      console.log("Login response:", response.data);
 
       if (response.data.user && response.data.token) {
         setAuth({
@@ -57,9 +69,6 @@ export const LoginPage: React.FC = () => {
             navigate("/dashboard");
           }
         }, 100);
-      } else {
-        console.error("Incomplete response:", response.data);
-        toast.error("Błąd logowania - brakujące dane");
       }
     } catch (error: any) {
       console.error("Login error:", error);
@@ -68,7 +77,6 @@ export const LoginPage: React.FC = () => {
         return;
       }
 
-      // Inne błędy
       const errorMessage =
         error.response?.data?.message ||
         "Błąd logowania. Sprawdź email i hasło.";
@@ -112,6 +120,25 @@ export const LoginPage: React.FC = () => {
               Kontynuuj naukę do matury
             </p>
 
+            {/* DODAJ TO - Przycisk Google na górze */}
+            <div className="mb-6">
+              <div
+                id="google-signin-button"
+                className="flex justify-center"
+              ></div>
+            </div>
+
+            {/* DODAJ TO - Separator */}
+            <div className="relative mb-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">lub</span>
+              </div>
+            </div>
+
+            {/* Formularz email/hasło - bez zmian */}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium mb-2">Email</label>
@@ -191,29 +218,6 @@ export const LoginPage: React.FC = () => {
               </button>
             </form>
 
-            {/*<div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">lub</span>
-                </div>
-              </div>
-
-              <button
-                className="mt-4 w-full py-3 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-2"
-                disabled={isLoading}
-              >
-                <img
-                  src="https://www.google.com/favicon.ico"
-                  alt="Google"
-                  className="w-5 h-5"
-                />
-                Zaloguj przez Google
-              </button>
-            </div>*/}
-
             <p className="text-center mt-6 text-sm">
               Nie masz konta?{" "}
               <Link
@@ -223,6 +227,7 @@ export const LoginPage: React.FC = () => {
                 Zarejestruj się za darmo
               </Link>
             </p>
+
             <p className="text-xs text-center text-gray-500 mt-4">
               Ta strona jest chroniona przez reCAPTCHA. Obowiązują{" "}
               <a
@@ -245,20 +250,6 @@ export const LoginPage: React.FC = () => {
               Google.
             </p>
           </div>
-
-          {/* Demo credentials 
-          <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-800 font-medium mb-2">
-              Dane testowe:
-            </p>
-            <p className="text-xs text-blue-700">
-              Admin: admin@matura-polski.pl / Admin123!
-            </p>
-            <p className="text-xs text-blue-700">
-              Student: student@example.com / Student123!
-            </p>
-          </div>*/}
-          {/* reCAPTCHA info */}
         </div>
       </div>
     </PublicLayout>

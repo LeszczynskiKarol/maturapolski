@@ -1,4 +1,5 @@
 // frontend/src/features/auth/RegisterPage.tsx
+// ZMODYFIKOWANA WERSJA - dodaj tylko te fragmenty do istniejącego pliku
 
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -6,6 +7,7 @@ import { useAuthStore } from "../../store/authStore";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "../../services/api";
 import { useRecaptcha } from "../../hooks/useRecaptcha";
+import { useGoogleLogin } from "../../hooks/useGoogleLogin"; // DODAJ TO
 import { PublicLayout } from "../../components/PublicLayout";
 import toast from "react-hot-toast";
 import { Eye, EyeOff, Loader2, CheckCircle } from "lucide-react";
@@ -31,6 +33,9 @@ export const RegisterPage: React.FC = () => {
   const { isReady, executeRecaptcha } = useRecaptcha(RECAPTCHA_SITE_KEY);
   const user = useAuthStore((state) => state.user);
 
+  // DODAJ TO - Google Login
+  const { renderGoogleButton } = useGoogleLogin();
+
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -42,7 +47,18 @@ export const RegisterPage: React.FC = () => {
     }
   }, [user, navigate]);
 
-  // Walidacja siły hasła
+  // DODAJ TO - renderuj przycisk Google
+  useEffect(() => {
+    renderGoogleButton("google-signup-button", {
+      theme: "outline",
+      size: "large",
+      text: "signup_with",
+      width: 400,
+    });
+  }, [renderGoogleButton]);
+
+  // ... reszta kodu bez zmian (getPasswordStrength, onSubmit, etc.)
+
   const getPasswordStrength = (pwd: string) => {
     if (!pwd) return { score: 0, text: "", color: "" };
 
@@ -69,7 +85,6 @@ export const RegisterPage: React.FC = () => {
   const passwordStrength = getPasswordStrength(password);
 
   const onSubmit = async (data: RegisterForm) => {
-    // Walidacja
     if (data.password !== data.confirmPassword) {
       toast.error("Hasła nie są identyczne");
       return;
@@ -83,18 +98,8 @@ export const RegisterPage: React.FC = () => {
     setLoading(true);
 
     try {
-      // Wykonaj reCAPTCHA
       const recaptchaToken = await executeRecaptcha("register");
-      console.log("=== FRONTEND DEBUG ===");
-      console.log("recaptchaToken:", recaptchaToken);
-      console.log("Sending data:", {
-        email: data.email,
-        username: data.username,
-        password: "***",
-        recaptchaToken: recaptchaToken ? "present" : "missing",
-      });
 
-      // Wyślij dane rejestracji (bez zapisywania response)
       await api.post("/api/auth/register", {
         email: data.email,
         username: data.username,
@@ -102,15 +107,12 @@ export const RegisterPage: React.FC = () => {
         recaptchaToken,
       });
 
-      // Pokaż komunikat o weryfikacji
       toast.success("Konto utworzone! Sprawdź swoją skrzynkę email.");
       navigate(`/check-email?email=${encodeURIComponent(data.email)}`);
     } catch (error: any) {
       console.error("Registration error:", error);
-
       const errorMessage =
         error.response?.data?.message || "Błąd rejestracji. Spróbuj ponownie.";
-
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -128,7 +130,28 @@ export const RegisterPage: React.FC = () => {
             </p>
           </div>
 
+          {/* DODAJ TO - Przycisk Google na górze */}
+          <div className="mb-6">
+            <div
+              id="google-signup-button"
+              className="flex justify-center"
+            ></div>
+          </div>
+
+          {/* DODAJ TO - Separator */}
+          <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">lub</span>
+            </div>
+          </div>
+
+          {/* Reszta formularza bez zmian */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* ... reszta pól - Username, Email, Password, etc. - bez zmian */}
+
             {/* Username */}
             <div>
               <label className="block text-sm font-medium mb-1">

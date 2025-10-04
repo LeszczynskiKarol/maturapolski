@@ -1,12 +1,14 @@
 // backend/src/services/authService.ts
 import { prisma } from "../lib/prisma";
 import bcrypt from "bcrypt";
+import { GoogleAuthService } from "./googleAuthService";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { EmailService } from "./emailService";
 
 export class AuthService {
   private emailResendCache = new Map<string, number>();
+  private googleAuthService: GoogleAuthService;
   private readonly JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
   private readonly JWT_REFRESH_SECRET =
     process.env.JWT_REFRESH_SECRET || "refresh-secret";
@@ -14,6 +16,7 @@ export class AuthService {
 
   constructor() {
     this.emailService = new EmailService();
+    this.googleAuthService = new GoogleAuthService();
   }
 
   async register(data: { email: string; username: string; password: string }) {
@@ -384,5 +387,83 @@ export class AuthService {
     if (!/[a-z]/.test(password)) {
       throw new Error("PASSWORD_NO_LOWERCASE");
     }
+  }
+  async loginWithGoogle(googleIdToken: string) {
+    // 1. Zweryfikuj token Google
+    const googleUser = await this.googleAuthService.verifyIdToken(
+      googleIdToken
+    );
+
+    // 2. Sprawdź czy użytkownik już istnieje
+    let user = await prisma.user.findUnique({
+      where: { email: googleUser.email.toLowerCase() },
+    });
+
+    if (user) {
+      // Użytkownik istnieje - zaloguj go
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { lastLogin: new Date() },
+      });
+    } else {
+      // Nowy użytkownik - utwórz konto
+      // Generuj unikalny username z Google name
+      const baseUsername = (
+        googleUser.givenName || googleUser.email.split("@")[0]
+      )
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "_");
+
+      let username = baseUsername;
+      let counter = 1;
+
+      while (await prisma.user.findUnique({ where: { username } })) {
+        username = `${baseUsername}${counter}`;
+        counter++;
+      }
+
+      // Generuj losowe hasło (użytkownik Google nie będzie go używał)
+      const randomPassword = crypto.randomBytes(32).toString("hex");
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
+
+      user = await prisma.user.create({
+        data: {
+          email: googleUser.email.toLowerCase(),
+          username,
+          password: hashedPassword,
+          emailVerified: true, // Google już zweryfikował email
+          role: "STUDENT",
+        },
+      });
+
+      // Wyślij email powitalny
+      try {
+        await this.emailService.sendWelcomeEmail(user.email, user.username);
+      } catch (error) {
+        console.error("Failed to send welcome email:", error);
+      }
+    }
+
+    // 3. Generuj tokeny
+    const token = this.generateToken(user);
+    const refreshToken = this.generateRefreshToken(user);
+
+    // 4. Zapisz refresh token
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { refreshToken },
+    });
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        userName: user.username,
+        role: user.role,
+        emailVerified: user.emailVerified,
+      },
+      token,
+      refreshToken,
+    };
   }
 }

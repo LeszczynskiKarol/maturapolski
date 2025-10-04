@@ -8,6 +8,9 @@ import { RecaptchaService } from "../services/recaptchaService";
 
 const authService = new AuthService();
 const recaptchaService = new RecaptchaService();
+const GoogleLoginSchema = z.object({
+  credential: z.string().min(1, "Google credential jest wymagany"),
+});
 
 const RegisterSchema = z.object({
   email: z.string().email("Nieprawidłowy adres email"),
@@ -327,6 +330,38 @@ export async function authRoutes(fastify: FastifyInstance) {
       return reply.code(401).send({
         error: "UNAUTHORIZED",
         message: "Nieautoryzowany",
+      });
+    }
+  });
+  // LOGOWANIE PRZEZ GOOGLE
+  fastify.post("/google", async (request, reply) => {
+    try {
+      const { credential } = GoogleLoginSchema.parse(request.body);
+
+      const result = await authService.loginWithGoogle(credential);
+
+      return reply.send(result);
+    } catch (error: any) {
+      console.error("Google login error:", error);
+
+      if (error instanceof z.ZodError) {
+        return reply.code(400).send({
+          error: "VALIDATION_ERROR",
+          message: error.errors[0].message,
+        });
+      }
+
+      const errorMessages: Record<string, string> = {
+        GOOGLE_AUTH_FAILED: "Nie udało się zweryfikować konta Google",
+        EMAIL_NOT_VERIFIED_BY_GOOGLE:
+          "Email nie jest zweryfikowany przez Google",
+      };
+
+      return reply.code(400).send({
+        error: error.message || "GOOGLE_LOGIN_FAILED",
+        message:
+          errorMessages[error.message] ||
+          "Logowanie przez Google nie powiodło się",
       });
     }
   });
