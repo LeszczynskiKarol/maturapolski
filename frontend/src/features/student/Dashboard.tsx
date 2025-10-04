@@ -216,7 +216,7 @@ export const StudentDashboard: React.FC = () => {
     : 0;
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="max-w-7xl mx-auto p-6 space-y-6 pb-32 lg:pb-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

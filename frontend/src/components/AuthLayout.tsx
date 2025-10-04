@@ -115,7 +115,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
           </div>
 
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
-            <p>© 2024 Matura Polski. Wszystkie prawa zastrzeżone.</p>
+            <p>© 2025 Matura Polski. Wszystkie prawa zastrzeżone.</p>
             <div className="flex justify-center gap-4 mt-2">
               <Link to="/terms" className="hover:text-white">
                 Regulamin

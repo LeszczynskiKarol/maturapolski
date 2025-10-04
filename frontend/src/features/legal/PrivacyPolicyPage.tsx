@@ -40,11 +40,13 @@ export const PrivacyPolicyPage: React.FC = () => {
                 <strong>Administratorem Twoich danych osobowych jest:</strong>
               </p>
               <p className="text-gray-700">
-                [Nazwa firmy]
+                eCopywriting.pl Karol Leszczyński
                 <br />
-                [Adres]
+                86-221 Papowo Biskupie 119/18
                 <br />
-                NIP: [NIP]
+                NIP: 9562203948
+                <br />
+                REGON: 340627879
                 <br />
                 Email: kontakt@maturapolski.pl
               </p>
@@ -599,9 +601,9 @@ export const PrivacyPolicyPage: React.FC = () => {
               <p className="text-gray-700">
                 <strong>Email:</strong> kontakt@maturapolski.pl
                 <br />
-                <strong>Adres:</strong> [Adres firmy]
+                <strong>Adres:</strong> 86-221 Papowo Biskupie 119/18
                 <br />
-                <strong>NIP:</strong> [NIP]
+                <strong>NIP:</strong> 9562203948
               </p>
               <p className="text-gray-600 text-sm mt-4">
                 Więcej informacji:{" "}

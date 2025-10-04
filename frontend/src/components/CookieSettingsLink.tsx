@@ -14,7 +14,6 @@ export const CookieSettingsLink: React.FC = () => {
         className="text-gray-500 dark:text-gray-400 flex items-center gap-1.5"
       >
         <Cookie className="w-4 h-4" />
-        <span>Ustawienia cookies</span>
       </button>
 
       {showSettings && (

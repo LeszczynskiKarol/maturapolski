@@ -1126,11 +1126,6 @@ export const LandingPage: React.FC = () => {
                     FAQ
                   </a>
                 </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Baza wiedzy
-                  </a>
-                </li>
               </ul>
             </div>
 
@@ -1142,23 +1137,20 @@ export const LandingPage: React.FC = () => {
                     O nas
                   </a>
                 </li>
+
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Kontakt
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Kariera
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a
+                    href="/terms"
+                    className="hover:text-white transition-colors"
+                  >
                     Regulamin
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a
+                    href="/privacy"
+                    className="hover:text-white transition-colors"
+                  >
                     Prywatność
                   </a>
                 </li>
@@ -1169,16 +1161,19 @@ export const LandingPage: React.FC = () => {
           <div className="border-t border-gray-800 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-gray-400 text-sm">
-                © 2024 Matura Polski. Wszystkie prawa zastrzeżone.
+                © 2025 Matura Polski. Wszystkie prawa zastrzeżone.
               </p>
               <div className="flex gap-6 text-sm text-gray-400">
-                <a href="#" className="hover:text-white transition-colors">
+                <a href="/terms" className="hover:text-white transition-colors">
                   Regulamin
                 </a>
-                <a href="#" className="hover:text-white transition-colors">
+                <a
+                  href="/privacy"
+                  className="hover:text-white transition-colors"
+                >
                   Polityka prywatności
                 </a>
-                <a href="#" className="hover:text-white transition-colors">
+                <a href="/rodo" className="hover:text-white transition-colors">
                   RODO
                 </a>
               </div>

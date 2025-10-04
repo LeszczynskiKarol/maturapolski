@@ -43,11 +43,11 @@ export const RodoPage: React.FC = () => {
                 <strong>Administratorem Twoich danych osobowych jest:</strong>
               </p>
               <p className="text-gray-700">
-                [Nazwa firmy]
+                eCopywriting.pl Karol Leszczyński
                 <br />
-                [Adres]
+                86-221 Papowo Biskupie 119/18
                 <br />
-                NIP: [NIP]
+                NIP: 9562203948
                 <br />
                 Email: kontakt@maturapolski.pl
               </p>

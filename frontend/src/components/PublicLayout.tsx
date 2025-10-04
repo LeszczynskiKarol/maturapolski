@@ -188,11 +188,6 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                     FAQ
                   </a>
                 </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Baza wiedzy
-                  </a>
-                </li>
               </ul>
             </div>
 
@@ -209,27 +204,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                     Kontakt
                   </a>
                 </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Kariera
-                  </a>
-                </li>
-                <li>
-                  <Link
-                    to="/terms"
-                    className="hover:text-white transition-colors"
-                  >
-                    Regulamin
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/privacy"
-                    className="hover:text-white transition-colors"
-                  >
-                    Prywatność
-                  </Link>
-                </li>
+
                 <li>
                   <CookieSettingsLink />
                 </li>
@@ -240,7 +215,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
           <div className="border-t border-gray-800 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-gray-400 text-sm">
-                © 2024 Matura Polski. Wszystkie prawa zastrzeżone.
+                © 2025 Matura Polski. Wszystkie prawa zastrzeżone.
               </p>
               <div className="flex gap-6 text-sm text-gray-400">
                 <Link

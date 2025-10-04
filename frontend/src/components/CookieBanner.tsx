@@ -60,9 +60,9 @@ export const CookieBanner: React.FC = () => {
     return (
       <button
         onClick={() => setIsMinimized(false)}
-        className="hidden lg:flex fixed bottom-4 left-4 z-50 items-center gap-2 
+        className="hidden lg:flex fixed bottom-4 left-4 z-[9999] items-center gap-2 
                    bg-blue-600 hover:bg-blue-700 text-white 
-                   px-4 py-3 rounded-full shadow-lg 
+                   px-4 py-3 rounded-full shadow-2xl 
                    transition-all hover:scale-105"
         aria-label="Pokaż ustawienia cookies"
       >
@@ -73,8 +73,8 @@ export const CookieBanner: React.FC = () => {
 
   // Pełny baner (tylko desktop)
   return (
-    <div className="hidden lg:block fixed bottom-4 left-4 z-50 max-w-md">
-      <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+    <div className="hidden lg:block fixed bottom-4 left-4 z-[9999] max-w-md">
+      <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden ring-1 ring-black/5">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -133,7 +133,10 @@ export const CookieBanner: React.FC = () => {
           {/* Buttons */}
           <div className="space-y-2">
             <button
-              onClick={acceptAll}
+              onClick={() => {
+                acceptAll();
+                setIsMinimized(true);
+              }}
               className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg font-semibold transition-all hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Akceptuj wszystkie
@@ -141,7 +144,10 @@ export const CookieBanner: React.FC = () => {
 
             <div className="flex gap-2">
               <button
-                onClick={acceptNecessary}
+                onClick={() => {
+                  acceptNecessary();
+                  setIsMinimized(true);
+                }}
                 className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
               >
                 Tylko niezbędne
