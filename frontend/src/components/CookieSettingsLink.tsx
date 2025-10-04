@@ -11,7 +11,7 @@ export const CookieSettingsLink: React.FC = () => {
     <>
       <button
         onClick={() => setShowSettings(true)}
-        className="hover:text-white transition-colors flex items-center gap-1.5"
+        className="text-gray-500 dark:text-gray-400 flex items-center gap-1.5"
       >
         <Cookie className="w-4 h-4" />
         <span>Ustawienia cookies</span>

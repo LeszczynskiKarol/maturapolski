@@ -14,6 +14,7 @@ import {
   User,
   X,
 } from "lucide-react";
+import { CookieSettingsLink } from "./CookieSettingsLink";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -39,12 +40,10 @@ export const Layout: React.FC = () => {
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: Home },
     { name: "Nauka", href: "/learn", icon: Brain },
-    { name: "Powtórki z epok", href: "/epoch-review", icon: Repeat }, // NOWY LINK
+    { name: "Powtórki z epok", href: "/epoch-review", icon: Repeat },
     { name: "Subskcypcja", href: "/subscription", icon: CreditCard },
     { name: "Historia sesji", href: "/sessions", icon: Clock },
-    //{ name: "Zadania", href: "/exercises", icon: BookOpen },
     { name: "Postępy", href: "/progress", icon: TrendingUp },
-    //{ name: "Egzamin", href: "/exams", icon: FileText },
   ];
 
   const handleLogout = () => {
@@ -71,7 +70,6 @@ export const Layout: React.FC = () => {
           <h1 className="text-xl font-bold text-blue-600 dark:text-blue-400">
             Matura Polski
           </h1>
-          {/* ✅ POPRAWIONE - ukryłem AiPointsWidget z mobile header */}
           <div className="flex items-center gap-2">
             <ThemeToggle />
           </div>
@@ -218,6 +216,13 @@ export const Layout: React.FC = () => {
             <LogOut className="w-4 h-4" />
             {!isSidebarCollapsed && <span>Wyloguj</span>}
           </button>
+
+          {/* Link do Cookies */}
+          {!isSidebarCollapsed && (
+            <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+              <CookieSettingsLink />
+            </div>
+          )}
         </div>
       </div>
 
@@ -251,7 +256,7 @@ export const Layout: React.FC = () => {
                 })}
               </nav>
 
-              {/* ✅ DODANE - AiPointsWidget w mobile sidebar */}
+              {/* AiPointsWidget w mobile sidebar */}
               <div className="px-6 py-3 border-t dark:border-gray-700">
                 <AiPointsWidget />
               </div>
@@ -313,6 +318,17 @@ export const Layout: React.FC = () => {
                 <LogOut className="w-4 h-4" />
                 Wyloguj
               </button>
+
+              {/* Link do Cookies w mobile */}
+              <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 text-center">
+                <Link
+                  to="/cookies"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                >
+                  Polityka Cookies
+                </Link>
+              </div>
             </div>
           </div>
         </>

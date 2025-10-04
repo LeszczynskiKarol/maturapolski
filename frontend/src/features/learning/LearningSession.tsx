@@ -2934,7 +2934,7 @@ const InSessionFilters: React.FC<{
 const SessionStart: React.FC<{
   onStart: () => void;
   stats: any;
-}> = ({ onStart, stats }) => {
+}> = ({ onStart }) => {
   const navigate = useNavigate();
   const [, setActiveSessions] = useState<any[]>([]);
 
@@ -2958,11 +2958,6 @@ const SessionStart: React.FC<{
     });
   }, []);
 
-  const { data: detailedStats } = useQuery({
-    queryKey: ["detailed-stats"],
-    queryFn: () => api.get("/api/student/detailed-stats").then((r) => r.data),
-  });
-
   const isFreeUser = subscription?.plan === "FREE";
 
   return (
@@ -2985,28 +2980,6 @@ const SessionStart: React.FC<{
           System dopasuje zadania do Twojego poziomu i postępów. Sesja zawiera{" "}
           {SESSION_LIMIT} zadań. Możesz zmieniać filtry w trakcie sesji!
         </p>
-
-        <div className="grid grid-cols-4 gap-4 mb-6">
-          <div className="bg-white/10 rounded-lg p-4">
-            <p className="text-3xl font-bold">{stats?.todayExercises || 0}</p>
-            <p className="text-sm text-blue-100">Zadań dzisiaj</p>
-          </div>
-          <div className="bg-white/10 rounded-lg p-4">
-            <p className="text-3xl font-bold">{stats?.streak || 0}</p>
-            <p className="text-sm text-blue-100">Dni z rzędu</p>
-          </div>
-          <div className="bg-white/10 rounded-lg p-4">
-            <p className="text-3xl font-bold">
-              {" "}
-              {detailedStats?.profile?.averageScore || 0}%
-            </p>
-            <p className="text-sm text-blue-100">Średni wynik</p>
-          </div>
-          <div className="bg-white/10 rounded-lg p-4">
-            <p className="text-3xl font-bold">{stats?.level || 1}</p>
-            <p className="text-sm text-blue-100">Twój poziom</p>
-          </div>
-        </div>
 
         {/* BLOKADA DLA FREE USERS */}
         {isFreeUser ? (
