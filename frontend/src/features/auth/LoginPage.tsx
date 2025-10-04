@@ -88,9 +88,9 @@ export const LoginPage: React.FC = () => {
                     Musisz potwierdzić swój adres email przed zalogowaniem.
                   </p>
                   <Link
-                    to={`/check-email?email=${encodeURIComponent(
+                    to={`/resend-verification?email=${encodeURIComponent(
                       verificationError
-                    )}`}
+                    )}&auto=true`}
                     className="text-sm text-yellow-900 underline font-medium"
                   >
                     Wyślij ponownie email weryfikacyjny →

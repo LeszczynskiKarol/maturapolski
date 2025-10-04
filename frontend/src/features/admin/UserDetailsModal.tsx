@@ -130,12 +130,11 @@ export const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-blue-50 to-purple-50">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-              {user?.firstName?.[0]}
-              {user?.lastName?.[0]}
+              {user?.userName?.[0]}
             </div>
             <div>
               <h2 className="text-xl font-semibold text-gray-900">
-                {user?.firstName} {user?.lastName}
+                {user?.username}
               </h2>
               <p className="text-gray-600">{user?.email}</p>
               <div className="flex items-center gap-3 mt-1">

@@ -149,13 +149,10 @@ export const LeaderboardPage: React.FC = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold">
-                        {user.firstName[0]}
-                        {user.lastName[0]}
+                        {user.userName[0]}
                       </div>
                       <div>
-                        <p className="font-medium">
-                          {user.firstName} {user.lastName}
-                        </p>
+                        <p className="font-medium">{user.username}</p>
                         <p className="text-sm text-gray-500">{user.school}</p>
                       </div>
                     </div>
@@ -209,9 +206,7 @@ const TopPlayerCard: React.FC<{ user: any; position: number }> = ({
       <div className="text-center">
         <div className="text-5xl mb-2">{medal.icon}</div>
         <p className="text-sm opacity-90 mb-2">{medal.text}</p>
-        <h3 className="text-xl font-bold mb-1">
-          {user.firstName} {user.lastName}
-        </h3>
+        <h3 className="text-xl font-bold mb-1">{user.username}</h3>
         <p className="text-3xl font-bold mb-2">{user.points} pkt</p>
         <div className="flex justify-around text-sm mt-4 pt-4 border-t border-white/30">
           <div>

@@ -38,8 +38,7 @@ import { toast } from "react-hot-toast";
 interface UserData {
   id: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  username: string;
   role: "STUDENT" | "ADMIN";
   createdAt: string;
   lastLogin?: string;
@@ -81,6 +80,7 @@ interface UserData {
 export const UserManager: React.FC = () => {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
+  const [userMenuOpen, setUserMenuOpen] = useState<string | null>(null);
   const [filterRole, setFilterRole] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState("createdAt");
@@ -411,12 +411,12 @@ export const UserManager: React.FC = () => {
                   />
                 </th>
                 <th
-                  onClick={() => handleSort("firstName")}
+                  onClick={() => handleSort("userName")}
                   className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                 >
                   <div className="flex items-center gap-1">
                     Użytkownik
-                    {sortBy === "firstName" &&
+                    {sortBy === "userName" &&
                       (sortOrder === "asc" ? (
                         <ChevronUp className="w-4 h-4" />
                       ) : (
@@ -488,12 +488,11 @@ export const UserManager: React.FC = () => {
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                          {user.firstName[0]}
-                          {user.lastName[0]}
+                          {user.username[0]}
                         </div>
                         <div>
                           <div className="font-medium text-gray-900">
-                            {user.firstName} {user.lastName}
+                            {user.username}
                           </div>
                           <div className="text-sm text-gray-500">
                             {user.email}
@@ -600,7 +599,7 @@ export const UserManager: React.FC = () => {
                           onClick={() =>
                             setSubscriptionEditorUser({
                               id: user.id,
-                              name: `${user.firstName} ${user.lastName}`,
+                              name: `${user.username}`,
                             })
                           }
                           className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1"
@@ -682,11 +681,53 @@ export const UserManager: React.FC = () => {
                         </button>
                         <div className="relative">
                           <button
+                            onClick={() =>
+                              setUserMenuOpen(
+                                userMenuOpen === user.id ? null : user.id
+                              )
+                            }
                             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                             title="Więcej opcji"
                           >
                             <MoreVertical className="w-4 h-4 text-gray-600" />
                           </button>
+
+                          {userMenuOpen === user.id && (
+                            <>
+                              <div
+                                className="fixed inset-0 z-10"
+                                onClick={() => setUserMenuOpen(null)}
+                              />
+                              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
+                                <button
+                                  onClick={() => {
+                                    resetProgressMutation.mutate(user.id);
+                                    setUserMenuOpen(null);
+                                  }}
+                                  className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm"
+                                >
+                                  <RefreshCw className="w-4 h-4" />
+                                  Resetuj postępy
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    if (
+                                      confirm(
+                                        `Czy na pewno chcesz usunąć użytkownika ${user.username}?`
+                                      )
+                                    ) {
+                                      deleteUserMutation.mutate(user.id);
+                                      setUserMenuOpen(null);
+                                    }
+                                  }}
+                                  className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2 text-sm text-red-600 border-t border-gray-100"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                  Usuń użytkownika
+                                </button>
+                              </div>
+                            </>
+                          )}
                         </div>
                       </div>
                     </td>

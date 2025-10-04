@@ -449,6 +449,8 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
         sortOrder = "desc",
       } = request.query;
 
+      const sortByField = sortBy === "userName" ? "username" : sortBy;
+
       const where: any = {};
 
       // Filtrowanie po roli
@@ -472,7 +474,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
           where,
           skip: (pageNum - 1) * limitNum,
           take: limitNum,
-          orderBy: { [sortBy]: sortOrder },
+          orderBy: { [sortByField]: sortOrder },
           include: {
             profile: true,
             levelProgress: true,
@@ -856,7 +858,6 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
       try {
         const { userId } = request.params;
 
-        // Usuń wszystkie powiązane dane
         await prisma.$transaction([
           prisma.submission.deleteMany({ where: { userId } }),
           prisma.assessment.deleteMany({ where: { userId } }),
@@ -868,8 +869,13 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
           prisma.examSession.deleteMany({ where: { userId } }),
           prisma.exerciseUsage.deleteMany({ where: { userId } }),
           prisma.learningSession.deleteMany({ where: { userId } }),
+          // DODAJ TO:
+          prisma.subscription.deleteMany({ where: { userId } }),
+          prisma.aiUsage.deleteMany({ where: { userId } }),
+          // Następnie usuń relacje jeden-do-jeden:
           prisma.userLevelProgress.deleteMany({ where: { userId } }),
           prisma.userProfile.deleteMany({ where: { userId } }),
+          // Na końcu usuń użytkownika:
           prisma.user.delete({ where: { id: userId } }),
         ]);
 

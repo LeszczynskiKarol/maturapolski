@@ -1,7 +1,6 @@
 - przy streaku poprawnych odpowiedzi, gdy idzie confetti, dodać info o tym confetti, dlaczego się tak dzieje
 - pododawać konteksty z zadań, które się do czegoś odwołują
-- w seedzie ćwiczeń zmienić cudzysłowy polskie na hardcodowane
-- zmienić mechanizm werfyikacji konta z linku na kod
+- w seedzie ćwiczeń zmienić cudzysłowy polskie na hardcodowane - zmienić mechanizm werfyikacji konta z linku na kod
 - usunąc recapctcha badge z login, register i dashboard
 - na desktop wyrównać poziomo położenie wytycznych zadania , np. Uzupełnij charakterystykę programu pozytywizmu. z przyciskiem Pomiń, który obecnie na desktopie jest o wiersz niżej niż wytyczne a mają być na takim samym poziomie. Na mobile niech zostanie jak jest
 - po 20 pytaniu automatycznie pojawia sie modal zakonczenia sesji zamiast wlasnie tego przycisku Zakończ sesje - modal nie ma sie pojawiac od razu po udzieleniu odpoweoedzi na pytanie nr 20, bo wtedy nie moge sie zapoznac z odpowiedzia na pytanie nr 20

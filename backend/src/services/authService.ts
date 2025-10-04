@@ -37,7 +37,9 @@ export class AuthService {
     this.validatePassword(data.password);
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
-    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const verificationToken = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString(); // 6-cyfrowy kod
     const verificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     const user = await prisma.user.create({
@@ -145,7 +147,10 @@ export class AuthService {
     }
 
     // Wygeneruj nowy token
-    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const verificationToken = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString(); // 6-cyfrowy kod
+
     const verificationExpiry = new Date();
     verificationExpiry.setHours(verificationExpiry.getHours() + 24);
 

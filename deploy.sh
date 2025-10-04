@@ -4,6 +4,12 @@ echo "========================================="
 echo "MaturaPolski - Deploy Script"
 echo "========================================="
 
+# 1. Git pull
+echo -e "${YELLOW}[1/7] Pobieranie zmian z repozytorium...${NC}"
+git pull origin main
+echo -e "${GREEN}✓ Zmiany pobrane${NC}\n"
+
+
 # Backend
 echo "[1/3] Updating Backend..."
 cd /var/www/maturapolski/backend

@@ -21,8 +21,7 @@ import { toast } from "react-hot-toast";
 interface UserProgressEditorProps {
   user: {
     id: string;
-    firstName: string;
-    lastName: string;
+    username: string;
     email: string;
     profile?: {
       level: number;
@@ -147,7 +146,7 @@ export const UserProgressEditor: React.FC<UserProgressEditorProps> = ({
                 Edytuj postępy użytkownika
               </h2>
               <p className="text-gray-600 text-sm mt-1">
-                {user.firstName} {user.lastName} ({user.email})
+                {user.username} ({user.email})
               </p>
             </div>
             <button

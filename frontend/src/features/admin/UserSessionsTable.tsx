@@ -122,9 +122,7 @@ export const UserSessionsTable: React.FC = () => {
                           <ChevronRight className="w-4 h-4" />
                         )}
                         <User className="w-4 h-4 text-gray-400" />
-                        <span className="font-medium">
-                          {user.firstName} {user.lastName}
-                        </span>
+                        <span className="font-medium">{user.username}</span>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">

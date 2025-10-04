@@ -267,9 +267,7 @@ export const UserStatistics: React.FC = () => {
                   </td>
                   <td className="py-3">
                     <div>
-                      <p className="font-medium">
-                        {user.firstName} {user.lastName}
-                      </p>
+                      <p className="font-medium">{user.username}</p>
                       <p className="text-sm text-gray-500">{user.email}</p>
                     </div>
                   </td>
