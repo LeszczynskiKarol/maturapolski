@@ -222,9 +222,10 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
-        userName: user.username,
+        username: user.username,
         role: user.role,
         emailVerified: user.emailVerified,
+        picture: user.picture,
       },
       token,
       refreshToken,
@@ -403,7 +404,7 @@ export class AuthService {
       // Użytkownik istnieje - zaloguj go
       await prisma.user.update({
         where: { id: user.id },
-        data: { lastLogin: new Date() },
+        data: { lastLogin: new Date(), picture: googleUser.picture },
       });
     } else {
       // Nowy użytkownik - utwórz konto
@@ -433,6 +434,7 @@ export class AuthService {
           password: hashedPassword,
           emailVerified: true, // Google już zweryfikował email
           role: "STUDENT",
+          picture: googleUser.picture,
         },
       });
 
@@ -458,9 +460,10 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
-        userName: user.username,
+        username: user.username,
         role: user.role,
         emailVerified: user.emailVerified,
+        picture: user.picture,
       },
       token,
       refreshToken,

@@ -188,8 +188,17 @@ export const Layout: React.FC = () => {
               isSidebarCollapsed ? "justify-center" : ""
             }`}
           >
-            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center flex-shrink-0">
-              <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+              {user?.picture ? (
+                <img
+                  src={user.picture}
+                  alt={user.username}
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              )}
             </div>
             {!isSidebarCollapsed && (
               <div className="overflow-hidden">
@@ -295,8 +304,17 @@ export const Layout: React.FC = () => {
             {/* Mobile User Section */}
             <div className="flex-shrink-0 p-4 border-t dark:border-gray-700 bg-white dark:bg-gray-800">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                  <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                  {user?.picture ? (
+                    <img
+                      src={user.picture}
+                      alt={user.username}
+                      className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  )}
                 </div>
                 <div>
                   <p className="font-medium text-gray-900 dark:text-white truncate">
