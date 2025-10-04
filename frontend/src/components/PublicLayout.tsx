@@ -4,6 +4,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { BookOpen, ChevronDown, ArrowLeft } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
+import { CookieSettingsLink } from "./CookieSettingsLink";
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -228,6 +229,9 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                   >
                     Prywatność
                   </Link>
+                </li>
+                <li>
+                  <CookieSettingsLink />
                 </li>
               </ul>
             </div>

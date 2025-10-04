@@ -1,6 +1,12 @@
 // frontend/src/App.tsx
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { CookieBanner } from "./components/CookieBanner";
+import { PrivacyPolicyPage } from "./features/legal/PrivacyPolicyPage";
+import { TermsOfServicePage } from "./features/legal/TermsOfServicePage";
+import { CookiePolicyPage } from "./features/legal/CookiePolicyPage";
+import { RodoPage } from "./features/legal/RodoPage";
+import { GoogleTagManager } from "./components/GoogleTagManager";
 import { ResendVerificationPage } from "./features/auth/ResendVerificationPage";
 import { ForgotPasswordPage } from "./features/auth/ForgotPasswordPage";
 import { ResetPasswordPage } from "./features/auth/ResetPasswordPage";
@@ -91,6 +97,7 @@ export const App: React.FC = () => {
 
   return (
     <ThemeInitializer>
+      <GoogleTagManager />
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
@@ -98,6 +105,12 @@ export const App: React.FC = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/cookies" element={<CookiePolicyPage />} />
+            <Route path="/rodo" element={<RodoPage />} />
+            <Route path="/terms" element={<TermsOfServicePage />} />
+
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+
             <Route path="/verify-email" element={<VerifyEmailCodePage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
@@ -106,11 +119,9 @@ export const App: React.FC = () => {
               path="/resend-verification"
               element={<ResendVerificationPage />}
             />
-
             {/* Public Materials routes */}
             <Route path="/materialy" element={<MaterialsPage />} />
             <Route path="/materialy/:slug" element={<MaterialDetailPage />} />
-
             {/* Admin routes */}
             <Route
               path="/admin"
@@ -127,7 +138,6 @@ export const App: React.FC = () => {
               <Route path="exams" element={<ExamStructureManager />} />
               <Route path="user-sessions" element={<UserSessionsTable />} />
             </Route>
-
             {/* Student routes with layout */}
             <Route element={<Layout />}>
               <Route
@@ -236,7 +246,6 @@ export const App: React.FC = () => {
                 }
               />
             </Route>
-
             {/* Catch all */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
@@ -250,6 +259,7 @@ export const App: React.FC = () => {
               },
             }}
           />
+          <CookieBanner />
         </BrowserRouter>
       </QueryClientProvider>
     </ThemeInitializer>
