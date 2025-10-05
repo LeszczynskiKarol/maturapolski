@@ -1,14 +1,14 @@
 // frontend/src/features/auth/LoginPage.tsx
 
-import React, { useState, useEffect } from "react";
+import { ArrowRight, Loader, Lock, Mail } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate, Link } from "react-router-dom";
-import { api } from "../../services/api";
-import { useAuthStore } from "../../store/authStore";
+import toast from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
 import { PublicLayout } from "../../components/PublicLayout";
 import { useGoogleLogin } from "../../hooks/useGoogleLogin";
-import toast from "react-hot-toast";
-import { Mail, Lock, ArrowRight, Loader } from "lucide-react";
+import { api } from "../../services/api";
+import { useAuthStore } from "../../store/authStore";
 
 interface LoginFormData {
   email: string;
@@ -37,14 +37,15 @@ export const LoginPage: React.FC = () => {
     }
   }, [user, navigate]);
 
-  // Renderuj przycisk Google po załadowaniu strony
+  // Renderuj przycisk Google - wywołaj tylko raz
   useEffect(() => {
     renderGoogleButton("google-signin-button", {
       theme: "outline",
       size: "large",
       text: "signin_with",
     });
-  }, [renderGoogleButton]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Pusta tablica - render tylko raz przy montowaniu
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);

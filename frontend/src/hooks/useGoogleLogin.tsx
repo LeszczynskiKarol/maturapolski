@@ -1,10 +1,10 @@
 // frontend/src/hooks/useGoogleLogin.tsx
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { api } from "../services/api";
 import { useAuthStore } from "../store/authStore";
-import toast from "react-hot-toast";
 
 declare global {
   interface Window {
@@ -48,6 +48,7 @@ export const useGoogleLogin = () => {
   const navigate = useNavigate();
   const { setAuth } = useAuthStore();
   const isInitialized = useRef(false);
+  const resizeListenerRef = useRef<(() => void) | null>(null);
 
   const handleGoogleResponse = async (response: GoogleCredentialResponse) => {
     try {
@@ -84,7 +85,6 @@ export const useGoogleLogin = () => {
   };
 
   useEffect(() => {
-    // Sprawdź czy skrypt Google jest załadowany
     if (isInitialized.current) return;
 
     const initializeGoogleSignIn = () => {
@@ -110,7 +110,6 @@ export const useGoogleLogin = () => {
       isInitialized.current = true;
     };
 
-    // Poczekaj aż skrypt się załaduje
     if (window.google) {
       initializeGoogleSignIn();
     } else {
@@ -119,57 +118,85 @@ export const useGoogleLogin = () => {
     }
   }, []);
 
-  const renderGoogleButton = (
-    elementId: string,
-    options?: GoogleButtonConfig
-  ) => {
-    // Oblicz responsywną szerokość
-    const getResponsiveWidth = () => {
-      const screenWidth = window.innerWidth;
+  // Memoize renderGoogleButton to prevent recreation on every render
+  const renderGoogleButton = useCallback(
+    (elementId: string, options?: GoogleButtonConfig) => {
+      const getResponsiveWidth = () => {
+        const screenWidth = window.innerWidth;
 
-      // Mobile: max 320px
-      if (screenWidth < 640) {
-        return Math.min(screenWidth - 64, 320); // 64px to padding (32px z każdej strony)
+        if (screenWidth < 640) {
+          return Math.min(screenWidth - 64, 320);
+        }
+        if (screenWidth < 1024) {
+          return 380;
+        }
+        return 400;
+      };
+
+      const defaultOptions: GoogleButtonConfig = {
+        theme: "outline",
+        size: "large",
+        text: "signin_with",
+        shape: "rectangular",
+        width: getResponsiveWidth(),
+        ...options,
+      };
+
+      // Remove previous resize listener if exists
+      if (resizeListenerRef.current) {
+        window.removeEventListener("resize", resizeListenerRef.current);
+        resizeListenerRef.current = null;
       }
-      // Tablet: 380px
-      if (screenWidth < 1024) {
-        return 380;
+
+      // Render button
+      setTimeout(() => {
+        const element = document.getElementById(elementId);
+        if (element && window.google && isInitialized.current) {
+          element.innerHTML = ""; // Clear any existing content
+          window.google.accounts.id.renderButton(element, defaultOptions);
+        }
+      }, 100);
+
+      // Setup resize handling
+      let lastWidth = window.innerWidth;
+      let resizeTimeout: number;
+
+      const handleResize = () => {
+        clearTimeout(resizeTimeout);
+
+        resizeTimeout = setTimeout(() => {
+          const currentWidth = window.innerWidth;
+
+          // Only re-render if width changed (ignore height changes from mobile keyboard)
+          if (currentWidth !== lastWidth) {
+            lastWidth = currentWidth;
+
+            const element = document.getElementById(elementId);
+            if (element && window.google && isInitialized.current) {
+              element.innerHTML = "";
+              window.google.accounts.id.renderButton(element, {
+                ...defaultOptions,
+                width: getResponsiveWidth(),
+              });
+            }
+          }
+        }, 250);
+      };
+
+      window.addEventListener("resize", handleResize);
+      resizeListenerRef.current = handleResize;
+    },
+    []
+  ); // Empty deps - function is stable
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (resizeListenerRef.current) {
+        window.removeEventListener("resize", resizeListenerRef.current);
       }
-      // Desktop: 400px
-      return 400;
     };
-
-    const defaultOptions: GoogleButtonConfig = {
-      theme: "outline",
-      size: "large",
-      text: "signin_with",
-      shape: "rectangular",
-      width: getResponsiveWidth(),
-      ...options,
-    };
-
-    setTimeout(() => {
-      const element = document.getElementById(elementId);
-      if (element && window.google && isInitialized.current) {
-        window.google.accounts.id.renderButton(element, defaultOptions);
-      }
-    }, 100);
-
-    // Re-render on window resize
-    const handleResize = () => {
-      const element = document.getElementById(elementId);
-      if (element && window.google && isInitialized.current) {
-        element.innerHTML = ""; // Clear previous button
-        window.google.accounts.id.renderButton(element, {
-          ...defaultOptions,
-          width: getResponsiveWidth(),
-        });
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  };
+  }, []);
 
   return { renderGoogleButton };
 };

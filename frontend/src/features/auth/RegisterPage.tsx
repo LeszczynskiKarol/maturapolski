@@ -1,15 +1,15 @@
 // frontend/src/features/auth/RegisterPage.tsx
 
-import React, { useState, useEffect } from "react";
+import { CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useAuthStore } from "../../store/authStore";
-import { useNavigate, Link } from "react-router-dom";
-import { api } from "../../services/api";
-import { useRecaptcha } from "../../hooks/useRecaptcha";
-import { useGoogleLogin } from "../../hooks/useGoogleLogin";
-import { PublicLayout } from "../../components/PublicLayout";
 import toast from "react-hot-toast";
-import { Eye, EyeOff, Loader2, CheckCircle } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { PublicLayout } from "../../components/PublicLayout";
+import { useGoogleLogin } from "../../hooks/useGoogleLogin";
+import { useRecaptcha } from "../../hooks/useRecaptcha";
+import { api } from "../../services/api";
+import { useAuthStore } from "../../store/authStore";
 
 interface RegisterForm {
   email: string;
@@ -46,14 +46,15 @@ export const RegisterPage: React.FC = () => {
     }
   }, [user, navigate]);
 
-  // Renderuj przycisk Google
+  // Renderuj przycisk Google - wywołaj tylko raz
   useEffect(() => {
     renderGoogleButton("google-signup-button", {
       theme: "outline",
       size: "large",
       text: "signup_with",
     });
-  }, [renderGoogleButton]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Pusta tablica - render tylko raz przy montowaniu
 
   const getPasswordStrength = (pwd: string) => {
     if (!pwd) return { score: 0, text: "", color: "" };
