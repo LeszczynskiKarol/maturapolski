@@ -1,6 +1,6 @@
 // frontend/src/components/CookieSettings.tsx
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   X,
   Shield,
@@ -96,20 +96,32 @@ const COOKIE_CATEGORIES: CookieCategory[] = [
   },
 ];
 
+const DEFAULT_CONSENT: CookieConsent = {
+  analytics_storage: "denied",
+  ad_storage: "denied",
+  ad_user_data: "denied",
+  ad_personalization: "denied",
+  functionality_storage: "granted",
+  personalization_storage: "denied",
+  security_storage: "granted",
+};
+
 export const CookieSettings: React.FC<CookieSettingsProps> = ({ onClose }) => {
   const { consent, updateConsent, acceptAll, acceptNecessary } =
     useCookieConsent();
+
+  // Inicjalizuj tempConsent z aktualnego consent lub domyślnego
   const [tempConsent, setTempConsent] = useState<CookieConsent>(
-    consent || {
-      analytics_storage: "denied",
-      ad_storage: "denied",
-      ad_user_data: "denied",
-      ad_personalization: "denied",
-      functionality_storage: "granted",
-      personalization_storage: "denied",
-      security_storage: "granted",
-    }
+    consent || DEFAULT_CONSENT
   );
+
+  // WAŻNE: Aktualizuj tempConsent gdy consent się zmieni
+  useEffect(() => {
+    if (consent) {
+      console.log("🔄 Updating tempConsent from context:", consent);
+      setTempConsent(consent);
+    }
+  }, [consent]);
 
   const handleToggle = (id: keyof CookieConsent) => {
     setTempConsent((prev) => ({
@@ -119,16 +131,19 @@ export const CookieSettings: React.FC<CookieSettingsProps> = ({ onClose }) => {
   };
 
   const handleSave = () => {
+    console.log("💾 Saving custom consent:", tempConsent);
     updateConsent(tempConsent);
     onClose();
   };
 
   const handleAcceptAll = () => {
+    console.log("✅ Accept all from settings");
     acceptAll();
     onClose();
   };
 
   const handleNecessaryOnly = () => {
+    console.log("⚠️ Accept necessary only from settings");
     acceptNecessary();
     onClose();
   };

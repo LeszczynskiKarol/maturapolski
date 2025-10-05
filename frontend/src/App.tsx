@@ -25,6 +25,7 @@ import { LearningSession } from "./features/learning/LearningSession";
 import { SessionHistory } from "./features/learning/SessionHistory";
 import { useAuthStore } from "./store/authStore";
 import { useThemeStore } from "./store/themeStore";
+import { CookieConsentProvider } from "./hooks/useCookieConsent";
 
 // Layouts
 import { Layout } from "./components/Layout";
@@ -97,171 +98,173 @@ export const App: React.FC = () => {
 
   return (
     <ThemeInitializer>
-      <GoogleTagManager />
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/cookies" element={<CookiePolicyPage />} />
-            <Route path="/rodo" element={<RodoPage />} />
-            <Route path="/terms" element={<TermsOfServicePage />} />
+      <CookieConsentProvider>
+        <GoogleTagManager />
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/cookies" element={<CookiePolicyPage />} />
+              <Route path="/rodo" element={<RodoPage />} />
+              <Route path="/terms" element={<TermsOfServicePage />} />
 
-            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
 
-            <Route path="/verify-email" element={<VerifyEmailCodePage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/check-email" element={<CheckEmailPage />} />
-            <Route
-              path="/resend-verification"
-              element={<ResendVerificationPage />}
+              <Route path="/verify-email" element={<VerifyEmailCodePage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/check-email" element={<CheckEmailPage />} />
+              <Route
+                path="/resend-verification"
+                element={<ResendVerificationPage />}
+              />
+              {/* Public Materials routes */}
+              <Route path="/materialy" element={<MaterialsPage />} />
+              <Route path="/materialy/:slug" element={<MaterialDetailPage />} />
+              {/* Admin routes */}
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <AdminLayout />
+                  </AdminRoute>
+                }
+              >
+                <Route index element={<AdminDashboard />} />
+                <Route path="exercises" element={<ExerciseManager />} />
+                <Route path="users" element={<UserManager />} />
+                <Route path="materials" element={<AdminMaterialsEditor />} />
+                <Route path="exams" element={<ExamStructureManager />} />
+                <Route path="user-sessions" element={<UserSessionsTable />} />
+              </Route>
+              {/* Student routes with layout */}
+              <Route element={<Layout />}>
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      {user?.role === "ADMIN" ? (
+                        <Navigate to="/admin" replace />
+                      ) : (
+                        <StudentDashboard />
+                      )}
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Subscription */}
+                <Route
+                  path="/subscription"
+                  element={
+                    <ProtectedRoute>
+                      <SubscriptionDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Epoch Review - NOWA STRONA */}
+                <Route
+                  path="/epoch-review"
+                  element={
+                    <ProtectedRoute>
+                      <EpochReviewPage />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="/exercises"
+                  element={
+                    <ProtectedRoute>
+                      <ExerciseList />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/exercises/:id"
+                  element={
+                    <ProtectedRoute>
+                      <ExerciseSolver />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/progress"
+                  element={
+                    <ProtectedRoute>
+                      <ProgressTracker />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/exams"
+                  element={
+                    <ProtectedRoute>
+                      <ExamList />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/exam/mature/:sessionId"
+                  element={
+                    <ProtectedRoute>
+                      <MatureExamViewer />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/exam/results/:sessionId"
+                  element={
+                    <ProtectedRoute>
+                      <ExamResults />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/learn"
+                  element={
+                    <ProtectedRoute>
+                      <LearningSession />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/sessions"
+                  element={
+                    <ProtectedRoute>
+                      <SessionHistory />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/leaderboard"
+                  element={
+                    <ProtectedRoute>
+                      <LeaderboardPage />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
+              {/* Catch all */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                className: "",
+                style: {
+                  background: "var(--toast-bg)",
+                  color: "var(--toast-color)",
+                },
+              }}
             />
-            {/* Public Materials routes */}
-            <Route path="/materialy" element={<MaterialsPage />} />
-            <Route path="/materialy/:slug" element={<MaterialDetailPage />} />
-            {/* Admin routes */}
-            <Route
-              path="/admin"
-              element={
-                <AdminRoute>
-                  <AdminLayout />
-                </AdminRoute>
-              }
-            >
-              <Route index element={<AdminDashboard />} />
-              <Route path="exercises" element={<ExerciseManager />} />
-              <Route path="users" element={<UserManager />} />
-              <Route path="materials" element={<AdminMaterialsEditor />} />
-              <Route path="exams" element={<ExamStructureManager />} />
-              <Route path="user-sessions" element={<UserSessionsTable />} />
-            </Route>
-            {/* Student routes with layout */}
-            <Route element={<Layout />}>
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    {user?.role === "ADMIN" ? (
-                      <Navigate to="/admin" replace />
-                    ) : (
-                      <StudentDashboard />
-                    )}
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Subscription */}
-              <Route
-                path="/subscription"
-                element={
-                  <ProtectedRoute>
-                    <SubscriptionDashboard />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Epoch Review - NOWA STRONA */}
-              <Route
-                path="/epoch-review"
-                element={
-                  <ProtectedRoute>
-                    <EpochReviewPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/exercises"
-                element={
-                  <ProtectedRoute>
-                    <ExerciseList />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/exercises/:id"
-                element={
-                  <ProtectedRoute>
-                    <ExerciseSolver />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/progress"
-                element={
-                  <ProtectedRoute>
-                    <ProgressTracker />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/exams"
-                element={
-                  <ProtectedRoute>
-                    <ExamList />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/exam/mature/:sessionId"
-                element={
-                  <ProtectedRoute>
-                    <MatureExamViewer />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/exam/results/:sessionId"
-                element={
-                  <ProtectedRoute>
-                    <ExamResults />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/learn"
-                element={
-                  <ProtectedRoute>
-                    <LearningSession />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/sessions"
-                element={
-                  <ProtectedRoute>
-                    <SessionHistory />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/leaderboard"
-                element={
-                  <ProtectedRoute>
-                    <LeaderboardPage />
-                  </ProtectedRoute>
-                }
-              />
-            </Route>
-            {/* Catch all */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              className: "",
-              style: {
-                background: "var(--toast-bg)",
-                color: "var(--toast-color)",
-              },
-            }}
-          />
-          <CookieBanner />
-        </BrowserRouter>
-      </QueryClientProvider>
+            <CookieBanner />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </CookieConsentProvider>
     </ThemeInitializer>
   );
 };

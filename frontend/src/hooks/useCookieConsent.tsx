@@ -1,6 +1,13 @@
-// frontend/src/hooks/useCookieConsent.ts
+// frontend/src/hooks/useCookieConsent.tsx
 
-import { useState, useEffect, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
 
 export type ConsentState = "granted" | "denied";
 
@@ -23,12 +30,11 @@ const DEFAULT_CONSENT: CookieConsent = {
   ad_storage: "denied",
   ad_user_data: "denied",
   ad_personalization: "denied",
-  functionality_storage: "granted", // Zawsze granted - niezbędne do działania
+  functionality_storage: "granted",
   personalization_storage: "denied",
-  security_storage: "granted", // Zawsze granted - bezpieczeństwo
+  security_storage: "granted",
 };
 
-// Declare gtag function
 declare global {
   interface Window {
     dataLayer: any[];
@@ -36,9 +42,62 @@ declare global {
   }
 }
 
-export const useCookieConsent = () => {
+interface CookieConsentContextType {
+  consent: CookieConsent | null;
+  showBanner: boolean;
+  setShowBanner: (show: boolean) => void;
+  acceptAll: () => void;
+  acceptNecessary: () => void;
+  updateConsent: (updates: Partial<CookieConsent>) => void;
+  resetConsent: () => void;
+  hasConsent: boolean;
+}
+
+const CookieConsentContext = createContext<
+  CookieConsentContextType | undefined
+>(undefined);
+
+export const CookieConsentProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [consent, setConsent] = useState<CookieConsent | null>(null);
   const [showBanner, setShowBanner] = useState(false);
+
+  const updateGoogleConsent = useCallback((newConsent: CookieConsent) => {
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("consent", "update", {
+        analytics_storage: newConsent.analytics_storage,
+        ad_storage: newConsent.ad_storage,
+        ad_user_data: newConsent.ad_user_data,
+        ad_personalization: newConsent.ad_personalization,
+        functionality_storage: newConsent.functionality_storage,
+        personalization_storage: newConsent.personalization_storage,
+        security_storage: newConsent.security_storage,
+      });
+
+      if (newConsent.analytics_storage === "granted") {
+        window.gtag("event", "page_view");
+      }
+    }
+  }, []);
+
+  const initializeDefaultConsent = useCallback(() => {
+    setConsent(DEFAULT_CONSENT);
+
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("consent", "default", {
+        analytics_storage: "denied",
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        functionality_storage: "granted",
+        personalization_storage: "denied",
+        security_storage: "granted",
+        region: ["PL"],
+        wait_for_update: 500,
+      });
+    }
+  }, []);
 
   // Initialize consent on mount
   useEffect(() => {
@@ -55,67 +114,30 @@ export const useCookieConsent = () => {
         updateGoogleConsent(parsed);
         setShowBanner(false);
       } else {
-        // Consent expired
         setShowBanner(true);
         initializeDefaultConsent();
       }
     } else {
-      // No consent saved
       setShowBanner(true);
       initializeDefaultConsent();
     }
-  }, []);
-
-  const initializeDefaultConsent = useCallback(() => {
-    setConsent(DEFAULT_CONSENT);
-
-    // Set default consent for Google
-    if (typeof window !== "undefined" && window.gtag) {
-      window.gtag("consent", "default", {
-        analytics_storage: "denied",
-        ad_storage: "denied",
-        ad_user_data: "denied",
-        ad_personalization: "denied",
-        functionality_storage: "granted",
-        personalization_storage: "denied",
-        security_storage: "granted",
-        region: ["PL"], // Polska
-        wait_for_update: 500,
-      });
-    }
-  }, []);
-
-  const updateGoogleConsent = useCallback((newConsent: CookieConsent) => {
-    if (typeof window !== "undefined" && window.gtag) {
-      window.gtag("consent", "update", {
-        analytics_storage: newConsent.analytics_storage,
-        ad_storage: newConsent.ad_storage,
-        ad_user_data: newConsent.ad_user_data,
-        ad_personalization: newConsent.ad_personalization,
-        functionality_storage: newConsent.functionality_storage,
-        personalization_storage: newConsent.personalization_storage,
-        security_storage: newConsent.security_storage,
-      });
-
-      // Trigger pageview after consent update
-      if (newConsent.analytics_storage === "granted") {
-        window.gtag("event", "page_view");
-      }
-    }
-  }, []);
+  }, [initializeDefaultConsent, updateGoogleConsent]);
 
   const saveConsent = useCallback(
     (newConsent: CookieConsent) => {
+      console.log("💾 SAVING CONSENT:", newConsent); // DEBUG
       localStorage.setItem(CONSENT_KEY, JSON.stringify(newConsent));
       localStorage.setItem(CONSENT_TIMESTAMP_KEY, Date.now().toString());
       setConsent(newConsent);
       updateGoogleConsent(newConsent);
       setShowBanner(false);
+      console.log("✅ CONSENT SAVED TO LOCALSTORAGE"); // DEBUG
     },
     [updateGoogleConsent]
   );
 
   const acceptAll = useCallback(() => {
+    console.log("🎯 ACCEPT ALL CALLED"); // DEBUG
     const allGranted: CookieConsent = {
       analytics_storage: "granted",
       ad_storage: "granted",
@@ -157,7 +179,7 @@ export const useCookieConsent = () => {
     initializeDefaultConsent();
   }, [initializeDefaultConsent]);
 
-  return {
+  const value = {
     consent,
     showBanner,
     setShowBanner,
@@ -167,4 +189,22 @@ export const useCookieConsent = () => {
     resetConsent,
     hasConsent: consent !== null && !showBanner,
   };
+
+  console.log("📊 CURRENT CONSENT STATE:", consent); // DEBUG
+
+  return (
+    <CookieConsentContext.Provider value={value}>
+      {children}
+    </CookieConsentContext.Provider>
+  );
+};
+
+export const useCookieConsent = (): CookieConsentContextType => {
+  const context = useContext(CookieConsentContext);
+  if (context === undefined) {
+    throw new Error(
+      "useCookieConsent must be used within a CookieConsentProvider"
+    );
+  }
+  return context;
 };
