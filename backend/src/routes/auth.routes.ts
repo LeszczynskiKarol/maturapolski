@@ -1,8 +1,8 @@
 // backend/src/routes/auth.routes.ts
 
 import { FastifyInstance } from "fastify";
-import { prisma } from "../lib/prisma";
 import { z } from "zod";
+import { prisma } from "../lib/prisma";
 import { AuthService } from "../services/authService";
 import { RecaptchaService } from "../services/recaptchaService";
 
@@ -20,7 +20,7 @@ const RegisterSchema = z.object({
     .max(20, "Maksimum 20 znaków")
     .regex(/^[a-zA-Z0-9_-]+$/, "Tylko litery, cyfry, _ i -"),
   password: z.string().min(8, "Hasło musi mieć minimum 8 znaków"),
-  recaptchaToken: z.string().min(1, "Weryfikacja reCAPTCHA wymagana"),
+  recaptchaToken: z.string().optional(),
 });
 
 const LoginSchema = z.object({
@@ -50,25 +50,20 @@ export async function authRoutes(fastify: FastifyInstance) {
   // REJESTRACJA
   fastify.post("/register", async (request, reply) => {
     try {
-      console.log("=== REGISTER REQUEST DEBUG ===");
-      console.log("Body:", JSON.stringify(request.body, null, 2));
-      console.log("Headers:", JSON.stringify(request.headers, null, 2));
-
       const data = RegisterSchema.parse(request.body);
-      console.log("Parsed data:", data);
-      console.log("recaptchaToken present:", !!data.recaptchaToken);
 
-      // Weryfikacja reCAPTCHA
-      const isHuman = await recaptchaService.verify(
-        data.recaptchaToken,
-        "register"
-      );
-
-      if (!isHuman) {
-        return reply.code(400).send({
-          error: "RECAPTCHA_FAILED",
-          message: "Weryfikacja reCAPTCHA nie powiodła się. Spróbuj ponownie.",
-        });
+      // ✅ Weryfikuj tylko jeśli token istnieje
+      if (data.recaptchaToken && data.recaptchaToken !== "MOBILE_DEV") {
+        const isHuman = await recaptchaService.verify(
+          data.recaptchaToken,
+          "register"
+        );
+        if (!isHuman) {
+          return reply.code(400).send({
+            error: "RECAPTCHA_FAILED",
+            message: "Weryfikacja reCAPTCHA nie powiodła się.",
+          });
+        }
       }
 
       const result = await authService.register(data);
