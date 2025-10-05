@@ -14,7 +14,7 @@ echo -e "${GREEN}✓ Zmiany pobrane${NC}\n"
 echo "[1/3] Updating Backend..."
 cd /var/www/maturapolski/backend
 git pull
-npm install --production
+npm install
 npm run build
 npx prisma generate
 npx prisma migrate deploy

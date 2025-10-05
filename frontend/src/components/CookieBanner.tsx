@@ -8,7 +8,7 @@ import { CookieSettings } from "./CookieSettings";
 
 export const CookieBanner: React.FC = () => {
   const location = useLocation();
-  const { acceptAll, acceptNecessary } = useCookieConsent();
+  const { acceptAll, acceptNecessary, hasConsent } = useCookieConsent();
   const [isMinimized, setIsMinimized] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
@@ -38,11 +38,10 @@ export const CookieBanner: React.FC = () => {
     return null;
   }
 
-  // WYŁĄCZONE - żeby banner ZAWSZE się pokazywał
   // Nie pokazuj banera jeśli użytkownik już wyraził zgodę
-  // if (hasConsent) {
-  //   return null;
-  // }
+  if (hasConsent) {
+    return null;
+  }
 
   // WYŁĄCZONE
   // Nie pokazuj banera na mobile
