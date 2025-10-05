@@ -1,5 +1,4 @@
 // frontend/src/features/auth/RegisterPage.tsx
-// ZMODYFIKOWANA WERSJA - dodaj tylko te fragmenty do istniejącego pliku
 
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -7,7 +6,7 @@ import { useAuthStore } from "../../store/authStore";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "../../services/api";
 import { useRecaptcha } from "../../hooks/useRecaptcha";
-import { useGoogleLogin } from "../../hooks/useGoogleLogin"; // DODAJ TO
+import { useGoogleLogin } from "../../hooks/useGoogleLogin";
 import { PublicLayout } from "../../components/PublicLayout";
 import toast from "react-hot-toast";
 import { Eye, EyeOff, Loader2, CheckCircle } from "lucide-react";
@@ -33,7 +32,7 @@ export const RegisterPage: React.FC = () => {
   const { isReady, executeRecaptcha } = useRecaptcha(RECAPTCHA_SITE_KEY);
   const user = useAuthStore((state) => state.user);
 
-  // DODAJ TO - Google Login
+  // Google Login
   const { renderGoogleButton } = useGoogleLogin();
 
   const [loading, setLoading] = useState(false);
@@ -47,17 +46,14 @@ export const RegisterPage: React.FC = () => {
     }
   }, [user, navigate]);
 
-  // DODAJ TO - renderuj przycisk Google
+  // Renderuj przycisk Google
   useEffect(() => {
     renderGoogleButton("google-signup-button", {
       theme: "outline",
       size: "large",
       text: "signup_with",
-      width: 400,
     });
   }, [renderGoogleButton]);
-
-  // ... reszta kodu bez zmian (getPasswordStrength, onSubmit, etc.)
 
   const getPasswordStrength = (pwd: string) => {
     if (!pwd) return { score: 0, text: "", color: "" };
@@ -130,15 +126,15 @@ export const RegisterPage: React.FC = () => {
             </p>
           </div>
 
-          {/* DODAJ TO - Przycisk Google na górze */}
+          {/* Przycisk Google - responsywny kontener */}
           <div className="mb-6">
             <div
               id="google-signup-button"
-              className="flex justify-center"
+              className="flex justify-center w-full"
             ></div>
           </div>
 
-          {/* DODAJ TO - Separator */}
+          {/* Separator */}
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300"></div>
@@ -148,10 +144,8 @@ export const RegisterPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Reszta formularza bez zmian */}
+          {/* Formularz */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* ... reszta pól - Username, Email, Password, etc. - bez zmian */}
-
             {/* Username */}
             <div>
               <label className="block text-sm font-medium mb-1">

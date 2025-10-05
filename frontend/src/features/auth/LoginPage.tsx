@@ -28,7 +28,7 @@ export const LoginPage: React.FC = () => {
     null
   );
 
-  // DODAJ TO - Google Login
+  // Google Login
   const { renderGoogleButton } = useGoogleLogin();
 
   useEffect(() => {
@@ -37,13 +37,12 @@ export const LoginPage: React.FC = () => {
     }
   }, [user, navigate]);
 
-  // DODAJ TO - renderuj przycisk Google po załadowaniu strony
+  // Renderuj przycisk Google po załadowaniu strony
   useEffect(() => {
     renderGoogleButton("google-signin-button", {
       theme: "outline",
       size: "large",
       text: "signin_with",
-      width: 400,
     });
   }, [renderGoogleButton]);
 
@@ -120,15 +119,15 @@ export const LoginPage: React.FC = () => {
               Kontynuuj naukę do matury
             </p>
 
-            {/* DODAJ TO - Przycisk Google na górze */}
+            {/* Przycisk Google - responsywny kontener */}
             <div className="mb-6">
               <div
                 id="google-signin-button"
-                className="flex justify-center"
+                className="flex justify-center w-full"
               ></div>
             </div>
 
-            {/* DODAJ TO - Separator */}
+            {/* Separator */}
             <div className="relative mb-6">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300"></div>
@@ -138,7 +137,7 @@ export const LoginPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Formularz email/hasło - bez zmian */}
+            {/* Formularz email/hasło */}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium mb-2">Email</label>
@@ -186,14 +185,14 @@ export const LoginPage: React.FC = () => {
                 )}
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between text-sm">
                 <label className="flex items-center">
                   <input type="checkbox" className="mr-2" />
-                  <span className="text-sm">Zapamiętaj mnie</span>
+                  <span>Zapamiętaj mnie</span>
                 </label>
                 <Link
                   to="/forgot-password"
-                  className="text-sm text-blue-600 hover:underline"
+                  className="text-blue-600 hover:underline"
                 >
                   Zapomniałeś hasła?
                 </Link>

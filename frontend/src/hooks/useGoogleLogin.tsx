@@ -123,12 +123,28 @@ export const useGoogleLogin = () => {
     elementId: string,
     options?: GoogleButtonConfig
   ) => {
+    // Oblicz responsywną szerokość
+    const getResponsiveWidth = () => {
+      const screenWidth = window.innerWidth;
+
+      // Mobile: max 320px
+      if (screenWidth < 640) {
+        return Math.min(screenWidth - 64, 320); // 64px to padding (32px z każdej strony)
+      }
+      // Tablet: 380px
+      if (screenWidth < 1024) {
+        return 380;
+      }
+      // Desktop: 400px
+      return 400;
+    };
+
     const defaultOptions: GoogleButtonConfig = {
       theme: "outline",
       size: "large",
       text: "signin_with",
       shape: "rectangular",
-      width: 400,
+      width: getResponsiveWidth(),
       ...options,
     };
 
@@ -138,6 +154,21 @@ export const useGoogleLogin = () => {
         window.google.accounts.id.renderButton(element, defaultOptions);
       }
     }, 100);
+
+    // Re-render on window resize
+    const handleResize = () => {
+      const element = document.getElementById(elementId);
+      if (element && window.google && isInitialized.current) {
+        element.innerHTML = ""; // Clear previous button
+        window.google.accounts.id.renderButton(element, {
+          ...defaultOptions,
+          width: getResponsiveWidth(),
+        });
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   };
 
   return { renderGoogleButton };

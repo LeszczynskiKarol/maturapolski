@@ -8,11 +8,11 @@ import { CookieSettings } from "./CookieSettings";
 
 export const CookieBanner: React.FC = () => {
   const location = useLocation();
-  const { acceptAll, acceptNecessary, hasConsent } = useCookieConsent();
+  const { acceptAll, acceptNecessary } = useCookieConsent();
   const [isMinimized, setIsMinimized] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
-  // NIE pokazuj banera w zalogowanej części aplikacji (Layout routes)
+  // NIE pokazuj banera w zalogowanej części aplikacji
   const protectedRoutes = [
     "/dashboard",
     "/learn",
@@ -38,23 +38,21 @@ export const CookieBanner: React.FC = () => {
     return null;
   }
 
-  // Nie pokazuj banera jeśli użytkownik już wyraził zgodę
-  if (hasConsent) {
-    return null;
-  }
-
-  // WYŁĄCZONE
-  // Nie pokazuj banera na mobile
-  // if (!showBanner) {
-  //   return null;
-  // }
+  // USUNIĘTE: if (hasConsent) return null;
 
   // Modal z ustawieniami
   if (showSettings) {
-    return <CookieSettings onClose={() => setShowSettings(false)} />;
+    return (
+      <CookieSettings
+        onClose={() => {
+          setShowSettings(false);
+          setIsMinimized(true);
+        }}
+      />
+    );
   }
 
-  // Zminimalizowana wersja (tylko desktop)
+  // Zminimalizowana wersja - ZAWSZE widoczna po akceptacji
   if (isMinimized) {
     return (
       <button
@@ -70,7 +68,7 @@ export const CookieBanner: React.FC = () => {
     );
   }
 
-  // Pełny baner (tylko desktop)
+  // Pełny baner
   return (
     <div className="hidden lg:block fixed bottom-4 left-4 z-[9999] max-w-md">
       <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden ring-1 ring-black/5">
@@ -105,7 +103,6 @@ export const CookieBanner: React.FC = () => {
             prawidłowe działanie strony, analizować ruch oraz personalizować
             treści i reklamy.
           </p>
-
           {/* Info box */}
           <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-4">
             <div className="flex items-start gap-3">
@@ -129,7 +126,6 @@ export const CookieBanner: React.FC = () => {
             </div>
           </div>
 
-          {/* Buttons */}
           <div className="space-y-2">
             <button
               onClick={() => {
@@ -145,7 +141,7 @@ export const CookieBanner: React.FC = () => {
               <button
                 onClick={() => {
                   acceptNecessary();
-                  setIsMinimized(true);
+                  setIsMinimized(true); // ← DODAJ TO Z POWROTEM
                 }}
                 className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
               >
@@ -161,7 +157,6 @@ export const CookieBanner: React.FC = () => {
               </button>
             </div>
           </div>
-
           {/* Footer text */}
           <p className="text-xs text-gray-500 mt-4 text-center">
             Korzystając z witryny, zgadzasz się na{" "}
