@@ -36,11 +36,6 @@ const ResendVerificationSchema = z.object({
   email: z.string().email("Nieprawidłowy adres email"),
 });
 
-const RequestPasswordResetSchema = z.object({
-  email: z.string().email("Nieprawidłowy adres email"),
-  recaptchaToken: z.string().min(1, "Weryfikacja reCAPTCHA wymagana"),
-});
-
 const ResetPasswordSchema = z.object({
   token: z.string().min(1, "Token jest wymagany"),
   password: z.string().min(8, "Hasło musi mieć minimum 8 znaków"),
@@ -237,34 +232,30 @@ export async function authRoutes(fastify: FastifyInstance) {
   // ŻĄDANIE RESETU HASŁA
   fastify.post("/request-password-reset", async (request, reply) => {
     try {
-      const { email, recaptchaToken } = RequestPasswordResetSchema.parse(
-        request.body
-      );
+      const { email, recaptchaToken } = request.body as {
+        email: string;
+        recaptchaToken?: string;
+      };
 
-      // Weryfikacja reCAPTCHA
-      const isHuman = await recaptchaService.verify(
-        recaptchaToken,
-        "password_reset"
-      );
+      // ✅ Weryfikacja reCAPTCHA tylko dla web (nie mobile)
+      if (recaptchaToken && recaptchaToken !== "MOBILE_DEV") {
+        const isHuman = await recaptchaService.verify(
+          recaptchaToken,
+          "password_reset"
+        );
 
-      if (!isHuman) {
-        return reply.code(400).send({
-          error: "RECAPTCHA_FAILED",
-          message: "Weryfikacja reCAPTCHA nie powiodła się",
-        });
+        if (!isHuman) {
+          return reply.code(400).send({
+            error: "RECAPTCHA_FAILED",
+            message: "Weryfikacja reCAPTCHA nie powiodła się",
+          });
+        }
       }
 
       const result = await authService.requestPasswordReset(email);
       return reply.send(result);
     } catch (error: any) {
       console.error("Password reset request error:", error);
-
-      if (error instanceof z.ZodError) {
-        return reply.code(400).send({
-          error: "VALIDATION_ERROR",
-          message: error.errors[0].message,
-        });
-      }
 
       // Zawsze zwracaj sukces, żeby nie ujawniać czy email istnieje
       return reply.send({
