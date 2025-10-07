@@ -858,7 +858,7 @@ async function seedExercises() {
         ],
         rightColumn: [
           { id: 1, text: "arystokratka" },
-          { id: 2, text: "kupiec-idealist" },
+          { id: 2, text: "kupiec-idealista" },
           { id: 3, text: "bogaty finansista" },
         ],
       },
@@ -6628,7 +6628,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       type: "SHORT_ANSWER",
       category: "HISTORICAL_LITERARY",
       difficulty: 2,
-      points: 2,
+      points: 1,
       question: "W której epoce tworzył Adam Mickiewicz?",
       content: {
         expectedAnswer: "romantyzm",
@@ -8989,17 +8989,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
         explanation: "Litota - podwójne przeczenie dla złagodzenia/wzmocnienia",
       },
     },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "LANGUAGE_USE",
-      difficulty: 2,
-      points: 3,
-      question: "W których wyrazach występuje 'rz' (nie 'ż')?",
-      content: {
-        options: ["morze", "może", "przez", "żaba", "rzecz"],
-      },
-      correctAnswer: [0, 2, 4],
-    },
+
     {
       type: "CLOSED_SINGLE",
       category: "HISTORICAL_LITERARY",

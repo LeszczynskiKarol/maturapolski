@@ -152,12 +152,38 @@ export class ExerciseService {
     });
 
     // Handle CLOSED questions - immediate scoring
+
     if (
       exercise.type === "CLOSED_SINGLE" ||
       exercise.type === "CLOSED_MULTIPLE"
     ) {
-      const isCorrect =
-        JSON.stringify(answer) === JSON.stringify(exercise.correctAnswer);
+      let isCorrect = false;
+
+      // CLOSED_SINGLE - porównaj bezpośrednio
+      if (exercise.type === "CLOSED_SINGLE") {
+        isCorrect = answer === exercise.correctAnswer;
+      }
+
+      // CLOSED_MULTIPLE - posortuj obie tablice przed porównaniem
+      if (exercise.type === "CLOSED_MULTIPLE") {
+        // Type guards i konwersja
+        const userAnswer = Array.isArray(answer)
+          ? [...answer].sort((a: number, b: number) => a - b)
+          : [];
+
+        const correctAnswer = Array.isArray(exercise.correctAnswer)
+          ? ([...exercise.correctAnswer] as number[]).sort((a, b) => a - b)
+          : [];
+
+        isCorrect =
+          JSON.stringify(userAnswer) === JSON.stringify(correctAnswer);
+
+        console.log("=== CLOSED_MULTIPLE VALIDATION ===");
+        console.log("User answer (sorted):", userAnswer);
+        console.log("Correct answer (sorted):", correctAnswer);
+        console.log("Is correct:", isCorrect);
+      }
+
       const score = isCorrect ? exercise.points : 0;
 
       // Pobierz wyjaśnienie z metadata
