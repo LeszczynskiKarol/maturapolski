@@ -2,6 +2,7 @@
 
 // ==========================================
 
+import { PublicLayout } from "../../components/PublicLayout";
 import { useState, useEffect } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { contentService } from "../../services/contentService";
@@ -271,117 +272,119 @@ export function PageViewer() {
   const totalPages = contentPages.length;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <Link
-          to={`/baza-wiedzy/${hubSlug}`}
-          className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Powrót do {page.hub.title}
-        </Link>
+    <PublicLayout>
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <Link
+            to={`/baza-wiedzy/${hubSlug}`}
+            className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Powrót do {page.hub.title}
+          </Link>
 
-        <article className="bg-white rounded-lg shadow-sm p-8">
-          {/* Breadcrumb */}
-          <div className="text-sm text-gray-500 mb-4">
-            <Link to="/baza-wiedzy" className="hover:text-gray-700">
-              Baza wiedzy
-            </Link>
-            {" / "}
-            <Link
-              to={`/baza-wiedzy/${hubSlug}`}
-              className="hover:text-gray-700"
-            >
-              {page.hub.title}
-            </Link>
-            {" / "}
-            <span className="text-gray-900">{page.title}</span>
-          </div>
+          <article className="bg-white rounded-lg shadow-sm p-8">
+            {/* Breadcrumb */}
+            <div className="text-sm text-gray-500 mb-4">
+              <Link to="/baza-wiedzy" className="hover:text-gray-700">
+                Baza wiedzy
+              </Link>
+              {" / "}
+              <Link
+                to={`/baza-wiedzy/${hubSlug}`}
+                className="hover:text-gray-700"
+              >
+                {page.hub.title}
+              </Link>
+              {" / "}
+              <span className="text-gray-900">{page.title}</span>
+            </div>
 
-          {/* Header */}
-          <h1 className="text-3xl font-bold mb-4">{page.title}</h1>
+            {/* Header */}
+            <h1 className="text-3xl font-bold mb-4">{page.title}</h1>
 
-          <div className="flex items-center gap-4 text-sm text-gray-600 border-b pb-4 mb-6">
-            {page.readingTime && (
+            <div className="flex items-center gap-4 text-sm text-gray-600 border-b pb-4 mb-6">
+              {page.readingTime && (
+                <span className="flex items-center gap-1">
+                  <Clock className="w-4 h-4" />
+                  {page.readingTime} min
+                </span>
+              )}
               <span className="flex items-center gap-1">
-                <Clock className="w-4 h-4" />
-                {page.readingTime} min
+                <Eye className="w-4 h-4" />
+                {page.views} wyświetleń
               </span>
-            )}
-            <span className="flex items-center gap-1">
-              <Eye className="w-4 h-4" />
-              {page.views} wyświetleń
-            </span>
+              {totalPages > 1 && (
+                <span className="ml-auto font-medium text-blue-600">
+                  Strona {currentPageIndex + 1} z {totalPages}
+                </span>
+              )}
+            </div>
+
+            {/* Treść aktualnej strony */}
+            <div className="prose max-w-none">
+              {currentBlocks.map((block, index) => renderBlock(block, index))}
+              {/* Clearfix na końcu treści */}
+              <div className="clear-both"></div>
+            </div>
+
+            {/* Paginacja - tylko jeśli jest więcej niż 1 strona */}
             {totalPages > 1 && (
-              <span className="ml-auto font-medium text-blue-600">
-                Strona {currentPageIndex + 1} z {totalPages}
-              </span>
-            )}
-          </div>
+              <div className="mt-12 pt-6 border-t">
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={() => goToPage(currentPageIndex - 1)}
+                    disabled={currentPageIndex === 0}
+                    className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    Poprzednia strona
+                  </button>
 
-          {/* Treść aktualnej strony */}
-          <div className="prose max-w-none">
-            {currentBlocks.map((block, index) => renderBlock(block, index))}
-            {/* Clearfix na końcu treści */}
-            <div className="clear-both"></div>
-          </div>
+                  {/* Numeracja stron */}
+                  <div className="flex gap-2">
+                    {Array.from({ length: totalPages }, (_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => goToPage(i)}
+                        className={`w-10 h-10 rounded-lg ${
+                          i === currentPageIndex
+                            ? "bg-blue-600 text-white"
+                            : "border hover:bg-gray-50"
+                        }`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
 
-          {/* Paginacja - tylko jeśli jest więcej niż 1 strona */}
-          {totalPages > 1 && (
-            <div className="mt-12 pt-6 border-t">
-              <div className="flex items-center justify-between">
-                <button
-                  onClick={() => goToPage(currentPageIndex - 1)}
-                  disabled={currentPageIndex === 0}
-                  className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                  Poprzednia strona
-                </button>
-
-                {/* Numeracja stron */}
-                <div className="flex gap-2">
-                  {Array.from({ length: totalPages }, (_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => goToPage(i)}
-                      className={`w-10 h-10 rounded-lg ${
-                        i === currentPageIndex
-                          ? "bg-blue-600 text-white"
-                          : "border hover:bg-gray-50"
-                      }`}
-                    >
-                      {i + 1}
-                    </button>
-                  ))}
+                  <button
+                    onClick={() => goToPage(currentPageIndex + 1)}
+                    disabled={currentPageIndex === totalPages - 1}
+                    className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Następna strona
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
                 </div>
-
-                <button
-                  onClick={() => goToPage(currentPageIndex + 1)}
-                  disabled={currentPageIndex === totalPages - 1}
-                  className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Następna strona
-                  <ChevronRight className="w-4 h-4" />
-                </button>
               </div>
+            )}
+          </article>
+
+          {/* SEO - ukryte strony dla crawlerów */}
+          {totalPages > 1 && (
+            <div className="hidden">
+              {contentPages.map((pageBlocks, pageIndex) => (
+                <div key={pageIndex} data-page={pageIndex + 1}>
+                  {pageBlocks.map((block, blockIndex) =>
+                    renderBlock(block, blockIndex)
+                  )}
+                </div>
+              ))}
             </div>
           )}
-        </article>
-
-        {/* SEO - ukryte strony dla crawlerów */}
-        {totalPages > 1 && (
-          <div className="hidden">
-            {contentPages.map((pageBlocks, pageIndex) => (
-              <div key={pageIndex} data-page={pageIndex + 1}>
-                {pageBlocks.map((block, blockIndex) =>
-                  renderBlock(block, blockIndex)
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+        </div>
       </div>
-    </div>
+    </PublicLayout>
   );
 }

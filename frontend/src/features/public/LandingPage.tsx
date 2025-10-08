@@ -866,12 +866,6 @@ export const LandingPage: React.FC = () => {
               isOpen={faqOpen === 5}
               onClick={() => setFaqOpen(faqOpen === 5 ? null : 5)}
             />
-            <FAQItem
-              question="Jak działa gwarancja zwrotu pieniędzy?"
-              answer="Masz 30 dni od momentu zakupu na przetestowanie platformy. Jeśli z jakiegokolwiek powodu nie będziesz zadowolony, zwrócimy Ci 100% wpłaconej kwoty - bez pytań i bez ukrytych warunków."
-              isOpen={faqOpen === 6}
-              onClick={() => setFaqOpen(faqOpen === 6 ? null : 6)}
-            />
           </div>
         </div>
       </section>
