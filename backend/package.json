@@ -14,9 +14,11 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.3",
+    "@aws-sdk/client-s3": "^3.901.0",
     "@aws-sdk/client-sesv2": "^3.901.0",
     "@fastify/cors": "^8.5.0",
     "@fastify/jwt": "^7.2.4",
+    "@fastify/multipart": "^9.2.1",
     "@prisma/client": "^5.7.0",
     "@types/nodemailer": "^7.0.1",
     "@types/ws": "^8.18.1",
@@ -30,8 +32,10 @@
     "google-auth-library": "^10.4.0",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^7.0.6",
+    "sharp": "^0.34.4",
     "socket.io": "^4.8.1",
     "stripe": "^18.5.0",
+    "uuid": "^13.0.0",
     "ws": "^8.18.3",
     "zod": "^3.22.4"
   },
@@ -39,6 +43,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20.19.17",
+    "@types/uuid": "^11.0.0",
     "prisma": "^5.7.0",
     "tsx": "^4.20.6",
     "typescript": "^5.3.0"

@@ -2,7 +2,8 @@
 
 import dotenv from "dotenv";
 dotenv.config();
-
+import multipart from "@fastify/multipart";
+import { uploadRoutes } from "./routes/upload.routes";
 import cors from "@fastify/cors";
 import jwt from "@fastify/jwt";
 import Fastify from "fastify";
@@ -87,6 +88,17 @@ console.log("✓ Auth routes registered at /api/auth/*");
 // admin routes
 fastify.register(adminRoutes, { prefix: "/api/admin" });
 console.log("✓ Admin routes registered at /api/admin/*");
+
+// upload routes
+fastify.register(uploadRoutes, { prefix: "/api/upload" });
+console.log("✓ Upload routes registered at /api/upload/*");
+
+fastify.register(multipart, {
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+    files: 10,
+  },
+});
 
 // Student routes
 fastify.register(studentRoutes, { prefix: "/api/student" });
