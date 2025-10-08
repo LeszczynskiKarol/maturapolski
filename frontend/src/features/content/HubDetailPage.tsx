@@ -1,6 +1,7 @@
 // frontend/src/features/content/HubDetailPage.tsx
 // Szczegóły HUB-a + menu stron
 // ==========================================
+import { Helmet } from "react-helmet-async";
 import { PublicLayout } from "../../components/PublicLayout";
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
@@ -65,6 +66,18 @@ export function HubDetailPage() {
 
   return (
     <PublicLayout>
+      <Helmet>
+        <title>{hub?.metaTitle || hub?.title || "Matura Polski"}</title>
+        <meta
+          name="description"
+          content={
+            hub?.metaDescription ||
+            hub?.description ||
+            "Przygotuj się do matury z Polski"
+          }
+        />
+      </Helmet>
+
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 py-8">
           {/* Breadcrumb */}

@@ -1,7 +1,7 @@
 // frontend/src/features/content/PageViewer.tsx
 
 // ==========================================
-
+import { Helmet } from "react-helmet-async";
 import { PublicLayout } from "../../components/PublicLayout";
 import { useState, useEffect } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
@@ -15,10 +15,13 @@ interface PageData {
   content: any;
   readingTime?: number;
   views: number;
+  metaTitle: string;
+  metaDescription: string;
   hub: {
     title: string;
     slug: string;
     author?: string;
+    description: string;
   };
 }
 
@@ -372,6 +375,18 @@ export function PageViewer() {
 
   return (
     <PublicLayout>
+      <Helmet>
+        <title>{page?.metaTitle || page?.title || "Matura Polski"}</title>
+        <meta
+          name="description"
+          content={
+            page?.metaDescription ||
+            page?.hub?.description ||
+            "Przygotuj się do matury z Polski"
+          }
+        />
+      </Helmet>
+
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

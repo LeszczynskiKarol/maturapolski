@@ -33,6 +33,8 @@ interface Hub {
   imageAlignment?: string;
   imageWidth?: string;
   pages?: ContentPage[];
+  metaTitle: string;
+  metaDescription: string;
 }
 
 interface ContentPage {
@@ -42,6 +44,8 @@ interface ContentPage {
   content: any;
   order: number;
   readingTime?: number;
+  metaTitle: string;
+  metaDescription: string;
 }
 
 const HUB_TYPES = [
@@ -640,6 +644,8 @@ export default function ContentManager() {
     imageUrl: "",
     imageAlignment: "full",
     imageWidth: "100%",
+    metaTitle: "",
+    metaDescription: "",
   });
 
   const [pageForm, setPageForm] = useState({
@@ -647,6 +653,8 @@ export default function ContentManager() {
     customSlug: "",
     content: { blocks: [] },
     readingTime: "",
+    metaTitle: "",
+    metaDescription: "",
   });
 
   const [showHubModal, setShowHubModal] = useState(false);
@@ -693,6 +701,8 @@ export default function ContentManager() {
       imageUrl: hub.imageUrl || "",
       imageAlignment: hub.imageAlignment || "full",
       imageWidth: hub.imageWidth || "100%",
+      metaTitle: hub.metaTitle || "",
+      metaDescription: hub.metaDescription || "",
     });
     setShowHubModal(true);
   };
@@ -750,6 +760,8 @@ export default function ContentManager() {
       imageUrl: "",
       imageAlignment: "full",
       imageWidth: "100%",
+      metaTitle: "",
+      metaDescription: "",
     });
     setSelectedHub(null);
   };
@@ -800,6 +812,8 @@ export default function ContentManager() {
       customSlug: "",
       content: { blocks: [] },
       readingTime: "",
+      metaTitle: "",
+      metaDescription: "",
     });
     setSelectedPage(null);
   };
@@ -1125,6 +1139,60 @@ export default function ContentManager() {
                     className="w-full px-4 py-2 border rounded"
                   />
                 </div>
+                <div className="pt-4 border-t">
+                  <h3 className="font-semibold mb-3 text-gray-700">
+                    SEO (opcjonalne)
+                  </h3>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Meta Title
+                        <span className="text-xs text-gray-500 ml-2">
+                          (max 60 znaków)
+                        </span>
+                      </label>
+                      <input
+                        type="text"
+                        value={hubForm.metaTitle}
+                        onChange={(e) =>
+                          setHubForm({ ...hubForm, metaTitle: e.target.value })
+                        }
+                        maxLength={60}
+                        className="w-full px-4 py-2 border rounded"
+                        placeholder="Tytuł dla Google (zostaw puste = użyje tytułu)"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        {hubForm.metaTitle.length}/60 znaków
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Meta Description
+                        <span className="text-xs text-gray-500 ml-2">
+                          (max 160 znaków)
+                        </span>
+                      </label>
+                      <textarea
+                        value={hubForm.metaDescription}
+                        onChange={(e) =>
+                          setHubForm({
+                            ...hubForm,
+                            metaDescription: e.target.value,
+                          })
+                        }
+                        maxLength={160}
+                        rows={3}
+                        className="w-full px-4 py-2 border rounded"
+                        placeholder="Opis dla Google (zostaw puste = użyje opisu)"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        {hubForm.metaDescription.length}/160 znaków
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="flex gap-4 mt-6">
@@ -1241,6 +1309,8 @@ export default function ContentManager() {
                             customSlug: page.slug,
                             content: page.content,
                             readingTime: page.readingTime?.toString() || "",
+                            metaTitle: page.metaTitle || "",
+                            metaDescription: page.metaDescription || "",
                           });
                           setShowPageModal(true);
                         }}
@@ -1336,6 +1406,63 @@ export default function ContentManager() {
                       setPageForm({ ...pageForm, content })
                     }
                   />
+                </div>
+                <div className="pt-4 border-t">
+                  <h3 className="font-semibold mb-3 text-gray-700">
+                    SEO (opcjonalne)
+                  </h3>
+
+                  <div className="grid grid-cols-1 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Meta Title
+                        <span className="text-xs text-gray-500 ml-2">
+                          (max 60 znaków)
+                        </span>
+                      </label>
+                      <input
+                        type="text"
+                        value={pageForm.metaTitle}
+                        onChange={(e) =>
+                          setPageForm({
+                            ...pageForm,
+                            metaTitle: e.target.value,
+                          })
+                        }
+                        maxLength={60}
+                        className="w-full px-4 py-2 border rounded"
+                        placeholder="Tytuł dla Google"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        {pageForm.metaTitle.length}/60 znaków
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Meta Description
+                        <span className="text-xs text-gray-500 ml-2">
+                          (max 160 znaków)
+                        </span>
+                      </label>
+                      <textarea
+                        value={pageForm.metaDescription}
+                        onChange={(e) =>
+                          setPageForm({
+                            ...pageForm,
+                            metaDescription: e.target.value,
+                          })
+                        }
+                        maxLength={160}
+                        rows={2}
+                        className="w-full px-4 py-2 border rounded"
+                        placeholder="Opis dla Google"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        {pageForm.metaDescription.length}/160 znaków
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 

@@ -1,6 +1,7 @@
 // frontend/src/features/content/HubListPage.tsx
 import { PublicLayout } from "../../components/PublicLayout";
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { contentService } from "../../services/contentService";
 import { BookOpen, Calendar, User, ArrowRight } from "lucide-react";
@@ -51,6 +52,14 @@ export default function HubListPage() {
 
   return (
     <PublicLayout>
+      <Helmet>
+        <title>Baza wiedzy - Matura Polski</title>
+        <meta
+          name="description"
+          content="Lektury, epoki, autorzy - wszystko czego potrzebujesz do matury z języka polskiego"
+        />
+      </Helmet>
+
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
         <div className="bg-white border-b">
