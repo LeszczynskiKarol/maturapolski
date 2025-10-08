@@ -51,9 +51,12 @@ fastify.addContentTypeParser(
 fastify.register(cors, {
   origin: [
     "http://localhost:3000",
-    "http://localhost:5173",
+    "http://localhost:4000",
     "https://app-reactapp.ngrok.app",
     "https://server-reactapp.ngrok.app",
+    "https://maturapolski.pl",
+    "https://api.maturapolski.pl",
+    "https://www.maturapolski.pl",
   ],
   credentials: true,
 });

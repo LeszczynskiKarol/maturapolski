@@ -11,6 +11,7 @@ import {
   GripVertical,
   X,
   ArrowLeft,
+  Scissors,
 } from "lucide-react";
 import { contentService } from "../../services/contentService";
 
@@ -53,6 +54,255 @@ const EPOCHS = [
   { value: "CONTEMPORARY", label: "Współczesność" },
 ];
 
+// ==========================================
+// RICH TEXT EDITOR
+// ==========================================
+
+const RichTextEditor = ({ content, onChange }: any) => {
+  const [blocks, setBlocks] = useState(content.blocks || []);
+
+  const addBlock = (type: string) => {
+    const newBlock = {
+      id: Date.now().toString(),
+      type,
+      content: "",
+    };
+    const newBlocks = [...blocks, newBlock];
+    setBlocks(newBlocks);
+    onChange({ blocks: newBlocks });
+  };
+
+  const updateBlock = (id: string, newContent: string) => {
+    const newBlocks = blocks.map((b: any) =>
+      b.id === id ? { ...b, content: newContent } : b
+    );
+    setBlocks(newBlocks);
+    onChange({ blocks: newBlocks });
+  };
+
+  const removeBlock = (id: string) => {
+    const newBlocks = blocks.filter((b: any) => b.id !== id);
+    setBlocks(newBlocks);
+    onChange({ blocks: newBlocks });
+  };
+
+  const moveBlockUp = (index: number) => {
+    if (index === 0) return;
+    const newBlocks = [...blocks];
+    [newBlocks[index - 1], newBlocks[index]] = [
+      newBlocks[index],
+      newBlocks[index - 1],
+    ];
+    setBlocks(newBlocks);
+    onChange({ blocks: newBlocks });
+  };
+
+  const moveBlockDown = (index: number) => {
+    if (index === blocks.length - 1) return;
+    const newBlocks = [...blocks];
+    [newBlocks[index], newBlocks[index + 1]] = [
+      newBlocks[index + 1],
+      newBlocks[index],
+    ];
+    setBlocks(newBlocks);
+    onChange({ blocks: newBlocks });
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Toolbar z przyciskami */}
+      <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg border">
+        <button
+          type="button"
+          onClick={() => addBlock("h2")}
+          className="px-3 py-1.5 bg-white border rounded hover:bg-gray-50 font-semibold"
+        >
+          H2
+        </button>
+        <button
+          type="button"
+          onClick={() => addBlock("h3")}
+          className="px-3 py-1.5 bg-white border rounded hover:bg-gray-50 font-semibold text-sm"
+        >
+          H3
+        </button>
+        <button
+          type="button"
+          onClick={() => addBlock("h4")}
+          className="px-3 py-1.5 bg-white border rounded hover:bg-gray-50 font-semibold text-xs"
+        >
+          H4
+        </button>
+        <div className="w-px bg-gray-300 mx-1"></div>
+        <button
+          type="button"
+          onClick={() => addBlock("paragraph")}
+          className="px-3 py-1.5 bg-white border rounded hover:bg-gray-50"
+        >
+          Akapit
+        </button>
+        <button
+          type="button"
+          onClick={() => addBlock("list")}
+          className="px-3 py-1.5 bg-white border rounded hover:bg-gray-50"
+        >
+          Lista
+        </button>
+        <button
+          type="button"
+          onClick={() => addBlock("quote")}
+          className="px-3 py-1.5 bg-white border rounded hover:bg-gray-50"
+        >
+          Cytat
+        </button>
+        <div className="w-px bg-gray-300 mx-1"></div>
+        <button
+          type="button"
+          onClick={() => addBlock("page_break")}
+          className="px-3 py-1.5 bg-orange-500 text-white border rounded hover:bg-orange-600 flex items-center gap-1"
+          title="Dodaj podział strony - dla długich tekstów"
+        >
+          <Scissors className="w-4 h-4" />
+          Podział strony
+        </button>
+      </div>
+
+      {/* Bloki treści */}
+      <div className="space-y-3">
+        {blocks.map((block: any, index: number) => (
+          <div
+            key={block.id}
+            className="relative group border rounded-lg p-3 bg-white"
+          >
+            {/* Kontrolki przesuwania */}
+            {block.type !== "page_break" && (
+              <div className="absolute -left-2 top-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  type="button"
+                  onClick={() => moveBlockUp(index)}
+                  disabled={index === 0}
+                  className="p-1 bg-white border rounded shadow-sm hover:bg-gray-50 disabled:opacity-30"
+                  title="Przesuń w górę"
+                >
+                  ▲
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveBlockDown(index)}
+                  disabled={index === blocks.length - 1}
+                  className="p-1 bg-white border rounded shadow-sm hover:bg-gray-50 disabled:opacity-30"
+                  title="Przesuń w dół"
+                >
+                  ▼
+                </button>
+              </div>
+            )}
+
+            {/* Przycisk usuń */}
+            <button
+              type="button"
+              onClick={() => removeBlock(block.id)}
+              className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+              title="Usuń blok"
+            >
+              <X className="w-3 h-3" />
+            </button>
+
+            {/* PAGE BREAK - specjalny typ */}
+            {block.type === "page_break" && (
+              <div className="flex items-center justify-center py-4 border-2 border-dashed border-orange-400 bg-orange-50 rounded">
+                <Scissors className="w-5 h-5 text-orange-600 mr-2" />
+                <span className="font-medium text-orange-700">
+                  PODZIAŁ STRONY
+                </span>
+                <span className="ml-2 text-xs text-orange-600">
+                  (na stronie pojawi się przycisk "Następna strona")
+                </span>
+              </div>
+            )}
+
+            {/* Label typu bloku */}
+            {block.type !== "page_break" && (
+              <div className="text-xs text-gray-500 mb-2 font-medium uppercase">
+                {block.type === "h2" && "Nagłówek H2"}
+                {block.type === "h3" && "Nagłówek H3"}
+                {block.type === "h4" && "Nagłówek H4"}
+                {block.type === "paragraph" && "Akapit"}
+                {block.type === "list" && "Lista"}
+                {block.type === "quote" && "Cytat"}
+              </div>
+            )}
+
+            {/* Pole edycji */}
+            {block.type === "h2" && (
+              <input
+                type="text"
+                value={block.content}
+                onChange={(e) => updateBlock(block.id, e.target.value)}
+                placeholder="Wpisz nagłówek H2..."
+                className="w-full px-4 py-2 text-2xl font-bold border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            )}
+            {block.type === "h3" && (
+              <input
+                type="text"
+                value={block.content}
+                onChange={(e) => updateBlock(block.id, e.target.value)}
+                placeholder="Wpisz nagłówek H3..."
+                className="w-full px-4 py-2 text-xl font-bold border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            )}
+            {block.type === "h4" && (
+              <input
+                type="text"
+                value={block.content}
+                onChange={(e) => updateBlock(block.id, e.target.value)}
+                placeholder="Wpisz nagłówek H4..."
+                className="w-full px-4 py-2 text-lg font-semibold border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            )}
+            {block.type === "paragraph" && (
+              <textarea
+                value={block.content}
+                onChange={(e) => updateBlock(block.id, e.target.value)}
+                placeholder="Wpisz treść akapitu... (Enter tworzy nową linię)"
+                rows={8}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y"
+              />
+            )}
+            {block.type === "list" && (
+              <textarea
+                value={block.content}
+                onChange={(e) => updateBlock(block.id, e.target.value)}
+                placeholder="Wpisz elementy listy (każdy w nowej linii)..."
+                rows={6}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y"
+              />
+            )}
+            {block.type === "quote" && (
+              <textarea
+                value={block.content}
+                onChange={(e) => updateBlock(block.id, e.target.value)}
+                placeholder="Wpisz cytat..."
+                rows={4}
+                className="w-full px-4 py-2 border rounded-lg bg-blue-50 italic focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y"
+              />
+            )}
+          </div>
+        ))}
+      </div>
+
+      {blocks.length === 0 && (
+        <div className="text-center py-12 text-gray-500 border-2 border-dashed rounded-lg bg-gray-50">
+          <FileText className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+          <p className="font-medium mb-1">Dodaj pierwszy blok treści</p>
+          <p className="text-sm">Użyj przycisków powyżej aby zacząć pisać</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function ContentManager() {
   const [view, setView] = useState<"hubs" | "hub-detail" | "page-editor">(
     "hubs"
@@ -70,11 +320,13 @@ export default function ContentManager() {
     author: "",
     epoch: "",
     year: "",
+    birthYear: "",
+    deathYear: "",
   });
 
   const [pageForm, setPageForm] = useState({
     title: "",
-    customSlug: "", // WAŻNE: Użytkownik sam wpisuje slug!
+    customSlug: "",
     content: { blocks: [] },
     readingTime: "",
   });
@@ -108,17 +360,21 @@ export default function ContentManager() {
     }
   };
 
-  // ==========================================
-  // HUB - Tworzenie i edycja
-  // ==========================================
-
   const handleSaveHub = async () => {
     try {
+      const dataToSend = {
+        ...hubForm,
+        year: hubForm.year ? parseInt(hubForm.year) : null,
+        birthYear: hubForm.birthYear ? parseInt(hubForm.birthYear) : null,
+        deathYear: hubForm.deathYear ? parseInt(hubForm.deathYear) : null,
+      };
+
       if (selectedHub) {
-        await contentService.updateHub(selectedHub.id, hubForm);
+        await contentService.updateHub(selectedHub.id, dataToSend);
       } else {
-        await contentService.createHub(hubForm);
+        await contentService.createHub(dataToSend);
       }
+
       setShowHubModal(false);
       resetHubForm();
       loadHubs();
@@ -146,13 +402,11 @@ export default function ContentManager() {
       author: "",
       epoch: "",
       year: "",
+      birthYear: "",
+      deathYear: "",
     });
     setSelectedHub(null);
   };
-
-  // ==========================================
-  // PAGE - Tworzenie i edycja
-  // ==========================================
 
   const handleSavePage = async () => {
     if (!selectedHub) return;
@@ -160,7 +414,7 @@ export default function ContentManager() {
     try {
       const pageData = {
         title: pageForm.title,
-        slug: pageForm.customSlug, // Użytkownik wpisał własny slug!
+        slug: pageForm.customSlug,
         content: pageForm.content,
         readingTime: pageForm.readingTime
           ? parseInt(pageForm.readingTime)
@@ -175,7 +429,7 @@ export default function ContentManager() {
 
       setShowPageModal(false);
       resetPageForm();
-      loadHubDetail(selectedHub.slug); // Odśwież
+      loadHubDetail(selectedHub.slug);
     } catch (error) {
       alert("Błąd zapisu: " + (error as any).message);
     }
@@ -204,134 +458,11 @@ export default function ContentManager() {
     setSelectedPage(null);
   };
 
-  // ==========================================
-  // RICH TEXT EDITOR
-  // ==========================================
-
-  const RichTextEditor = ({ content, onChange }: any) => {
-    const [blocks, setBlocks] = useState(content.blocks || []);
-
-    const addBlock = (type: string) => {
-      const newBlock = {
-        id: Date.now().toString(),
-        type,
-        content: "",
-      };
-      const updated = [...blocks, newBlock];
-      setBlocks(updated);
-      onChange({ blocks: updated });
-    };
-
-    const updateBlock = (id: string, content: string) => {
-      const updated = blocks.map((b: any) =>
-        b.id === id ? { ...b, content } : b
-      );
-      setBlocks(updated);
-      onChange({ blocks: updated });
-    };
-
-    const removeBlock = (id: string) => {
-      const updated = blocks.filter((b: any) => b.id !== id);
-      setBlocks(updated);
-      onChange({ blocks: updated });
-    };
-
-    return (
-      <div className="space-y-4">
-        <div className="flex gap-2 p-2 bg-gray-50 rounded">
-          <button
-            type="button"
-            onClick={() => addBlock("heading")}
-            className="px-3 py-1 bg-white border rounded hover:bg-gray-50"
-          >
-            Nagłówek
-          </button>
-          <button
-            type="button"
-            onClick={() => addBlock("paragraph")}
-            className="px-3 py-1 bg-white border rounded hover:bg-gray-50"
-          >
-            Akapit
-          </button>
-          <button
-            type="button"
-            onClick={() => addBlock("list")}
-            className="px-3 py-1 bg-white border rounded hover:bg-gray-50"
-          >
-            Lista
-          </button>
-          <button
-            type="button"
-            onClick={() => addBlock("quote")}
-            className="px-3 py-1 bg-white border rounded hover:bg-gray-50"
-          >
-            Cytat
-          </button>
-        </div>
-
-        <div className="space-y-3">
-          {blocks.map((block: any) => (
-            <div key={block.id} className="relative group">
-              {block.type === "heading" && (
-                <input
-                  type="text"
-                  value={block.content}
-                  onChange={(e) => updateBlock(block.id, e.target.value)}
-                  placeholder="Wpisz nagłówek..."
-                  className="w-full px-4 py-2 text-xl font-bold border rounded"
-                />
-              )}
-              {block.type === "paragraph" && (
-                <textarea
-                  value={block.content}
-                  onChange={(e) => updateBlock(block.id, e.target.value)}
-                  placeholder="Wpisz treść..."
-                  rows={4}
-                  className="w-full px-4 py-2 border rounded"
-                />
-              )}
-              {block.type === "list" && (
-                <textarea
-                  value={block.content}
-                  onChange={(e) => updateBlock(block.id, e.target.value)}
-                  placeholder="Każdy element w nowej linii..."
-                  rows={4}
-                  className="w-full px-4 py-2 border rounded"
-                />
-              )}
-              {block.type === "quote" && (
-                <textarea
-                  value={block.content}
-                  onChange={(e) => updateBlock(block.id, e.target.value)}
-                  placeholder="Wpisz cytat..."
-                  rows={3}
-                  className="w-full px-4 py-2 border rounded bg-gray-50 italic"
-                />
-              )}
-              <button
-                type="button"
-                onClick={() => removeBlock(block.id)}
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100"
-              >
-                <X className="w-4 h-4 text-red-500" />
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  // ==========================================
-  // VIEWS
-  // ==========================================
-
   // VIEW 1: Lista HUB-ów
   if (view === "hubs") {
     return (
       <div className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
             <div className="flex justify-between items-center">
               <div>
@@ -353,7 +484,6 @@ export default function ContentManager() {
             </div>
           </div>
 
-          {/* Lista HUB-ów */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {hubs.map((hub) => {
               const Icon =
@@ -396,7 +526,6 @@ export default function ContentManager() {
           </div>
         </div>
 
-        {/* MODAL: Tworzenie/Edycja HUB-a */}
         {showHubModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
@@ -489,6 +618,38 @@ export default function ContentManager() {
                   </>
                 )}
 
+                {hubForm.type === "AUTHOR" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Rok urodzenia
+                      </label>
+                      <input
+                        type="number"
+                        value={hubForm.birthYear}
+                        onChange={(e) =>
+                          setHubForm({ ...hubForm, birthYear: e.target.value })
+                        }
+                        className="w-full px-4 py-2 border rounded"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Rok śmierci
+                      </label>
+                      <input
+                        type="number"
+                        value={hubForm.deathYear}
+                        onChange={(e) =>
+                          setHubForm({ ...hubForm, deathYear: e.target.value })
+                        }
+                        className="w-full px-4 py-2 border rounded"
+                      />
+                    </div>
+                  </>
+                )}
+
                 <div>
                   <label className="block text-sm font-medium mb-2">Opis</label>
                   <textarea
@@ -539,7 +700,6 @@ export default function ContentManager() {
             Powrót do listy
           </button>
 
-          {/* Header HUB-a */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
             <div className="flex justify-between items-start">
               <div>
@@ -567,7 +727,6 @@ export default function ContentManager() {
             </div>
           </div>
 
-          {/* Lista stron */}
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-semibold mb-4">Strony tego HUB-a</h2>
 
@@ -626,28 +785,47 @@ export default function ContentManager() {
           </div>
         </div>
 
-        {/* MODAL: Tworzenie/Edycja strony */}
+        {/* MODAL: Tworzenie/Edycja strony - WIĘKSZY MODAL! */}
         {showPageModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto">
-            <div className="bg-white rounded-lg max-w-4xl w-full my-8 p-6">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 z-50 overflow-y-auto pt-8">
+            <div className="bg-white rounded-lg max-w-6xl w-full mb-8 p-6">
               <h2 className="text-xl font-bold mb-4">
                 {selectedPage ? "Edytuj stronę" : "Nowa strona"}
               </h2>
 
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Tytuł strony
-                  </label>
-                  <input
-                    type="text"
-                    value={pageForm.title}
-                    onChange={(e) =>
-                      setPageForm({ ...pageForm, title: e.target.value })
-                    }
-                    className="w-full px-4 py-2 border rounded"
-                    placeholder="np. Streszczenie szczegółowe"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Tytuł strony
+                    </label>
+                    <input
+                      type="text"
+                      value={pageForm.title}
+                      onChange={(e) =>
+                        setPageForm({ ...pageForm, title: e.target.value })
+                      }
+                      className="w-full px-4 py-2 border rounded"
+                      placeholder="np. Streszczenie szczegółowe"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Czas czytania (minuty)
+                    </label>
+                    <input
+                      type="number"
+                      value={pageForm.readingTime}
+                      onChange={(e) =>
+                        setPageForm({
+                          ...pageForm,
+                          readingTime: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-2 border rounded"
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -673,20 +851,6 @@ export default function ContentManager() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Czas czytania (minuty)
-                  </label>
-                  <input
-                    type="number"
-                    value={pageForm.readingTime}
-                    onChange={(e) =>
-                      setPageForm({ ...pageForm, readingTime: e.target.value })
-                    }
-                    className="w-full px-4 py-2 border rounded"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">
                     Treść
                   </label>
                   <RichTextEditor
@@ -698,7 +862,7 @@ export default function ContentManager() {
                 </div>
               </div>
 
-              <div className="flex gap-4 mt-6">
+              <div className="flex gap-4 mt-6 sticky bottom-0 bg-white pt-4 border-t">
                 <button
                   onClick={() => {
                     setShowPageModal(false);

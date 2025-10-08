@@ -205,7 +205,28 @@ export class ContentService {
   }
 
   // Zmiana kolejności stron
+  // Zmiana kolejności stron
   async reorderPages(hubId: string, pageIds: string[]) {
+    // Sprawdź czy hub istnieje
+    const hub = await prisma.contentHub.findUnique({
+      where: { id: hubId },
+    });
+
+    if (!hub) throw new Error("Hub not found");
+
+    // Sprawdź czy wszystkie strony należą do tego huba
+    const pages = await prisma.contentPage.findMany({
+      where: {
+        id: { in: pageIds },
+        hubId: hubId, // ✅ Teraz używamy hubId!
+      },
+    });
+
+    if (pages.length !== pageIds.length) {
+      throw new Error("Some pages do not belong to this hub");
+    }
+
+    // Aktualizuj kolejność
     const updates = pageIds.map((pageId, index) =>
       prisma.contentPage.update({
         where: { id: pageId },
