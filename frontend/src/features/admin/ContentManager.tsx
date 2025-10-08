@@ -1,11 +1,12 @@
 // frontend/src/features/admin/ContentManager.tsx
-import { useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   Plus,
   Trash2,
   Edit,
   FileText,
   BookOpen,
+  ImageIcon,
   Calendar,
   User,
   GripVertical,
@@ -14,6 +15,7 @@ import {
   Scissors,
 } from "lucide-react";
 import { contentService } from "../../services/contentService";
+import { ImageUpload } from "../../components/ImageUpload";
 
 interface Hub {
   id: string;
@@ -60,19 +62,50 @@ const EPOCHS = [
 
 const RichTextEditor = ({ content, onChange }: any) => {
   const [blocks, setBlocks] = useState(content.blocks || []);
+  const textareaRefs = useRef<{ [key: string]: HTMLTextAreaElement | null }>(
+    {}
+  );
+
+  // Handler dla Ctrl+B i Ctrl+I
+  const handleKeyDown = (e: React.KeyboardEvent, blockId: string) => {
+    if (e.ctrlKey || e.metaKey) {
+      const textarea = textareaRefs.current[blockId];
+      if (!textarea) return;
+
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      if (start === end) return;
+
+      const selectedText = textarea.value.substring(start, end);
+
+      if (e.key === "b" || e.key === "B") {
+        e.preventDefault();
+        const newText = `**${selectedText}**`;
+        const before = textarea.value.substring(0, start);
+        const after = textarea.value.substring(end);
+        updateBlock(blockId, before + newText + after);
+      } else if (e.key === "i" || e.key === "I") {
+        e.preventDefault();
+        const newText = `*${selectedText}*`;
+        const before = textarea.value.substring(0, start);
+        const after = textarea.value.substring(end);
+        updateBlock(blockId, before + newText + after);
+      }
+    }
+  };
 
   const addBlock = (type: string) => {
     const newBlock = {
       id: Date.now().toString(),
       type,
-      content: "",
+      content: type === "image" ? { url: "", alt: "", caption: "" } : "",
     };
     const newBlocks = [...blocks, newBlock];
     setBlocks(newBlocks);
     onChange({ blocks: newBlocks });
   };
 
-  const updateBlock = (id: string, newContent: string) => {
+  const updateBlock = (id: string, newContent: string | any) => {
     const newBlocks = blocks.map((b: any) =>
       b.id === id ? { ...b, content: newContent } : b
     );
@@ -155,6 +188,14 @@ const RichTextEditor = ({ content, onChange }: any) => {
         >
           Cytat
         </button>
+        <button
+          type="button"
+          onClick={() => addBlock("image")}
+          className="px-3 py-1.5 bg-green-500 text-white border rounded hover:bg-green-600 flex items-center gap-1"
+        >
+          <ImageIcon className="w-4 h-4" />
+          Obraz
+        </button>
         <div className="w-px bg-gray-300 mx-1"></div>
         <button
           type="button"
@@ -198,6 +239,18 @@ const RichTextEditor = ({ content, onChange }: any) => {
               </div>
             )}
 
+            {block.type === "paragraph" && (
+              <textarea
+                ref={(el) => (textareaRefs.current[block.id] = el)}
+                value={block.content}
+                onChange={(e) => updateBlock(block.id, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e, block.id)}
+                placeholder="**pogrubienie** *pochylenie*"
+                rows={8}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y font-mono text-sm"
+              />
+            )}
+
             {/* Przycisk usuń */}
             <button
               type="button"
@@ -218,6 +271,64 @@ const RichTextEditor = ({ content, onChange }: any) => {
                 <span className="ml-2 text-xs text-orange-600">
                   (na stronie pojawi się przycisk "Następna strona")
                 </span>
+              </div>
+            )}
+
+            {block.type === "image" && (
+              <div className="space-y-3">
+                <div className="text-xs text-gray-500 mb-2 font-medium uppercase">
+                  Obraz
+                </div>
+
+                {block.content.url ? (
+                  <div className="space-y-2">
+                    <img
+                      src={block.content.url}
+                      alt={block.content.alt || ""}
+                      className="w-full rounded-lg border"
+                    />
+                    <input
+                      type="text"
+                      value={block.content.alt}
+                      onChange={(e) =>
+                        updateBlock(block.id, {
+                          ...block.content,
+                          alt: e.target.value,
+                        })
+                      }
+                      placeholder="Tekst alternatywny (ALT)"
+                      className="w-full px-3 py-2 text-sm border rounded"
+                    />
+                    <input
+                      type="text"
+                      value={block.content.caption}
+                      onChange={(e) =>
+                        updateBlock(block.id, {
+                          ...block.content,
+                          caption: e.target.value,
+                        })
+                      }
+                      placeholder="Podpis obrazu (opcjonalny)"
+                      className="w-full px-3 py-2 text-sm border rounded"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateBlock(block.id, { url: "", alt: "", caption: "" })
+                      }
+                      className="text-sm text-red-600 hover:text-red-700"
+                    >
+                      Usuń obraz
+                    </button>
+                  </div>
+                ) : (
+                  <ImageUpload
+                    onImageUploaded={(url) =>
+                      updateBlock(block.id, { ...block.content, url })
+                    }
+                    folder="content"
+                  />
+                )}
               </div>
             )}
 
@@ -261,15 +372,7 @@ const RichTextEditor = ({ content, onChange }: any) => {
                 className="w-full px-4 py-2 text-lg font-semibold border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             )}
-            {block.type === "paragraph" && (
-              <textarea
-                value={block.content}
-                onChange={(e) => updateBlock(block.id, e.target.value)}
-                placeholder="Wpisz treść akapitu... (Enter tworzy nową linię)"
-                rows={8}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y"
-              />
-            )}
+
             {block.type === "list" && (
               <textarea
                 value={block.content}
@@ -322,6 +425,7 @@ export default function ContentManager() {
     year: "",
     birthYear: "",
     deathYear: "",
+    imageUrl: "",
   });
 
   const [pageForm, setPageForm] = useState({
@@ -404,6 +508,7 @@ export default function ContentManager() {
       year: "",
       birthYear: "",
       deathYear: "",
+      imageUrl: "",
     });
     setSelectedHub(null);
   };
@@ -649,7 +754,33 @@ export default function ContentManager() {
                     </div>
                   </>
                 )}
-
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Zdjęcie główne (opcjonalne)
+                  </label>
+                  <ImageUpload
+                    onImageUploaded={(url) =>
+                      setHubForm({ ...hubForm, imageUrl: url })
+                    }
+                    folder="hubs"
+                  />
+                  {hubForm.imageUrl && (
+                    <div className="mt-2">
+                      <img
+                        src={hubForm.imageUrl}
+                        alt="Hub image"
+                        className="w-full h-48 object-cover rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setHubForm({ ...hubForm, imageUrl: "" })}
+                        className="mt-2 text-sm text-red-600"
+                      >
+                        Usuń zdjęcie
+                      </button>
+                    </div>
+                  )}
+                </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Opis</label>
                   <textarea

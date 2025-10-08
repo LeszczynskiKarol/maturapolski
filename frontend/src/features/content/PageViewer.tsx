@@ -92,12 +92,22 @@ export function PageViewer() {
 
   // Renderuj pojedynczy blok z obsługą enterów!
   const renderBlock = (block: any, index: number) => {
-    // Helper: podziel tekst na linie i renderuj z <br>
-    const renderWithLineBreaks = (text: string) => {
-      return text.split("\n").map((line, i, arr) => (
+    // Helper: markdown do HTML
+    const parseMarkdown = (text: string) => {
+      // Bold: **text** -> <strong>
+      let parsed = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+      // Italic: *text* -> <em>
+      parsed = parsed.replace(/\*(.*?)\*/g, "<em>$1</em>");
+      return parsed;
+    };
+
+    // Helper: podziel na linie + markdown
+    const renderWithMarkdown = (text: string) => {
+      const lines = text.split("\n");
+      return lines.map((line, i) => (
         <span key={i}>
-          {line}
-          {i < arr.length - 1 && <br />}
+          <span dangerouslySetInnerHTML={{ __html: parseMarkdown(line) }} />
+          {i < lines.length - 1 && <br />}
         </span>
       ));
     };
@@ -124,7 +134,7 @@ export function PageViewer() {
       case "paragraph":
         return (
           <p key={index} className="mb-4 text-gray-700 leading-relaxed">
-            {renderWithLineBreaks(block.content)}
+            {renderWithMarkdown(block.content)}
           </p>
         );
       case "list":
@@ -144,8 +154,23 @@ export function PageViewer() {
             key={index}
             className="border-l-4 border-blue-500 pl-4 py-2 mb-4 italic text-gray-600 bg-blue-50"
           >
-            {renderWithLineBreaks(block.content)}
+            {renderWithMarkdown(block.content)}
           </blockquote>
+        );
+      case "image":
+        return (
+          <figure key={index} className="my-8">
+            <img
+              src={block.content.url}
+              alt={block.content.alt || ""}
+              className="w-full rounded-lg shadow-lg"
+            />
+            {block.content.caption && (
+              <figcaption className="mt-2 text-sm text-center text-gray-600 italic">
+                {block.content.caption}
+              </figcaption>
+            )}
+          </figure>
         );
       // Backward compatibility
       case "heading":

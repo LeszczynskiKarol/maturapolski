@@ -2,6 +2,18 @@
 
 import dotenv from "dotenv";
 dotenv.config();
+console.log("=== ENV DEBUG ===");
+console.log("AWS_REGION:", process.env.AWS_REGION);
+console.log("AWS_BUCKET_NAME:", process.env.AWS_BUCKET_NAME);
+console.log(
+  "AWS_ACCESS_KEY_ID:",
+  process.env.AWS_ACCESS_KEY_ID ? "✅ SET" : "❌ MISSING"
+);
+console.log(
+  "AWS_SECRET_ACCESS_KEY:",
+  process.env.AWS_SECRET_ACCESS_KEY ? "✅ SET" : "❌ MISSING"
+);
+console.log("=================");
 import multipart from "@fastify/multipart";
 import { uploadRoutes } from "./routes/upload.routes";
 import cors from "@fastify/cors";
@@ -81,6 +93,13 @@ fastify.get("/health", async () => {
 // Register API routes
 console.log("Registering routes...");
 
+fastify.register(multipart, {
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+    files: 10,
+  },
+});
+
 // AUTH ROUTES - MUSZĄ BYĆ PIERWSZE!
 fastify.register(authRoutes, { prefix: "/api/auth" });
 console.log("✓ Auth routes registered at /api/auth/*");
@@ -92,13 +111,6 @@ console.log("✓ Admin routes registered at /api/admin/*");
 // upload routes
 fastify.register(uploadRoutes, { prefix: "/api/upload" });
 console.log("✓ Upload routes registered at /api/upload/*");
-
-fastify.register(multipart, {
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB
-    files: 10,
-  },
-});
 
 // Student routes
 fastify.register(studentRoutes, { prefix: "/api/student" });
