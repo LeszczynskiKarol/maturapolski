@@ -3,15 +3,24 @@
 import React, { useState } from "react";
 
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { BookOpen, Users, BarChart3, FileText, Menu, X } from "lucide-react";
+import {
+  BookOpen,
+  Users,
+  Eye,
+  BarChart3,
+  FileText,
+  Menu,
+  X,
+  BrainCircuit,
+} from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: BarChart3 },
   { name: "Zadania", href: "/admin/exercises", icon: BookOpen },
   { name: "Egzaminy", href: "/admin/exams", icon: FileText },
   { name: "Użytkownicy", href: "/admin/users", icon: Users },
-  { name: "Materiały", href: "/admin/materials", icon: FileText },
-  { name: "Sesje użytkowników", href: "/admin/user-sessions", icon: FileText },
+  { name: "Baza wiedzy", href: "/admin/content", icon: BrainCircuit },
+  { name: "Sesje użytkowników", href: "/admin/user-sessions", icon: Eye },
 ];
 
 export const AdminLayout: React.FC = () => {

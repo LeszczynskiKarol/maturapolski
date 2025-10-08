@@ -90,7 +90,7 @@ export default function HubListPage() {
             {hubs.map((hub) => (
               <Link
                 key={hub.id}
-                to={`/baza/${hub.slug}`}
+                to={`/baza-wiedzy/${hub.slug}`}
                 className="block bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6"
               >
                 <h3 className="text-lg font-semibold mb-2">{hub.title}</h3>

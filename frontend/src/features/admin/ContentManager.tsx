@@ -13,6 +13,7 @@ import {
   X,
   ArrowLeft,
   Scissors,
+  Settings,
 } from "lucide-react";
 import { contentService } from "../../services/contentService";
 import { ImageUpload } from "../../components/ImageUpload";
@@ -25,6 +26,12 @@ interface Hub {
   description?: string;
   author?: string;
   epoch?: string;
+  year?: number;
+  birthYear?: number;
+  deathYear?: number;
+  imageUrl?: string;
+  imageAlignment?: string;
+  imageWidth?: string;
   pages?: ContentPage[];
 }
 
@@ -281,12 +288,83 @@ const RichTextEditor = ({ content, onChange }: any) => {
                 </div>
 
                 {block.content.url ? (
-                  <div className="space-y-2">
-                    <img
-                      src={block.content.url}
-                      alt={block.content.alt || ""}
-                      className="w-full rounded-lg border"
-                    />
+                  <div className="space-y-3">
+                    {/* NOWE: Kontrolki wyrównania i szerokości */}
+                    <div className="flex gap-4 p-3 bg-gray-50 rounded border">
+                      <div className="flex-1">
+                        <label className="block text-xs font-medium mb-1">
+                          Wyrównanie
+                        </label>
+                        <select
+                          value={block.content.alignment || "full"}
+                          onChange={(e) =>
+                            updateBlock(block.id, {
+                              ...block.content,
+                              alignment: e.target.value,
+                            })
+                          }
+                          className="w-full px-2 py-1 text-sm border rounded"
+                        >
+                          <option value="full">
+                            Pełna szerokość (osobny wiersz)
+                          </option>
+                          <option value="left">
+                            Z lewej (tekst opływa z prawej)
+                          </option>
+                          <option value="right">
+                            Z prawej (tekst opływa z lewej)
+                          </option>
+                          <option value="center">Wyśrodkowane</option>
+                        </select>
+                      </div>
+
+                      <div className="flex-1">
+                        <label className="block text-xs font-medium mb-1">
+                          Szerokość
+                        </label>
+                        <select
+                          value={block.content.width || "100%"}
+                          onChange={(e) =>
+                            updateBlock(block.id, {
+                              ...block.content,
+                              width: e.target.value,
+                            })
+                          }
+                          className="w-full px-2 py-1 text-sm border rounded"
+                        >
+                          <option value="100%">100% (pełna)</option>
+                          <option value="75%">75%</option>
+                          <option value="50%">50%</option>
+                          <option value="33%">33%</option>
+                          <option value="25%">25%</option>
+                          <option value="300px">300px (małe)</option>
+                          <option value="500px">500px (średnie)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Podgląd */}
+                    <div
+                      className={`
+          ${block.content.alignment === "left" ? "float-left mr-4 mb-2" : ""}
+          ${block.content.alignment === "right" ? "float-right ml-4 mb-2" : ""}
+          ${block.content.alignment === "center" ? "mx-auto" : ""}
+        `}
+                      style={{ width: block.content.width || "100%" }}
+                    >
+                      <img
+                        src={block.content.url}
+                        alt={block.content.alt || ""}
+                        className="w-full rounded-lg border"
+                      />
+                    </div>
+
+                    {/* Clearfix jeśli float */}
+                    {(block.content.alignment === "left" ||
+                      block.content.alignment === "right") && (
+                      <div className="clear-both"></div>
+                    )}
+
                     <input
                       type="text"
                       value={block.content.alt}
@@ -314,7 +392,13 @@ const RichTextEditor = ({ content, onChange }: any) => {
                     <button
                       type="button"
                       onClick={() =>
-                        updateBlock(block.id, { url: "", alt: "", caption: "" })
+                        updateBlock(block.id, {
+                          url: "",
+                          alt: "",
+                          caption: "",
+                          alignment: "full",
+                          width: "100%",
+                        })
                       }
                       className="text-sm text-red-600 hover:text-red-700"
                     >
@@ -324,7 +408,12 @@ const RichTextEditor = ({ content, onChange }: any) => {
                 ) : (
                   <ImageUpload
                     onImageUploaded={(url) =>
-                      updateBlock(block.id, { ...block.content, url })
+                      updateBlock(block.id, {
+                        ...block.content,
+                        url,
+                        alignment: "full",
+                        width: "100%",
+                      })
                     }
                     folder="content"
                   />
@@ -426,6 +515,8 @@ export default function ContentManager() {
     birthYear: "",
     deathYear: "",
     imageUrl: "",
+    imageAlignment: "full",
+    imageWidth: "100%",
   });
 
   const [pageForm, setPageForm] = useState({
@@ -464,6 +555,25 @@ export default function ContentManager() {
     }
   };
 
+  // ✅ NOWA FUNKCJA: Otwórz modal edycji huba
+  const openHubEditModal = (hub: Hub) => {
+    setSelectedHub(hub);
+    setHubForm({
+      title: hub.title,
+      type: hub.type as any,
+      description: hub.description || "",
+      author: hub.author || "",
+      epoch: hub.epoch || "",
+      year: hub.year?.toString() || "",
+      birthYear: hub.birthYear?.toString() || "",
+      deathYear: hub.deathYear?.toString() || "",
+      imageUrl: hub.imageUrl || "",
+      imageAlignment: hub.imageAlignment || "full",
+      imageWidth: hub.imageWidth || "100%",
+    });
+    setShowHubModal(true);
+  };
+
   const handleSaveHub = async () => {
     try {
       const dataToSend = {
@@ -481,7 +591,13 @@ export default function ContentManager() {
 
       setShowHubModal(false);
       resetHubForm();
-      loadHubs();
+
+      // Odśwież listę lub widok szczegółów
+      if (view === "hub-detail" && selectedHub) {
+        loadHubDetail(selectedHub.slug);
+      } else {
+        loadHubs();
+      }
     } catch (error) {
       alert("Błąd zapisu: " + (error as any).message);
     }
@@ -509,6 +625,8 @@ export default function ContentManager() {
       birthYear: "",
       deathYear: "",
       imageUrl: "",
+      imageAlignment: "full",
+      imageWidth: "100%",
     });
     setSelectedHub(null);
   };
@@ -602,15 +720,25 @@ export default function ContentManager() {
                   <div className="flex items-start justify-between mb-3">
                     <Icon className="w-8 h-8 text-blue-600" />
                     <div className="flex gap-2">
+                      {/* ✅ ZMIENIONY: Teraz otwiera modal edycji */}
                       <button
-                        onClick={() => loadHubDetail(hub.slug)}
+                        onClick={() => openHubEditModal(hub)}
                         className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                        title="Edytuj hub"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
+                        onClick={() => loadHubDetail(hub.slug)}
+                        className="p-1 text-gray-600 hover:bg-gray-50 rounded"
+                        title="Zarządzaj stronami"
+                      >
+                        <Settings className="w-4 h-4" />
+                      </button>
+                      <button
                         onClick={() => handleDeleteHub(hub.id)}
                         className="p-1 text-red-600 hover:bg-red-50 rounded"
+                        title="Usuń hub"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -758,27 +886,109 @@ export default function ContentManager() {
                   <label className="block text-sm font-medium mb-2">
                     Zdjęcie główne (opcjonalne)
                   </label>
-                  <ImageUpload
-                    onImageUploaded={(url) =>
-                      setHubForm({ ...hubForm, imageUrl: url })
-                    }
-                    folder="hubs"
-                  />
-                  {hubForm.imageUrl && (
-                    <div className="mt-2">
-                      <img
-                        src={hubForm.imageUrl}
-                        alt="Hub image"
-                        className="w-full h-48 object-cover rounded-lg"
-                      />
+
+                  {hubForm.imageUrl ? (
+                    <div className="space-y-3">
+                      <div className="flex gap-4 p-3 bg-gray-50 rounded border">
+                        <div className="flex-1">
+                          <label className="block text-xs font-medium mb-1">
+                            Wyrównanie
+                          </label>
+                          <select
+                            value={hubForm.imageAlignment || "full"}
+                            onChange={(e) =>
+                              setHubForm({
+                                ...hubForm,
+                                imageAlignment: e.target.value,
+                              })
+                            }
+                            className="w-full px-2 py-1 text-sm border rounded"
+                          >
+                            <option value="full">Pełna szerokość</option>
+                            <option value="left">
+                              Z lewej (tekst z prawej)
+                            </option>
+                            <option value="right">
+                              Z prawej (tekst z lewej)
+                            </option>
+                            <option value="center">Wyśrodkowane</option>
+                          </select>
+                        </div>
+                        <div className="flex-1">
+                          <label className="block text-xs font-medium mb-1">
+                            Szerokość
+                          </label>
+                          <select
+                            value={hubForm.imageWidth || "100%"}
+                            onChange={(e) =>
+                              setHubForm({
+                                ...hubForm,
+                                imageWidth: e.target.value,
+                              })
+                            }
+                            className="w-full px-2 py-1 text-sm border rounded"
+                          >
+                            <option value="100%">100%</option>
+                            <option value="50%">50%</option>
+                            <option value="300px">300px</option>
+                            <option value="500px">500px</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div
+                        className={`${
+                          hubForm.imageAlignment === "left"
+                            ? "float-left mr-4"
+                            : ""
+                        }${
+                          hubForm.imageAlignment === "right"
+                            ? "float-right ml-4"
+                            : ""
+                        }${
+                          hubForm.imageAlignment === "center" ? "mx-auto" : ""
+                        }`}
+                        style={{
+                          width: hubForm.imageWidth || "100%",
+                          maxWidth: "100%",
+                        }}
+                      >
+                        <img
+                          src={hubForm.imageUrl}
+                          alt="Hub"
+                          className="w-full rounded-lg border"
+                        />
+                      </div>
+                      {(hubForm.imageAlignment === "left" ||
+                        hubForm.imageAlignment === "right") && (
+                        <div className="clear-both"></div>
+                      )}
                       <button
                         type="button"
-                        onClick={() => setHubForm({ ...hubForm, imageUrl: "" })}
-                        className="mt-2 text-sm text-red-600"
+                        onClick={() =>
+                          setHubForm({
+                            ...hubForm,
+                            imageUrl: "",
+                            imageAlignment: "full",
+                            imageWidth: "100%",
+                          })
+                        }
+                        className="text-sm text-red-600"
                       >
                         Usuń zdjęcie
                       </button>
                     </div>
+                  ) : (
+                    <ImageUpload
+                      onImageUploaded={(url) =>
+                        setHubForm({
+                          ...hubForm,
+                          imageUrl: url,
+                          imageAlignment: "full",
+                          imageWidth: "100%",
+                        })
+                      }
+                      folder="hubs"
+                    />
                   )}
                 </div>
                 <div>
@@ -796,7 +1006,10 @@ export default function ContentManager() {
 
               <div className="flex gap-4 mt-6">
                 <button
-                  onClick={() => setShowHubModal(false)}
+                  onClick={() => {
+                    setShowHubModal(false);
+                    resetHubForm();
+                  }}
                   className="flex-1 px-4 py-2 border rounded hover:bg-gray-50"
                 >
                   Anuluj
@@ -845,16 +1058,26 @@ export default function ContentManager() {
                   </code>
                 </p>
               </div>
-              <button
-                onClick={() => {
-                  resetPageForm();
-                  setShowPageModal(true);
-                }}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                Dodaj stronę
-              </button>
+              <div className="flex gap-2">
+                {/* ✅ NOWY PRZYCISK: Edytuj hub */}
+                <button
+                  onClick={() => openHubEditModal(selectedHub)}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2"
+                >
+                  <Edit className="w-4 h-4" />
+                  Edytuj hub
+                </button>
+                <button
+                  onClick={() => {
+                    resetPageForm();
+                    setShowPageModal(true);
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Dodaj stronę
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1009,6 +1232,271 @@ export default function ContentManager() {
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
                 >
                   Zapisz stronę
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL: Edycja huba - DODANY */}
+        {showHubModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
+              <h2 className="text-xl font-bold mb-4">Edytuj Hub</h2>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Tytuł
+                  </label>
+                  <input
+                    type="text"
+                    value={hubForm.title}
+                    onChange={(e) =>
+                      setHubForm({ ...hubForm, title: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border rounded"
+                    placeholder="np. Lalka, Romantyzm, Adam Mickiewicz"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Typ</label>
+                  <select
+                    value={hubForm.type}
+                    onChange={(e) =>
+                      setHubForm({ ...hubForm, type: e.target.value as any })
+                    }
+                    className="w-full px-4 py-2 border rounded"
+                  >
+                    {HUB_TYPES.map((type) => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {hubForm.type === "LITERARY_WORK" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Autor
+                      </label>
+                      <input
+                        type="text"
+                        value={hubForm.author}
+                        onChange={(e) =>
+                          setHubForm({ ...hubForm, author: e.target.value })
+                        }
+                        className="w-full px-4 py-2 border rounded"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Epoka
+                      </label>
+                      <select
+                        value={hubForm.epoch}
+                        onChange={(e) =>
+                          setHubForm({ ...hubForm, epoch: e.target.value })
+                        }
+                        className="w-full px-4 py-2 border rounded"
+                      >
+                        <option value="">-- Wybierz --</option>
+                        {EPOCHS.map((e) => (
+                          <option key={e.value} value={e.value}>
+                            {e.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Rok
+                      </label>
+                      <input
+                        type="number"
+                        value={hubForm.year}
+                        onChange={(e) =>
+                          setHubForm({ ...hubForm, year: e.target.value })
+                        }
+                        className="w-full px-4 py-2 border rounded"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {hubForm.type === "AUTHOR" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Rok urodzenia
+                      </label>
+                      <input
+                        type="number"
+                        value={hubForm.birthYear}
+                        onChange={(e) =>
+                          setHubForm({ ...hubForm, birthYear: e.target.value })
+                        }
+                        className="w-full px-4 py-2 border rounded"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Rok śmierci
+                      </label>
+                      <input
+                        type="number"
+                        value={hubForm.deathYear}
+                        onChange={(e) =>
+                          setHubForm({ ...hubForm, deathYear: e.target.value })
+                        }
+                        className="w-full px-4 py-2 border rounded"
+                      />
+                    </div>
+                  </>
+                )}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Zdjęcie główne (opcjonalne)
+                  </label>
+
+                  {hubForm.imageUrl ? (
+                    <div className="space-y-3">
+                      <div className="flex gap-4 p-3 bg-gray-50 rounded border">
+                        <div className="flex-1">
+                          <label className="block text-xs font-medium mb-1">
+                            Wyrównanie
+                          </label>
+                          <select
+                            value={hubForm.imageAlignment || "full"}
+                            onChange={(e) =>
+                              setHubForm({
+                                ...hubForm,
+                                imageAlignment: e.target.value,
+                              })
+                            }
+                            className="w-full px-2 py-1 text-sm border rounded"
+                          >
+                            <option value="full">Pełna szerokość</option>
+                            <option value="left">
+                              Z lewej (tekst z prawej)
+                            </option>
+                            <option value="right">
+                              Z prawej (tekst z lewej)
+                            </option>
+                            <option value="center">Wyśrodkowane</option>
+                          </select>
+                        </div>
+                        <div className="flex-1">
+                          <label className="block text-xs font-medium mb-1">
+                            Szerokość
+                          </label>
+                          <select
+                            value={hubForm.imageWidth || "100%"}
+                            onChange={(e) =>
+                              setHubForm({
+                                ...hubForm,
+                                imageWidth: e.target.value,
+                              })
+                            }
+                            className="w-full px-2 py-1 text-sm border rounded"
+                          >
+                            <option value="100%">100%</option>
+                            <option value="50%">50%</option>
+                            <option value="300px">300px</option>
+                            <option value="500px">500px</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div
+                        className={`${
+                          hubForm.imageAlignment === "left"
+                            ? "float-left mr-4"
+                            : ""
+                        }${
+                          hubForm.imageAlignment === "right"
+                            ? "float-right ml-4"
+                            : ""
+                        }${
+                          hubForm.imageAlignment === "center" ? "mx-auto" : ""
+                        }`}
+                        style={{
+                          width: hubForm.imageWidth || "100%",
+                          maxWidth: "100%",
+                        }}
+                      >
+                        <img
+                          src={hubForm.imageUrl}
+                          alt="Hub"
+                          className="w-full rounded-lg border"
+                        />
+                      </div>
+                      {(hubForm.imageAlignment === "left" ||
+                        hubForm.imageAlignment === "right") && (
+                        <div className="clear-both"></div>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setHubForm({
+                            ...hubForm,
+                            imageUrl: "",
+                            imageAlignment: "full",
+                            imageWidth: "100%",
+                          })
+                        }
+                        className="text-sm text-red-600"
+                      >
+                        Usuń zdjęcie
+                      </button>
+                    </div>
+                  ) : (
+                    <ImageUpload
+                      onImageUploaded={(url) =>
+                        setHubForm({
+                          ...hubForm,
+                          imageUrl: url,
+                          imageAlignment: "full",
+                          imageWidth: "100%",
+                        })
+                      }
+                      folder="hubs"
+                    />
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Opis</label>
+                  <textarea
+                    value={hubForm.description}
+                    onChange={(e) =>
+                      setHubForm({ ...hubForm, description: e.target.value })
+                    }
+                    rows={3}
+                    className="w-full px-4 py-2 border rounded"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-4 mt-6">
+                <button
+                  onClick={() => {
+                    setShowHubModal(false);
+                    resetHubForm();
+                  }}
+                  className="flex-1 px-4 py-2 border rounded hover:bg-gray-50"
+                >
+                  Anuluj
+                </button>
+                <button
+                  onClick={handleSaveHub}
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Zapisz
                 </button>
               </div>
             </div>

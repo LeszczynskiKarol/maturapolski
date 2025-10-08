@@ -115,22 +115,26 @@ export function PageViewer() {
     switch (block.type) {
       case "h2":
         return (
-          <h2 key={index} className="text-2xl font-bold mb-4 mt-8">
+          <h2 key={index} className="text-2xl font-bold mb-4 mt-8 clear-both">
             {block.content}
           </h2>
         );
       case "h3":
         return (
-          <h3 key={index} className="text-xl font-bold mb-3 mt-6">
+          <h3 key={index} className="text-xl font-bold mb-3 mt-6 clear-both">
             {block.content}
           </h3>
         );
       case "h4":
         return (
-          <h4 key={index} className="text-lg font-semibold mb-2 mt-4">
+          <h4
+            key={index}
+            className="text-lg font-semibold mb-2 mt-4 clear-both"
+          >
             {block.content}
           </h4>
         );
+
       case "paragraph":
         return (
           <p key={index} className="mb-4 text-gray-700 leading-relaxed">
@@ -140,7 +144,10 @@ export function PageViewer() {
       case "list":
         const items = block.content.split("\n").filter((i: string) => i.trim());
         return (
-          <ul key={index} className="list-disc list-inside mb-4 space-y-2">
+          <ul
+            key={index}
+            className="list-disc list-inside mb-4 space-y-2 clear-both"
+          >
             {items.map((item: string, i: number) => (
               <li key={i} className="text-gray-700">
                 {item}
@@ -152,14 +159,65 @@ export function PageViewer() {
         return (
           <blockquote
             key={index}
-            className="border-l-4 border-blue-500 pl-4 py-2 mb-4 italic text-gray-600 bg-blue-50"
+            className="border-l-4 border-blue-500 pl-4 py-2 mb-4 italic text-gray-600 bg-blue-50 clear-both"
           >
             {renderWithMarkdown(block.content)}
           </blockquote>
         );
+
       case "image":
+        const alignment = block.content.alignment || "full";
+        const width = block.content.width || "100%";
+
+        // Style dla różnych wyrównań
+        const getImageWrapperClass = () => {
+          switch (alignment) {
+            case "left":
+              return "float-left mr-6 mb-4";
+            case "right":
+              return "float-right ml-6 mb-4";
+            case "center":
+              return "mx-auto";
+            default: // 'full'
+              return "w-full";
+          }
+        };
+
+        // Dla float dodaj wrapper, który wymusi clearfix
+        if (alignment === "left" || alignment === "right") {
+          return (
+            <figure
+              key={index}
+              className={getImageWrapperClass()}
+              style={{
+                width: width,
+                maxWidth: "100%",
+              }}
+            >
+              <img
+                src={block.content.url}
+                alt={block.content.alt || ""}
+                className="w-full rounded-lg shadow-lg"
+              />
+              {block.content.caption && (
+                <figcaption className="mt-2 text-sm text-gray-600 italic">
+                  {block.content.caption}
+                </figcaption>
+              )}
+            </figure>
+          );
+        }
+
+        // Dla center i full
         return (
-          <figure key={index} className="my-8">
+          <figure
+            key={index}
+            className={`my-8 ${getImageWrapperClass()}`}
+            style={{
+              width: alignment === "center" ? width : "100%",
+              maxWidth: "100%",
+            }}
+          >
             <img
               src={block.content.url}
               alt={block.content.alt || ""}
@@ -216,7 +274,7 @@ export function PageViewer() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <Link
-          to={`/baza/${hubSlug}`}
+          to={`/baza-wiedzy/${hubSlug}`}
           className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
@@ -226,11 +284,14 @@ export function PageViewer() {
         <article className="bg-white rounded-lg shadow-sm p-8">
           {/* Breadcrumb */}
           <div className="text-sm text-gray-500 mb-4">
-            <Link to="/baza" className="hover:text-gray-700">
+            <Link to="/baza-wiedzy" className="hover:text-gray-700">
               Baza wiedzy
             </Link>
             {" / "}
-            <Link to={`/baza/${hubSlug}`} className="hover:text-gray-700">
+            <Link
+              to={`/baza-wiedzy/${hubSlug}`}
+              className="hover:text-gray-700"
+            >
               {page.hub.title}
             </Link>
             {" / "}
@@ -261,6 +322,8 @@ export function PageViewer() {
           {/* Treść aktualnej strony */}
           <div className="prose max-w-none">
             {currentBlocks.map((block, index) => renderBlock(block, index))}
+            {/* Clearfix na końcu treści */}
+            <div className="clear-both"></div>
           </div>
 
           {/* Paginacja - tylko jeśli jest więcej niż 1 strona */}

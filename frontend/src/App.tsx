@@ -126,9 +126,12 @@ export const App: React.FC = () => {
                 element={<ResendVerificationPage />}
               />
               {/* NOWA BAZA WIEDZY */}
-              <Route path="/baza" element={<HubListPage />} />
-              <Route path="/baza/:hubSlug" element={<HubDetailPage />} />
-              <Route path="/baza/:hubSlug/:pageSlug" element={<PageViewer />} />
+              <Route path="/baza-wiedzy" element={<HubListPage />} />
+              <Route path="/baza-wiedzy/:hubSlug" element={<HubDetailPage />} />
+              <Route
+                path="/baza-wiedzy/:hubSlug/:pageSlug"
+                element={<PageViewer />}
+              />
 
               {/* Public Materials routes */}
               <Route path="/materialy" element={<MaterialsPage />} />
