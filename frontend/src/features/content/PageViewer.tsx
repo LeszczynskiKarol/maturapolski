@@ -6,7 +6,7 @@ import { PublicLayout } from "../../components/PublicLayout";
 import { useState, useEffect } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { contentService } from "../../services/contentService";
-import { ArrowLeft, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { Clock, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface PageData {
   id: string;
@@ -43,27 +43,35 @@ export function PageViewer() {
 
   const volumeInfo = isLalkaChapters
     ? contentPages.map((pageBlocks, index) => {
-        let volumeNumber = 1;
-        let chapterInVolume = index + 1;
+        // Sprawdź czy TA strona zaczyna się od volume_break
+        const startsWithVolumeBreak = pageBlocks[0]?.type === "volume_break";
+        const volumeTitle = startsWithVolumeBreak
+          ? pageBlocks[0].content?.volumeTitle
+          : null;
 
+        // Policz którym jesteśmy tomem (licząc volume_break do tej pory)
+        let volumeNumber = 1;
         for (let i = 0; i < index; i++) {
-          const hasVolumeBreak = contentPages[i].some(
-            (block: any) => block.type === "volume_break"
-          );
-          if (hasVolumeBreak) {
+          if (contentPages[i][0]?.type === "volume_break") {
             volumeNumber++;
-            chapterInVolume = 1;
-          } else if (i < index) {
-            chapterInVolume++;
           }
         }
 
-        const volumeBreak = pageBlocks.find(
-          (block: any) => block.type === "volume_break"
-        );
-        const volumeTitle = volumeBreak?.content?.volumeTitle;
+        // Policz numer rozdziału W TYM TOMIE
+        let chapterInVolume = 1;
+        for (let i = index - 1; i >= 0; i--) {
+          if (contentPages[i][0]?.type === "volume_break") {
+            break; // Zatrzymaj się na poprzednim volume_break
+          }
+          chapterInVolume++;
+        }
 
-        return { volumeNumber, chapterInVolume, volumeTitle };
+        return {
+          volumeNumber,
+          chapterInVolume,
+          volumeTitle,
+          startsWithVolumeBreak,
+        };
       })
     : [];
 
@@ -311,14 +319,6 @@ export function PageViewer() {
     <PublicLayout>
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 py-8">
-          <Link
-            to={`/baza-wiedzy/${hubSlug}`}
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Powrót do {page.hub.title}
-          </Link>
-
           <article className="bg-white rounded-lg shadow-sm p-8">
             {/* Breadcrumb */}
             <div className="text-sm text-gray-500 mb-4">
@@ -370,14 +370,17 @@ export function PageViewer() {
             {/* Treść aktualnej strony */}
             <div className="prose max-w-none">
               {isLalkaChapters && currentVolumeInfo?.volumeTitle && (
-                <div className="mb-8 pb-4 border-b-2 border-purple-200 bg-purple-50 -mx-8 px-8 py-4">
+                <div className="mb-8 pb-4 border-b-2 border-purple-200 bg-purple-50 rounded-lg px-8 py-6">
                   <h2 className="text-3xl font-bold text-purple-900 text-center">
                     {currentVolumeInfo.volumeTitle}
                   </h2>
                 </div>
               )}
 
-              {currentBlocks.map((block, index) => renderBlock(block, index))}
+              {currentBlocks
+                .filter((block) => block.type !== "volume_break") // Filtruj volume_break z treści
+                .map((block, index) => renderBlock(block, index))}
+
               {/* Clearfix na końcu treści */}
               <div className="clear-both"></div>
             </div>
@@ -385,50 +388,69 @@ export function PageViewer() {
             {/* Paginacja - tylko jeśli jest więcej niż 1 strona */}
             {totalPages > 1 && (
               <div className="mt-12 pt-6 border-t">
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <button
-                    onClick={() => goToPage(currentPageIndex - 1)}
-                    disabled={currentPageIndex === 0}
-                    className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                    {isLalkaChapters
-                      ? "Poprzedni rozdział"
-                      : "Poprzednia strona"}
-                  </button>
+                <div className="flex flex-col items-center gap-4">
+                  {/* Przyciski nawigacji */}
+                  <div className="flex w-full items-center justify-between gap-4">
+                    <button
+                      onClick={() => goToPage(currentPageIndex - 1)}
+                      disabled={currentPageIndex === 0}
+                      className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                      {isLalkaChapters
+                        ? "Poprzedni rozdział"
+                        : "Poprzednia strona"}
+                    </button>
+
+                    <button
+                      onClick={() => goToPage(currentPageIndex + 1)}
+                      disabled={currentPageIndex === totalPages - 1}
+                      className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                    >
+                      {isLalkaChapters
+                        ? "Następny rozdział"
+                        : "Następna strona"}
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
 
                   {/* Numeracja stron */}
-                  <div className="flex gap-2 overflow-x-auto max-w-full px-2">
+                  <div className="flex flex-wrap gap-2 justify-center items-center max-w-full">
                     {Array.from({ length: totalPages }, (_, i) => {
-                      const displayNumber =
-                        isLalkaChapters && volumeInfo[i]
-                          ? volumeInfo[i].chapterInVolume
-                          : i + 1;
+                      const info =
+                        isLalkaChapters && volumeInfo[i] ? volumeInfo[i] : null;
+                      const displayNumber = info ? info.chapterInVolume : i + 1;
+                      const showVolumeSeparator = info?.startsWithVolumeBreak;
 
                       return (
-                        <button
-                          key={i}
-                          onClick={() => goToPage(i)}
-                          className={`min-w-[2.5rem] h-10 px-2 rounded-lg text-sm ${
-                            i === currentPageIndex
-                              ? "bg-blue-600 text-white"
-                              : "border hover:bg-gray-50"
-                          }`}
-                        >
-                          {displayNumber}
-                        </button>
+                        <div key={i} className="flex items-center gap-2">
+                          {/* Separator tomu */}
+                          {showVolumeSeparator && (
+                            <div className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg font-semibold text-sm border-2 border-purple-300">
+                              {info!.volumeTitle || `Tom ${info!.volumeNumber}`}
+                            </div>
+                          )}
+
+                          {/* Przycisk rozdziału/strony */}
+                          <button
+                            onClick={() => goToPage(i)}
+                            className={`min-w-[2.5rem] h-10 px-2 rounded-lg text-sm font-medium transition-colors ${
+                              i === currentPageIndex
+                                ? "bg-blue-600 text-white shadow-md"
+                                : "border border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+                            }`}
+                            title={
+                              info
+                                ? `Rozdział ${displayNumber}`
+                                : `Strona ${displayNumber}`
+                            }
+                          >
+                            {displayNumber}
+                          </button>
+                        </div>
                       );
                     })}
                   </div>
-
-                  <button
-                    onClick={() => goToPage(currentPageIndex + 1)}
-                    disabled={currentPageIndex === totalPages - 1}
-                    className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                  >
-                    {isLalkaChapters ? "Następny rozdział" : "Następna strona"}
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
                 </div>
               </div>
             )}
