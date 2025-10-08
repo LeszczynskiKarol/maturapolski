@@ -105,7 +105,12 @@ const RichTextEditor = ({ content, onChange }: any) => {
     const newBlock = {
       id: Date.now().toString(),
       type,
-      content: type === "image" ? { url: "", alt: "", caption: "" } : "",
+      content:
+        type === "image"
+          ? { url: "", alt: "", caption: "" }
+          : type === "volume_break"
+          ? { volumeTitle: "Tom 1" }
+          : "",
     };
     const newBlocks = [...blocks, newBlock];
     setBlocks(newBlocks);
@@ -213,6 +218,15 @@ const RichTextEditor = ({ content, onChange }: any) => {
           <Scissors className="w-4 h-4" />
           Podział strony
         </button>
+        <button
+          type="button"
+          onClick={() => addBlock("volume_break")}
+          className="px-3 py-1.5 bg-purple-500 text-white border rounded hover:bg-purple-600 flex items-center gap-1"
+          title="Dodaj oznaczenie tomu (Tom 1, Tom 2, etc.)"
+        >
+          <BookOpen className="w-4 h-4" />
+          Tom
+        </button>
       </div>
 
       {/* Bloki treści */}
@@ -276,6 +290,27 @@ const RichTextEditor = ({ content, onChange }: any) => {
                 <span className="ml-2 text-xs text-orange-600">
                   (na stronie pojawi się przycisk "Następna strona")
                 </span>
+              </div>
+            )}
+
+            {/* VOLUME BREAK */}
+            {block.type === "volume_break" && (
+              <div className="flex items-center justify-center py-4 border-2 border-dashed border-purple-400 bg-purple-50 rounded">
+                <BookOpen className="w-5 h-5 text-purple-600 mr-2" />
+                <span className="font-medium text-purple-700 mr-3">TOM:</span>
+                <input
+                  type="text"
+                  value={block.content.volumeTitle || ""}
+                  onChange={(e) =>
+                    updateBlock(block.id, {
+                      ...block.content,
+                      volumeTitle: e.target.value,
+                    })
+                  }
+                  placeholder="np. Tom 1"
+                  className="px-3 py-1 text-sm border rounded w-40"
+                  onClick={(e) => e.stopPropagation()}
+                />
               </div>
             )}
 

@@ -51,19 +51,28 @@ export function PageViewer() {
 
         // Policz którym jesteśmy tomem (licząc volume_break do tej pory)
         let volumeNumber = 1;
-        for (let i = 0; i < index; i++) {
+        for (let i = 0; i <= index; i++) {
           if (contentPages[i][0]?.type === "volume_break") {
-            volumeNumber++;
+            volumeNumber =
+              contentPages[i][0].content?.volumeTitle?.match(/\d+/)?.[0] ||
+              volumeNumber;
           }
         }
 
-        // Policz numer rozdziału W TYM TOMIE
+        // POPRAWIONA LOGIKA: Policz numer rozdziału W TYM TOMIE
         let chapterInVolume = 1;
-        for (let i = index - 1; i >= 0; i--) {
-          if (contentPages[i][0]?.type === "volume_break") {
-            break; // Zatrzymaj się na poprzednim volume_break
+
+        if (startsWithVolumeBreak) {
+          // Jeśli TA strona zaczyna się od volume_break, to będzie rozdział 1 nowego tomu
+          chapterInVolume = 1;
+        } else {
+          // Cofaj się i licz rozdziały do poprzedniego volume_break
+          for (let i = index - 1; i >= 0; i--) {
+            if (contentPages[i][0]?.type === "volume_break") {
+              break; // Zatrzymaj się na poprzednim volume_break
+            }
+            chapterInVolume++;
           }
-          chapterInVolume++;
         }
 
         return {
@@ -121,6 +130,7 @@ export function PageViewer() {
           currentPage = [];
         }
       } else {
+        // WAŻNE: volume_break też dodajemy do strony
         currentPage.push(block);
       }
     });
@@ -394,22 +404,26 @@ export function PageViewer() {
                     <button
                       onClick={() => goToPage(currentPageIndex - 1)}
                       disabled={currentPageIndex === 0}
-                      className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                      className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <ChevronLeft className="w-4 h-4" />
-                      {isLalkaChapters
-                        ? "Poprzedni rozdział"
-                        : "Poprzednia strona"}
+                      <span className="hidden sm:inline">
+                        {isLalkaChapters
+                          ? "Poprzedni rozdział"
+                          : "Poprzednia strona"}
+                      </span>
                     </button>
 
                     <button
                       onClick={() => goToPage(currentPageIndex + 1)}
                       disabled={currentPageIndex === totalPages - 1}
-                      className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                      className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {isLalkaChapters
-                        ? "Następny rozdział"
-                        : "Następna strona"}
+                      <span className="hidden sm:inline">
+                        {isLalkaChapters
+                          ? "Następny rozdział"
+                          : "Następna strona"}
+                      </span>
                       <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
@@ -424,11 +438,15 @@ export function PageViewer() {
 
                       return (
                         <div key={i} className="flex items-center gap-2">
-                          {/* Separator tomu */}
+                          {/* Separator tomu - KLIKALNE */}
                           {showVolumeSeparator && (
-                            <div className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg font-semibold text-sm border-2 border-purple-300">
+                            <button
+                              onClick={() => goToPage(i)}
+                              className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg font-semibold text-sm border-2 border-purple-300 hover:bg-purple-200 transition-colors cursor-pointer"
+                              title={`Przejdź do ${info!.volumeTitle}`}
+                            >
                               {info!.volumeTitle || `Tom ${info!.volumeNumber}`}
-                            </div>
+                            </button>
                           )}
 
                           {/* Przycisk rozdziału/strony */}
