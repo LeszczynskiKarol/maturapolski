@@ -18,6 +18,8 @@ interface HubDetail {
   imageUrl?: string;
   imageAlignment?: string;
   imageWidth?: string;
+  metaTitle: string;
+  metaDescription: string;
   pages: Array<{
     id: string;
     slug: string;
