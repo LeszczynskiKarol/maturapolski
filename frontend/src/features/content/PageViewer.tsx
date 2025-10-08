@@ -30,7 +30,7 @@ export function PageViewer() {
   const isLalkaChapters =
     hubSlug === "lalka" &&
     pageSlug === "lalka-streszczenie-szczegolowe-dokladne-lektury";
-
+  const [hubPages, setHubPages] = useState<any[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [page, setPage] = useState<PageData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -91,8 +91,18 @@ export function PageViewer() {
   useEffect(() => {
     if (hubSlug && pageSlug) {
       loadPage();
+      loadHubPages();
     }
   }, [hubSlug, pageSlug]);
+
+  const loadHubPages = async () => {
+    try {
+      const pages = await contentService.getHubPages(hubSlug!);
+      setHubPages(pages);
+    } catch (error) {
+      console.error("Error loading hub pages:", error);
+    }
+  };
 
   // Obsługa query params dla paginacji
   useEffect(() => {
@@ -328,164 +338,235 @@ export function PageViewer() {
   return (
     <PublicLayout>
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <article className="bg-white rounded-lg shadow-sm p-8">
-            {/* Breadcrumb */}
-            <div className="text-sm text-gray-500 mb-4">
-              <Link to="/baza-wiedzy" className="hover:text-gray-700">
-                Baza wiedzy
-              </Link>
-              {" / "}
-              <Link
-                to={`/baza-wiedzy/${hubSlug}`}
-                className="hover:text-gray-700"
-              >
-                {page.hub.title}
-              </Link>
-              {" / "}
-              <span className="text-gray-900">{page.title}</span>
-            </div>
-
-            {/* Header */}
-            <h1 className="text-3xl font-bold mb-4">{page.title}</h1>
-
-            <div className="flex items-center gap-4 text-sm text-gray-600 border-b pb-4 mb-6">
-              {page.readingTime && (
-                <span className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  {page.readingTime} min
-                </span>
-              )}
-
-              {totalPages > 1 && (
-                <span className="ml-auto font-medium text-blue-600">
-                  {isLalkaChapters ? (
-                    <>
-                      Rozdział {currentVolumeInfo!.chapterInVolume}
-                      {currentVolumeInfo!.volumeNumber > 1 && (
-                        <span className="text-sm text-gray-500 ml-2">
-                          (Tom {currentVolumeInfo!.volumeNumber})
-                        </span>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      Strona {currentPageIndex + 1} z {totalPages}
-                    </>
-                  )}
-                </span>
-              )}
-            </div>
-
-            {/* Treść aktualnej strony */}
-            <div className="prose max-w-none">
-              {isLalkaChapters && currentVolumeInfo?.volumeTitle && (
-                <div className="mb-8 pb-4 border-b-2 border-purple-200 bg-purple-50 rounded-lg px-8 py-6">
-                  <h2 className="text-3xl font-bold text-purple-900 text-center">
-                    {currentVolumeInfo.volumeTitle}
-                  </h2>
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Sidebar - Lista stron Hub-a */}
+            {hubPages.length > 0 && (
+              <aside className="lg:col-span-3 order-2 lg:order-1">
+                <div className="sticky top-20 bg-white rounded-lg shadow-sm p-4">
+                  <h3 className="font-semibold text-sm text-gray-700 mb-3 uppercase tracking-wide">
+                    {page?.hub.title}
+                  </h3>
+                  <nav className="space-y-1 max-h-[calc(100vh-150px)] overflow-y-auto">
+                    {hubPages.map((hubPage) => (
+                      <Link
+                        key={hubPage.id}
+                        to={`/baza-wiedzy/${hubSlug}/${hubPage.slug}`}
+                        className={`block px-3 py-2 rounded text-sm transition-colors ${
+                          hubPage.slug === pageSlug
+                            ? "bg-blue-50 text-blue-700 font-medium"
+                            : "text-gray-600 hover:bg-gray-50"
+                        }`}
+                      >
+                        {hubPage.title}
+                      </Link>
+                    ))}
+                  </nav>
                 </div>
+              </aside>
+            )}
+
+            {/* Główna treść */}
+            <article
+              className={`${
+                hubPages.length > 0 ? "lg:col-span-9" : "lg:col-span-12"
+              } order-1 lg:order-2 bg-white rounded-lg shadow-sm p-8`}
+            >
+              {/* Breadcrumb */}
+              <div className="text-sm text-gray-500 mb-4">
+                <Link to="/baza-wiedzy" className="hover:text-gray-700">
+                  Baza wiedzy
+                </Link>
+                {" / "}
+                <Link
+                  to={`/baza-wiedzy/${hubSlug}`}
+                  className="hover:text-gray-700"
+                >
+                  {page.hub.title}
+                </Link>
+                {" / "}
+                <span className="text-gray-900">{page.title}</span>
+              </div>
+
+              {/* Header */}
+              <h1 className="text-3xl font-bold mb-4">{page.title}</h1>
+
+              <div className="flex items-center gap-4 text-sm text-gray-600 border-b pb-4 mb-6">
+                {page.readingTime && (
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    {page.readingTime} min
+                  </span>
+                )}
+
+                {totalPages > 1 && (
+                  <span className="ml-auto font-medium text-blue-600">
+                    {isLalkaChapters ? (
+                      <>
+                        Rozdział {currentVolumeInfo!.chapterInVolume}
+                        {currentVolumeInfo!.volumeNumber > 1 && (
+                          <span className="text-sm text-gray-500 ml-2">
+                            (Tom {currentVolumeInfo!.volumeNumber})
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        Strona {currentPageIndex + 1} z {totalPages}
+                      </>
+                    )}
+                  </span>
+                )}
+              </div>
+
+              {/* Treść aktualnej strony */}
+              <div className="prose max-w-none">
+                {isLalkaChapters && currentVolumeInfo?.volumeTitle && (
+                  <div className="mb-8 pb-4 border-b-2 border-purple-200 bg-purple-50 rounded-lg px-8 py-6">
+                    <h2 className="text-3xl font-bold text-purple-900 text-center">
+                      {currentVolumeInfo.volumeTitle}
+                    </h2>
+                  </div>
+                )}
+
+                {currentBlocks
+                  .filter((block) => block.type !== "volume_break") // Filtruj volume_break z treści
+                  .map((block, index) => renderBlock(block, index))}
+
+                {/* Clearfix na końcu treści */}
+                <div className="clear-both"></div>
+              </div>
+
+              {isLalkaChapters && (
+                <script type="application/ld+json">
+                  {JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "Book",
+                    name: page.title,
+                    author: {
+                      "@type": "Person",
+                      name: page.hub.author,
+                    },
+                    numberOfPages: totalPages,
+                    inLanguage: "pl",
+                    hasPart: contentPages.map((blocks, i) => {
+                      const chapterTitle = blocks.find(
+                        (b) => b.type === "h3"
+                      )?.content;
+                      return {
+                        "@type": "Chapter",
+                        name: chapterTitle || `Rozdział ${i + 1}`,
+                        position: i + 1,
+                      };
+                    }),
+                  })}
+                </script>
               )}
 
-              {currentBlocks
-                .filter((block) => block.type !== "volume_break") // Filtruj volume_break z treści
-                .map((block, index) => renderBlock(block, index))}
+              {/* Paginacja - tylko jeśli jest więcej niż 1 strona */}
+              {totalPages > 1 && (
+                <div className="mt-12 pt-6 border-t">
+                  <div className="flex flex-col items-center gap-4">
+                    {/* Przyciski nawigacji */}
+                    <div className="flex w-full items-center justify-between gap-4">
+                      <button
+                        onClick={() => goToPage(currentPageIndex - 1)}
+                        disabled={currentPageIndex === 0}
+                        className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                        <span className="hidden sm:inline">
+                          {isLalkaChapters
+                            ? "Poprzedni rozdział"
+                            : "Poprzednia strona"}
+                        </span>
+                      </button>
 
-              {/* Clearfix na końcu treści */}
-              <div className="clear-both"></div>
-            </div>
+                      <button
+                        onClick={() => goToPage(currentPageIndex + 1)}
+                        disabled={currentPageIndex === totalPages - 1}
+                        className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <span className="hidden sm:inline">
+                          {isLalkaChapters
+                            ? "Następny rozdział"
+                            : "Następna strona"}
+                        </span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
 
-            {/* Paginacja - tylko jeśli jest więcej niż 1 strona */}
-            {totalPages > 1 && (
-              <div className="mt-12 pt-6 border-t">
-                <div className="flex flex-col items-center gap-4">
-                  {/* Przyciski nawigacji */}
-                  <div className="flex w-full items-center justify-between gap-4">
-                    <button
-                      onClick={() => goToPage(currentPageIndex - 1)}
-                      disabled={currentPageIndex === 0}
-                      className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                      <span className="hidden sm:inline">
-                        {isLalkaChapters
-                          ? "Poprzedni rozdział"
-                          : "Poprzednia strona"}
-                      </span>
-                    </button>
+                    {/* Numeracja stron */}
+                    <div className="flex flex-wrap gap-2 justify-center items-start max-w-full">
+                      {Array.from({ length: totalPages }, (_, i) => {
+                        const info =
+                          isLalkaChapters && volumeInfo[i]
+                            ? volumeInfo[i]
+                            : null;
+                        const displayNumber = info
+                          ? info.chapterInVolume
+                          : i + 1;
+                        const showVolumeSeparator = info?.startsWithVolumeBreak;
 
-                    <button
-                      onClick={() => goToPage(currentPageIndex + 1)}
-                      disabled={currentPageIndex === totalPages - 1}
-                      className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <span className="hidden sm:inline">
-                        {isLalkaChapters
-                          ? "Następny rozdział"
-                          : "Następna strona"}
-                      </span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
+                        return (
+                          <div
+                            key={i}
+                            className={`flex items-center gap-2 ${
+                              showVolumeSeparator && i !== 0
+                                ? "w-full justify-center mt-2"
+                                : ""
+                            }`}
+                          >
+                            {/* Separator tomu - KLIKALNE */}
+                            {showVolumeSeparator && (
+                              <button
+                                onClick={() => goToPage(i)}
+                                className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg font-semibold text-sm border-2 border-purple-300 hover:bg-purple-200 transition-colors cursor-pointer"
+                                title={`Przejdź do ${info!.volumeTitle}`}
+                              >
+                                {info!.volumeTitle ||
+                                  `Tom ${info!.volumeNumber}`}
+                              </button>
+                            )}
 
-                  {/* Numeracja stron */}
-                  <div className="flex flex-wrap gap-2 justify-center items-center max-w-full">
-                    {Array.from({ length: totalPages }, (_, i) => {
-                      const info =
-                        isLalkaChapters && volumeInfo[i] ? volumeInfo[i] : null;
-                      const displayNumber = info ? info.chapterInVolume : i + 1;
-                      const showVolumeSeparator = info?.startsWithVolumeBreak;
-
-                      return (
-                        <div key={i} className="flex items-center gap-2">
-                          {/* Separator tomu - KLIKALNE */}
-                          {showVolumeSeparator && (
+                            {/* Przycisk rozdziału/strony */}
                             <button
                               onClick={() => goToPage(i)}
-                              className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg font-semibold text-sm border-2 border-purple-300 hover:bg-purple-200 transition-colors cursor-pointer"
-                              title={`Przejdź do ${info!.volumeTitle}`}
+                              className={`min-w-[2.5rem] h-10 px-2 rounded-lg text-sm font-medium transition-colors ${
+                                i === currentPageIndex
+                                  ? "bg-blue-600 text-white shadow-md"
+                                  : "border border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+                              }`}
+                              title={
+                                info
+                                  ? `Rozdział ${displayNumber}`
+                                  : `Strona ${displayNumber}`
+                              }
                             >
-                              {info!.volumeTitle || `Tom ${info!.volumeNumber}`}
+                              {displayNumber}
                             </button>
-                          )}
-
-                          {/* Przycisk rozdziału/strony */}
-                          <button
-                            onClick={() => goToPage(i)}
-                            className={`min-w-[2.5rem] h-10 px-2 rounded-lg text-sm font-medium transition-colors ${
-                              i === currentPageIndex
-                                ? "bg-blue-600 text-white shadow-md"
-                                : "border border-gray-300 hover:bg-gray-50 hover:border-gray-400"
-                            }`}
-                            title={
-                              info
-                                ? `Rozdział ${displayNumber}`
-                                : `Strona ${displayNumber}`
-                            }
-                          >
-                            {displayNumber}
-                          </button>
-                        </div>
-                      );
-                    })}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
+              )}
+            </article>
+
+            {/* SEO - ukryte strony dla crawlerów */}
+            {totalPages > 1 && (
+              <div className="hidden">
+                {contentPages.map((pageBlocks, pageIndex) => (
+                  <div key={pageIndex} data-page={pageIndex + 1}>
+                    {pageBlocks.map((block, blockIndex) =>
+                      renderBlock(block, blockIndex)
+                    )}
+                  </div>
+                ))}
               </div>
             )}
-          </article>
-
-          {/* SEO - ukryte strony dla crawlerów */}
-          {totalPages > 1 && (
-            <div className="hidden">
-              {contentPages.map((pageBlocks, pageIndex) => (
-                <div key={pageIndex} data-page={pageIndex + 1}>
-                  {pageBlocks.map((block, blockIndex) =>
-                    renderBlock(block, blockIndex)
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+          </div>
         </div>
       </div>
     </PublicLayout>

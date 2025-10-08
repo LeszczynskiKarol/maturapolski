@@ -153,6 +153,25 @@ const RichTextEditor = ({ content, onChange }: any) => {
     onChange({ blocks: newBlocks });
   };
 
+  // DODAJ TE DWIe FUNKCJE:
+  const moveBlockToStart = (index: number) => {
+    if (index === 0) return;
+    const newBlocks = [...blocks];
+    const [movedBlock] = newBlocks.splice(index, 1);
+    newBlocks.unshift(movedBlock);
+    setBlocks(newBlocks);
+    onChange({ blocks: newBlocks });
+  };
+
+  const moveBlockToEnd = (index: number) => {
+    if (index === blocks.length - 1) return;
+    const newBlocks = [...blocks];
+    const [movedBlock] = newBlocks.splice(index, 1);
+    newBlocks.push(movedBlock);
+    setBlocks(newBlocks);
+    onChange({ blocks: newBlocks });
+  };
+
   return (
     <div className="space-y-4">
       {/* Toolbar z przyciskami */}
@@ -240,6 +259,15 @@ const RichTextEditor = ({ content, onChange }: any) => {
             <div className="absolute -left-2 top-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 type="button"
+                onClick={() => moveBlockToStart(index)}
+                disabled={index === 0}
+                className="p-1 bg-white border rounded shadow-sm hover:bg-blue-50 disabled:opacity-30 text-xs font-bold"
+                title="Przesuń na początek"
+              >
+                ⇈
+              </button>
+              <button
+                type="button"
                 onClick={() => moveBlockUp(index)}
                 disabled={index === 0}
                 className="p-1 bg-white border rounded shadow-sm hover:bg-gray-50 disabled:opacity-30"
@@ -256,8 +284,16 @@ const RichTextEditor = ({ content, onChange }: any) => {
               >
                 ▼
               </button>
+              <button
+                type="button"
+                onClick={() => moveBlockToEnd(index)}
+                disabled={index === blocks.length - 1}
+                className="p-1 bg-white border rounded shadow-sm hover:bg-blue-50 disabled:opacity-30 text-xs font-bold"
+                title="Przesuń na koniec"
+              >
+                ⇊
+              </button>
             </div>
-
             {block.type === "paragraph" && (
               <textarea
                 ref={(el) => (textareaRefs.current[block.id] = el)}
