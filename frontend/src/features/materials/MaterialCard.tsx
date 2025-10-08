@@ -1,3 +1,4 @@
+// frontend/src/features/materials/MaterialCard.tsx
 import { useState, useEffect } from "react";
 import {
   BookOpen,

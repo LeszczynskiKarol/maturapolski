@@ -6473,17 +6473,6 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
     },
     {
       type: "SHORT_ANSWER",
-      category: "LANGUAGE_USE",
-      difficulty: 1,
-      points: 1,
-      question: "Ile sylab ma wyraz 'mama'?",
-      content: {
-        expectedAnswer: "2",
-        acceptableAnswers: ["2", "dwie", "dwa"],
-      },
-    },
-    {
-      type: "SHORT_ANSWER",
       category: "HISTORICAL_LITERARY",
       difficulty: 1,
       points: 1,
