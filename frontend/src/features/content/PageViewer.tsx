@@ -6,7 +6,7 @@ import { PublicLayout } from "../../components/PublicLayout";
 import { useState, useEffect } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { contentService } from "../../services/contentService";
-import { ArrowLeft, Clock, Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface PageData {
   id: string;
@@ -27,6 +27,10 @@ export function PageViewer() {
     hubSlug: string;
     pageSlug: string;
   }>();
+  const isLalkaChapters =
+    hubSlug === "lalka" &&
+    pageSlug === "lalka-streszczenie-szczegolowe-dokladne-lektury";
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [page, setPage] = useState<PageData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -36,6 +40,36 @@ export function PageViewer() {
   const contentPages = page?.content?.blocks
     ? splitContentIntoPages(page.content.blocks)
     : [];
+
+  const volumeInfo = isLalkaChapters
+    ? contentPages.map((pageBlocks, index) => {
+        let volumeNumber = 1;
+        let chapterInVolume = index + 1;
+
+        for (let i = 0; i < index; i++) {
+          const hasVolumeBreak = contentPages[i].some(
+            (block: any) => block.type === "volume_break"
+          );
+          if (hasVolumeBreak) {
+            volumeNumber++;
+            chapterInVolume = 1;
+          } else if (i < index) {
+            chapterInVolume++;
+          }
+        }
+
+        const volumeBreak = pageBlocks.find(
+          (block: any) => block.type === "volume_break"
+        );
+        const volumeTitle = volumeBreak?.content?.volumeTitle;
+
+        return { volumeNumber, chapterInVolume, volumeTitle };
+      })
+    : [];
+
+  const currentVolumeInfo = isLalkaChapters
+    ? volumeInfo[currentPageIndex]
+    : null;
 
   useEffect(() => {
     if (hubSlug && pageSlug) {
@@ -114,6 +148,8 @@ export function PageViewer() {
     };
 
     switch (block.type) {
+      case "volume_break":
+        return null; // Nie renderuj inline
       case "h2":
         return (
           <h2 key={index} className="text-2xl font-bold mb-4 mt-8 clear-both">
@@ -310,19 +346,37 @@ export function PageViewer() {
                   {page.readingTime} min
                 </span>
               )}
-              <span className="flex items-center gap-1">
-                <Eye className="w-4 h-4" />
-                {page.views} wyświetleń
-              </span>
+
               {totalPages > 1 && (
                 <span className="ml-auto font-medium text-blue-600">
-                  Strona {currentPageIndex + 1} z {totalPages}
+                  {isLalkaChapters ? (
+                    <>
+                      Rozdział {currentVolumeInfo!.chapterInVolume}
+                      {currentVolumeInfo!.volumeNumber > 1 && (
+                        <span className="text-sm text-gray-500 ml-2">
+                          (Tom {currentVolumeInfo!.volumeNumber})
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      Strona {currentPageIndex + 1} z {totalPages}
+                    </>
+                  )}
                 </span>
               )}
             </div>
 
             {/* Treść aktualnej strony */}
             <div className="prose max-w-none">
+              {isLalkaChapters && currentVolumeInfo?.volumeTitle && (
+                <div className="mb-8 pb-4 border-b-2 border-purple-200 bg-purple-50 -mx-8 px-8 py-4">
+                  <h2 className="text-3xl font-bold text-purple-900 text-center">
+                    {currentVolumeInfo.volumeTitle}
+                  </h2>
+                </div>
+              )}
+
               {currentBlocks.map((block, index) => renderBlock(block, index))}
               {/* Clearfix na końcu treści */}
               <div className="clear-both"></div>
@@ -331,39 +385,48 @@ export function PageViewer() {
             {/* Paginacja - tylko jeśli jest więcej niż 1 strona */}
             {totalPages > 1 && (
               <div className="mt-12 pt-6 border-t">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                   <button
                     onClick={() => goToPage(currentPageIndex - 1)}
                     disabled={currentPageIndex === 0}
-                    className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                   >
                     <ChevronLeft className="w-4 h-4" />
-                    Poprzednia strona
+                    {isLalkaChapters
+                      ? "Poprzedni rozdział"
+                      : "Poprzednia strona"}
                   </button>
 
                   {/* Numeracja stron */}
-                  <div className="flex gap-2">
-                    {Array.from({ length: totalPages }, (_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => goToPage(i)}
-                        className={`w-10 h-10 rounded-lg ${
-                          i === currentPageIndex
-                            ? "bg-blue-600 text-white"
-                            : "border hover:bg-gray-50"
-                        }`}
-                      >
-                        {i + 1}
-                      </button>
-                    ))}
+                  <div className="flex gap-2 overflow-x-auto max-w-full px-2">
+                    {Array.from({ length: totalPages }, (_, i) => {
+                      const displayNumber =
+                        isLalkaChapters && volumeInfo[i]
+                          ? volumeInfo[i].chapterInVolume
+                          : i + 1;
+
+                      return (
+                        <button
+                          key={i}
+                          onClick={() => goToPage(i)}
+                          className={`min-w-[2.5rem] h-10 px-2 rounded-lg text-sm ${
+                            i === currentPageIndex
+                              ? "bg-blue-600 text-white"
+                              : "border hover:bg-gray-50"
+                          }`}
+                        >
+                          {displayNumber}
+                        </button>
+                      );
+                    })}
                   </div>
 
                   <button
                     onClick={() => goToPage(currentPageIndex + 1)}
                     disabled={currentPageIndex === totalPages - 1}
-                    className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                   >
-                    Następna strona
+                    {isLalkaChapters ? "Następny rozdział" : "Następna strona"}
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>

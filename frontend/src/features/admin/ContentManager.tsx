@@ -223,28 +223,26 @@ const RichTextEditor = ({ content, onChange }: any) => {
             className="relative group border rounded-lg p-3 bg-white"
           >
             {/* Kontrolki przesuwania */}
-            {block.type !== "page_break" && (
-              <div className="absolute -left-2 top-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  type="button"
-                  onClick={() => moveBlockUp(index)}
-                  disabled={index === 0}
-                  className="p-1 bg-white border rounded shadow-sm hover:bg-gray-50 disabled:opacity-30"
-                  title="Przesuń w górę"
-                >
-                  ▲
-                </button>
-                <button
-                  type="button"
-                  onClick={() => moveBlockDown(index)}
-                  disabled={index === blocks.length - 1}
-                  className="p-1 bg-white border rounded shadow-sm hover:bg-gray-50 disabled:opacity-30"
-                  title="Przesuń w dół"
-                >
-                  ▼
-                </button>
-              </div>
-            )}
+            <div className="absolute -left-2 top-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button
+                type="button"
+                onClick={() => moveBlockUp(index)}
+                disabled={index === 0}
+                className="p-1 bg-white border rounded shadow-sm hover:bg-gray-50 disabled:opacity-30"
+                title="Przesuń w górę"
+              >
+                ▲
+              </button>
+              <button
+                type="button"
+                onClick={() => moveBlockDown(index)}
+                disabled={index === blocks.length - 1}
+                className="p-1 bg-white border rounded shadow-sm hover:bg-gray-50 disabled:opacity-30"
+                title="Przesuń w dół"
+              >
+                ▼
+              </button>
+            </div>
 
             {block.type === "paragraph" && (
               <textarea
