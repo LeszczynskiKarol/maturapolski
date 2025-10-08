@@ -97,6 +97,20 @@ const RichTextEditor = ({ content, onChange }: any) => {
         const before = textarea.value.substring(0, start);
         const after = textarea.value.substring(end);
         updateBlock(blockId, before + newText + after);
+      } else if (e.key === "k" || e.key === "K") {
+        // DODAJ TO - Ctrl+K dla linków
+        e.preventDefault();
+        const newText = `[${selectedText}](https://)`;
+        const before = textarea.value.substring(0, start);
+        const after = textarea.value.substring(end);
+        updateBlock(blockId, before + newText + after);
+
+        // Ustaw kursor na URL do edycji
+        setTimeout(() => {
+          const newCursorPos = start + selectedText.length + 3; // po "(https://"
+          textarea.setSelectionRange(newCursorPos, newCursorPos + 8);
+          textarea.focus();
+        }, 0);
       }
     }
   };
@@ -104,12 +118,14 @@ const RichTextEditor = ({ content, onChange }: any) => {
   const addBlock = (type: string) => {
     const newBlock = {
       id: Date.now().toString(),
-      type,
+      type: type === "link_template" ? "paragraph" : type, // Konwertuj na paragraph
       content:
         type === "image"
           ? { url: "", alt: "", caption: "" }
           : type === "volume_break"
           ? { volumeTitle: "Tom 1" }
+          : type === "link_template"
+          ? "[tekst linku](https://example.com)" // Szablon linku
           : "",
     };
     const newBlocks = [...blocks, newBlock];
@@ -221,6 +237,15 @@ const RichTextEditor = ({ content, onChange }: any) => {
         </button>
         <button
           type="button"
+          onClick={() => addBlock("link_template")}
+          className="px-3 py-1.5 bg-indigo-500 text-white border rounded hover:bg-indigo-600 flex items-center gap-1"
+          title="Wstaw szablon linku"
+        >
+          🔗 Link
+        </button>
+
+        <button
+          type="button"
           onClick={() => addBlock("image")}
           className="px-3 py-1.5 bg-green-500 text-white border rounded hover:bg-green-600 flex items-center gap-1"
         >
@@ -300,7 +325,7 @@ const RichTextEditor = ({ content, onChange }: any) => {
                 value={block.content}
                 onChange={(e) => updateBlock(block.id, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(e, block.id)}
-                placeholder="**pogrubienie** *pochylenie*"
+                placeholder="**pogrubienie** *pochylenie* [link](url)"
                 rows={8}
                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y font-mono text-sm"
               />

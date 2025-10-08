@@ -157,10 +157,20 @@ export function PageViewer() {
   const renderBlock = (block: any, index: number) => {
     // Helper: markdown do HTML
     const parseMarkdown = (text: string) => {
+      let parsed = text;
+
+      // Links: [tekst](url) -> <a>
+      parsed = parsed.replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">$1</a>'
+      );
+
       // Bold: **text** -> <strong>
-      let parsed = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+      parsed = parsed.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
       // Italic: *text* -> <em>
       parsed = parsed.replace(/\*(.*?)\*/g, "<em>$1</em>");
+
       return parsed;
     };
 
