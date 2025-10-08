@@ -197,13 +197,21 @@ export function PageViewer() {
         return null; // Nie renderuj inline
       case "h2":
         return (
-          <h2 key={index} className="text-2xl font-bold mb-4 mt-8 clear-both">
+          <h2
+            key={index}
+            className="text-2xl font-bold mb-4 mt-8"
+            style={{ overflow: "auto" }}
+          >
             {block.content}
           </h2>
         );
       case "h3":
         return (
-          <h3 key={index} className="text-xl font-bold mb-3 mt-6 clear-both">
+          <h3
+            key={index}
+            className="text-xl font-bold mb-3 mt-6"
+            style={{ overflow: "auto" }}
+          >
             {block.content}
           </h3>
         );
@@ -211,7 +219,8 @@ export function PageViewer() {
         return (
           <h4
             key={index}
-            className="text-lg font-semibold mb-2 mt-4 clear-both"
+            className="text-lg font-semibold mb-2 mt-4"
+            style={{ overflow: "auto" }}
           >
             {block.content}
           </h4>
