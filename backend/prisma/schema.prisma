@@ -165,6 +165,87 @@ model ExerciseUsage {
   @@index([exerciseId])
 }
 
+model ContentHub {
+  id            String    @id @default(cuid())
+  slug          String    @unique
+  title         String
+  type          HubType
+  
+  // Podstawowe info
+  description   String?   @db.Text
+  imageUrl      String?
+  
+  // Dla lektur (LITERARY_WORK)
+  author        String?
+  year          Int?
+  genre         String?
+  epoch         LiteraryEpoch?
+  isRequired    Boolean   @default(false)
+  
+  // Dla autorów (AUTHOR)
+  birthYear     Int?
+  deathYear     Int?
+  
+  // Dla epok (EPOCH)
+  period        String?
+  
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  
+  // Stats
+  views         Int       @default(0)
+  isPublished   Boolean   @default(true)
+  
+  // Relacje
+  pages         ContentPage[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([type, isPublished])
+  @@index([slug])
+}
+
+model ContentPage {
+  id            String    @id @default(cuid())
+  hubId         String
+  hub           ContentHub @relation(fields: [hubId], references: [id], onDelete: Cascade)
+  
+  slug          String
+  title         String
+  
+  // Treść - Rich Text JSON
+  content       Json
+  
+  // Kolejność wyświetlania
+  order         Int       @default(0)
+  
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  
+  // Stats
+  readingTime   Int?
+  views         Int       @default(0)
+  isPublished   Boolean   @default(true)
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@unique([hubId, slug])
+  @@index([hubId, order])
+}
+
+enum HubType {
+  LITERARY_WORK
+  EPOCH
+  AUTHOR
+  THEME
+  GENRE
+}
+
+
 enum UsageContext {
   LEARNING
   EXAM

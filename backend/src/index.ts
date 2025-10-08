@@ -16,6 +16,7 @@ import { learningRoutes } from "./routes/learning.routes";
 import { examRoutes } from "./routes/exam.routes";
 import { materialsRoutes } from "./routes/materials.routes";
 import { studentRoutes } from "./routes/student.routes";
+import { contentRoutes } from "./routes/content.routes";
 import { studyPlanRoutes } from "./routes/studyPlan.routes";
 
 const fastify = Fastify({
@@ -116,6 +117,9 @@ console.log("✓ Learning routes registered at /api/learning/*");
 // Trasy publiczne
 fastify.register(materialsRoutes, { prefix: "/api/materials" });
 console.log("✓ Materials routes registered at /api/materials/*");
+
+fastify.register(contentRoutes, { prefix: "/api/content" });
+console.log("✓ Content routes registered at /api/content/*");
 
 // Error handler
 fastify.setErrorHandler(async (error) => {

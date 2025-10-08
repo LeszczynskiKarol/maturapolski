@@ -1,6 +1,10 @@
 // frontend/src/App.tsx
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import HubListPage from "./features/content/HubListPage";
+import { HubDetailPage } from "./features/content/HubDetailPage";
+import { PageViewer } from "./features/content/PageViewer";
+import ContentManager from "./features/admin/ContentManager";
 import { CookieBanner } from "./components/CookieBanner";
 import { PrivacyPolicyPage } from "./features/legal/PrivacyPolicyPage";
 import { TermsOfServicePage } from "./features/legal/TermsOfServicePage";
@@ -121,6 +125,11 @@ export const App: React.FC = () => {
                 path="/resend-verification"
                 element={<ResendVerificationPage />}
               />
+              {/* NOWA BAZA WIEDZY */}
+              <Route path="/baza" element={<HubListPage />} />
+              <Route path="/baza/:hubSlug" element={<HubDetailPage />} />
+              <Route path="/baza/:hubSlug/:pageSlug" element={<PageViewer />} />
+
               {/* Public Materials routes */}
               <Route path="/materialy" element={<MaterialsPage />} />
               <Route path="/materialy/:slug" element={<MaterialDetailPage />} />
@@ -136,6 +145,7 @@ export const App: React.FC = () => {
                 <Route index element={<AdminDashboard />} />
                 <Route path="exercises" element={<ExerciseManager />} />
                 <Route path="users" element={<UserManager />} />
+                <Route path="content" element={<ContentManager />} />
                 <Route path="materials" element={<AdminMaterialsEditor />} />
                 <Route path="exams" element={<ExamStructureManager />} />
                 <Route path="user-sessions" element={<UserSessionsTable />} />
