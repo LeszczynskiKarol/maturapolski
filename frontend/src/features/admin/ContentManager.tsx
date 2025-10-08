@@ -243,6 +243,14 @@ const RichTextEditor = ({ content, onChange }: any) => {
         >
           🔗 Link
         </button>
+        <button
+          type="button"
+          onClick={() => addBlock("html")}
+          className="px-3 py-1.5 bg-red-500 text-white border rounded hover:bg-red-600 flex items-center gap-1"
+          title="Wstaw kod HTML"
+        >
+          &lt;/&gt; HTML
+        </button>
 
         <button
           type="button"
@@ -516,7 +524,7 @@ const RichTextEditor = ({ content, onChange }: any) => {
             )}
 
             {/* Label typu bloku */}
-            {block.type !== "page_break" && (
+            {block.type !== "page_break" && block.type !== "volume_break" && (
               <div className="text-xs text-gray-500 mb-2 font-medium uppercase">
                 {block.type === "h2" && "Nagłówek H2"}
                 {block.type === "h3" && "Nagłówek H3"}
@@ -524,6 +532,7 @@ const RichTextEditor = ({ content, onChange }: any) => {
                 {block.type === "paragraph" && "Akapit"}
                 {block.type === "list" && "Lista"}
                 {block.type === "quote" && "Cytat"}
+                {block.type === "html" && "⚠️ Kod HTML"}
               </div>
             )}
 
@@ -573,6 +582,26 @@ const RichTextEditor = ({ content, onChange }: any) => {
                 rows={4}
                 className="w-full px-4 py-2 border rounded-lg bg-blue-50 italic focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y"
               />
+            )}
+            {block.type === "html" && (
+              <div className="space-y-2">
+                <textarea
+                  value={block.content}
+                  onChange={(e) => updateBlock(block.id, e.target.value)}
+                  placeholder="<div>Twój kod HTML...</div>"
+                  rows={8}
+                  className="w-full px-4 py-2 border rounded-lg bg-blue-20 text-green-800 font-mono text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 resize-y"
+                />
+                {/* Podgląd */}
+                {block.content && (
+                  <div className="p-4 border rounded-lg bg-gray-50">
+                    <div className="text-xs text-gray-500 mb-2 font-semibold">
+                      PODGLĄD:
+                    </div>
+                    <div dangerouslySetInnerHTML={{ __html: block.content }} />
+                  </div>
+                )}
+              </div>
             )}
           </div>
         ))}

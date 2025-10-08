@@ -43,13 +43,12 @@ export function PageViewer() {
 
   const volumeInfo = isLalkaChapters
     ? contentPages.map((pageBlocks, index) => {
-        // Sprawdź czy TA strona zaczyna się od volume_break
         const startsWithVolumeBreak = pageBlocks[0]?.type === "volume_break";
         const volumeTitle = startsWithVolumeBreak
           ? pageBlocks[0].content?.volumeTitle
           : null;
 
-        // Policz którym jesteśmy tomem (licząc volume_break do tej pory)
+        // Policz którym jesteśmy tomem
         let volumeNumber = 1;
         for (let i = 0; i <= index; i++) {
           if (contentPages[i][0]?.type === "volume_break") {
@@ -63,15 +62,23 @@ export function PageViewer() {
         let chapterInVolume = 1;
 
         if (startsWithVolumeBreak) {
-          // Jeśli TA strona zaczyna się od volume_break, to będzie rozdział 1 nowego tomu
           chapterInVolume = 1;
         } else {
-          // Cofaj się i licz rozdziały do poprzedniego volume_break
+          // Znajdź indeks ostatniego volume_break przed tą stroną
+          let lastVolumeBreakIndex = -1;
           for (let i = index - 1; i >= 0; i--) {
             if (contentPages[i][0]?.type === "volume_break") {
-              break; // Zatrzymaj się na poprzednim volume_break
+              lastVolumeBreakIndex = i;
+              break;
             }
-            chapterInVolume++;
+          }
+
+          // Policz odległość od ostatniego volume_break
+          if (lastVolumeBreakIndex >= 0) {
+            chapterInVolume = index - lastVolumeBreakIndex + 1;
+          } else {
+            // Jeśli nie ma wcześniejszego volume_break, jesteśmy w tomie 1
+            chapterInVolume = index + 1;
           }
         }
 
@@ -240,6 +247,15 @@ export function PageViewer() {
           </blockquote>
         );
 
+      case "html":
+        return (
+          <div
+            key={index}
+            className="html-content my-4"
+            dangerouslySetInnerHTML={{ __html: block.content }}
+          />
+        );
+
       case "image":
         const alignment = block.content.alignment || "full";
         const width = block.content.width || "100%";
@@ -353,7 +369,7 @@ export function PageViewer() {
             {/* Sidebar - Lista stron Hub-a */}
             {hubPages.length > 0 && (
               <aside className="lg:col-span-3 order-2 lg:order-1">
-                <div className="sticky top-20 bg-white rounded-lg shadow-sm p-4">
+                <div className="sticky bg-white rounded-lg shadow-sm p-4">
                   <h3 className="font-semibold text-sm text-gray-700 mb-3 uppercase tracking-wide">
                     {page?.hub.title}
                   </h3>
@@ -476,13 +492,13 @@ export function PageViewer() {
               {/* Paginacja - tylko jeśli jest więcej niż 1 strona */}
               {totalPages > 1 && (
                 <div className="mt-12 pt-6 border-t">
-                  <div className="flex flex-col items-center gap-4">
+                  <div className="flex flex-col items-left gap-4">
                     {/* Przyciski nawigacji */}
-                    <div className="flex w-full items-center justify-between gap-4">
+                    <div className="flex w-full items-left justify-between gap-4">
                       <button
                         onClick={() => goToPage(currentPageIndex - 1)}
                         disabled={currentPageIndex === 0}
-                        className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-left gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <ChevronLeft className="w-4 h-4" />
                         <span className="hidden sm:inline">
