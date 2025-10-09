@@ -87,7 +87,14 @@ export class ContentService {
     // Najpierw znajdź hub
     const hub = await prisma.contentHub.findUnique({
       where: { slug: hubSlug, isPublished: true },
-      select: { id: true, title: true, type: true },
+      select: {
+        id: true,
+        title: true,
+        type: true,
+        slug: true,
+        author: true,
+        description: true,
+      },
     });
 
     if (!hub) throw new Error("Hub not found");
@@ -109,6 +116,7 @@ export class ContentService {
             type: true,
             author: true,
             epoch: true,
+            description: true,
           },
         },
       },
@@ -140,7 +148,100 @@ export class ContentService {
         isPublished: true,
       },
       orderBy: { order: "asc" },
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        order: true,
+        readingTime: true,
+      },
     });
+  }
+
+  // ==========================================
+  // OCENY (RATINGS)
+  // ==========================================
+
+  async submitRating(
+    pageId: string,
+    rating: number,
+    ipAddress: string,
+    userId?: string
+  ) {
+    if (rating < 1 || rating > 5) {
+      throw new Error("Rating must be between 1 and 5");
+    }
+
+    // Sprawdź czy strona istnieje
+    const page = await prisma.contentPage.findUnique({
+      where: { id: pageId },
+    });
+
+    if (!page) throw new Error("Page not found");
+
+    // Sprawdź czy użytkownik/IP już ocenił
+    const existingRating = await prisma.pageRating.findFirst({
+      where: {
+        pageId,
+        OR: [{ userId: userId || undefined }, { ipAddress }],
+      },
+    });
+
+    if (existingRating) {
+      // Aktualizuj istniejącą ocenę
+      await prisma.pageRating.update({
+        where: { id: existingRating.id },
+        data: { rating },
+      });
+    } else {
+      // Dodaj nową ocenę
+      await prisma.pageRating.create({
+        data: {
+          pageId,
+          rating,
+          userId,
+          ipAddress,
+        },
+      });
+    }
+
+    // Przelicz średnią
+    await this.recalculatePageRating(pageId);
+
+    return { success: true };
+  }
+
+  async recalculatePageRating(pageId: string) {
+    const ratings = await prisma.pageRating.findMany({
+      where: { pageId },
+      select: { rating: true },
+    });
+
+    const count = ratings.length;
+    const average =
+      count > 0 ? ratings.reduce((sum, r) => sum + r.rating, 0) / count : 0;
+
+    await prisma.contentPage.update({
+      where: { id: pageId },
+      data: {
+        averageRating: average,
+        ratingsCount: count,
+      },
+    });
+
+    return { average, count };
+  }
+
+  async getPageRating(pageId: string) {
+    const page = await prisma.contentPage.findUnique({
+      where: { id: pageId },
+      select: {
+        averageRating: true,
+        ratingsCount: true,
+      },
+    });
+
+    return page || { averageRating: 0, ratingsCount: 0 };
   }
 
   // ==========================================
@@ -204,8 +305,6 @@ export class ContentService {
     });
   }
 
-  // Zmiana kolejności stron
-  // Zmiana kolejności stron
   async reorderPages(hubId: string, pageIds: string[]) {
     // Sprawdź czy hub istnieje
     const hub = await prisma.contentHub.findUnique({
@@ -218,7 +317,7 @@ export class ContentService {
     const pages = await prisma.contentPage.findMany({
       where: {
         id: { in: pageIds },
-        hubId: hubId, // ✅ Teraz używamy hubId!
+        hubId: hubId,
       },
     });
 

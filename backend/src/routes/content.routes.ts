@@ -71,6 +71,54 @@ export async function contentRoutes(fastify: FastifyInstance) {
   });
 
   // ==========================================
+  // RATINGS - Oceny stron
+  // ==========================================
+
+  // Dodaj/aktualizuj ocenę
+  // POST /api/content/pages/:pageId/rate
+  fastify.post("/pages/:pageId/rate", async (request, reply) => {
+    try {
+      const { pageId } = request.params as { pageId: string };
+      const { rating } = request.body as { rating: number };
+
+      // Pobierz IP użytkownika
+      const ipAddress = request.ip;
+
+      // Jeśli użytkownik jest zalogowany, użyj jego ID
+      let userId: string | undefined;
+      try {
+        await request.jwtVerify();
+        userId = request.user?.userId;
+      } catch {
+        // Użytkownik niezalogowany - użyj tylko IP
+      }
+
+      const result = await contentService.submitRating(
+        pageId,
+        rating,
+        ipAddress,
+        userId
+      );
+
+      return reply.send(result);
+    } catch (error: any) {
+      return reply.status(400).send({ error: error.message });
+    }
+  });
+
+  // Pobierz statystyki ocen dla strony
+  // GET /api/content/pages/:pageId/rating
+  fastify.get("/pages/:pageId/rating", async (request, reply) => {
+    try {
+      const { pageId } = request.params as { pageId: string };
+      const rating = await contentService.getPageRating(pageId);
+      return reply.send(rating);
+    } catch (error: any) {
+      return reply.status(400).send({ error: error.message });
+    }
+  });
+
+  // ==========================================
   // ADMIN ROUTES - Wymagają autoryzacji
   // ==========================================
 

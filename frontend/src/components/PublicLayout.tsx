@@ -1,6 +1,7 @@
 // frontend/src/components/PublicLayout.tsx
 
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import { contentService } from "../services/contentService";
 import { Link } from "react-router-dom";
 import { BookOpen, ChevronDown, ArrowLeft, X } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
@@ -14,6 +15,23 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
   const user = useAuthStore((state) => state.user);
   const isLoggedIn = !!user;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [featuredHubs, setFeaturedHubs] = useState<any[]>([]);
+
+  useEffect(() => {
+    loadFeaturedHubs();
+  }, []);
+
+  const loadFeaturedHubs = async () => {
+    try {
+      const response = await contentService.getHubs({
+        type: "LITERARY_WORK",
+        limit: 5,
+      });
+      setFeaturedHubs(response.hubs || []);
+    } catch (error) {
+      console.error("Error loading featured hubs:", error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -249,22 +267,26 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
               </ul>
             </div>
 
+            {/* ZAKTUALIZOWANA SEKCJA - Baza wiedzy */}
             <div>
-              <h4 className="font-bold mb-4 text-lg">Zasoby</h4>
+              <h4 className="font-bold mb-4 text-lg">Baza wiedzy</h4>
               <ul className="space-y-3 text-gray-400">
+                {featuredHubs.slice(0, 4).map((hub) => (
+                  <li key={hub.id}>
+                    <a
+                      href={`/baza-wiedzy/${hub.slug}`}
+                      className="hover:text-white transition-colors"
+                    >
+                      {hub.title}
+                    </a>
+                  </li>
+                ))}
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Blog
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Poradniki
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    FAQ
+                  <a
+                    href="/baza-wiedzy"
+                    className="hover:text-white transition-colors font-medium"
+                  >
+                    Zobacz wszystkie →
                   </a>
                 </li>
               </ul>

@@ -231,6 +231,10 @@ model ContentPage {
   readingTime   Int?
   views         Int       @default(0)
   isPublished   Boolean   @default(true)
+
+  ratings       PageRating[]
+  averageRating Float?        @default(0)
+  ratingsCount  Int           @default(0)
   
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -741,6 +745,21 @@ model AiUsage {
   @@index([userId, createdAt])
   @@index([subscriptionId])
   @@index([exerciseId])  // Ten index już jest poprawnie
+}
+
+model PageRating {
+  id        String   @id @default(cuid())
+  pageId    String
+  page      ContentPage @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  
+  userId    String?  // opcjonalne - anonimowe oceny
+  ipAddress String?  // do ograniczenia spamu
+  rating    Int      // 1-5 gwiazdek
+  
+  createdAt DateTime @default(now())
+  
+  @@index([pageId])
+  @@index([ipAddress])
 }
 
 model StripeEvent {

@@ -23,6 +23,19 @@ export const contentService = {
     return response.data;
   },
 
+  // Ratings
+  async submitRating(pageId: string, rating: number) {
+    const response = await api.post(`/api/content/pages/${pageId}/rate`, {
+      rating,
+    });
+    return response.data;
+  },
+
+  async getPageRating(pageId: string) {
+    const response = await api.get(`/api/content/pages/${pageId}/rating`);
+    return response.data;
+  },
+
   // Admin
   async createHub(data: any) {
     const response = await api.post("/api/content/hubs", data);
