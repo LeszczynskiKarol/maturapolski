@@ -393,11 +393,11 @@ export function PageViewer() {
             {/* Sidebar - Lista stron Hub-a */}
             {hubPages.length > 0 && (
               <aside className="lg:col-span-3 order-2 lg:order-1">
-                <div className="sticky bg-white rounded-lg shadow-sm p-4">
+                <div className="bg-white rounded-lg shadow-sm p-4">
                   <h3 className="font-semibold text-sm text-gray-700 mb-3 uppercase tracking-wide">
                     {page?.hub.title}
                   </h3>
-                  <nav className="space-y-1 max-h-[calc(100vh-150px)] overflow-y-auto">
+                  <nav className="space-y-1">
                     {hubPages.map((hubPage) => (
                       <Link
                         key={hubPage.id}

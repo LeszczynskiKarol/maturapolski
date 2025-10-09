@@ -1,8 +1,8 @@
 // frontend/src/components/PublicLayout.tsx
 
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, ChevronDown, ArrowLeft } from "lucide-react";
+import { BookOpen, ChevronDown, ArrowLeft, X } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 import { CookieSettingsLink } from "./CookieSettingsLink";
 
@@ -13,6 +13,7 @@ interface PublicLayoutProps {
 export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
   const user = useAuthStore((state) => state.user);
   const isLoggedIn = !!user;
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -82,10 +83,83 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
             </div>
 
             {/* Mobile menu button */}
-            <button className="md:hidden p-2">
-              <ChevronDown className="w-6 h-6" />
+            <button
+              className="md:hidden p-2"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <ChevronDown className="w-6 h-6" />
+              )}
             </button>
           </div>
+
+          {/* Mobile menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden mt-4 pb-4 border-t pt-4">
+              {!isLoggedIn ? (
+                <div className="flex flex-col space-y-3">
+                  <a
+                    href="/#jak-dziala"
+                    className="text-gray-700 hover:text-blue-600 transition-colors py-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Jak działa
+                  </a>
+
+                  <a
+                    href="/#funkcje"
+                    className="text-gray-700 hover:text-blue-600 transition-colors py-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Funkcje
+                  </a>
+
+                  <a
+                    href="/#cennik"
+                    className="text-gray-700 hover:text-blue-600 transition-colors py-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Cennik
+                  </a>
+
+                  <a
+                    href="/#opinie"
+                    className="text-gray-700 hover:text-blue-600 transition-colors py-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Opinie
+                  </a>
+
+                  <Link
+                    to="/login"
+                    className="text-gray-700 hover:text-blue-600 transition-colors py-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Zaloguj się
+                  </Link>
+
+                  <Link
+                    to="/register"
+                    className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg text-center"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Zarejestruj się
+                  </Link>
+                </div>
+              ) : (
+                <Link
+                  to="/dashboard"
+                  className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg flex items-center gap-2 justify-center"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Wróć do panelu
+                </Link>
+              )}
+            </div>
+          )}
         </div>
       </nav>
 
