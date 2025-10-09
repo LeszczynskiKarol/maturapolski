@@ -50,12 +50,17 @@ export const LandingPage: React.FC = () => {
       <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-lg z-50 border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2">
               <BookOpen className="w-8 h-8 text-blue-600" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Matura Polski
-              </span>
-            </div>
+              <div className="flex flex-col">
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Matura Polski
+                </span>
+                <span className="text-xs font-semibold text-gray-600 tracking-wide">
+                  Zdaj na 100%
+                </span>
+              </div>
+            </Link>
 
             <div className="hidden md:flex items-center gap-8">
               {!isLoggedIn ? (
@@ -170,7 +175,7 @@ export const LandingPage: React.FC = () => {
             <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-500">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-green-500" />
-                <span>Tylko 49 zł/miesiąc</span>
+                <span>Tylko 39 zł/miesiąc</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-green-500" />
@@ -251,7 +256,7 @@ export const LandingPage: React.FC = () => {
                 to="/register"
                 className="mt-8 block w-full text-center px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors"
               >
-                Zarejestruj się za 49 zł/mies
+                Zarejestruj się za 39 zł/mies
               </Link>
             </motion.div>
           </div>
@@ -304,7 +309,7 @@ export const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Wszystko czego potrzebujesz
+              Wszystko, czego potrzebujesz do matury z Polaka
             </h2>
             <p className="text-xl text-gray-600">
               w jednej, przejrzystej aplikacji
@@ -321,14 +326,12 @@ export const LandingPage: React.FC = () => {
                 <div className="w-3 h-3 rounded-full bg-green-500" />
               </div>
               <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                <div className="text-center p-8">
-                  <Monitor className="w-20 h-20 mx-auto mb-4 text-gray-400" />
-                  <p className="text-gray-500 text-lg font-semibold">
-                    [PLACEHOLDER: Dashboard Screenshot]
-                  </p>
-                  <p className="text-gray-400 text-sm mt-2">
-                    Widok głównego dashboardu z statystykami i postępami
-                  </p>
+                <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
+                  <img
+                    src="https://maturapolski.s3.eu-north-1.amazonaws.com/content/dashboard_opt.webp"
+                    alt="Dashboard z pełnymi statystykami"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
             </div>
@@ -345,7 +348,7 @@ export const LandingPage: React.FC = () => {
                 "Analiza według epok literackich",
                 "Dzienne cele i streaki",
               ]}
-              imageText="[Dashboard Preview]"
+              imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/postepy_opt.webp"
             />
 
             <FeatureWithImage
@@ -357,7 +360,7 @@ export const LandingPage: React.FC = () => {
                 "Odblokowanie wyższych poziomów",
                 "Punkty doświadczenia (XP)",
               ]}
-              imageText="[Adaptive Learning]"
+              imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/analiza_postepow_opt.webp"
             />
           </div>
         </div>
@@ -404,7 +407,7 @@ export const LandingPage: React.FC = () => {
                   text: "Zobacz jak poprawiają się kolejne wypracowania",
                 },
               ]}
-              image="[AI Essay Grading Interface]"
+              imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/ai_opt.webp"
               imageOnRight={true}
             />
 
@@ -435,7 +438,7 @@ export const LandingPage: React.FC = () => {
                   text: "Zobacz które epoki znasz najlepiej i nad czym popracować",
                 },
               ]}
-              image="[Epoch Review System]"
+              imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/epoki_opt.webp"
               imageOnRight={false}
             />
 
@@ -466,7 +469,7 @@ export const LandingPage: React.FC = () => {
                   text: "Do każdego zadania pełne wyjaśnienie odpowiedzi",
                 },
               ]}
-              image="[Exercise Database Interface]"
+              imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/zadanie_opt.webp"
               imageOnRight={true}
             />
 
@@ -497,7 +500,7 @@ export const LandingPage: React.FC = () => {
                   text: "Buduj serie dni z rzędu i nie przerywaj passy",
                 },
               ]}
-              image="[Progress Analytics Dashboard]"
+              imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/zbior_pytan_opt.webp"
               imageOnRight={false}
             />
           </div>
@@ -651,7 +654,7 @@ export const LandingPage: React.FC = () => {
               name="Paweł D."
               role="Matura 2024 - 89 pkt"
               avatar="PD"
-              text="Aplikacja mobilna świetnie działa - mogłem się uczyć w drodze do szkoły. System streaki zmotywował mnie do codziennej nauki."
+              text="Aplikacja świetnie działa - mogłem się uczyć w drodze do szkoły. System streaki zmotywował mnie do codziennej nauki."
               rating={5}
               improvement="+25 pkt"
             />
@@ -659,7 +662,7 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Stats Section - Enhanced */}
+      {/* Stats Section - Enhanced 
       <section className="py-20 px-4 bg-gradient-to-br from-blue-600 to-purple-600 text-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -710,7 +713,7 @@ export const LandingPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section>*/}
 
       {/* Comparison Table */}
       <section className="py-20 px-4 bg-gray-50">
@@ -741,7 +744,7 @@ export const LandingPage: React.FC = () => {
                   feature="Koszt miesięczny"
                   traditional="600-800 zł"
                   books="0 zł (jednorazowo 100-200 zł)"
-                  us="49 zł"
+                  us="39 zł"
                 />
                 <ComparisonRow
                   feature="Dostępność 24/7"
@@ -779,12 +782,12 @@ export const LandingPage: React.FC = () => {
                   books={false}
                   us={true}
                 />
-                <ComparisonRow
+                {/*<ComparisonRow
                   feature="Aplikacja mobilna"
                   traditional={false}
                   books={false}
                   us={true}
-                />
+                />*/}
               </tbody>
             </table>
           </div>
@@ -806,7 +809,7 @@ export const LandingPage: React.FC = () => {
           <div className="grid md:grid-cols-3 gap-8">
             <FeatureCard
               icon={<Smartphone className="w-8 h-8" />}
-              title="Aplikacja mobilna"
+              title="Dostosowanie do urządzeń mobilnych"
               description="Ucz się w dowolnym miejscu - w drodze do szkoły, w przerwie, przed snem. Pełna synchronizacja z wersją web."
             />
             <FeatureCard
@@ -851,7 +854,7 @@ export const LandingPage: React.FC = () => {
           <div className="space-y-4">
             <FAQItem
               question="Jak mogę zacząć korzystać z platformy?"
-              answer="Po zarejestrowaniu się i opłaceniu subskrypcji (49 zł/miesiąc) otrzymujesz natychmiastowy dostęp do całej platformy. Możesz od razu rozpocząć naukę - rozwiązywać zadania, pisać wypracowania i korzystać ze wszystkich funkcji."
+              answer="Po zarejestrowaniu się i opłaceniu subskrypcji (39 zł/miesiąc) otrzymujesz natychmiastowy dostęp do całej platformy. Możesz od razu rozpocząć naukę - rozwiązywać zadania, pisać wypracowania i korzystać ze wszystkich funkcji."
               isOpen={faqOpen === 0}
               onClick={() => setFaqOpen(faqOpen === 0 ? null : 0)}
             />
@@ -917,7 +920,7 @@ export const LandingPage: React.FC = () => {
                   Wszystko czego potrzebujesz do matury
                 </p>
                 <div className="mb-4">
-                  <span className="text-6xl font-bold">49 zł</span>
+                  <span className="text-6xl font-bold">39 zł</span>
                   <span className="text-2xl ml-2">/miesiąc</span>
                 </div>
                 <p className="text-blue-100 text-sm">
@@ -986,7 +989,7 @@ export const LandingPage: React.FC = () => {
                 to="/register"
                 className="block text-center py-4 rounded-xl font-bold text-lg transition-all bg-white text-blue-600 hover:bg-blue-50 shadow-2xl hover:shadow-3xl hover:scale-105"
               >
-                Rozpocznij naukę za 49 zł
+                Rozpocznij naukę za 39 zł
               </Link>
 
               <p className="text-center text-blue-100 text-sm mt-4">
@@ -1011,7 +1014,7 @@ export const LandingPage: React.FC = () => {
               Zdaj na 100%.
             </h2>
             <p className="text-xl md:text-2xl mb-10 text-blue-100">
-              Dołącz do 50,000+ uczniów którzy osiągnęli swoje cele dzięki
+              Dołącz do zadowolonych uczniów, którzy osiągnęli swoje cele dzięki
               naszej platformie
             </p>
 
@@ -1034,11 +1037,7 @@ export const LandingPage: React.FC = () => {
             <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-blue-100">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5" />
-                <span>Tylko 49 zł/miesiąc</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5" />
-                <span>Anuluj kiedy chcesz</span>
+                <span>Tylko 39 zł/miesiąc</span>
               </div>
             </div>
           </motion.div>
@@ -1058,7 +1057,7 @@ export const LandingPage: React.FC = () => {
                 Inteligentna platforma do nauki języka polskiego, która pomaga
                 tysiącom maturzystów osiągnąć wymarzone wyniki.
               </p>
-              <div className="flex gap-4">
+              {/*<div className="flex gap-4">
                 <a
                   href="#"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
@@ -1080,7 +1079,7 @@ export const LandingPage: React.FC = () => {
                   <span className="sr-only">TikTok</span>
                   TT
                 </a>
-              </div>
+              </div>*/}
             </div>
 
             <div>
@@ -1125,11 +1124,14 @@ export const LandingPage: React.FC = () => {
               <h4 className="font-bold mb-4 text-lg">Zasoby</h4>
               <ul className="space-y-3 text-gray-400">
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Blog
+                  <a
+                    href="/baza-wiedzy"
+                    className="hover:text-white transition-colors"
+                  >
+                    Opracowania literackie
                   </a>
                 </li>
-                <li>
+                {/*<li>
                   <a href="#" className="hover:text-white transition-colors">
                     Poradniki
                   </a>
@@ -1138,7 +1140,7 @@ export const LandingPage: React.FC = () => {
                   <a href="#" className="hover:text-white transition-colors">
                     FAQ
                   </a>
-                </li>
+                </li>*/}
               </ul>
             </div>
 
@@ -1199,18 +1201,6 @@ export const LandingPage: React.FC = () => {
 };
 
 // ============ HELPER COMPONENTS ============
-
-const Monitor: React.FC<{ className?: string }> = ({ className }) => (
-  <svg
-    className={className}
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <rect x="2" y="3" width="20" height="14" rx="2" strokeWidth="2" />
-    <path d="M8 21h8M12 17v4" strokeWidth="2" />
-  </svg>
-);
 
 const User: React.FC<{ className?: string }> = ({ className }) => (
   <svg
@@ -1284,8 +1274,8 @@ const FeatureWithImage: React.FC<{
   title: string;
   description: string;
   features: string[];
-  imageText: string;
-}> = ({ title, description, features, imageText }) => (
+  imageUrl: string; // ZMIENIONE Z imageText
+}> = ({ title, description, features, imageUrl }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -1304,8 +1294,8 @@ const FeatureWithImage: React.FC<{
         ))}
       </ul>
     </div>
-    <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl p-8 aspect-video flex items-center justify-center border-2 border-gray-300">
-      <p className="text-gray-500 font-semibold">{imageText}</p>
+    <div className="rounded-xl overflow-hidden shadow-lg">
+      <img src={imageUrl} alt={title} className="w-full h-full object-cover" />
     </div>
   </motion.div>
 );
@@ -1315,9 +1305,9 @@ const FeatureSection: React.FC<{
   subtitle: string;
   description: string;
   features: Array<{ icon: React.ReactNode; title: string; text: string }>;
-  image: string;
+  imageUrl: string; // ZMIENIONE Z image
   imageOnRight: boolean;
-}> = ({ title, subtitle, description, features, image, imageOnRight }) => (
+}> = ({ title, subtitle, description, features, imageUrl, imageOnRight }) => (
   <div
     className={`grid md:grid-cols-2 gap-12 items-center ${
       imageOnRight ? "" : "md:grid-flow-dense"
@@ -1341,8 +1331,12 @@ const FeatureSection: React.FC<{
       </div>
     </div>
     <div className={imageOnRight ? "" : "md:col-start-1 md:row-start-1"}>
-      <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl p-12 aspect-square flex items-center justify-center border-4 border-blue-200">
-        <p className="text-gray-600 font-semibold text-center">{image}</p>
+      <div className="rounded-2xl overflow-hidden shadow-xl">
+        <img
+          src={imageUrl}
+          alt={title}
+          className="w-full h-full object-cover"
+        />
       </div>
     </div>
   </div>
@@ -1400,27 +1394,6 @@ const TestimonialCard: React.FC<{
       ))}
     </div>
     <p className="text-gray-700 italic">"{text}"</p>
-  </motion.div>
-);
-
-const EnhancedStatCard: React.FC<{
-  number: string;
-  label: string;
-  icon: React.ReactNode;
-  subtitle?: string;
-}> = ({ number, label, icon, subtitle }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    className="text-center"
-  >
-    <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-4">
-      {icon}
-    </div>
-    <div className="text-4xl md:text-5xl font-bold mb-2">{number}</div>
-    <div className="text-blue-100 font-medium">{label}</div>
-    {subtitle && <div className="text-sm text-blue-200 mt-1">{subtitle}</div>}
   </motion.div>
 );
 

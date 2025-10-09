@@ -1538,19 +1538,7 @@ async function seedExercises() {
         [2, 2],
       ],
     },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "LANGUAGE_USE",
-      difficulty: 1,
-      points: 2,
-      question: "Które słowa piszemy wielką literą?",
-      content: {
-        sentence: "Adam mieszka w warszawie i lubi czytać mickiewicza.",
-        question: "Co poprawić?",
-        options: ["Adam", "warszawie", "czytać", "mickiewicza", "lubi"],
-      },
-      correctAnswer: [1, 3],
-    },
+
     {
       type: "CLOSED_MULTIPLE",
       category: "LANGUAGE_USE",
@@ -6482,17 +6470,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
         acceptableAnswers: ["Smok Wawelski", "smok wawelski", "wawelski"],
       },
     },
-    {
-      type: "SHORT_ANSWER",
-      category: "LANGUAGE_USE",
-      difficulty: 1,
-      points: 1,
-      question: "Dokończ przysłowie: 'Bez pracy nie ma...'",
-      content: {
-        expectedAnswer: "kołaczy",
-        acceptableAnswers: ["kołaczy"],
-      },
-    },
+
     {
       type: "SHORT_ANSWER",
       category: "LANGUAGE_USE",

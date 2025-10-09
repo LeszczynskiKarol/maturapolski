@@ -51,7 +51,7 @@ export const AiPointsWidget = () => {
         <div className="space-y-2 mb-3">
           <div className="flex items-center gap-2 text-xs text-gray-700 dark:text-gray-300">
             <Crown className="w-3 h-3 text-yellow-500" />
-            <span>300 punktów AI miesięcznie</span>
+            <span>200 punktów AI miesięcznie</span>
           </div>
           <div className="flex items-center gap-2 text-xs text-gray-700 dark:text-gray-300">
             <Zap className="w-3 h-3 text-yellow-500" />
@@ -65,7 +65,7 @@ export const AiPointsWidget = () => {
 
         <div className="flex items-center justify-between p-2 bg-white dark:bg-gray-800 rounded-lg">
           <span className="text-sm font-bold text-gray-900 dark:text-white">
-            49 zł/miesiąc
+            39 zł/miesiąc
           </span>
         </div>
       </Link>

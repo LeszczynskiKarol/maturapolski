@@ -1523,7 +1523,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
             updateData.aiPointsLimit = 20;
             updateData.status = "INACTIVE";
           } else if (plan === "PREMIUM") {
-            updateData.aiPointsLimit = 300;
+            updateData.aiPointsLimit = 200;
             updateData.status = "ACTIVE";
           }
         }

@@ -326,7 +326,7 @@ export class SubscriptionService {
           stripeSubscriptionId: subscriptionId,
           status: "ACTIVE",
           plan: "PREMIUM",
-          aiPointsLimit: 300,
+          aiPointsLimit: 200,
           aiPointsUsed: 0,
           aiPointsReset: new Date(),
           startDate: new Date(),

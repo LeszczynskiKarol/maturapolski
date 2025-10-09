@@ -270,13 +270,13 @@ export const StudentDashboard: React.FC = () => {
                   </div>
                   <p className="text-sm sm:text-base text-blue-100 mb-3 sm:mb-4">
                     Plan FREE nie obejmuje sesji nauki. Wykup Premium aby
-                    otrzymywać szczegółowe oceny AI, 300 punktów miesięcznie i
+                    otrzymywać szczegółowe oceny AI, 200 punktów miesięcznie i
                     nielimitowany dostęp.
                   </p>
                   <div className="flex flex-col xs:flex-row xs:flex-wrap items-start xs:items-center gap-2 xs:gap-4 text-xs sm:text-sm mb-3 sm:mb-4">
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                      <span>300 punktów AI/mies</span>
+                      <span>200 punktów AI/mies</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
@@ -284,7 +284,7 @@ export const StudentDashboard: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                      <span>49 zł/miesiąc</span>
+                      <span>39 zł/miesiąc</span>
                     </div>
                   </div>
                   <button

@@ -112,11 +112,11 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
                 <ul className="space-y-2">
                   <li className="flex items-center gap-2 text-sm">
                     <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                    <span>300 punktów AI miesięcznie (15x więcej!)</span>
+                    <span>200 punktów AI miesięcznie (15x więcej!)</span>
                   </li>
                   <li className="flex items-center gap-2 text-sm">
                     <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                    <span>~240 krótkich odpowiedzi lub ~100 wypracowań</span>
+                    <span>~200 krótkich odpowiedzi lub ~70 wypracowań</span>
                   </li>
                   <li className="flex items-center gap-2 text-sm">
                     <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
@@ -133,7 +133,7 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
               <div className="text-center mb-6">
                 <div className="inline-flex items-baseline gap-2">
                   <span className="text-4xl font-bold text-gray-900 dark:text-white">
-                    49 zł
+                    39 zł
                   </span>
                   <span className="text-gray-500 dark:text-gray-400">
                     /miesiąc

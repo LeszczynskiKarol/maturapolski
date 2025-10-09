@@ -3008,7 +3008,7 @@ const SessionStart: React.FC<{
                        shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               <Crown className="w-6 h-6" />
-              Ulepsz do Premium - 49 zł/miesiąc
+              Ulepsz do Premium - 39 zł/miesiąc
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>

@@ -5,3 +5,4 @@
 - na desktop wyrównać poziomo położenie wytycznych zadania , np. Uzupełnij charakterystykę programu pozytywizmu. z przyciskiem Pomiń, który obecnie na desktopie jest o wiersz niżej niż wytyczne a mają być na takim samym poziomie. Na mobile niech zostanie jak jest
 - po 20 pytaniu automatycznie pojawia sie modal zakonczenia sesji zamiast wlasnie tego przycisku Zakończ sesje - modal nie ma sie pojawiac od razu po udzieleniu odpoweoedzi na pytanie nr 20, bo wtedy nie moge sie zapoznac z odpowiedzia na pytanie nr 20
 - stworzyć dwa pola - username + user name wpisane przez usera żeby nie wyświetlać Karol2 - żeby dokładnie imie wpisane przez usera pojawiało się w dashboardzie
+- po pytaniu 19 WIDZE MODAL ZAKOŃCZ SESJE

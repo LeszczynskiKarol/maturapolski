@@ -100,8 +100,8 @@ export const TermsOfServicePage: React.FC = () => {
                   funkcjonalnościami (20 Punktów AI/miesiąc)
                 </p>
                 <p>
-                  <strong>Plan PREMIUM</strong> – płatny plan subskrypcyjny (49
-                  zł/miesiąc, 300 Punktów AI/miesiąc)
+                  <strong>Plan PREMIUM</strong> – płatny plan subskrypcyjny (39
+                  zł/miesiąc, 200 Punktów AI/miesiąc)
                 </p>
                 <p>
                   <strong>Subskrypcja</strong> – umowa o charakterze ciągłym,
@@ -230,7 +230,7 @@ export const TermsOfServicePage: React.FC = () => {
               <div className="flex items-center gap-3 mb-4">
                 <Crown className="w-8 h-8 text-blue-600" />
                 <h3 className="text-xl font-bold">
-                  4.2. Plan PREMIUM (49 zł/miesiąc)
+                  4.2. Plan PREMIUM (39 zł/miesiąc)
                 </h3>
               </div>
               <div className="space-y-3 text-gray-700">
@@ -243,7 +243,7 @@ export const TermsOfServicePage: React.FC = () => {
                     (zamknięte, otwarte, wypracowania)
                   </li>
                   <li>
-                    <strong>300 Punktów AI miesięcznie</strong> (automatyczna
+                    <strong>200 Punktów AI miesięcznie</strong> (automatyczna
                     ocena przez AI)
                   </li>
                   <li>
@@ -388,7 +388,7 @@ export const TermsOfServicePage: React.FC = () => {
                   </p>
                   <ul className="list-disc list-inside ml-4">
                     <li>
-                      <strong>Plan PREMIUM:</strong> 49 zł/miesiąc
+                      <strong>Plan PREMIUM:</strong> 39 zł/miesiąc
                     </li>
                     <li>
                       <strong>Pakiet SMALL:</strong> 19 zł (50 Punktów AI)

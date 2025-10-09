@@ -275,7 +275,7 @@ export const SubscriptionDashboard: React.FC = () => {
           {isPremium ? (
             <div className="text-right">
               <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                49 zł
+                39 zł
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 /miesiąc
@@ -638,7 +638,7 @@ export const SubscriptionDashboard: React.FC = () => {
               <CheckCircle className="w-5 h-5 text-green-500 mt-1" />
               <div>
                 <p className="font-semibold text-gray-900 dark:text-white">
-                  300 punktów AI miesięcznie
+                  200 punktów AI miesięcznie
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   15x więcej niż w planie Free

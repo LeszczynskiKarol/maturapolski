@@ -410,7 +410,7 @@ export const SubscriptionEditor: React.FC<SubscriptionEditorProps> = ({
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="FREE">Free (20 punktów)</option>
-                      <option value="PREMIUM">Premium (300 punktów)</option>
+                      <option value="PREMIUM">Premium (200 punktów)</option>
                     </select>
                   </div>
 
@@ -436,7 +436,7 @@ export const SubscriptionEditor: React.FC<SubscriptionEditorProps> = ({
                     <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                     <p>
                       Zmiana planu automatycznie ustawi odpowiedni limit
-                      punktów: Free = 20 pkt, Premium = 300 pkt
+                      punktów: Free = 0 pkt, Premium = 200 pkt
                     </p>
                   </div>
                 </div>
