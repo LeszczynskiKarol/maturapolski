@@ -22,6 +22,14 @@ export function RatingWidget({
   const [hasRated, setHasRated] = useState(false);
 
   useEffect(() => {
+    // RESET STANU przed załadowaniem nowych danych
+    setUserRating(0);
+    setHasRated(false);
+    setHoveredRating(0);
+    setAverageRating(0);
+    setRatingsCount(0);
+
+    // Teraz załaduj dane dla nowej strony
     loadRating();
     checkIfUserRated();
   }, [pageId]);

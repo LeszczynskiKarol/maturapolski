@@ -612,6 +612,7 @@ export function PageViewer() {
               {/* Rating Widget */}
               <RatingWidget
                 pageId={page.id}
+                key={page.id}
                 pageTitle={page.title}
                 hubTitle={page.hub.title}
               />
