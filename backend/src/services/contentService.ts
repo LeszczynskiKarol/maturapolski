@@ -360,4 +360,80 @@ export class ContentService {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "");
   }
+
+  // ==========================================
+  // ADMIN - Zarządzanie ocenami
+  // ==========================================
+
+  async getPageRatingsDetailed(pageId: string) {
+    const page = await prisma.contentPage.findUnique({
+      where: { id: pageId },
+      select: {
+        id: true,
+        title: true,
+        averageRating: true,
+        ratingsCount: true,
+      },
+    });
+
+    if (!page) throw new Error("Page not found");
+
+    // Pobierz wszystkie ratings
+    const ratings = await prisma.pageRating.findMany({
+      where: { pageId },
+      orderBy: { createdAt: "desc" },
+    });
+
+    // Zbierz unikalne userId (pomijając null)
+    const userIds = [
+      ...new Set(
+        ratings.map((r) => r.userId).filter((id): id is string => id !== null)
+      ),
+    ];
+
+    // Pobierz wszystkich userów jednym zapytaniem
+    const users = await prisma.user.findMany({
+      where: { id: { in: userIds } },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+      },
+    });
+
+    // Stwórz mapę userId -> user
+    const userMap = new Map(users.map((u) => [u.id, u]));
+
+    // Połącz dane
+    const ratingsWithUser = ratings.map((rating) => ({
+      id: rating.id,
+      rating: rating.rating,
+      userId: rating.userId,
+      ipAddress: rating.ipAddress,
+      createdAt: rating.createdAt,
+      user: rating.userId ? userMap.get(rating.userId) || null : null,
+    }));
+
+    return {
+      page,
+      ratings: ratingsWithUser,
+    };
+  }
+
+  async deleteRating(ratingId: string) {
+    const rating = await prisma.pageRating.findUnique({
+      where: { id: ratingId },
+    });
+
+    if (!rating) throw new Error("Rating not found");
+
+    await prisma.pageRating.delete({
+      where: { id: ratingId },
+    });
+
+    // Przelicz średnią po usunięciu
+    await this.recalculatePageRating(rating.pageId);
+
+    return { success: true };
+  }
 }

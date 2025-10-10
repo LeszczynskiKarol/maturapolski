@@ -7,6 +7,7 @@ import {
   FileText,
   BookOpen,
   ImageIcon,
+  Star,
   Calendar,
   User,
   GripVertical,
@@ -17,6 +18,7 @@ import {
 } from "lucide-react";
 import { contentService } from "../../services/contentService";
 import { ImageUpload } from "../../components/ImageUpload";
+import { RatingsManager } from "./RatingsManager";
 
 interface Hub {
   id: string;
@@ -626,6 +628,11 @@ export default function ContentManager() {
   const [view, setView] = useState<"hubs" | "hub-detail" | "page-editor">(
     "hubs"
   );
+  const [showRatingsModal, setShowRatingsModal] = useState(false);
+  const [selectedPageForRatings, setSelectedPageForRatings] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
   const [hubs, setHubs] = useState<Hub[]>([]);
   const [selectedHub, setSelectedHub] = useState<Hub | null>(null);
   const [selectedPage, setSelectedPage] = useState<ContentPage | null>(null);
@@ -1318,6 +1325,20 @@ export default function ContentManager() {
                       >
                         <Edit className="w-4 h-4" />
                       </button>
+
+                      <button
+                        onClick={() => {
+                          setSelectedPageForRatings({
+                            id: page.id,
+                            title: page.title,
+                          });
+                          setShowRatingsModal(true);
+                        }}
+                        className="p-2 text-yellow-600 hover:bg-yellow-50 rounded"
+                        title="Zarządzaj ocenami"
+                      >
+                        <Star className="w-4 h-4" />
+                      </button>
                       <button
                         onClick={() => handleDeletePage(page.id)}
                         className="p-2 text-red-600 hover:bg-red-50 rounded"
@@ -1751,6 +1772,17 @@ export default function ContentManager() {
               </div>
             </div>
           </div>
+        )}
+        {/* Modal zarządzania ocenami */}
+        {showRatingsModal && selectedPageForRatings && (
+          <RatingsManager
+            pageId={selectedPageForRatings.id}
+            pageTitle={selectedPageForRatings.title}
+            onClose={() => {
+              setShowRatingsModal(false);
+              setSelectedPageForRatings(null);
+            }}
+          />
         )}
       </div>
     );

@@ -241,4 +241,34 @@ export async function contentRoutes(fastify: FastifyInstance) {
       }
     }
   );
+
+  // Pobierz wszystkie oceny dla strony (z userami/IP)
+  fastify.get(
+    "/pages/:pageId/ratings/all",
+    { preHandler: adminPreHandler },
+    async (request, reply) => {
+      try {
+        const { pageId } = request.params as { pageId: string };
+        const ratings = await contentService.getPageRatingsDetailed(pageId);
+        return reply.send(ratings);
+      } catch (error: any) {
+        return reply.status(400).send({ error: error.message });
+      }
+    }
+  );
+
+  // Usuń pojedynczą ocenę
+  fastify.delete(
+    "/ratings/:ratingId",
+    { preHandler: adminPreHandler },
+    async (request, reply) => {
+      try {
+        const { ratingId } = request.params as { ratingId: string };
+        await contentService.deleteRating(ratingId);
+        return reply.status(204).send();
+      } catch (error: any) {
+        return reply.status(400).send({ error: error.message });
+      }
+    }
+  );
 }

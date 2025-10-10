@@ -71,4 +71,14 @@ export const contentService = {
     });
     return response.data;
   },
+
+  // Admin - Ratings Management
+  async getPageRatingsDetailed(pageId: string) {
+    const response = await api.get(`/api/content/pages/${pageId}/ratings/all`);
+    return response.data;
+  },
+
+  async deleteRating(ratingId: string) {
+    await api.delete(`/api/content/ratings/${ratingId}`);
+  },
 };
