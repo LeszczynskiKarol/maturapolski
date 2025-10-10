@@ -1,7 +1,6 @@
 // frontend/src/features/content/PageViewer.tsx
 
 // ==========================================
-import html2pdf from "html2pdf.js";
 import { ChevronLeft, ChevronRight, Clock, Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -47,82 +46,221 @@ export function PageViewer() {
     ? splitContentIntoPages(page.content.blocks)
     : [];
 
-  const downloadAsPDF = () => {
+  const downloadAsPDF = async () => {
     if (!page) return;
 
-    // Stwórz kontener
-    const tempContainer = document.createElement("div");
-    tempContainer.style.cssText = `
-    font-family: 'Georgia', 'Times New Roman', serif;
-    font-size: 14px;
-    line-height: 1.6;
-    color: #2d2d2d;
-    padding: 20px;
-  `;
+    try {
+      // Import przez require-style dynamiczny import
+      // Import przez require-style dynamiczny import
+      const pdfMakeModule: any = await import("pdfmake/build/pdfmake");
+      const pdfFontsModule: any = await import("pdfmake/build/vfs_fonts");
 
-    // Nagłówek
-    const header = document.createElement("div");
-    header.style.cssText =
-      "margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px;";
-    header.innerHTML = `
-    <h1 style="font-size: 24px; font-weight: bold; margin: 0 0 8px 0; color: #1a1a1a;">
-      ${page.title}
-    </h1>
-    <p style="font-size: 12px; color: #666; margin: 0;">
-      ${page.hub.title}
-    </p>
-  `;
-    tempContainer.appendChild(header);
+      const pdfMake = pdfMakeModule.default;
+      const pdfFonts = pdfFontsModule.default;
 
-    // WSZYSTKIE bloki jako HTML string (najszybsze)
-    const allBlocks = page.content?.blocks || [];
-
-    allBlocks.forEach((block: any) => {
-      if (block.type === "page_break") return;
-
-      if (block.type === "volume_break" && isLalkaChapters) {
-        const volumeDiv = document.createElement("div");
-        volumeDiv.style.cssText =
-          "margin: 30px 0; padding: 15px; border-top: 3px solid #9333ea; border-bottom: 3px solid #9333ea; background: #faf5ff; text-align: center;";
-        volumeDiv.innerHTML = `<h2 style="font-size: 20px; font-weight: bold; color: #7e22ce; margin: 0;">${
-          block.content?.volumeTitle || "Tom"
-        }</h2>`;
-        tempContainer.appendChild(volumeDiv);
-        return;
+      // Przypisz fonty - cała magia w any
+      if (pdfMake && pdfFonts) {
+        pdfMake.vfs = pdfFonts.pdfMake ? pdfFonts.pdfMake.vfs : pdfFonts.vfs;
       }
 
-      if (block.type === "volume_break") return;
+      // Helper: parsuj markdown
+      const parseMarkdown = (text: string): any => {
+        const segments: any[] = [];
+        let current = text;
 
-      const element = renderBlockForPDF(block);
-      if (element) {
-        tempContainer.appendChild(element);
+        current = current.replace(/\*\*(.*?)\*\*/g, (_, txt) => {
+          segments.push({ text: txt, bold: true });
+          return "\x00";
+        });
+
+        current = current.replace(/\*(.*?)\*/g, (_, txt) => {
+          segments.push({ text: txt, italics: true });
+          return "\x00";
+        });
+
+        current = current.replace(/\[(.*?)\]\((.*?)\)/g, (_, txt, url) => {
+          segments.push({
+            text: txt,
+            link: url,
+            color: "blue",
+            decoration: "underline",
+          });
+          return "\x00";
+        });
+
+        if (segments.length === 0) return text;
+
+        const result: any[] = [];
+        const parts = current.split("\x00");
+        parts.forEach((part, i) => {
+          if (part) result.push({ text: part });
+          if (i < segments.length) result.push(segments[i]);
+        });
+
+        return result;
+      };
+
+      const processText = (text: string): any => {
+        const lines = text.split("\n");
+        const result: any[] = [];
+
+        lines.forEach((line, i) => {
+          const parsed = parseMarkdown(line);
+          if (Array.isArray(parsed)) {
+            result.push(...parsed);
+          } else {
+            result.push({ text: parsed });
+          }
+          if (i < lines.length - 1) result.push({ text: "\n" });
+        });
+
+        return result;
+      };
+
+      const content: any[] = [];
+
+      content.push(
+        { text: page.title, fontSize: 22, bold: true, margin: [0, 0, 0, 10] },
+        {
+          text: page.hub.title,
+          fontSize: 11,
+          color: "#666666",
+          margin: [0, 0, 0, 5],
+        },
+        {
+          canvas: [
+            { type: "line", x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 },
+          ],
+          margin: [0, 0, 0, 15],
+        }
+      );
+
+      const allBlocks = page.content?.blocks || [];
+
+      for (const block of allBlocks) {
+        if (block.type === "page_break") continue;
+
+        if (block.type === "volume_break" && isLalkaChapters) {
+          content.push({
+            table: {
+              widths: ["*"],
+              body: [
+                [
+                  {
+                    text: block.content?.volumeTitle || "Tom",
+                    fontSize: 18,
+                    bold: true,
+                    color: "#7e22ce",
+                    alignment: "center",
+                    fillColor: "#faf5ff",
+                    border: [false, false, false, false],
+                    margin: [10, 8, 10, 8],
+                  },
+                ],
+              ],
+            },
+            margin: [0, 10, 0, 15],
+          });
+          continue;
+        }
+
+        if (block.type === "volume_break") continue;
+
+        switch (block.type) {
+          case "h2":
+          case "heading":
+            content.push({
+              text: block.content,
+              fontSize: 18,
+              bold: true,
+              margin: [0, 15, 0, 8],
+            });
+            break;
+
+          case "h3":
+            content.push({
+              text: block.content,
+              fontSize: 16,
+              bold: true,
+              margin: [0, 12, 0, 6],
+            });
+            break;
+
+          case "h4":
+            content.push({
+              text: block.content,
+              fontSize: 14,
+              bold: true,
+              margin: [0, 10, 0, 5],
+            });
+            break;
+
+          case "paragraph":
+            content.push({
+              text: processText(block.content),
+              fontSize: 11,
+              lineHeight: 1.5,
+              alignment: "justify",
+              margin: [0, 0, 0, 10],
+            });
+            break;
+
+          case "quote":
+            content.push({
+              table: {
+                widths: ["*"],
+                body: [
+                  [
+                    {
+                      text: processText(block.content),
+                      fontSize: 11,
+                      italics: true,
+                      fillColor: "#eff6ff",
+                      border: [true, false, false, false],
+                      borderColor: ["#3b82f6", "#3b82f6", "#3b82f6", "#3b82f6"],
+                      margin: [10, 8, 10, 8],
+                    },
+                  ],
+                ],
+              },
+              layout: {
+                defaultBorder: false,
+                paddingLeft: () => 0,
+                paddingRight: () => 0,
+                paddingTop: () => 0,
+                paddingBottom: () => 0,
+              },
+              margin: [0, 0, 0, 10],
+            });
+            break;
+
+          case "list":
+            const items = block.content
+              .split("\n")
+              .filter((i: string) => i.trim());
+            content.push({
+              ul: items.map((item: string) => processText(item)),
+              fontSize: 11,
+              margin: [0, 0, 0, 10],
+            });
+            break;
+        }
       }
-    });
 
-    // KLUCZOWA ZMIANA: Użyj jsPDF bezpośrednio z opcją splitTextToSize
-    const opt = {
-      margin: 10,
-      filename: `${page.title.replace(
-        /[^a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s]/g,
-        "_"
-      )}.pdf`,
-      image: { type: "jpeg" as const, quality: 0.95 },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        letterRendering: true,
-        windowWidth: 800,
-      },
-      jsPDF: {
-        unit: "mm" as const,
-        format: "a4" as const,
-        orientation: "portrait" as const,
-      },
-      pagebreak: { mode: [] }, // PUSTA TABLICA = BEZ AUTOMATYCZNYCH PODZIAŁÓW
-    };
+      const docDefinition: any = {
+        content: content,
+        pageMargins: [40, 40, 40, 40],
+      };
 
-    html2pdf().set(opt).from(tempContainer).save();
+      pdfMake
+        .createPdf(docDefinition)
+        .download(
+          `${page.title.replace(/[^a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s]/g, "_")}.pdf`
+        );
+    } catch (error) {
+      console.error("Błąd generowania PDF:", error);
+      alert("Nie udało się wygenerować PDF. Sprawdź konsolę.");
+    }
   };
 
   const volumeInfo = isLalkaChapters
@@ -428,109 +566,6 @@ export function PageViewer() {
       default:
         return null;
     }
-  };
-
-  // Renderuj blok do PDF (zwraca HTMLElement zamiast React)
-  const renderBlockForPDF = (block: any): HTMLElement | null => {
-    const parseMarkdown = (text: string) => {
-      let parsed = text;
-      parsed = parsed.replace(
-        /\[([^\]]+)\]\(([^)]+)\)/g,
-        '<a href="$2" style="color: #2563eb; text-decoration: underline;">$1</a>'
-      );
-      parsed = parsed.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-      parsed = parsed.replace(/\*(.*?)\*/g, "<em>$1</em>");
-      return parsed;
-    };
-
-    const renderWithMarkdown = (text: string) => {
-      return text
-        .split("\n")
-        .map((line) => parseMarkdown(line))
-        .join("<br>");
-    };
-
-    let element: HTMLElement | null = null;
-
-    switch (block.type) {
-      case "h2":
-        element = document.createElement("h2");
-        element.style.cssText =
-          "font-size: 20px; font-weight: bold; margin-top: 16px; margin-bottom: 10px;";
-        element.textContent = block.content;
-        break;
-
-      case "h3":
-        element = document.createElement("h3");
-        element.style.cssText =
-          "font-size: 18px; font-weight: bold; margin-top: 14px; margin-bottom: 8px;";
-        element.textContent = block.content;
-        break;
-
-      case "h4":
-        element = document.createElement("h4");
-        element.style.cssText =
-          "font-size: 16px; font-weight: 600; margin-top: 12px; margin-bottom: 6px;";
-        element.textContent = block.content;
-        break;
-
-      case "paragraph":
-        element = document.createElement("p");
-        element.style.cssText =
-          "margin-bottom: 10px; text-align: justify; line-height: 1.8;";
-        element.innerHTML = renderWithMarkdown(block.content);
-        break;
-
-      case "list":
-        element = document.createElement("ul");
-        element.style.cssText =
-          "margin-bottom: 10px; padding-left: 20px; list-style-type: disc;";
-        const items = block.content.split("\n").filter((i: string) => i.trim());
-        items.forEach((item: string) => {
-          const li = document.createElement("li");
-          li.style.marginBottom = "4px";
-          li.textContent = item;
-          element!.appendChild(li);
-        });
-        break;
-
-      case "quote":
-        element = document.createElement("blockquote");
-        element.style.cssText =
-          "border-left: 4px solid #3b82f6; padding-left: 16px; padding-top: 8px; padding-bottom: 8px; margin: 10px 0; font-style: italic; color: #4b5563; background-color: #eff6ff;";
-        element.innerHTML = renderWithMarkdown(block.content);
-        break;
-
-      case "image":
-        const figure = document.createElement("figure");
-        figure.style.cssText = "margin: 15px 0; text-align: center;";
-
-        const img = document.createElement("img");
-        img.src = block.content.url;
-        img.alt = block.content.alt || "";
-        img.style.cssText =
-          "max-width: 100%; height: auto; border-radius: 8px;";
-        figure.appendChild(img);
-
-        if (block.content.caption) {
-          const caption = document.createElement("figcaption");
-          caption.style.cssText =
-            "margin-top: 6px; font-size: 12px; color: #6b7280; font-style: italic;";
-          caption.textContent = block.content.caption;
-          figure.appendChild(caption);
-        }
-
-        element = figure;
-        break;
-
-      case "html":
-        element = document.createElement("div");
-        element.innerHTML = block.content;
-        element.style.margin = "10px 0";
-        break;
-    }
-
-    return element;
   };
 
   // Nawigacja między stronami
