@@ -3,7 +3,7 @@
 // ==========================================
 import html2pdf from "html2pdf.js";
 import { ChevronLeft, ChevronRight, Clock, Download } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { PublicLayout } from "../../components/PublicLayout";
@@ -41,7 +41,6 @@ export function PageViewer() {
   const [page, setPage] = useState<PageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
-  const contentRef = useRef<HTMLDivElement>(null);
 
   // Podziel treść na "strony" na podstawie page_break
   const contentPages = page?.content?.blocks
@@ -49,31 +48,81 @@ export function PageViewer() {
     : [];
 
   const downloadAsPDF = () => {
-    if (!contentRef.current || !page) return;
+    if (!page) return;
 
+    // Stwórz kontener
+    const tempContainer = document.createElement("div");
+    tempContainer.style.cssText = `
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #2d2d2d;
+    padding: 20px;
+  `;
+
+    // Nagłówek
+    const header = document.createElement("div");
+    header.style.cssText =
+      "margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px;";
+    header.innerHTML = `
+    <h1 style="font-size: 24px; font-weight: bold; margin: 0 0 8px 0; color: #1a1a1a;">
+      ${page.title}
+    </h1>
+    <p style="font-size: 12px; color: #666; margin: 0;">
+      ${page.hub.title}
+    </p>
+  `;
+    tempContainer.appendChild(header);
+
+    // WSZYSTKIE bloki jako HTML string (najszybsze)
+    const allBlocks = page.content?.blocks || [];
+
+    allBlocks.forEach((block) => {
+      if (block.type === "page_break") return;
+
+      if (block.type === "volume_break" && isLalkaChapters) {
+        const volumeDiv = document.createElement("div");
+        volumeDiv.style.cssText =
+          "margin: 30px 0; padding: 15px; border-top: 3px solid #9333ea; border-bottom: 3px solid #9333ea; background: #faf5ff; text-align: center;";
+        volumeDiv.innerHTML = `<h2 style="font-size: 20px; font-weight: bold; color: #7e22ce; margin: 0;">${
+          block.content?.volumeTitle || "Tom"
+        }</h2>`;
+        tempContainer.appendChild(volumeDiv);
+        return;
+      }
+
+      if (block.type === "volume_break") return;
+
+      const element = renderBlockForPDF(block);
+      if (element) {
+        tempContainer.appendChild(element);
+      }
+    });
+
+    // KLUCZOWA ZMIANA: Użyj jsPDF bezpośrednio z opcją splitTextToSize
     const opt = {
-      margin: [15, 15, 15, 15] as [number, number, number, number],
+      margin: 10,
       filename: `${page.title.replace(
         /[^a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s]/g,
         "_"
       )}.pdf`,
-      image: { type: "jpeg" as const, quality: 0.98 },
+      image: { type: "jpeg" as const, quality: 0.95 },
       html2canvas: {
         scale: 2,
         useCORS: true,
+        logging: false,
         letterRendering: true,
-        scrollY: -window.scrollY,
-        scrollX: -window.scrollX,
+        windowWidth: 800,
       },
       jsPDF: {
         unit: "mm" as const,
         format: "a4" as const,
         orientation: "portrait" as const,
-        compress: true,
       },
+      pagebreak: { mode: [] }, // PUSTA TABLICA = BEZ AUTOMATYCZNYCH PODZIAŁÓW
     };
 
-    html2pdf().set(opt).from(contentRef.current).save();
+    html2pdf().set(opt).from(tempContainer).save();
   };
 
   const volumeInfo = isLalkaChapters
@@ -381,6 +430,109 @@ export function PageViewer() {
     }
   };
 
+  // Renderuj blok do PDF (zwraca HTMLElement zamiast React)
+  const renderBlockForPDF = (block: any): HTMLElement | null => {
+    const parseMarkdown = (text: string) => {
+      let parsed = text;
+      parsed = parsed.replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2" style="color: #2563eb; text-decoration: underline;">$1</a>'
+      );
+      parsed = parsed.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+      parsed = parsed.replace(/\*(.*?)\*/g, "<em>$1</em>");
+      return parsed;
+    };
+
+    const renderWithMarkdown = (text: string) => {
+      return text
+        .split("\n")
+        .map((line) => parseMarkdown(line))
+        .join("<br>");
+    };
+
+    let element: HTMLElement | null = null;
+
+    switch (block.type) {
+      case "h2":
+        element = document.createElement("h2");
+        element.style.cssText =
+          "font-size: 20px; font-weight: bold; margin-top: 16px; margin-bottom: 10px;";
+        element.textContent = block.content;
+        break;
+
+      case "h3":
+        element = document.createElement("h3");
+        element.style.cssText =
+          "font-size: 18px; font-weight: bold; margin-top: 14px; margin-bottom: 8px;";
+        element.textContent = block.content;
+        break;
+
+      case "h4":
+        element = document.createElement("h4");
+        element.style.cssText =
+          "font-size: 16px; font-weight: 600; margin-top: 12px; margin-bottom: 6px;";
+        element.textContent = block.content;
+        break;
+
+      case "paragraph":
+        element = document.createElement("p");
+        element.style.cssText =
+          "margin-bottom: 10px; text-align: justify; line-height: 1.8;";
+        element.innerHTML = renderWithMarkdown(block.content);
+        break;
+
+      case "list":
+        element = document.createElement("ul");
+        element.style.cssText =
+          "margin-bottom: 10px; padding-left: 20px; list-style-type: disc;";
+        const items = block.content.split("\n").filter((i: string) => i.trim());
+        items.forEach((item: string) => {
+          const li = document.createElement("li");
+          li.style.marginBottom = "4px";
+          li.textContent = item;
+          element!.appendChild(li);
+        });
+        break;
+
+      case "quote":
+        element = document.createElement("blockquote");
+        element.style.cssText =
+          "border-left: 4px solid #3b82f6; padding-left: 16px; padding-top: 8px; padding-bottom: 8px; margin: 10px 0; font-style: italic; color: #4b5563; background-color: #eff6ff;";
+        element.innerHTML = renderWithMarkdown(block.content);
+        break;
+
+      case "image":
+        const figure = document.createElement("figure");
+        figure.style.cssText = "margin: 15px 0; text-align: center;";
+
+        const img = document.createElement("img");
+        img.src = block.content.url;
+        img.alt = block.content.alt || "";
+        img.style.cssText =
+          "max-width: 100%; height: auto; border-radius: 8px;";
+        figure.appendChild(img);
+
+        if (block.content.caption) {
+          const caption = document.createElement("figcaption");
+          caption.style.cssText =
+            "margin-top: 6px; font-size: 12px; color: #6b7280; font-style: italic;";
+          caption.textContent = block.content.caption;
+          figure.appendChild(caption);
+        }
+
+        element = figure;
+        break;
+
+      case "html":
+        element = document.createElement("div");
+        element.innerHTML = block.content;
+        element.style.margin = "10px 0";
+        break;
+    }
+
+    return element;
+  };
+
   // Nawigacja między stronami
   const goToPage = (pageNum: number) => {
     if (pageNum >= 0 && pageNum < contentPages.length) {
@@ -520,53 +672,17 @@ export function PageViewer() {
                 </div>
 
                 {/* Treść aktualnej strony */}
-                <div
-                  ref={contentRef}
-                  className="prose max-w-none"
-                  style={{
-                    fontFamily: "'Georgia', 'Times New Roman', serif",
-                    fontSize: "14px",
-                    lineHeight: "1.8",
-                  }}
-                >
-                  {/* Nagłówek dla PDF */}
-                  <div
-                    style={{
-                      marginBottom: "20px",
-                      borderBottom: "2px solid #333",
-                      paddingBottom: "10px",
-                    }}
-                  >
-                    <h1
-                      style={{
-                        fontSize: "24px",
-                        fontWeight: "bold",
-                        marginBottom: "8px",
-                        color: "#1a1a1a",
-                      }}
-                    >
-                      {page.title}
-                    </h1>
-                    <p
-                      style={{
-                        fontSize: "12px",
-                        color: "#666",
-                        margin: 0,
-                      }}
-                    >
-                      {page.hub.title}
-                      {isLalkaChapters && currentVolumeInfo && (
-                        <span>
-                          {" • "}
-                          {currentVolumeInfo.volumeNumber > 1 &&
-                            `Tom ${currentVolumeInfo.volumeNumber} - `}
-                          Rozdział {currentVolumeInfo.chapterInVolume}
-                        </span>
-                      )}
-                    </p>
-                  </div>
+                <div className="prose max-w-none">
+                  {isLalkaChapters && currentVolumeInfo?.volumeTitle && (
+                    <div className="mb-8 pb-4 border-b-2 border-purple-200 bg-purple-50 rounded-lg px-8 py-6">
+                      <h2 className="text-3xl font-bold text-purple-900 text-center">
+                        {currentVolumeInfo.volumeTitle}
+                      </h2>
+                    </div>
+                  )}
 
                   {currentBlocks
+
                     .filter((block) => block.type !== "volume_break")
                     .map((block, index) => renderBlock(block, index))}
 
