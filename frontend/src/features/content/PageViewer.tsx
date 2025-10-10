@@ -110,7 +110,11 @@ export function PageViewer() {
   const loadHubPages = async () => {
     try {
       const pages = await contentService.getHubPages(hubSlug!);
-      setHubPages(pages);
+      // SORTOWANIE ALFABETYCZNE - zawsze ta sama kolejność
+      const sortedPages = [...pages].sort((a, b) =>
+        a.title.localeCompare(b.title, "pl", { sensitivity: "base" })
+      );
+      setHubPages(sortedPages);
     } catch (error) {
       console.error("Error loading hub pages:", error);
     }
@@ -394,7 +398,7 @@ export function PageViewer() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Sidebar - Lista stron Hub-a */}
             {hubPages.length > 0 && (
-              <aside className="lg:col-span-3 order-2 lg:order-1">
+              <aside className="hidden lg:block lg:col-span-3">
                 <div className="bg-white rounded-lg shadow-sm p-4">
                   <h3 className="font-semibold text-sm text-gray-700 mb-3 uppercase tracking-wide">
                     {page?.hub.title}
