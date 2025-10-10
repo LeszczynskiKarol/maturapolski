@@ -165,63 +165,54 @@ export class ContentService {
   async submitRating(
     pageId: string,
     rating: number,
-    ipAddress: string,
+    fingerprintOrIP: string,
     userId?: string
   ) {
     if (rating < 1 || rating > 5) {
       throw new Error("Rating must be between 1 and 5");
     }
 
-    // Sprawdź czy strona istnieje
     const page = await prisma.contentPage.findUnique({
       where: { id: pageId },
     });
 
     if (!page) throw new Error("Page not found");
 
-    // POPRAWIONA LOGIKA - rozdziel zalogowanych od niezalogowanych
     let existingRating;
 
     if (userId) {
-      // Użytkownik zalogowany - sprawdź tylko userId
       existingRating = await prisma.pageRating.findFirst({
-        where: {
-          pageId,
-          userId: userId,
-        },
+        where: { pageId, userId },
       });
     } else {
-      // Użytkownik niezalogowany - sprawdź tylko IP
       existingRating = await prisma.pageRating.findFirst({
         where: {
           pageId,
-          userId: null, // WAŻNE: tylko oceny anonimowe
-          ipAddress: ipAddress,
+          userId: null,
+          ipAddress: fingerprintOrIP,
         },
       });
     }
 
     if (existingRating) {
-      // Aktualizuj istniejącą ocenę
+      // Aktualizuj istniejącą
       await prisma.pageRating.update({
         where: { id: existingRating.id },
         data: { rating },
       });
     } else {
-      // Dodaj nową ocenę
+      // Dodaj nową
       await prisma.pageRating.create({
         data: {
           pageId,
           rating,
           userId: userId || null,
-          ipAddress,
+          ipAddress: fingerprintOrIP,
         },
       });
     }
 
-    // Przelicz średnią
     await this.recalculatePageRating(pageId);
-
     return { success: true };
   }
 
@@ -449,5 +440,39 @@ export class ContentService {
     await this.recalculatePageRating(rating.pageId);
 
     return { success: true };
+  }
+
+  async checkIfUserRated(
+    pageId: string,
+    fingerprintOrIP: string,
+    userId?: string
+  ) {
+    let existingRating;
+
+    if (userId) {
+      existingRating = await prisma.pageRating.findFirst({
+        where: { pageId, userId },
+      });
+    } else {
+      existingRating = await prisma.pageRating.findFirst({
+        where: {
+          pageId,
+          userId: null,
+          ipAddress: fingerprintOrIP,
+        },
+      });
+    }
+
+    if (existingRating) {
+      return {
+        hasRated: true,
+        rating: existingRating.rating,
+      };
+    }
+
+    return {
+      hasRated: false,
+      rating: null,
+    };
   }
 }

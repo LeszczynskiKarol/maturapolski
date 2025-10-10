@@ -78,31 +78,23 @@ export async function contentRoutes(fastify: FastifyInstance) {
   fastify.post("/pages/:pageId/rate", async (request, reply) => {
     try {
       const { pageId } = request.params as { pageId: string };
-      const { rating } = request.body as { rating: number };
+      const { rating, fingerprint } = request.body as {
+        rating: number;
+        fingerprint?: string;
+      };
 
-      // Pobierz PRAWDZIWY IP użytkownika
-      // Sprawdź najpierw nagłówki proxy/load balancera
-      const ipAddress =
-        (request.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
-        (request.headers["x-real-ip"] as string) ||
-        request.ip ||
-        "unknown";
-
-      console.log("Rating IP:", ipAddress); // Debug - zobacz jakie IP dostajemy
-
-      // Jeśli użytkownik jest zalogowany, użyj jego ID
       let userId: string | undefined;
       try {
         await request.jwtVerify();
         userId = request.user?.userId;
       } catch {
-        // Użytkownik niezalogowany - użyj tylko IP
+        // Niezalogowany
       }
 
       const result = await contentService.submitRating(
         pageId,
         rating,
-        ipAddress,
+        fingerprint || "unknown",
         userId
       );
 
@@ -277,4 +269,30 @@ export async function contentRoutes(fastify: FastifyInstance) {
       }
     }
   );
+
+  fastify.post("/pages/:pageId/check-rating", async (request, reply) => {
+    try {
+      const { pageId } = request.params as { pageId: string };
+      const { fingerprint } = request.body as { fingerprint: string };
+
+      let userId: string | undefined;
+      try {
+        await request.jwtVerify();
+        userId = request.user?.userId;
+      } catch {
+        // Niezalogowany
+      }
+
+      // POPRAWKA: `checkIfUserRated` już zwraca { hasRated, rating }
+      const result = await contentService.checkIfUserRated(
+        pageId,
+        fingerprint,
+        userId
+      );
+
+      return reply.send(result); // NIE { hasRated: result }!
+    } catch (error: any) {
+      return reply.status(400).send({ error: error.message });
+    }
+  });
 }

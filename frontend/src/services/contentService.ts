@@ -24,10 +24,21 @@ export const contentService = {
   },
 
   // Ratings
-  async submitRating(pageId: string, rating: number) {
+  async submitRating(pageId: string, rating: number, fingerprint?: string) {
     const response = await api.post(`/api/content/pages/${pageId}/rate`, {
       rating,
+      fingerprint, // Wyślij zamiast polegać na IP
     });
+    return response.data;
+  },
+
+  async checkIfUserRated(pageId: string, fingerprint: string) {
+    const response = await api.post(
+      `/api/content/pages/${pageId}/check-rating`,
+      {
+        fingerprint,
+      }
+    );
     return response.data;
   },
 
