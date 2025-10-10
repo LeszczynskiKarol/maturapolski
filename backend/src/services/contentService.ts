@@ -179,13 +179,27 @@ export class ContentService {
 
     if (!page) throw new Error("Page not found");
 
-    // Sprawdź czy użytkownik/IP już ocenił
-    const existingRating = await prisma.pageRating.findFirst({
-      where: {
-        pageId,
-        OR: [{ userId: userId || undefined }, { ipAddress }],
-      },
-    });
+    // POPRAWIONA LOGIKA - rozdziel zalogowanych od niezalogowanych
+    let existingRating;
+
+    if (userId) {
+      // Użytkownik zalogowany - sprawdź tylko userId
+      existingRating = await prisma.pageRating.findFirst({
+        where: {
+          pageId,
+          userId: userId,
+        },
+      });
+    } else {
+      // Użytkownik niezalogowany - sprawdź tylko IP
+      existingRating = await prisma.pageRating.findFirst({
+        where: {
+          pageId,
+          userId: null, // WAŻNE: tylko oceny anonimowe
+          ipAddress: ipAddress,
+        },
+      });
+    }
 
     if (existingRating) {
       // Aktualizuj istniejącą ocenę
@@ -199,7 +213,7 @@ export class ContentService {
         data: {
           pageId,
           rating,
-          userId,
+          userId: userId || null,
           ipAddress,
         },
       });

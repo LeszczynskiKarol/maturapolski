@@ -46,6 +46,7 @@ export function RatingWidget({
 
   const checkIfUserRated = () => {
     // Sprawdź localStorage czy użytkownik już ocenił tę stronę
+    // Używaj pageId jako klucza (nie będzie to konfliktować między różnymi userami/IP)
     const ratedPages = JSON.parse(localStorage.getItem("ratedPages") || "{}");
     if (ratedPages[pageId]) {
       setHasRated(true);
@@ -70,9 +71,15 @@ export function RatingWidget({
 
       // Odśwież ocenę
       await loadRating();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting rating:", error);
-      alert("Wystąpił błąd podczas oceniania. Spróbuj ponownie.");
+
+      // DODAJ LEPSZĄ OBSŁUGĘ BŁĘDÓW
+      if (error.response?.data?.error) {
+        alert(error.response.data.error);
+      } else {
+        alert("Wystąpił błąd podczas oceniania. Spróbuj ponownie.");
+      }
     } finally {
       setIsSubmitting(false);
     }

@@ -74,15 +74,21 @@ export async function contentRoutes(fastify: FastifyInstance) {
   // RATINGS - Oceny stron
   // ==========================================
 
-  // Dodaj/aktualizuj ocenę
   // POST /api/content/pages/:pageId/rate
   fastify.post("/pages/:pageId/rate", async (request, reply) => {
     try {
       const { pageId } = request.params as { pageId: string };
       const { rating } = request.body as { rating: number };
 
-      // Pobierz IP użytkownika
-      const ipAddress = request.ip;
+      // Pobierz PRAWDZIWY IP użytkownika
+      // Sprawdź najpierw nagłówki proxy/load balancera
+      const ipAddress =
+        (request.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
+        (request.headers["x-real-ip"] as string) ||
+        request.ip ||
+        "unknown";
+
+      console.log("Rating IP:", ipAddress); // Debug - zobacz jakie IP dostajemy
 
       // Jeśli użytkownik jest zalogowany, użyj jego ID
       let userId: string | undefined;
