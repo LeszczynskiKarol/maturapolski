@@ -30,6 +30,7 @@ import { SessionHistory } from "./features/learning/SessionHistory";
 import { useAuthStore } from "./store/authStore";
 import { useThemeStore } from "./store/themeStore";
 import { CookieConsentProvider } from "./hooks/useCookieConsent";
+import { ScrollToTop } from "./components/ScrollToTop";
 
 // Layouts
 import { Layout } from "./components/Layout";
@@ -106,6 +107,7 @@ export const App: React.FC = () => {
         <GoogleTagManager />
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
+            <ScrollToTop />
             <Routes>
               {/* Public routes */}
               <Route path="/" element={<LandingPage />} />
