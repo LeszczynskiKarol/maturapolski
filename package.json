@@ -12,6 +12,9 @@
     "concurrently": "^8.2.2"
   },
   "dependencies": {
-    "@fastify/multipart": "^8.3.0"
+    "@aws-sdk/client-s3": "^3.907.0",
+    "@fastify/multipart": "^8.3.0",
+    "@fingerprintjs/fingerprintjs": "^4.6.2",
+    "react-helmet-async": "^2.0.5"
   }
 }

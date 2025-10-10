@@ -1,14 +1,15 @@
 // frontend/src/features/content/PageViewer.tsx
 
 // ==========================================
+import html2pdf from "html2pdf.js";
+import { ChevronLeft, ChevronRight, Clock, Download } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { PublicLayout } from "../../components/PublicLayout";
-import { useState, useEffect } from "react";
-import { useParams, Link, useSearchParams } from "react-router-dom";
-import { contentService } from "../../services/contentService";
-import { Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { RatingWidget } from "../../components/RatingWidget";
 import { RelatedPages } from "../../components/RelatedPages";
+import { contentService } from "../../services/contentService";
 
 interface PageData {
   id: string;
@@ -40,11 +41,40 @@ export function PageViewer() {
   const [page, setPage] = useState<PageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   // Podziel treść na "strony" na podstawie page_break
   const contentPages = page?.content?.blocks
     ? splitContentIntoPages(page.content.blocks)
     : [];
+
+  const downloadAsPDF = () => {
+    if (!contentRef.current || !page) return;
+
+    const opt = {
+      margin: [15, 15, 15, 15] as [number, number, number, number],
+      filename: `${page.title.replace(
+        /[^a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s]/g,
+        "_"
+      )}.pdf`,
+      image: { type: "jpeg" as const, quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        letterRendering: true,
+        scrollY: -window.scrollY,
+        scrollX: -window.scrollX,
+      },
+      jsPDF: {
+        unit: "mm" as const,
+        format: "a4" as const,
+        orientation: "portrait" as const,
+        compress: true,
+      },
+    };
+
+    html2pdf().set(opt).from(contentRef.current).save();
+  };
 
   const volumeInfo = isLalkaChapters
     ? contentPages.map((pageBlocks, index) => {
@@ -447,7 +477,19 @@ export function PageViewer() {
                 </div>
 
                 {/* Header */}
-                <h1 className="text-3xl font-bold mb-4">{page.title}</h1>
+                <div className="flex items-start justify-between gap-4 mb-4">
+                  <h1 className="text-3xl font-bold flex-1">{page.title}</h1>
+                  <button
+                    onClick={downloadAsPDF}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 
+               text-white rounded-lg transition-colors shadow-sm hover:shadow-md
+               flex-shrink-0"
+                    title="Pobierz jako PDF"
+                  >
+                    <Download className="w-5 h-5" />
+                    <span className="hidden sm:inline">Pobierz PDF</span>
+                  </button>
+                </div>
 
                 <div className="flex items-center gap-4 text-sm text-gray-600 border-b pb-4 mb-6">
                   {page.readingTime && (
@@ -478,14 +520,51 @@ export function PageViewer() {
                 </div>
 
                 {/* Treść aktualnej strony */}
-                <div className="prose max-w-none">
-                  {isLalkaChapters && currentVolumeInfo?.volumeTitle && (
-                    <div className="mb-8 pb-4 border-b-2 border-purple-200 bg-purple-50 rounded-lg px-8 py-6">
-                      <h2 className="text-3xl font-bold text-purple-900 text-center">
-                        {currentVolumeInfo.volumeTitle}
-                      </h2>
-                    </div>
-                  )}
+                <div
+                  ref={contentRef}
+                  className="prose max-w-none"
+                  style={{
+                    fontFamily: "'Georgia', 'Times New Roman', serif",
+                    fontSize: "14px",
+                    lineHeight: "1.8",
+                  }}
+                >
+                  {/* Nagłówek dla PDF */}
+                  <div
+                    style={{
+                      marginBottom: "20px",
+                      borderBottom: "2px solid #333",
+                      paddingBottom: "10px",
+                    }}
+                  >
+                    <h1
+                      style={{
+                        fontSize: "24px",
+                        fontWeight: "bold",
+                        marginBottom: "8px",
+                        color: "#1a1a1a",
+                      }}
+                    >
+                      {page.title}
+                    </h1>
+                    <p
+                      style={{
+                        fontSize: "12px",
+                        color: "#666",
+                        margin: 0,
+                      }}
+                    >
+                      {page.hub.title}
+                      {isLalkaChapters && currentVolumeInfo && (
+                        <span>
+                          {" • "}
+                          {currentVolumeInfo.volumeNumber > 1 &&
+                            `Tom ${currentVolumeInfo.volumeNumber} - `}
+                          Rozdział {currentVolumeInfo.chapterInVolume}
+                        </span>
+                      )}
+                    </p>
+                  </div>
 
                   {currentBlocks
                     .filter((block) => block.type !== "volume_break")
