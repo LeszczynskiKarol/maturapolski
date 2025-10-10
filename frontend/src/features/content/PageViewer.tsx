@@ -77,7 +77,7 @@ export function PageViewer() {
     // WSZYSTKIE bloki jako HTML string (najszybsze)
     const allBlocks = page.content?.blocks || [];
 
-    allBlocks.forEach((block) => {
+    allBlocks.forEach((block: any) => {
       if (block.type === "page_break") return;
 
       if (block.type === "volume_break" && isLalkaChapters) {
