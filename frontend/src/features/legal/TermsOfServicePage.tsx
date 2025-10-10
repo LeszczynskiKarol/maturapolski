@@ -32,7 +32,7 @@ export const TermsOfServicePage: React.FC = () => {
             <div className="flex items-start gap-4">
               <AlertCircle className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
               <p className="text-gray-700">
-                Korzystając z platformy Matura Polski, akceptujesz niniejszy
+                Korzystając z platformy MaturaPolski.pl, akceptujesz niniejszy
                 regulamin. Prosimy o uważne zapoznanie się z jego treścią.
               </p>
             </div>
@@ -51,7 +51,7 @@ export const TermsOfServicePage: React.FC = () => {
               <div className="space-y-2 text-gray-700">
                 <p>
                   <strong>1.</strong> Niniejszy Regulamin określa zasady i
-                  warunki korzystania z platformy edukacyjnej „Matura Polski"
+                  warunki korzystania z platformy edukacyjnej „MaturaPolski.pl"
                   dostępnej pod adresem www.maturapolski.pl (zwanej dalej
                   „Platformą" lub „Serwisem").
                 </p>
@@ -81,7 +81,7 @@ export const TermsOfServicePage: React.FC = () => {
               <div className="space-y-2 text-gray-700 text-sm">
                 <p>
                   <strong>Platforma/Serwis</strong> – platforma edukacyjna
-                  „Matura Polski" dostępna pod adresem www.maturapolski.pl
+                  „MaturaPolski.pl" dostępna pod adresem www.maturapolski.pl
                 </p>
                 <p>
                   <strong>Użytkownik</strong> – osoba fizyczna korzystająca z
@@ -1000,7 +1000,7 @@ export const TermsOfServicePage: React.FC = () => {
           {/* Zakończenie */}
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 text-white mt-8">
             <p className="text-center font-semibold">
-              Dziękujemy za korzystanie z platformy Matura Polski!
+              Dziękujemy za korzystanie z platformy MaturaPolski.pl!
               <br />
               Życzymy sukcesów w nauce i powodzenia na egzaminie maturalnym.
             </p>

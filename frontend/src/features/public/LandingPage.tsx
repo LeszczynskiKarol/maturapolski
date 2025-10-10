@@ -72,7 +72,7 @@ export const LandingPage: React.FC = () => {
               <BookOpen className="w-8 h-8 text-blue-600" />
               <div className="flex flex-col">
                 <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Matura Polski
+                  MaturaPolski.pl
                 </span>
                 <span className="text-xs font-semibold text-gray-600 tracking-wide">
                   Zdaj na 100%
@@ -753,7 +753,7 @@ export const LandingPage: React.FC = () => {
                   <th className="px-6 py-4 text-center">Korepetycje</th>
                   <th className="px-6 py-4 text-center">Podręczniki</th>
                   <th className="px-6 py-4 text-center bg-blue-700">
-                    Matura Polski
+                    MaturaPolski.pl
                   </th>
                 </tr>
               </thead>
@@ -1069,7 +1069,7 @@ export const LandingPage: React.FC = () => {
             <div className="col-span-2">
               <div className="flex items-center gap-2 mb-4">
                 <BookOpen className="w-8 h-8 text-blue-400" />
-                <span className="text-2xl font-bold">Matura Polski</span>
+                <span className="text-2xl font-bold">MaturaPolski.pl</span>
               </div>
               <p className="text-gray-400 mb-4 max-w-sm">
                 Inteligentna platforma do nauki języka polskiego, która pomaga
@@ -1195,7 +1195,7 @@ export const LandingPage: React.FC = () => {
           <div className="border-t border-gray-800 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-gray-400 text-sm">
-                © 2025 Matura Polski. Wszystkie prawa zastrzeżone.
+                © 2025 MaturaPolski.pl. Wszystkie prawa zastrzeżone.
               </p>
               <div className="flex gap-6 text-sm text-gray-400">
                 <a href="/terms" className="hover:text-white transition-colors">

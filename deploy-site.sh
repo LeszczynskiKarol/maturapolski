@@ -17,7 +17,7 @@ NC='\033[0m' # No Color
 APP_DIR="/var/www/maturapolski"
 
 echo -e "${BLUE}========================================${NC}"
-echo -e "${BLUE}  Deployment aplikacji Matura Polski${NC}"
+echo -e "${BLUE}  Deployment aplikacji MaturaPolski.pl${NC}"
 echo -e "${BLUE}========================================${NC}\n"
 
 # Przejdź do katalogu aplikacji

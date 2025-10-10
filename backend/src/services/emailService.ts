@@ -9,7 +9,7 @@ export class EmailService {
       const result = await transporter.sendMail({
         from: `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM}>`,
         to,
-        subject: "Kod weryfikacyjny - Matura Polski",
+        subject: "Kod weryfikacyjny - MaturaPolski.pl",
         html,
       });
       console.log("✅ Email sent:", result.messageId);
@@ -27,7 +27,7 @@ export class EmailService {
       const result = await transporter.sendMail({
         from: `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM}>`,
         to,
-        subject: "Witaj w Matura Polski! 🎓",
+        subject: "Witaj w MaturaPolski.pl! 🎓",
         html,
       });
       console.log("✅ Welcome email sent:", result.messageId);
@@ -46,7 +46,7 @@ export class EmailService {
       const result = await transporter.sendMail({
         from: `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM}>`,
         to,
-        subject: "Reset hasła - Matura Polski",
+        subject: "Reset hasła - MaturaPolski.pl",
         html,
       });
       console.log("✅ Password reset email sent:", result.messageId);
@@ -136,7 +136,7 @@ export class EmailService {
           </div>
           <div class="content">
             <h2>Cześć, ${displayName}!</h2>
-            <p>Dziękujemy za rejestrację w Matura Polski! Jeszcze jeden krok do rozpoczęcia nauki.</p>
+            <p>Dziękujemy za rejestrację w MaturaPolski.pl! Jeszcze jeden krok do rozpoczęcia nauki.</p>
             
             <p>Skopiuj poniższy kod i wklej go na stronie weryfikacji:</p>
             
@@ -151,11 +151,11 @@ export class EmailService {
             <hr style="border: none; border-top: 1px solid #e9ecef; margin: 30px 0;">
             
             <p style="color: #6c757d; font-size: 13px;">
-              Jeśli nie zakładałeś konta w Matura Polski, zignoruj ten email.
+              Jeśli nie zakładałeś konta w MaturaPolski.pl, zignoruj ten email.
             </p>
           </div>
           <div class="footer">
-            <p style="margin: 0 0 10px 0;">© 2025 Matura Polski. Wszystkie prawa zastrzeżone.</p>
+            <p style="margin: 0 0 10px 0;">© 2025 MaturaPolski.pl. Wszystkie prawa zastrzeżone.</p>
           </div>
         </div>
       </body>
@@ -193,7 +193,7 @@ export class EmailService {
         <body>
           <div class="container">
             <div class="header">
-              <h1>🎓 Witaj w Matura Polski!</h1>
+              <h1>🎓 Witaj w MaturaPolski.pl!</h1>
             </div>
             <div class="content">
               <h2>Cześć, ${displayName}!</h2>

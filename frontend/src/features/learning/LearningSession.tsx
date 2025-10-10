@@ -484,33 +484,101 @@ export const LearningSession: React.FC = () => {
 
     const hasPoints = hasEnoughPoints(currentExercise.type);
 
-    // PO SUBMICIE - zawsze tylko "Następne"
+    // PO SUBMICIE - sprawdź czy to DOKŁADNIE 20 pytanie (nie 19!)
     if (hasSubmitted) {
+      // ✅ POPRAWKA: Sprawdzamy completed + 1 (bo to pytanie które WŁAŚNIE zakończyliśmy)
+      const isLastQuestion = sessionStats.completed >= SESSION_LIMIT;
+
       return (
         <button
-          onClick={handleNext}
+          onClick={async () => {
+            if (isLastQuestion) {
+              // ✅ DOKŁADNIE TA SAMA LOGIKA CO W MODALU ZAMYKANIA
+              console.log("=== LAST QUESTION - ZAKOŃCZ SESJĘ ===");
+
+              if (sessionId && sessionStats.completed > 0) {
+                try {
+                  await saveSessionMutation.mutateAsync({
+                    sessionId,
+                    stats: sessionStats,
+                    completedExercises: completedExercises,
+                  });
+                  console.log("✅ Session saved successfully");
+                } catch (error) {
+                  console.error("❌ Failed to save session:", error);
+                }
+              }
+
+              // Resetuj wszystko
+              setSessionId(null);
+              setSessionActive(false);
+              setSessionComplete(true);
+              setCurrentExercise(null);
+              setAnswer(null);
+              setShowFeedback(false);
+              setSessionFilters({});
+              localStorage.removeItem("sessionFilters");
+              localStorage.removeItem("isStudyPlanSession");
+              localStorage.removeItem("isEpochReview");
+              setCompletedExercises([]);
+              setSessionStats({
+                completed: 0,
+                correct: 0,
+                streak: 0,
+                maxStreak: 0,
+                points: 0,
+                timeSpent: 0,
+              });
+
+              refetchStats();
+
+              // Invaliduj wszystkie query
+              await queryClient.invalidateQueries({
+                predicate: (query) => query.queryKey[0] === "all-sessions",
+              });
+
+              // Dodatkowe opóźnienie dla pewności
+              setTimeout(async () => {
+                await queryClient.invalidateQueries({
+                  predicate: (query) => query.queryKey[0] === "all-sessions",
+                });
+              }, 500);
+
+              // Nawiguj do dashboard
+              navigate("/dashboard");
+            } else {
+              handleNext();
+            }
+          }}
           className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 
-                 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 
-                 font-semibold flex items-center gap-2"
+       text-white rounded-lg hover:from-blue-700 hover:to-purple-700 
+       font-semibold flex items-center gap-2"
         >
-          Następne
-          <ChevronRight className="w-5 h-5" />
+          {isLastQuestion ? (
+            <>
+              Zakończ sesję
+              <Trophy className="w-5 h-5" />
+            </>
+          ) : (
+            <>
+              Następne
+              <ChevronRight className="w-5 h-5" />
+            </>
+          )}
         </button>
       );
     }
 
-    // PRZED SUBMITEM
-
-    // Zadania zamknięte (CLOSED_*) - zawsze tylko "Sprawdź"
+    // PRZED SUBMITEM - bez zmian
     if (!needsAi) {
       return (
         <button
           onClick={handleSubmit}
           disabled={!canSubmit || isSubmitting}
           className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 
-                 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 
-                 disabled:opacity-50 disabled:cursor-not-allowed 
-                 font-semibold flex items-center gap-2"
+               text-white rounded-lg hover:from-blue-700 hover:to-purple-700 
+               disabled:opacity-50 disabled:cursor-not-allowed 
+               font-semibold flex items-center gap-2"
         >
           {isSubmitting ? (
             <>
@@ -527,16 +595,15 @@ export const LearningSession: React.FC = () => {
       );
     }
 
-    // Zadania pisemne (SHORT_ANSWER, SYNTHESIS_NOTE, ESSAY) BEZ punktów
     if (!hasPoints) {
       return (
         <div className="flex gap-3">
           <button
             onClick={handleSkip}
             className="px-6 py-3 border-2 border-gray-300 dark:border-gray-600 
-                   text-gray-700 dark:text-gray-300 rounded-lg 
-                   hover:bg-gray-50 dark:hover:bg-gray-700 font-semibold
-                   flex items-center gap-2"
+                 text-gray-700 dark:text-gray-300 rounded-lg 
+                 hover:bg-gray-50 dark:hover:bg-gray-700 font-semibold
+                 flex items-center gap-2"
           >
             <SkipForward className="w-4 h-4" />
             Pomiń zadanie
@@ -544,8 +611,8 @@ export const LearningSession: React.FC = () => {
           <button
             onClick={() => navigate("/subscription")}
             className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 
-                   text-white rounded-lg hover:from-green-700 hover:to-emerald-700 
-                   font-semibold flex items-center gap-2"
+                 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 
+                 font-semibold flex items-center gap-2"
           >
             <CreditCard className="w-5 h-5" />
             Doładuj konto
@@ -554,15 +621,14 @@ export const LearningSession: React.FC = () => {
       );
     }
 
-    // Zadania pisemne Z punktami - tylko "Sprawdź"
     return (
       <button
         onClick={handleSubmit}
         disabled={!canSubmit || isSubmitting}
         className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 
-               text-white rounded-lg hover:from-blue-700 hover:to-purple-700 
-               disabled:opacity-50 disabled:cursor-not-allowed 
-               font-semibold flex items-center gap-2"
+             text-white rounded-lg hover:from-blue-700 hover:to-purple-700 
+             disabled:opacity-50 disabled:cursor-not-allowed 
+             font-semibold flex items-center gap-2"
       >
         {isSubmitting ? (
           <>
@@ -592,16 +658,14 @@ export const LearningSession: React.FC = () => {
       console.log("=== SUBMIT SUCCESS ===");
       console.log("Exercise ID:", currentExercise.id, "Score:", result.score);
 
-      // Sprawdź czy sessionId istnieje
       if (!sessionId) {
-        console.error("BRAK sessionId! Nie można zapisać wyniku.");
+        console.error("BRAK sessionId!");
         toast.error("Błąd sesji. Spróbuj rozpocząć nową sesję.");
         setShowFeedback(true);
         setHasSubmitted(true);
         return;
       }
 
-      // Zapisz do bazy danych
       try {
         console.log("Zapisuję do sesji:", {
           sessionId,
@@ -628,7 +692,6 @@ export const LearningSession: React.FC = () => {
         return;
       }
 
-      // Aktualizuj lokalne state
       const isCorrect = result.score > 0;
 
       setCompletedExercises((prev) => [
@@ -647,7 +710,6 @@ export const LearningSession: React.FC = () => {
         points: prev.points + (result.score || 0),
       }));
 
-      // Aktualizuj poziomy trudności
       if (result.levelProgress) {
         queryClient.setQueryData(["difficulty-progress"], result.levelProgress);
 
@@ -657,6 +719,7 @@ export const LearningSession: React.FC = () => {
             spread: 100,
             origin: { y: 0.5 },
           });
+          // ✅ TEN TOAST JEST OK - odblokowanie poziomu
           toast.success(
             `Odblokowano poziom ${result.levelProgress.currentMaxDifficulty}!`,
             { duration: 5000 }
@@ -664,48 +727,31 @@ export const LearningSession: React.FC = () => {
         }
       }
 
-      // Odśwież poziomy po chwili
       if (isCorrect) {
         setTimeout(() => {
           queryClient.invalidateQueries({ queryKey: ["difficulty-progress"] });
         }, 500);
       }
 
-      // Konfetti dla serii
-      if (
-        isCorrect &&
-        sessionStats.streak > 0 &&
-        sessionStats.streak % 5 === 0
-      ) {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
-        });
+      // ✅ TYLKO TEN TOAST przy streak % 5
+      if (isCorrect && sessionStats.streak > 0) {
+        const newStreak = sessionStats.streak + 1;
+
+        if (newStreak % 5 === 0) {
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+          });
+
+          toast.success(
+            `🔥 BRAWO! To już ${newStreak}. Twoja poprawna odpowiedź z rzędu. Kontynuuj passę!`,
+            { duration: 4000 }
+          );
+        }
       }
 
       setShowFeedback(true);
-    },
-    onError: (error: any) => {
-      setIsSubmitting(false);
-      const errorMessage = error.response?.data?.error || error.message || "";
-
-      if (errorMessage.includes("INSUFFICIENT_AI_POINTS")) {
-        const match = errorMessage.match(/(\d+)\/(\d+) punktów.*(\d+) punkt/);
-
-        if (match && subscription) {
-          setUpgradePromptData({
-            pointsNeeded: parseInt(match[3]),
-            currentPoints: subscription.aiPointsUsed,
-            totalPoints: subscription.aiPointsLimit,
-          });
-          setShowUpgradePrompt(true);
-        } else {
-          toast.error("Brak punktów AI! Ulepsz plan aby kontynuować.");
-        }
-      } else {
-        toast.error(errorMessage || "Błąd podczas sprawdzania odpowiedzi");
-      }
     },
   });
 
@@ -933,10 +979,10 @@ export const LearningSession: React.FC = () => {
 
   // Next exercise with filters
   const goToNextExercise = async () => {
-    // ✅ SPRAWDŹ CZY TO BYŁO OSTATNIE PYTANIE
+    // ✅ SPRAWDŹ czy już jest 20 UKOŃCZONYCH
     if (sessionStats.completed >= SESSION_LIMIT) {
-      console.log("=== LAST EXERCISE COMPLETED - SHOWING EXIT DIALOG ===");
-      setShowExitDialog(true); // Pokaż dialog zamiast kończyć
+      console.log("=== SESSION LIMIT REACHED - NO MORE QUESTIONS ===");
+      // Po prostu nie rób nic - przycisk już pokazuje "Zakończ sesję"
       return;
     }
 
@@ -949,11 +995,15 @@ export const LearningSession: React.FC = () => {
       if (data) {
         setCurrentExercise(data);
       } else {
-        setShowExitDialog(true); // Brak pytań - pokaż dialog
+        console.log("No more exercises available");
+        toast.error("Brak więcej dostępnych ćwiczeń");
+        // Zakończ sesję automatycznie jeśli brak pytań
+        setSessionComplete(true);
+        setSessionActive(false);
       }
     } catch (error) {
       console.error("Error fetching next exercise:", error);
-      setShowExitDialog(true);
+      toast.error("Błąd podczas pobierania następnego zadania");
     } finally {
       setIsLoadingNext(false);
     }
@@ -1130,17 +1180,6 @@ export const LearningSession: React.FC = () => {
     return () => clearInterval(saveInterval);
   }, [sessionActive, sessionId, sessionStats]);
 
-  useEffect(() => {
-    if (
-      sessionStats.completed >= SESSION_LIMIT &&
-      sessionActive &&
-      !showExitDialog
-    ) {
-      console.log("=== SESSION LIMIT REACHED - SHOWING EXIT DIALOG ===");
-      setShowExitDialog(true);
-    }
-  }, [sessionStats.completed, sessionActive]);
-
   if (isAutoStarting) {
     return (
       <div className="max-w-7xl mx-auto p-6">
@@ -1238,12 +1277,11 @@ export const LearningSession: React.FC = () => {
                 {!showFeedback && (
                   <button
                     onClick={skipExercise}
-                    disabled={sessionStats.completed >= SESSION_LIMIT - 1}
                     className="flex items-center gap-1 px-1 py-1 text-gray-500 dark:text-gray-400 
-         hover:text-gray-700 dark:hover:text-gray-200 
-         hover:bg-gray-100 dark:hover:bg-gray-700
-         disabled:opacity-50 transition-colors rounded-lg
-         whitespace-nowrap"
+ hover:text-gray-700 dark:hover:text-gray-200 
+ hover:bg-gray-100 dark:hover:bg-gray-700
+ transition-colors rounded-lg
+ whitespace-nowrap"
                   >
                     <SkipForward className="w-4 h-4" />
                     <span>Pomiń</span>
@@ -2314,12 +2352,75 @@ export const LearningSession: React.FC = () => {
                 {/* Przycisk następnego zadania */}
                 <div className="flex justify-end">
                   <button
-                    onClick={goToNextExercise}
+                    onClick={async () => {
+                      const isLastQuestion =
+                        sessionStats.completed >= SESSION_LIMIT;
+
+                      if (isLastQuestion) {
+                        // ✅ DOKŁADNIE TA SAMA LOGIKA CO W renderActionButtons
+                        console.log("=== FEEDBACK BUTTON - ZAKOŃCZ SESJĘ ===");
+
+                        if (sessionId && sessionStats.completed > 0) {
+                          try {
+                            await saveSessionMutation.mutateAsync({
+                              sessionId,
+                              stats: sessionStats,
+                              completedExercises: completedExercises,
+                            });
+                            console.log("✅ Session saved successfully");
+                          } catch (error) {
+                            console.error("❌ Failed to save session:", error);
+                          }
+                        }
+
+                        // Resetuj wszystko
+                        setSessionId(null);
+                        setSessionActive(false);
+                        setSessionComplete(true);
+                        setCurrentExercise(null);
+                        setAnswer(null);
+                        setShowFeedback(false);
+                        setSessionFilters({});
+                        localStorage.removeItem("sessionFilters");
+                        localStorage.removeItem("isStudyPlanSession");
+                        localStorage.removeItem("isEpochReview");
+                        setCompletedExercises([]);
+                        setSessionStats({
+                          completed: 0,
+                          correct: 0,
+                          streak: 0,
+                          maxStreak: 0,
+                          points: 0,
+                          timeSpent: 0,
+                        });
+
+                        refetchStats();
+
+                        // Invaliduj wszystkie query
+                        await queryClient.invalidateQueries({
+                          predicate: (query) =>
+                            query.queryKey[0] === "all-sessions",
+                        });
+
+                        setTimeout(async () => {
+                          await queryClient.invalidateQueries({
+                            predicate: (query) =>
+                              query.queryKey[0] === "all-sessions",
+                          });
+                        }, 500);
+
+                        // Nawiguj do dashboard
+                        navigate("/dashboard");
+                      } else {
+                        // Nie ostatnie pytanie - idź dalej
+                        await goToNextExercise();
+                      }
+                    }}
                     className="px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white rounded-lg 
-                         hover:bg-blue-700 dark:hover:bg-blue-600 
-                         flex items-center gap-2 transition-colors"
+         hover:bg-blue-700 dark:hover:bg-blue-600 
+         flex items-center gap-2 transition-colors"
                   >
-                    {sessionStats.completed >= SESSION_LIMIT - 1 ? (
+                    {sessionStats.completed >= SESSION_LIMIT ? (
                       <>
                         Zakończ sesję
                         <Trophy className="w-5 h-5" />

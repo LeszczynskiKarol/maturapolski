@@ -53,7 +53,7 @@ export default function HubListPage() {
   return (
     <PublicLayout>
       <Helmet>
-        <title>Baza wiedzy - Matura Polski</title>
+        <title>Baza wiedzy - MaturaPolski.pl</title>
         <meta
           name="description"
           content="Lektury, epoki, autorzy - wszystko czego potrzebujesz do matury z języka polskiego"

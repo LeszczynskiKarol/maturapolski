@@ -68,7 +68,7 @@ export const Layout: React.FC = () => {
             )}
           </button>
           <h1 className="text-xl font-bold text-blue-600 dark:text-blue-400">
-            Matura Polski
+            MaturaPolski.pl
           </h1>
           <div className="flex items-center gap-2">
             <ThemeToggle />
@@ -90,7 +90,7 @@ export const Layout: React.FC = () => {
                 isSidebarCollapsed ? "opacity-0" : "opacity-100"
               }`}
             >
-              Matura Polski
+              MaturaPolski.pl
             </h1>
             <button
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}

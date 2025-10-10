@@ -378,7 +378,7 @@ export function PageViewer() {
   return (
     <PublicLayout>
       <Helmet>
-        <title>{page?.metaTitle || page?.title || "Matura Polski"}</title>
+        <title>{page?.metaTitle || page?.title || "MaturaPolski.pl"}</title>
         <meta
           name="description"
           content={

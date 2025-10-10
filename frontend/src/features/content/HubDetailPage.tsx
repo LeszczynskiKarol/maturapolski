@@ -69,7 +69,7 @@ export function HubDetailPage() {
   return (
     <PublicLayout>
       <Helmet>
-        <title>{hub?.metaTitle || hub?.title || "Matura Polski"}</title>
+        <title>{hub?.metaTitle || hub?.title || "MaturaPolski.pl"}</title>
         <meta
           name="description"
           content={

@@ -1,15 +1,15 @@
 // frontend/src/components/CookieBanner.tsx
 
 import React, { useState } from "react";
-import { Cookie, Settings, Shield, ChevronDown } from "lucide-react";
+import { Cookie, Settings, Shield } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useCookieConsent } from "../hooks/useCookieConsent";
 import { CookieSettings } from "./CookieSettings";
 
 export const CookieBanner: React.FC = () => {
   const location = useLocation();
-  const { acceptAll, acceptNecessary } = useCookieConsent();
-  const [isMinimized, setIsMinimized] = useState(false);
+  const { acceptAll, acceptNecessary, hasConsent, showBanner } =
+    useCookieConsent(); // ✅ Dodane hasConsent i showBanner
   const [showSettings, setShowSettings] = useState(false);
 
   // NIE pokazuj banera w zalogowanej części aplikacji
@@ -38,7 +38,23 @@ export const CookieBanner: React.FC = () => {
     return null;
   }
 
-  // USUNIĘTE: if (hasConsent) return null;
+  // ✅ KLUCZOWA ZMIANA: Jeśli użytkownik już wyraził zgodę, nie pokazuj banera
+  if (hasConsent && !showBanner) {
+    // Opcjonalnie: możesz pokazać małą ikonę do ponownego otwarcia ustawień
+    return (
+      <button
+        onClick={() => setShowSettings(true)}
+        className="hidden lg:flex fixed bottom-4 left-4 z-[9999] items-center gap-2 
+                   bg-blue-600 hover:bg-blue-700 text-white 
+                   px-4 py-3 rounded-full shadow-2xl 
+                   transition-all hover:scale-105"
+        aria-label="Pokaż ustawienia cookies"
+        title="Zarządzaj cookies"
+      >
+        <Cookie className="w-4 h-4" />
+      </button>
+    );
+  }
 
   // Modal z ustawieniami
   if (showSettings) {
@@ -46,29 +62,12 @@ export const CookieBanner: React.FC = () => {
       <CookieSettings
         onClose={() => {
           setShowSettings(false);
-          setIsMinimized(true);
         }}
       />
     );
   }
 
-  // Zminimalizowana wersja - ZAWSZE widoczna po akceptacji
-  if (isMinimized) {
-    return (
-      <button
-        onClick={() => setIsMinimized(false)}
-        className="hidden lg:flex fixed bottom-4 left-4 z-[9999] items-center gap-2 
-                   bg-blue-600 hover:bg-blue-700 text-white 
-                   px-4 py-3 rounded-full shadow-2xl 
-                   transition-all hover:scale-105"
-        aria-label="Pokaż ustawienia cookies"
-      >
-        <Cookie className="w-4 h-4" />
-      </button>
-    );
-  }
-
-  // Pełny baner
+  // ✅ Pełny baner - pokazuje się TYLKO gdy nie ma zgody
   return (
     <div className="hidden lg:block fixed bottom-4 left-4 z-[9999] max-w-md">
       <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden ring-1 ring-black/5">
@@ -87,13 +86,6 @@ export const CookieBanner: React.FC = () => {
               </p>
             </div>
           </div>
-          <button
-            onClick={() => setIsMinimized(true)}
-            className="text-white/80 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10"
-            aria-label="Minimalizuj"
-          >
-            <ChevronDown className="w-5 h-5" />
-          </button>
         </div>
 
         {/* Content */}
@@ -128,10 +120,7 @@ export const CookieBanner: React.FC = () => {
 
           <div className="space-y-2">
             <button
-              onClick={() => {
-                acceptAll();
-                setIsMinimized(true);
-              }}
+              onClick={acceptAll}
               className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg font-semibold transition-all hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Akceptuj wszystkie
@@ -139,10 +128,7 @@ export const CookieBanner: React.FC = () => {
 
             <div className="flex gap-2">
               <button
-                onClick={() => {
-                  acceptNecessary();
-                  setIsMinimized(true); // ← DODAJ TO Z POWROTEM
-                }}
+                onClick={acceptNecessary}
                 className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
               >
                 Tylko niezbędne
