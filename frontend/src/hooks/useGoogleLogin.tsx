@@ -164,7 +164,7 @@ export const useGoogleLogin = () => {
       const handleResize = () => {
         clearTimeout(resizeTimeout);
 
-        resizeTimeout = setTimeout(() => {
+        resizeTimeout = window.setTimeout(() => {
           const currentWidth = window.innerWidth;
 
           // Only re-render if width changed (ignore height changes from mobile keyboard)
