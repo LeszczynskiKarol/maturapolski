@@ -74,6 +74,7 @@ const EPOCHS = [
 // ==========================================
 
 const RichTextEditor = ({ content, onChange }: any) => {
+  const blockRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const [blocks, setBlocks] = useState(content.blocks || []);
   const textareaRefs = useRef<{ [key: string]: HTMLTextAreaElement | null }>(
     {}
@@ -124,19 +125,30 @@ const RichTextEditor = ({ content, onChange }: any) => {
   const addBlock = (type: string) => {
     const newBlock = {
       id: Date.now().toString(),
-      type: type === "link_template" ? "paragraph" : type, // Konwertuj na paragraph
+      type: type === "link_template" ? "paragraph" : type,
       content:
         type === "image"
           ? { url: "", alt: "", caption: "" }
           : type === "volume_break"
           ? { volumeTitle: "Tom 1" }
           : type === "link_template"
-          ? "[tekst linku](https://example.com)" // Szablon linku
+          ? "[tekst linku](https://example.com)"
           : "",
     };
     const newBlocks = [...blocks, newBlock];
     setBlocks(newBlocks);
     onChange({ blocks: newBlocks });
+
+    // ✅ NOWE: Scroll do nowo dodanego bloku
+    setTimeout(() => {
+      const newBlockElement = blockRefs.current[newBlock.id];
+      if (newBlockElement) {
+        newBlockElement.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+    }, 100);
   };
 
   const updateBlock = (id: string, newContent: string | any) => {
@@ -197,7 +209,7 @@ const RichTextEditor = ({ content, onChange }: any) => {
   return (
     <div className="space-y-4">
       {/* Toolbar z przyciskami */}
-      <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg border">
+      <div className="sticky top-0 z-10 flex flex-wrap gap-2 p-0 bg-gray-50 rounded-lg border shadow-sm">
         <button
           type="button"
           onClick={() => addBlock("h2")}
@@ -292,6 +304,7 @@ const RichTextEditor = ({ content, onChange }: any) => {
         {blocks.map((block: any, index: number) => (
           <div
             key={block.id}
+            ref={(el) => (blockRefs.current[block.id] = el)}
             className="relative group border rounded-lg p-3 bg-white"
           >
             {/* Kontrolki przesuwania */}
@@ -1356,138 +1369,143 @@ export default function ContentManager() {
         {/* MODAL: Tworzenie/Edycja strony - WIĘKSZY MODAL! */}
         {showPageModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 z-50 overflow-y-auto pt-8">
-            <div className="bg-white rounded-lg max-w-6xl w-full mb-8 p-6">
-              <h2 className="text-xl font-bold mb-4">
-                {selectedPage ? "Edytuj stronę" : "Nowa strona"}
-              </h2>
+            <div className="bg-white rounded-lg max-w-6xl w-full mb-8 flex flex-col max-h-[90vh]">
+              {/* Header - normalny */}
 
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Tytuł strony
-                    </label>
-                    <input
-                      type="text"
-                      value={pageForm.title}
-                      onChange={(e) =>
-                        setPageForm({ ...pageForm, title: e.target.value })
-                      }
-                      className="w-full px-4 py-2 border rounded"
-                      placeholder="np. Streszczenie szczegółowe"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Czas czytania (minuty)
-                    </label>
-                    <input
-                      type="number"
-                      value={pageForm.readingTime}
-                      onChange={(e) =>
-                        setPageForm({
-                          ...pageForm,
-                          readingTime: e.target.value,
-                        })
-                      }
-                      className="w-full px-4 py-2 border rounded"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    URL (slug) - wpisz własny!
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-500">/{selectedHub.slug}/</span>
-                    <input
-                      type="text"
-                      value={pageForm.customSlug}
-                      onChange={(e) =>
-                        setPageForm({ ...pageForm, customSlug: e.target.value })
-                      }
-                      className="flex-1 px-4 py-2 border rounded"
-                      placeholder="np. streszczenie-szczegolowe"
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Pełny URL: /{selectedHub.slug}/{pageForm.customSlug}
-                  </p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Treść
-                  </label>
-                  <RichTextEditor
-                    content={pageForm.content}
-                    onChange={(content: any) =>
-                      setPageForm({ ...pageForm, content })
-                    }
-                  />
-                </div>
-                <div className="pt-4 border-t">
-                  <h3 className="font-semibold mb-3 text-gray-700">
-                    SEO (opcjonalne)
-                  </h3>
-
-                  <div className="grid grid-cols-1 gap-4">
+              <div className="flex-1 overflow-y-auto p-6">
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium mb-2">
-                        Meta Title
-                        <span className="text-xs text-gray-500 ml-2">
-                          (max 60 znaków)
-                        </span>
+                        Tytuł strony
                       </label>
                       <input
                         type="text"
-                        value={pageForm.metaTitle}
+                        value={pageForm.title}
                         onChange={(e) =>
-                          setPageForm({
-                            ...pageForm,
-                            metaTitle: e.target.value,
-                          })
+                          setPageForm({ ...pageForm, title: e.target.value })
                         }
-                        maxLength={60}
                         className="w-full px-4 py-2 border rounded"
-                        placeholder="Tytuł dla Google"
+                        placeholder="np. Streszczenie szczegółowe"
                       />
-                      <p className="text-xs text-gray-500 mt-1">
-                        {pageForm.metaTitle.length}/60 znaków
-                      </p>
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium mb-2">
-                        Meta Description
-                        <span className="text-xs text-gray-500 ml-2">
-                          (max 160 znaków)
-                        </span>
+                        Czas czytania (minuty)
                       </label>
-                      <textarea
-                        value={pageForm.metaDescription}
+                      <input
+                        type="number"
+                        value={pageForm.readingTime}
                         onChange={(e) =>
                           setPageForm({
                             ...pageForm,
-                            metaDescription: e.target.value,
+                            readingTime: e.target.value,
                           })
                         }
-                        maxLength={160}
-                        rows={2}
                         className="w-full px-4 py-2 border rounded"
-                        placeholder="Opis dla Google"
                       />
-                      <p className="text-xs text-gray-500 mt-1">
-                        {pageForm.metaDescription.length}/160 znaków
-                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      URL (slug) - wpisz własny!
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-500">
+                        /{selectedHub.slug}/
+                      </span>
+                      <input
+                        type="text"
+                        value={pageForm.customSlug}
+                        onChange={(e) =>
+                          setPageForm({
+                            ...pageForm,
+                            customSlug: e.target.value,
+                          })
+                        }
+                        className="flex-1 px-4 py-2 border rounded"
+                        placeholder="np. streszczenie-szczegolowe"
+                      />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Pełny URL: /{selectedHub.slug}/{pageForm.customSlug}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Treść
+                    </label>
+                    <RichTextEditor
+                      content={pageForm.content}
+                      onChange={(content: any) =>
+                        setPageForm({ ...pageForm, content })
+                      }
+                    />
+                  </div>
+                  <div className="pt-4 border-t">
+                    <h3 className="font-semibold mb-3 text-gray-700">
+                      SEO (opcjonalne)
+                    </h3>
+
+                    <div className="grid grid-cols-1 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          Meta Title
+                          <span className="text-xs text-gray-500 ml-2">
+                            (max 60 znaków)
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          value={pageForm.metaTitle}
+                          onChange={(e) =>
+                            setPageForm({
+                              ...pageForm,
+                              metaTitle: e.target.value,
+                            })
+                          }
+                          maxLength={60}
+                          className="w-full px-4 py-2 border rounded"
+                          placeholder="Tytuł dla Google"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          {pageForm.metaTitle.length}/60 znaków
+                        </p>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          Meta Description
+                          <span className="text-xs text-gray-500 ml-2">
+                            (max 160 znaków)
+                          </span>
+                        </label>
+                        <textarea
+                          value={pageForm.metaDescription}
+                          onChange={(e) =>
+                            setPageForm({
+                              ...pageForm,
+                              metaDescription: e.target.value,
+                            })
+                          }
+                          maxLength={160}
+                          rows={2}
+                          className="w-full px-4 py-2 border rounded"
+                          placeholder="Opis dla Google"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          {pageForm.metaDescription.length}/160 znaków
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex gap-4 mt-6 sticky bottom-0 bg-white pt-4 border-t">
+              <div className="flex gap-4 px-6 py-4 bg-white border-t">
                 <button
                   onClick={() => {
                     setShowPageModal(false);
