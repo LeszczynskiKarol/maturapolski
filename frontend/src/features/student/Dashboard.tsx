@@ -50,6 +50,31 @@ export const StudentDashboard: React.FC = () => {
     queryFn: () => api.get("/api/learning/stats").then((r) => r.data),
   });
 
+  const { data: worksStats } = useQuery({
+    queryKey: ["works-stats"],
+    queryFn: () => api.get("/api/learning/works-stats").then((r) => r.data),
+  });
+
+  // ✅ Dodaj funkcję startWorkReview obok startEpochReview
+  const startWorkReview = (workTitle: string) => {
+    if (isFree) {
+      toast.error("Powtórki z lektur dostępne tylko w planie Premium!");
+      navigate("/subscription");
+      return;
+    }
+
+    const filters = {
+      category: "HISTORICAL_LITERARY",
+      work: workTitle, // ✅ Filtrujemy po tytule dzieła
+    };
+
+    localStorage.setItem("sessionFilters", JSON.stringify(filters));
+    localStorage.setItem("isWorkReview", "true");
+    localStorage.setItem("autoStartSession", "true");
+
+    navigate("/learn");
+  };
+
   const { data: detailedStats } = useQuery({
     queryKey: ["detailed-stats"],
     queryFn: () => api.get("/api/student/detailed-stats").then((r) => r.data),
@@ -467,6 +492,105 @@ export const StudentDashboard: React.FC = () => {
                   </button>
                 );
               })}
+            </div>
+          </div>
+
+          {/* Powtórka z lektur */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-6 h-6 text-green-600 dark:text-green-400" />
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                  Powtórka z lektur
+                </h3>
+              </div>
+            </div>
+
+            {isFree && (
+              <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg">
+                <p className="text-sm text-yellow-800 dark:text-yellow-200 flex items-center gap-2">
+                  <Lock className="w-4 h-4" />
+                  Powtórki dostępne tylko w Premium
+                </p>
+              </div>
+            )}
+
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Wybierz lekturę do powtórki - system dopasuje zadania
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {worksStats &&
+                Object.values(worksStats)
+                  .sort((a: any, b: any) => {
+                    // Sortuj po epoce, potem po autorze
+                    const epochOrder = [
+                      "ANTIQUITY",
+                      "MIDDLE_AGES",
+                      "RENAISSANCE",
+                      "BAROQUE",
+                      "ENLIGHTENMENT",
+                      "ROMANTICISM",
+                      "POSITIVISM",
+                      "YOUNG_POLAND",
+                      "INTERWAR",
+                      "CONTEMPORARY",
+                    ];
+                    const aIndex = epochOrder.indexOf(a.epoch);
+                    const bIndex = epochOrder.indexOf(b.epoch);
+
+                    if (aIndex !== bIndex) return aIndex - bIndex;
+                    return a.author.localeCompare(b.author);
+                  })
+                  .map((work: any) => {
+                    const progress =
+                      work.total > 0
+                        ? Math.round((work.completed / work.total) * 100)
+                        : 0;
+
+                    return (
+                      <button
+                        key={work.id}
+                        onClick={() => startWorkReview(work.title)}
+                        disabled={isFree}
+                        className={`p-4 rounded-lg transition-colors text-left group ${
+                          isFree
+                            ? "bg-gray-100 dark:bg-gray-700/30 opacity-50 cursor-not-allowed"
+                            : "bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-gray-900 dark:text-white text-sm mb-1 line-clamp-2">
+                              {work.title}
+                            </p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                              {work.author}
+                            </p>
+                          </div>
+                          {isFree ? (
+                            <Lock className="w-4 h-4 text-gray-400 ml-2 flex-shrink-0" />
+                          ) : (
+                            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors ml-2 flex-shrink-0" />
+                          )}
+                        </div>
+
+                        {work.total > 0 && !isFree && (
+                          <div className="flex items-center gap-2 mt-2">
+                            <div className="flex-1 bg-gray-200 dark:bg-gray-600 rounded-full h-1.5">
+                              <div
+                                className="bg-green-500 h-1.5 rounded-full transition-all"
+                                style={{ width: `${progress}%` }}
+                              />
+                            </div>
+                            <span className="text-xs text-gray-600 dark:text-gray-400 flex-shrink-0">
+                              {progress}%
+                            </span>
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
             </div>
           </div>
 

@@ -1,8 +1,9 @@
 // frontend/src/components/AdminLayout.tsx
 
 import React, { useState } from "react";
-
-import { Link, Outlet, useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useAuthStore } from "../store/authStore";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   BookOpen,
   Users,
@@ -12,6 +13,7 @@ import {
   Menu,
   X,
   BrainCircuit,
+  LogOut,
 } from "lucide-react";
 
 const navigation = [
@@ -26,6 +28,13 @@ const navigation = [
 export const AdminLayout: React.FC = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const logout = useAuthStore((state) => state.logout);
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    toast.success("Wylogowano pomyślnie");
+    navigate("/login");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -70,6 +79,14 @@ export const AdminLayout: React.FC = () => {
             );
           })}
         </nav>
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-2 px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors justify-center"
+          title="Wyloguj"
+        >
+          <LogOut className="w-4 h-4" />
+          <span>Wyloguj</span>
+        </button>
       </div>
 
       {/* Mobile Sidebar */}

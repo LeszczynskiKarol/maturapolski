@@ -100,7 +100,8 @@ async function seedExercises() {
       difficulty: 2,
       points: 1,
       epoch: "POSITIVISM",
-      question: "Która postać z „Lalki” reprezentuje arystokrację?",
+      work: "Lalka",
+      question: "Która postać z Lalki reprezentuje arystokrację?",
       content: {
         contextLinks: [
           {
@@ -244,7 +245,8 @@ async function seedExercises() {
       difficulty: 3,
       points: 2,
       epoch: "YOUNG_POLAND",
-      question: "Który symbol pojawia się w „Weselu” Wyspiańskiego?",
+      work: "Wesele",
+      question: "Który symbol pojawia się w Weselu Wyspiańskiego?",
       content: {
         options: ["biały orzeł", "róża", "złoty róg", "krzyż"],
       },
@@ -501,7 +503,8 @@ async function seedExercises() {
       difficulty: 2,
       points: 1,
       epoch: "ROMANTICISM",
-      question: "Gdzie rozgrywa się akcja „Dziadów” cz. III?",
+      work: "Dziady cz. III",
+      question: "Gdzie rozgrywa się akcja Dziadów cz. III?",
       content: {
         options: ["w Wilnie", "w Warszawie", "w Paryżu", "w Petersburgu"],
       },
@@ -674,6 +677,7 @@ async function seedExercises() {
       difficulty: 3,
       points: 4,
       epoch: "ROMANTICISM",
+      work: "Dziady, Kordian",
       question: "Dopasuj bohatera do jego dylematu.",
       content: {
         matchingType: "character_dilemma",
@@ -848,7 +852,8 @@ async function seedExercises() {
       difficulty: 2,
       points: 3,
       epoch: "POSITIVISM",
-      question: "Dopasuj postać z „Lalki” do jej roli społecznej.",
+      work: "Lalka",
+      question: "Dopasuj postać z Lalki do jej roli społecznej.",
       content: {
         matchingType: "character_role",
         leftColumn: [
@@ -4133,6 +4138,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 2,
       points: 1,
       epoch: "POSITIVISM",
+      work: "Faraon",
       question: "Kto jest autorem 'Faraona'?",
       content: { options: ["Sienkiewicz", "Prus", "Orzeszkowa", "Konopnicka"] },
       correctAnswer: 1,
@@ -4156,6 +4162,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 1,
       points: 1,
       epoch: "RENAISSANCE",
+      work: "Odprawa posłów greckich",
       question: "Kto napisał 'Odprawa posłów greckich'?",
       content: { options: ["Rej", "Kochanowski", "Modrzewski", "Górnicki"] },
       correctAnswer: 1,
@@ -4176,6 +4183,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 2,
       points: 1,
       epoch: "ENLIGHTENMENT",
+      work: "Myszeidos",
       question: "Kto napisał 'Myszeidos'?",
       content: {
         options: ["Krasicki", "Naruszewicz", "Trembecki", "Karpiński"],
@@ -4188,6 +4196,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 3,
       points: 1,
       epoch: "ROMANTICISM",
+      work: "Nie-Boska komedia",
       question: "Jak nazywa się główny bohater 'Nie-Boskiej komedii'?",
       content: { options: ["Gustaw", "Konrad", "Henryk", "Kordian"] },
       correctAnswer: 2,
@@ -4198,6 +4207,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 1,
       points: 1,
       epoch: "CONTEMPORARY",
+      work: "Ferdydurke",
       question: "Kto napisał 'Ferdydurke'?",
       content: { options: ["Witkacy", "Gombrowicz", "Schulz", "Mrożek"] },
       correctAnswer: 1,
@@ -4247,6 +4257,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 3,
       points: 1,
       epoch: "POSITIVISM",
+      work: "Lalka",
       question: "Która postać z 'Lalki' reprezentuje idealistę-romantyka?",
       content: {
         options: ["Rzecki", "Wokulski", "Ochocki", "Szlangbaum"],
@@ -4276,6 +4287,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 4,
       points: 2,
       epoch: "CONTEMPORARY",
+      work: "Tango",
       question: "Kto jest autorem 'Tanga'?",
       content: {
         options: ["Mrożek", "Różewicz", "Herbert", "Gombrowicz"],
@@ -4488,9 +4500,9 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 4,
       points: 3,
       epoch: "CONTEMPORARY",
+      work: "Tango",
       question: "Interpretacja motywu w kontekście filozofii absurdu.",
       content: {
-        work: "Tango - Sławomir Mrożek",
         motif: "Powtarzające się pytanie Artura: 'Gdzie są formy?'",
         question: "Co symbolizuje obsesja Artura na punkcie 'form'?",
         options: [
@@ -4625,9 +4637,9 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 5,
       points: 3,
       epoch: "RENAISSANCE",
+      work: "Odprawa posłów greckich",
       question: "Rozpoznaj koncepcję filozoficzną w utworze renesansowym.",
       content: {
-        work: "Odprawa posłów greckich - Jan Kochanowski",
         context: "Ksantypa wygłasza mowę o godności człowieka.",
         question: "Jaka idea filozoficzna leży u podstaw tej mowy?",
         options: [
@@ -4671,9 +4683,9 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 4,
       points: 3,
       epoch: "ENLIGHTENMENT",
+      work: "Monachomachia",
       question: "Interpretacja satyry w kontekście programu oświecenia.",
       content: {
-        work: "Monachomachia - Ignacy Krasicki",
         question:
           "Jaki aspekt rzeczywistości krytykuje Krasicki w 'Mona chomachia'?",
         options: [
@@ -6155,9 +6167,9 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 1,
       points: 2,
       epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
       question: "Opisz głównego bohatera.",
       content: {
-        work: "Pan Tadeusz",
         instruction: "Kim jest Tadeusz Soplica? Opisz go w 2-3 zdaniach.",
       },
     },
@@ -6264,9 +6276,9 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 2,
       points: 3,
       epoch: "ENLIGHTENMENT",
+      work: "Bajki",
       question: "Wyjaśnij cel utworu.",
       content: {
-        work: "Bajki Ignacego Krasickiego",
         instruction:
           "Jaki cel miały bajki Krasickiego? Co chciał osiągnąć autor?",
       },
@@ -6425,9 +6437,9 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 5,
       points: 5,
       epoch: "YOUNG_POLAND",
+      work: "Wesele",
       question: "Interpretacja symbolu w kontekście całości utworu.",
       content: {
-        work: "Wesele - Stanisław Wyspiański",
         symbol: "złoty róg",
         context:
           "Poeta rozdaje go gościom weselnym, ale nikt nie potrafi zagrać.",
@@ -6498,6 +6510,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       category: "HISTORICAL_LITERARY",
       difficulty: 1,
       points: 1,
+      work: "Lokomotywa",
       question: "Kto napisał 'Lokomotywę'? (podaj nazwisko)",
       content: {
         expectedAnswer: "Tuwim",
@@ -7239,7 +7252,8 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 1,
       points: 1,
       epoch: "ROMANTICISM",
-      question: "Kto napisał „Pana Tadeusza”?",
+      work: "Pan Tadeusz",
+      question: "Kto napisał Pana Tadeusza?",
       content: {
         options: [
           "Juliusz Słowacki",
@@ -7376,11 +7390,11 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 3,
       points: 2,
       epoch: "ROMANTICISM",
+      work: "Dziady",
       question: "Przeczytaj fragment i określ jego charakter.",
       content: {
         text: "Jestem młody, zdrów, łatwo wnoszę w górę ciężary, a ręce mam pełne sił.",
         author: "Adam Mickiewicz",
-        work: "Dziady cz. III",
         question: "Jaki typ bohatera reprezentuje narrator?",
         options: [
           "romantyczny buntownik",
@@ -7424,6 +7438,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 2,
       points: 1,
       epoch: "YOUNG_POLAND",
+      work: "Wesele",
       question: "Kto napisał 'Wesele'?",
       content: {
         options: [
@@ -7700,6 +7715,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 2,
       points: 1,
       epoch: "CONTEMPORARY",
+      work: "Ferdydurke",
       question: "Kto napisał 'Ferdydurke'?",
       content: {
         options: [
@@ -7943,6 +7959,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 2,
       points: 1,
       epoch: "POSITIVISM",
+      work: "Chłopi",
       question: "Kto napisał 'Chłopi'?",
       content: {
         options: [
@@ -8030,6 +8047,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 1,
       points: 1,
       epoch: "ROMANTICISM",
+      work: "Dziady",
       question: "Kto napisał 'Dziady'?",
       content: {
         options: [
@@ -8122,6 +8140,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 2,
       points: 1,
       epoch: "INTERWAR",
+      work: "Ferdydurke",
       question: "Kto napisał 'Ferdydurke'?",
       content: {
         options: [
@@ -9399,9 +9418,9 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 5,
       points: 6,
       epoch: "CONTEMPORARY",
+      work: "Bieguni",
       question: "Interpretacja postmodernistycznej strategii narracyjnej.",
       content: {
-        work: "Bieguni - Olga Tokarczuk",
         technique: "fragmentaryczność, montaż, brak linearności",
         instruction:
           "Wyjaśnij, jak ta strategia narracyjna służy wyrażeniu głównych idei powieści. Odnieś się do koncepcji podróży i tożsamości. (250-300 słów)",
@@ -9989,6 +10008,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 2,
       points: 1,
       epoch: "RENAISSANCE",
+      work: "Treny",
       question: "Komu Jan Kochanowski poświęcił 'Treny'?",
       content: {
         options: ["żonie", "córce Urszulce", "synowi", "ojcu"],
@@ -10076,6 +10096,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 4,
       points: 3,
       epoch: "POSITIVISM",
+      work: "Lalka",
       question: "Która postać z 'Lalki' reprezentuje typ 'organic pracownika'?",
       content: {
         options: ["Wokulski", "Rzecki", "Ochocki", "Szuman"],
@@ -10862,6 +10883,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       epoch: "RENAISSANCE",
       difficulty: 1,
       points: 1,
+      work: "Treny",
       question: "Kto jest autorem cyklu 'Trenów'?",
       content: {
         options: [
@@ -11066,6 +11088,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       epoch: "ROMANTICISM",
       difficulty: 2,
       points: 1,
+      work: "Pan Tadeusz",
       question: "Jaki gatunek literacki reprezentuje 'Pan Tadeusz'?",
       content: {
         options: ["powieść", "epopeja", "poemat", "dramat"],
@@ -11130,6 +11153,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       epoch: "YOUNG_POLAND",
       difficulty: 2,
       points: 1,
+      work: "Wesele",
       question: "Kto jest autorem dramatu 'Wesele'?",
       content: {
         options: [
@@ -11149,6 +11173,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       epoch: "YOUNG_POLAND",
       difficulty: 3,
       points: 2,
+      work: "Wesele",
       question: "Wyjaśnij symbolikę chochoła w finale 'Wesela' Wyspiańskiego.",
       content: {
         hint: "Marazm, bezwładność społeczeństwa",
@@ -11183,6 +11208,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       epoch: "INTERWAR",
       difficulty: 3,
       points: 2,
+      work: "Ferdydurke",
       question: "Jak w 'Ferdydurke' Gombrowicz przedstawia problem formy?",
       content: {
         requirements: ["Definicja formy", "Przykłady z tekstu"],
@@ -11813,6 +11839,2223 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       tags: ["intertekstualność", "Norwid", "Shakespeare"],
     },
 
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Kto jest autorem powieści Lalka?",
+      content: {
+        options: [
+          "Henryk Sienkiewicz",
+          "Bolesław Prus",
+          "Eliza Orzeszkowa",
+          "Maria Konopnicka",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Autorem Lalki jest Bolesław Prus (właściwie Aleksander Głowacki).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Jak nazywa się główny bohater Lalki?",
+      content: {
+        options: [
+          "Ignacy Rzecki",
+          "Stanisław Wokulski",
+          "Julian Ochocki",
+          "Tomasz Łęcki",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Głównym bohaterem jest Stanisław Wokulski - warszawski kupiec zakochany w Izabeli Łęckiej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "W kim zakochał się Stanisław Wokulski?",
+      content: {
+        options: [
+          "w Helenie Stawskiej",
+          "w baronowej Krzeszowskiej",
+          "w Izabeli Łęckiej",
+          "w pani Wąsowskiej",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Wokulski zakochał się bez pamięci w pięknej arystokratce Izabeli Łęckiej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Jaki zawód wykonuje Stanisław Wokulski?",
+      content: {
+        options: ["lekarz", "nauczyciel", "kupiec", "bankier"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Wokulski jest właścicielem sklepu galanteryjnego w Warszawie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Gdzie Wokulski zarobił swój majątek?",
+      content: {
+        options: [
+          "w Paryżu jako naukowiec",
+          "w Warszawie w handlu",
+          "na wojnie turecko-rosyjskiej dostarczając broń",
+          "w Moskwie jako kupiec",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Wokulski wyjechał do Bułgarii podczas wojny turecko-rosyjskiej i zarobił majątek na dostawach broni dla wojska.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Kto jest narratorem w Pamiętniku starego subiekta?",
+      content: {
+        options: [
+          "Stanisław Wokulski",
+          "Ignacy Rzecki",
+          "Julian Ochocki",
+          "doktor Szuman",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Fragmenty Pamiętnika starego subiekta są pisane z perspektywy Ignacego Rzeckiego - przyjaciela Wokulskiego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Jakiego przywódcy politycznego uwielbiał Ignacy Rzecki?",
+      content: {
+        options: [
+          "Napoleona Bonaparte",
+          "Józefa Piłsudskiego",
+          "Tadeusza Kościuszkę",
+          "Kazimierza Wielkiego",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Rzecki był zagorzałym bonapartystą - uwielbiał Napoleona Bonaparte i wierzył w bonapartyzm.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Jaki pierwotny tytuł miała mieć Lalka?",
+      content: {
+        options: [
+          "Idealiści",
+          "Trzy pokolenia",
+          "Warszawiacy",
+          "Kupiec warszawski",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Pierwotnie Prus chciał nadać powieści tytuł Trzy pokolenia, nawiązujący do trzech generacji idealistów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "W którym mieście głównie toczy się akcja Lalki?",
+      content: {
+        options: ["Krakowie", "Poznaniu", "Warszawie", "Lwowie"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Akcja głównie toczy się w Warszawie lat 1878-1879, choć pojawiają się także sceny z Paryża i Zasławka.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Jaka technika narracyjna charakteryzuje Lalkę?",
+      content: {
+        options: [
+          "monolog wewnętrzny",
+          "narracja pierwszoosobowa",
+          "dwugłos: narrator trzecioosobowy + pamiętnik Rzeckiego",
+          "narracja strumienia świadomości",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Prus zastosował dwugłos narracyjny: narrator trzecioosobowy przeplatany jest fragmentami pamiętnika Rzeckiego (narracja pierwszoosobowa).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Co symbolizuje lalka w tytule powieści?",
+      content: {
+        options: [
+          "tylko zabawkę w procesie sądowym",
+          "sztuczność relacji społecznych i pustą arystokrację",
+          "dzieciństwo bohaterów",
+          "przemysł zabawkarski",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Lalka symbolizuje sztuczność i pustkę emocjonalną (jak Izabela), a także topos theatrum mundi - ludzie jako marionetki.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Kogo reprezentuje postać Juliana Ochockiego w powieści?",
+      content: {
+        options: [
+          "romantycznych idealistów politycznych",
+          "nowych pozytywistycznych idealistów naukowych",
+          "cyniczną arystokrację",
+          "mieszczaństwo handlowe",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Ochocki reprezentuje młode pokolenie pozytywistycznych idealistów oddanych nauce i postępowi naukowemu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "W jakim kierunku Prus krytykuje społeczeństwo w Lalce?",
+      content: {
+        options: [
+          "krytykuje tylko arystokrację",
+          "krytykuje tylko mieszczaństwo",
+          "krytykuje wszystkie warstwy społeczne",
+          "nie krytykuje żadnej warstwy",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Lalka to realizm krytyczny - Prus krytykuje wszystkie warstwy społeczne: arystokrację, mieszczaństwo i inteligencję.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Jak charakteryzuje się postać Izabeli Łęckiej?",
+      content: {
+        options: [
+          "pracowita i zaradna kobieta",
+          "inteligentna i wykształcona arystokratka",
+          "pusta emocjonalnie i intelektualnie salonowa lalka",
+          "oddana i zakochana w Wokulskim",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Izabela to salonowa lalka - piękna zewnętrznie, ale pusta wewnętrznie, wychowana w luksusie i oderwana od rzeczywistości.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Jaki kontrast przedstawia Prus w postaciach Izabeli Łęckiej i Heleny Stawskiej?",
+      content: {
+        options: [
+          "bogata vs biedna",
+          "młoda vs stara",
+          "pusta i egoistyczna vs życzliwa i zaradna",
+          "piękna vs brzydka",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Prus kontrastuje Izabelę (emocjonalnie niedostępna, egoistyczna) z Heleną (życzliwa, zaradna, troskliwa o rodzinę).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Jak zakończył się prawdopodobnie los Wokulskiego?",
+      content: {
+        options: [
+          "ożenił się z Izabelą",
+          "wyjechał na stałe do Paryża",
+          "prawdopodobnie popełnił samobójstwo wysadzając zamek w Zasławiu",
+          "został naukowcem u Geista",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Zakończenie jest otwarte, ale sugeruje samobójstwo - Węgiełek pisze o wybuchu na zamku i umieszcza krzyż z napisem Non omnis moriar.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Co symbolizuje porównanie Warszawy i Paryża w powieści?",
+      content: {
+        options: [
+          "obie są równie piękne",
+          "Paryż ma plan i logikę, Warszawa jest chaotyczna i zaniedbana",
+          "Warszawa jest lepsza od Paryża",
+          "obie są równie chaotyczne",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Paryż przedstawiony jest jako uporządkowane miasto z planem urbanistycznym, podczas gdy Warszawa (zwłaszcza Powiśle) jest chaotyczna i zaniedbana.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "POSITIVISM",
+      question:
+        "Jaki topos literacki Prus wykorzystuje w symbolice lalki i scenie z nakręcanymi zabawkami?",
+      content: {
+        options: ["locus amoenus", "carpe diem", "theatrum mundi", "vanitas"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Prus wykorzystuje topos theatrum mundi - świat jako teatr, a ludzie jako marionetki kierowane przez los i konwenanse społeczne.",
+      },
+    },
+
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      question:
+        "Które cechy charakteryzują Stanisława Wokulskiego? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "zakochany idealista",
+          "cyniczny kapitalista",
+          "były uczestnik powstania styczniowego",
+          "zainteresowany nauką i postępem",
+          "arystokrata z urodzenia",
+        ],
+      },
+      correctAnswer: [0, 2, 3],
+      metadata: {
+        explanation:
+          "Wokulski to zakochany idealista, uczestnik powstania styczniowego i człowiek zainteresowany nauką. Nie jest cynikiem ani arystokratą.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "POSITIVISM",
+      question:
+        "Które motywy literackie pojawiają się w Lalce? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "motyw miłości romantycznej",
+          "motyw miasta",
+          "motyw nauki i postępu",
+          "motyw przyrody",
+          "motyw lalki/marionetki",
+          "motyw biedy społecznej",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 4, 5],
+      metadata: {
+        explanation:
+          "W Lalce pojawiają się motywy: miłości, miasta (Warszawa vs Paryż), nauki, lalki/marionetki i biedy. Motyw przyrody nie jest istotny.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "POSITIVISM",
+      question: "Dopasuj postaci do ich charakterystyki.",
+      content: {
+        matchingType: "character_traits",
+        leftColumn: [
+          { id: "A", text: "Stanisław Wokulski" },
+          { id: "B", text: "Ignacy Rzecki" },
+          { id: "C", text: "Julian Ochocki" },
+        ],
+        rightColumn: [
+          { id: 1, text: "romantyczny bonapartysta, samotnik" },
+          { id: 2, text: "idealista naukowy, młody wynalazca" },
+          { id: 3, text: "kupiec zakochany w arystokratce" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 0],
+        [2, 1],
+      ],
+      metadata: {
+        explanation:
+          "Wokulski - kupiec zakochany w Izabeli, Rzecki - bonapartysta i samotnik, Ochocki - młody naukowiec.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "POSITIVISM",
+      question: "Uzupełnij analizę symboliki w Lalce.",
+      content: {
+        textWithGaps:
+          "W powieści Lalka tytuł ma wielowymiarowe znaczenie. Lalka symbolizuje [1], co odnosi się do postaci Izabeli. Ponadto motyw lalki/marionetki wiąże się z toposem [2], co pokazuje scena z [3].",
+        gaps: [
+          {
+            id: 1,
+            options: [
+              "sztuczność i pustkę emocjonalną",
+              "piękno",
+              "bogactwo",
+              "mądrość",
+            ],
+          },
+          {
+            id: 2,
+            options: [
+              "locus amoenus",
+              "carpe diem",
+              "theatrum mundi",
+              "vanitas",
+            ],
+          },
+          {
+            id: 3,
+            options: [
+              "pojedynkiem",
+              "nakręcanymi zabawkami u Rzeckiego",
+              "balem",
+              "procesem",
+            ],
+          },
+        ],
+      },
+      correctAnswer: [0, 2, 1],
+      metadata: {
+        explanation:
+          "Lalka symbolizuje sztuczność (jak Izabela), wiąże się z toposem theatrum mundi, ilustrowanym sceną z zabawkami.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 4,
+      epoch: "POSITIVISM",
+      question:
+        "Dopasuj działania Wokulskiego do motywacji, która za nimi stała.",
+      content: {
+        matchingType: "actions_motivations",
+        leftColumn: [
+          { id: "A", text: "Kupno kamienicy Łęckich za wygórowaną cenę" },
+          { id: "B", text: "Nauka języka angielskiego" },
+          { id: "C", text: "Organizacja aplauzu dla Rossiego" },
+          { id: "D", text: "Wyjazd do Bułgarii na wojnę" },
+        ],
+        rightColumn: [
+          {
+            id: 1,
+            text: "aby spodobać się Izabeli, która mówiła po angielsku",
+          },
+          { id: 2, text: "aby spełnić prośbę Izabeli i ją zadowolić" },
+          { id: 3, text: "aby pomóc finansowo rodzinie Łęckich" },
+          { id: 4, text: "aby zarobić majątek potrzebny do zdobycia Izabeli" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 0],
+        [2, 1],
+        [3, 3],
+      ],
+      metadata: {
+        explanation:
+          "Wszystkie działania Wokulskiego podporządkowane były miłości do Izabeli: pomoc finansowa, nauka angielskiego, spełnianie próśb, zarabianie majątku.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      question:
+        "Które zdania dotyczące Lalki są prawdziwe? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "Akcja toczy się w latach 1878-1879",
+          "Prus zastosował technikę dwugłosu narracyjnego",
+          "Wokulski jest arystokratą",
+          "Izabela jest przedstawiona jako ideał kobiety",
+          "Powieść krytykuje wszystkie warstwy społeczne",
+        ],
+      },
+      correctAnswer: [0, 1, 4],
+      metadata: {
+        explanation:
+          "Prawdziwe: akcja w latach 1878-79, dwugłos narracyjny, krytyka wszystkich warstw. Fałszywe: Wokulski to kupiec, Izabela to krytykowana lalka.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 4,
+      epoch: "POSITIVISM",
+      question:
+        "Dopasuj fragmenty tekstu do ich funkcji w kompozycji powieści.",
+      content: {
+        matchingType: "text_function",
+        leftColumn: [
+          { id: "A", text: "Pamiętnik starego subiekta" },
+          { id: "B", text: "Opis Powiśla" },
+          { id: "C", text: "Scena nakręcania zabawek przez Rzeckiego" },
+          { id: "D", text: "Wizyta Wokulskiego u Geista w Paryżu" },
+        ],
+        rightColumn: [
+          {
+            id: 1,
+            text: "ilustracja toposu theatrum mundi i kompozycja klamrowa",
+          },
+          { id: 2, text: "subiektywny głos narratora-bohatera" },
+          { id: 3, text: "motyw nauki i idealizmu pozytywistycznego" },
+          {
+            id: 4,
+            text: "naturalistyczny obraz biedy i nierówności społecznych",
+          },
+        ],
+      },
+      correctAnswer: [
+        [0, 1],
+        [1, 3],
+        [2, 0],
+        [3, 2],
+      ],
+      metadata: {
+        explanation:
+          "Pamiętnik = subiektywny głos, Powiśle = bieda, zabawki = theatrum mundi (klamra kompozycyjna), Geist = motyw nauki.",
+      },
+    },
+
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Wyjaśnij, dlaczego Stanisław Wokulski wyjechał do Bułgarii.",
+      content: {
+        instruction:
+          "Podaj powód wyjazdu Wokulskiego do Bułgarii i wyjaśnij, co chciał osiągnąć. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie, że wyjechał zarobić majątek (1 pkt)",
+          "wyjaśnienie, że chciał zdobyć Izabelę Łęcką (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Wokulski wyjechał do Bułgarii podczas wojny turecko-rosyjskiej, aby zarobić majątek na dostawach broni. Wszystko robił, żeby zdobyć środki potrzebne do zdobycia serca Izabeli Łęckiej, w której był zakochany bez pamięci.",
+        keyWords: ["majątek", "wojna", "Izabela", "zakochany"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Wyjaśnij znaczenie tytułu Lalka.",
+      content: {
+        instruction:
+          "Przedstaw co najmniej dwa znaczenia tytułu powieści. (50-80 słów)",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "odniesienie do Izabeli jako lalki salonowej (1 pkt)",
+          "wspomnienie procesu o lalkę między Stawską a Krzeszowską (1 pkt)",
+          "topos theatrum mundi - ludzie jako marionetki (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Tytuł ma wielowymiarowe znaczenie: po pierwsze odnosi się do Izabeli Łęckiej jako lalki salonowej - pięknej, ale pustej emocjonalnie. Po drugie nawiązuje do procesu sądowego o lalkę między panią Stawską a baronową. Po trzecie symbolizuje topos theatrum mundi - ludzi jako marionetki kierowane przez społeczeństwo i los.",
+        keyWords: [
+          "Izabela",
+          "proces",
+          "theatrum mundi",
+          "marionetka",
+          "sztuczność",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Scharakteryzuj postać Ignacego Rzeckiego.",
+      content: {
+        instruction:
+          "Opisz osobowość i poglądy Ignacego Rzeckiego w 3-5 zdaniach. (50-80 słów)",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "wskazanie, że to subiekt i przyjaciel Wokulskiego (1 pkt)",
+          "określenie jako bonapartysta, idealista romantyczny (1 pkt)",
+          "opis jako samotnik prowadzący pamiętnik (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Ignacy Rzecki to stary subiekt, najbliższy przyjaciel Wokulskiego. Jest zagorzałym bonapartystą i romantycznym idealistą, który uwielbia Napoleona. Prowadzi samotnicze życie, mieszka w ciemnym pokoju i pisze pamiętnik, w którym wyraża swoje emocje. Reprezentuje starsze pokolenie romantyków.",
+        keyWords: [
+          "subiekt",
+          "bonapartysta",
+          "Napoleon",
+          "samotnik",
+          "pamiętnik",
+          "romantyk",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 4,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Porównaj postawy Stanisława Wokulskiego i Juliana Ochockiego wobec nauki.",
+      content: {
+        instruction:
+          "Opisz, jak obaj bohaterowie podchodzą do nauki i postępu. Wskaż różnice. (80-120 słów)",
+      },
+      rubric: {
+        maxScore: 4,
+        criteria: [
+          "opis zainteresowań naukowych Wokulskiego (1 pkt)",
+          "opis pasji Ochockiego do wynalazków (1 pkt)",
+          "wskazanie, że Wokulski zrezygnował z nauki dla Izabeli (1 pkt)",
+          "kontrast: Ochocki całkowicie oddany nauce (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Wokulski w młodości studiował na Szkole Głównej i interesował się mechaniką. Później jednak zrezygnował z kariery naukowej dla miłości do Izabeli. Ochocki natomiast reprezentuje młode pokolenie pozytywistów - całkowicie poświęcił się nauce i wynalazkom. Marzył o maszynie latającej i dla nauki odmówił małżeństwa. Wokulski zapisał mu część majątku na badania.",
+        keyWords: [
+          "Wokulski",
+          "Ochocki",
+          "nauka",
+          "rezygnacja",
+          "Izabela",
+          "wynalazki",
+          "idealizm",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 4,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Wyjaśnij, jak Prus przedstawia kontrast między Warszawą a Paryżem.",
+      content: {
+        instruction:
+          "Opisz różnice między oboma miastami w powieści i wyjaśnij, co one symbolizują. (100-150 słów)",
+      },
+      rubric: {
+        maxScore: 4,
+        criteria: [
+          "opis Warszawy jako chaotycznej i zaniedbanej (1 pkt)",
+          "opis Paryża jako uporządkowanego i logicznego (1 pkt)",
+          "wspomnienie o Powiślu jako symbolu biedy (1 pkt)",
+          "interpretacja symboliczna (Polska vs Europa) (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Prus przedstawia ostry kontrast: Warszawa jest chaotyczna, brudna i pozbawiona planu urbanistycznego. Szczególnie Powiśle symbolizuje biedę i zaniedbanie. Paryż natomiast ma logiczny plan, jest uporządkowany, daje możliwości rozwoju. Wokulski zauważa, że Paryż to miasto pracy, nauki i postępu. Kontrast symbolizuje różnicę między zacofaną Polską a rozwiniętą Europą Zachodnią, co wpisuje się w pozytywistyczną krytykę polskiej rzeczywistości.",
+        keyWords: [
+          "Warszawa",
+          "Paryż",
+          "chaos",
+          "porządek",
+          "Powiśle",
+          "plan",
+          "kontrast",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 4,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Rozwiń wypowiedź na temat otwartego zakończenia Lalki.",
+      content: {
+        instruction:
+          "Wyjaśnij, na czym polega otwarte zakończenie powieści i jakie są możliwe interpretacje losu Wokulskiego. (120-150 słów)",
+        hints: ["Non omnis moriar", "wybuch w zamku", "Węgiełek"],
+      },
+      rubric: {
+        maxScore: 4,
+        criteria: [
+          "wskazanie, że zakończenie jest niejednoznaczne (1 pkt)",
+          "interpretacja sugerująca samobójstwo (wybuch) (1 pkt)",
+          "wskazanie innych możliwości (ucieczka, nowe życie) (1 pkt)",
+          "odniesienie do cytatu Non omnis moriar (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Zakończenie Lalki jest otwarte i niejednoznaczne. List Węgiełka sugeruje, że Wokulski prawdopodobnie popełnił samobójstwo, wysadzając zamek w Zasławiu. Świadczy o tym krzyż z napisem Non omnis moriar (nie wszystek umrę). Jednak brak zwłok pozwala na inne interpretacje - może uciekł i zaczął nowe życie. Prus celowo nie stawia kropki nad i, dając czytelnikowi przestrzeń do własnej interpretacji i refleksji nad losem idealistów w społeczeństwie.",
+        keyWords: [
+          "otwarte",
+          "samobójstwo",
+          "Zasławie",
+          "Non omnis moriar",
+          "interpretacja",
+          "idealiści",
+        ],
+      },
+    },
+
+    {
+      type: "SYNTHESIS_NOTE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 6,
+      epoch: "POSITIVISM",
+      question: "Napisz notatkę syntetyzującą o głównych motywach w Lalce.",
+      content: {
+        topic: "Najważniejsze motywy literackie w Lalce Bolesława Prusa",
+        requirements: [
+          "motyw miłości (romantycznej)",
+          "motyw lalki/marionetki",
+          "motyw miasta",
+          "motyw nauki i postępu",
+          "krótka charakterystyka każdego motywu",
+          "150-200 słów",
+        ],
+      },
+      rubric: {
+        maxScore: 6,
+        criteria: [
+          "wymienienie i omówienie motywu miłości (1,5 pkt)",
+          "wymienienie i omówienie motywu lalki (1,5 pkt)",
+          "wymienienie i omówienie motywu miasta (1,5 pkt)",
+          "wymienienie i omówienie motywu nauki (1,5 pkt)",
+        ],
+      },
+    },
+    {
+      type: "SYNTHESIS_NOTE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 7,
+      epoch: "POSITIVISM",
+      question: "Porównaj dwie kobiece postacie w Lalce.",
+      content: {
+        topic: "Kontrast między Izabelą Łęcką a Heleną Stawską w Lalce",
+        requirements: [
+          "charakterystyka Izabeli (cechy, postawa)",
+          "charakterystyka Heleny (cechy, postawa)",
+          "wskazanie głównych różnic",
+          "interpretacja: co symbolizuje ten kontrast",
+          "200-250 słów",
+        ],
+      },
+      rubric: {
+        maxScore: 7,
+        criteria: [
+          "charakterystyka Izabeli (2 pkt)",
+          "charakterystyka Heleny (2 pkt)",
+          "wskazanie różnic (2 pkt)",
+          "interpretacja symboliczna (1 pkt)",
+        ],
+      },
+    },
+    {
+      type: "SYNTHESIS_NOTE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 7,
+      epoch: "POSITIVISM",
+      question: "Omów technikę narracyjną w Lalce.",
+      content: {
+        topic: "Dwugłos narracyjny w Lalce Bolesława Prusa",
+        requirements: [
+          "narrator trzecioosobowy - charakterystyka",
+          "pamiętnik Rzeckiego - charakterystyka",
+          "funkcja każdego typu narracji",
+          "efekt artystyczny dwugłosu",
+          "180-220 słów",
+        ],
+      },
+      rubric: {
+        maxScore: 7,
+        criteria: [
+          "omówienie narratora trzecioosobowego (2 pkt)",
+          "omówienie pamiętnika Rzeckiego (2 pkt)",
+          "funkcje obu typów narracji (2 pkt)",
+          "efekt artystyczny (1 pkt)",
+        ],
+      },
+    },
+    {
+      type: "SYNTHESIS_NOTE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 8,
+      epoch: "POSITIVISM",
+      question: "Scharakteryzuj Lalkę jako powieść pozytywistyczną.",
+      content: {
+        topic: "Cechy pozytywizmu w Lalce Bolesława Prusa",
+        requirements: [
+          "realizm krytyczny - przykłady",
+          "scjentyzm (kult nauki) - postacie",
+          "krytyka społeczna - które warstwy",
+          "praca organiczna - czy jest realizowana",
+          "idealiści a społeczny rozkład",
+          "250-300 słów",
+        ],
+      },
+      rubric: {
+        maxScore: 8,
+        criteria: [
+          "realizm krytyczny (2 pkt)",
+          "scjentyzm (2 pkt)",
+          "krytyka społeczna (2 pkt)",
+          "idealiści vs rzeczywistość (2 pkt)",
+        ],
+      },
+    },
+
+    {
+      type: "ESSAY",
+      category: "WRITING",
+      difficulty: 5,
+      points: 15,
+      epoch: "POSITIVISM",
+      question:
+        "Napisz rozprawkę na temat: Miłość – siła motywująca czy destrukcyjna? Omów zagadnienie na podstawie Lalki Bolesława Prusa.",
+      content: {
+        thesis:
+          "Miłość – siła motywująca czy destrukcyjna? Omów na podstawie Lalki",
+        structure: {
+          introduction: "Wprowadzenie z tezą i zapowiedzią argumentów",
+          arguments_for:
+            "Argumenty za tym, że miłość motywuje Wokulskiego (zarabianie majątku, pomoc innym, rozwój)",
+          arguments_against:
+            "Argumenty za tym, że miłość destruuje Wokulskiego (zaślepienie, rezygnacja z nauki, samobójstwo)",
+          conclusion: "Podsumowanie i synteza - miłość jako siła ambiwalentna",
+        },
+        requirements: [
+          "struktura: wstęp - rozwinięcie - zakończenie",
+          "argumenty z Lalki",
+          "odniesienie do losów Wokulskiego",
+          "kontekst pozytywistyczny",
+          "300-400 słów",
+        ],
+        wordLimit: {
+          min: 300,
+          max: 400,
+        },
+      },
+      rubric: {
+        maxScore: 15,
+        formalScore: 1,
+        literaryScore: 8,
+        compositionScore: 3,
+        languageScore: 3,
+        criteria: {
+          formal: "Zachowanie wymogów formalnych (objętość, struktura)",
+          literary: "Znajomość lektury, trafność argumentów, kontekst epoki",
+          composition: "Logika wywodu, spójność kompozycyjna, teza",
+          language: "Poprawność językowa, styl, precyzja wypowiedzi",
+        },
+      },
+    },
+    {
+      type: "ESSAY",
+      category: "WRITING",
+      difficulty: 5,
+      points: 15,
+      epoch: "POSITIVISM",
+      question:
+        "Napisz rozprawkę: Czy idealiści mogą być szczęśliwi w świecie przedstawionym Lalki?",
+      content: {
+        thesis:
+          "Czy idealiści mogą być szczęśliwi w świecie przedstawionym Lalki?",
+        structure: {
+          introduction: "Wprowadzenie - kim są idealiści w Lalce",
+          arguments_for:
+            "Argumenty: Wokulski (miłość vs realizm), Rzecki (bonapartyzm vs rzeczywistość), Ochocki (nauka vs emigracja)",
+          arguments_against:
+            "Klęska idealistów - Prus pokazuje, że społeczeństwo ich odtrąca",
+          conclusion:
+            "Wnioski: w świecie Lalki idealiści są skazani na porażkę",
+        },
+        requirements: [
+          "analiza losów trzech idealistów",
+          "odniesienie do tytułu (idealiści na tle rozkładu)",
+          "kontekst pozytywizmu",
+          "350-450 słów",
+        ],
+        wordLimit: {
+          min: 350,
+          max: 450,
+        },
+      },
+      rubric: {
+        maxScore: 15,
+        formalScore: 1,
+        literaryScore: 8,
+        compositionScore: 3,
+        languageScore: 3,
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      question:
+        "Kto zapisał Wokulskiemu znaczną część swojego majątku na badania naukowe?",
+      content: {
+        options: [
+          "Ignacy Rzecki",
+          "Julian Ochocki",
+          "doktor Szuman",
+          "Wokulski sam sobie zapisał",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "To właśnie Wokulski zapisał Ochockiemu dużą część majątku, aby mógł kontynuować badania naukowe nad maszyną latającą.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      question:
+        "Jaki proces sądowy miał inspirację w rzeczywistej historii przeczytanej przez Prusa?",
+      content: {
+        options: [
+          "proces o kamienicę",
+          "proces o lalkę między Stawską a Krzeszowską",
+          "proces o sklep",
+          "proces o dziedzictwo",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Prus przeczytał w gazecie o procesie za kradzież lalki, co zainspirowało go do zmiany tytułu z Trzy pokolenia na Lalka i wprowadzenia tego wątku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Za co został zesłany na Syberię Stanisław Wokulski?",
+      content: {
+        options: [
+          "za kradzież",
+          "za udział w powstaniu styczniowym",
+          "za handel bronią",
+          "za działalność naukową",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Wokulski został zesłany na Syberię do Irkucka za wzięcie udziału w powstaniu styczniowym.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      question: "Czym charakteryzuje się dzielnica Powiśle w Lalce?",
+      content: {
+        options: [
+          "luksusowymi rezydencjami arystokracji",
+          "dobrze zagospodarowanymi bulwarami",
+          "biedą, brudem i chaosem urbanistycznym",
+          "rozwiniętym przemysłem",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Powiśle przedstawione jest jako symbol biedy, zaniedbania i braku planu urbanistycznego - naturalistyczny obraz nędzy warszawskiej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "POSITIVISM",
+      question:
+        "Z kim Wokulski spotyka się w Paryżu i kto reprezentuje ideał naukowca-wynalazcy?",
+      content: {
+        options: [
+          "z Suzinem - rosyjskim kupcem",
+          "z profesorem Geistem - genialnym chemikiem",
+          "z Rossim - włoskim aktorem",
+          "z Ochockim - polskim wynalazcą",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Profesor Geist to genialny chemik pracujący nad metalem lżejszym od powietrza, uznawany przez otoczenie za dziwaka, reprezentuje ideał naukowca oddanego ludzkości.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      question:
+        "Dlaczego Wokulski organizuje aplauz dla włoskiego tragika Rossiego?",
+      content: {
+        options: [
+          "bo sam uwielbia teatr włoski",
+          "aby spełnić prośbę Izabeli i ją zadowolić",
+          "bo jest przyjacielem Rossiego",
+          "aby zarobić na przedsięwzięciu",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Izabela zachwycała się Rossim i Wokulski zorganizował owacje, aby jej sprawić przyjemność - wszystkie jego działania podporządkowane były zdobyciu jej serca.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "POSITIVISM",
+      question:
+        "Co oznacza łaciński napis Non omnis moriar umieszczony przez Węgiełka na krzyżu?",
+      content: {
+        options: [
+          "tutaj spoczywam",
+          "nie wszystek umrę",
+          "pamiętaj o śmierci",
+          "zawsze wierny",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Non omnis moriar to cytat z Horacego oznaczający nie wszystek umrę - symbol nieśmiertelności duchowej, nawet jeśli ciało ginie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "POSITIVISM",
+      question:
+        "Jaką rolę pełni scena, w której Rzecki nakręca mechaniczne zabawki w sklepie?",
+      content: {
+        options: [
+          "ilustruje jego pracę jako subiekta",
+          "wprowadza wątek zabaw dziecięcych",
+          "symbolizuje topos theatrum mundi i tworzy klamrę kompozycyjną",
+          "pokazuje nowoczesną technologię",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Scena z zabawkami otwiera i kończy powieść (klamra), symbolizując topos theatrum mundi - ludzie jako marionetki kierowane przez los.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "POSITIVISM",
+      question:
+        "Dlaczego Wokulski nie mógł zostać uczonym po powrocie z Syberii?",
+      content: {
+        options: [
+          "nie miał zdolności",
+          "wolał być kupcem",
+          "naukowcy widzieli w nim byłego subiekta, a kupcy - naukowca",
+          "zabroniono mu uprawiania nauki",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Wokulski nie został zaakceptowany ani przez świat nauki (widzieli w nim kupca), ani przez świat handlu (widzieli w nim naukowca) - symbolizuje to jego pozycję pomiędzy i niezrozumienie idealistów.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "POSITIVISM",
+      question:
+        "Dopasuj cytaty do postaci, które je wypowiadają lub których dotyczą.",
+      content: {
+        matchingType: "quotes_characters",
+        leftColumn: [
+          { id: "A", text: "Świat to teatr, a ludzie to marionetki" },
+          { id: "B", text: "„Lalka bezmyślna, irytująca, budząca zazdrość" },
+          { id: "C", text: "Non omnis moriar" },
+        ],
+        rightColumn: [
+          { id: 1, text: "refleksje Rzeckiego o istocie życia" },
+          { id: 2, text: "cytat na krzyżu dla Wokulskiego" },
+          { id: 3, text: "opinia o Izabeli Łęckiej" },
+        ],
+      },
+      correctAnswer: [
+        [0, 0],
+        [1, 2],
+        [2, 1],
+      ],
+      metadata: {
+        explanation:
+          "Rzecki mówi o theatrum mundi, Izabela opisywana jako lalka, krzyż z cytatem Horacego dla Wokulskiego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Jak nazywa się najbliższy przyjaciel Stanisława Wokulskiego?",
+      content: {
+        options: [
+          "Julian Ochocki",
+          "Ignacy Rzecki",
+          "doktor Szuman",
+          "Tomasz Łęcki",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Ignacy Rzecki to najbliższy przyjaciel Wokulskiego, stary subiekt prowadzący sklep i pamiętnik.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Jak długo Ignacy Rzecki mieszkał w pokoju przy sklepie?",
+      content: {
+        options: ["10 lat", "25 lat", "5 lat", "50 lat"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Rzecki od 25 lat mieszkał w ciemnym pokoju przy sklepie, który był jego całym światem.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Z kim Wokulski wziął ślub dla pieniędzy?",
+      content: {
+        options: [
+          "z Izabelą Łęcką",
+          "z Heleną Stawską",
+          "z Małgorzatą Minclową",
+          "z panią Wąsowską",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Wokulski poślubił wdowę po Janie Minclu - Małgorzatę, dziedzicząc po niej sklep i trzydzieści tysięcy rubli.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Jak nazywa się ojciec Izabeli Łęckiej?",
+      content: {
+        options: [
+          "Julian Łęcki",
+          "Stanisław Łęcki",
+          "Tomasz Łęcki",
+          "Kazimierz Łęcki",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Tomasz Łęcki to ojciec Izabeli, zubożały arystokrata, który stracił majątek.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Gdzie Wokulski uczęszczał na wykłady jako wolny słuchacz?",
+      content: {
+        options: [
+          "na Uniwersytecie Jagiellońskim",
+          "w Szkole Głównej",
+          "na Uniwersytecie Warszawskim",
+          "w Akademii Medycznej",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Po rzuceniu pracy u Hopfera, Wokulski uczęszczał na wykłady w Szkole Głównej jako wolny słuchacz.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Kto uratował życie Wokulskiego podczas próby samobójstwa?",
+      content: {
+        options: [
+          "Ignacy Rzecki",
+          "Julian Ochocki",
+          "brat Wysockiego - dróżnik",
+          "Tomasz Łęcki",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "W Skierniewicach życie Wokulskiego uratował dróżnik - brat Wysockiego, któremu Stanisław wcześniej pomógł.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Jak nazywa się warszawska dzielnica biedy opisana w powieści?",
+      content: {
+        options: ["Praga", "Powiśle", "Wola", "Mokotów"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Powiśle to dzielnica nad Wisłą, symbol biedy, brudu i zaniedbania w ówczesnej Warszawie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Kto prowadził pamiętnik w powieści?",
+      content: {
+        options: [
+          "Stanisław Wokulski",
+          "Ignacy Rzecki",
+          "Izabela Łęcka",
+          "doktor Szuman",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Ignacy Rzecki prowadził \u201ePamiętnik starego subiekta\u201d, w którym zapisywał swoje myśli i emocje.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Kim był Suzin w życiu Wokulskiego?",
+      content: {
+        options: [
+          "jego wrogiem",
+          "rosyjskim kupcem i wspólnikiem",
+          "przyjacielem z dzieciństwa",
+          "nauczycielem",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Suzin to rosyjski kupiec, wspólnik Wokulskiego, który pomógł mu zarobić majątek na wojnie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Co Wokulski kupił dla rodziny Łęckich za wygórowaną cenę?",
+      content: {
+        options: ["powóz", "kamienicę", "sklep", "pałac"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Wokulski kupił kamienicę Łęckich za 90 tysięcy rubli, choć była warta 70 tysięcy, aby pomóc finansowo rodzinie Izabeli.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Z jakiej rodziny pochodził Stanisław Wokulski?",
+      content: {
+        options: [
+          "z bogatej rodziny kupieckiej",
+          "ze zubożałej rodziny szlacheckiej",
+          "z rodziny chłopskiej",
+          "z rodziny arystokratycznej",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Wokulski pochodził ze zubożałej rodziny szlacheckiej, a jego ojciec ciągle procesował się o majątek.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Kim była Helena Stawska w powieści?",
+      content: {
+        options: [
+          "arystokratką",
+          "biedną wdową pracującą jako nauczycielka",
+          "prostytutką",
+          "służącą",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Helena Stawska to biedna wdowa, która utrzymywała się z korepetycji i nauczania gry na fortepianie oraz angielskiego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Kim był Maruszewicz w powieści?",
+      content: {
+        options: [
+          "uczciwym kupcem",
+          "zdeklasowanym szlachcicem i oszustem",
+          "lekarzem",
+          "naukowcem",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Maruszewicz to zdeklasowany szlachcic i oszust, który wyłudzał pieniądze od różnych osób, w tym od Wokulskiego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "W jakich latach toczy się akcja główna \u201eLalki\u201d?",
+      content: {
+        options: ["1870-1871", "1878-1879", "1880-1881", "1863-1864"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Akcja główna powieści toczy się w latach 1878-1879 w Warszawie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Gdzie Wokulski spotkał profesora Geista?",
+      content: {
+        options: ["w Warszawie", "w Paryżu", "w Berlinie", "w Moskwie"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Wokulski poznał profesora Geista - genialnego chemika - podczas pobytu w Paryżu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Co łączyło Rzeckiego z Wokulskim?",
+      content: {
+        options: [
+          "byli braćmi",
+          "głęboka przyjaźń",
+          "rywalizacja",
+          "tylko relacja pracownik-pracodawca",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Rzeckiego i Wokulskiego łączyła głęboka przyjaźń - Rzecki był najbliższym przyjacielem Stanisława.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Jaki interes prowadził Wokulski?",
+      content: {
+        options: [
+          "sklep z bronią",
+          "sklep galanteryjny",
+          "fabrykę",
+          "jadłodajnię",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Wokulski prowadził sklep galanteryjny odziedziczony po Minclowej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Kto był żydowskim przyjacielem i lekarzem Wokulskiego?",
+      content: {
+        options: ["Szlangbaum", "doktor Szuman", "Suzin", "Geist"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Doktor Szuman to żydowski lekarz i naukowiec, przyjaciel Wokulskiego, który traktował biednych za darmo.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Kto kupił sklep Wokulskiego?",
+      content: {
+        options: ["Rzecki", "młody Szlangbaum", "baron Krzeszowski", "Ochocki"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Sklep Wokulskiego kupił młody Szlangbaum - syn starego Szlangbauma.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Gdzie Wokulski poznał Izabelę Łęcką?",
+      content: {
+        options: ["w swoim sklepie", "w teatrze", "w kościele", "na balu"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Wokulski po raz pierwszy zobaczył Izabelę w teatrze podczas spektaklu \u201eVioletta\u201d i zakochał się w niej od pierwszego wejrzenia.",
+      },
+    },
+
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      question: "Dopasuj postaci do ich głównych cech charakteru.",
+      content: {
+        matchingType: "character_traits",
+        leftColumn: [
+          { id: "A", text: "Tomasz Łęcki" },
+          { id: "B", text: "Helena Stawska" },
+          { id: "C", text: "Maruszewicz" },
+          { id: "D", text: "doktor Szuman" },
+        ],
+        rightColumn: [
+          { id: 1, text: "życzliwa, zaradna wdowa" },
+          { id: 2, text: "zdeklasowany szlachcic i oszust" },
+          { id: 3, text: "żydowski lekarz i naukowiec" },
+          { id: 4, text: "zubożały arystokrata" },
+        ],
+      },
+      correctAnswer: [
+        [0, 3],
+        [1, 0],
+        [2, 1],
+        [3, 2],
+      ],
+      metadata: {
+        explanation:
+          "Tomasz Łęcki - zubożały arystokrata, Helena - życzliwa wdowa, Maruszewicz - oszust, Szuman - lekarz.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      question:
+        "Które cechy charakteryzują Ignacego Rzeckiego? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "bonapartysta",
+          "samotnik",
+          "prowadzi pamiętnik",
+          "bogaty arystokrata",
+          "subiekt w sklepie",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 4],
+      metadata: {
+        explanation:
+          "Rzecki to bonapartysta, samotnik prowadzący pamiętnik i pracujący jako stary subiekt. Nie jest arystokratą.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      question: "Uzupełnij informacje o życiu Wokulskiego.",
+      content: {
+        textWithGaps:
+          "Stanisław Wokulski pochodził ze [1] rodziny szlacheckiej. W młodości uczęszczał do [2], ale został wyrzucony za udział w [3]. Za to zesłano go na Syberię do [4].",
+        gaps: [
+          {
+            id: 1,
+            options: ["bogatej", "zubożałej", "arystokratycznej", "chłopskiej"],
+          },
+          {
+            id: 2,
+            options: ["Uniwersytetu", "Szkoły Głównej", "Akademii", "liceum"],
+          },
+          {
+            id: 3,
+            options: [
+              "powstaniu styczniowym",
+              "powstaniu listopadowym",
+              "wojnie",
+              "zamachu",
+            ],
+          },
+          {
+            id: 4,
+            options: ["Moskwy", "Petersburga", "Irkucka", "Omska"],
+          },
+        ],
+      },
+      correctAnswer: [1, 1, 0, 2],
+      metadata: {
+        explanation:
+          "Wokulski pochodził ze zubożałej szlachty, uczęszczał do Szkoły Głównej, brał udział w powstaniu styczniowym i został zesłany do Irkucka.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      question: "Dopasuj miejsca do wydarzeń, które się w nich rozegrały.",
+      content: {
+        matchingType: "places_events",
+        leftColumn: [
+          { id: "A", text: "Powiśle" },
+          { id: "B", text: "Paryż" },
+          { id: "C", text: "Skierniewice" },
+          { id: "D", text: "Zasławek" },
+        ],
+        rightColumn: [
+          { id: 1, text: "próba samobójstwa Wokulskiego" },
+          { id: 2, text: "spotkanie z profesorem Geistem" },
+          { id: 3, text: "obraz warszawskiej biedy" },
+          { id: 4, text: "posiadłość prezesowej Zasławskiej" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 1],
+        [2, 0],
+        [3, 3],
+      ],
+      metadata: {
+        explanation:
+          "Powiśle - bieda, Paryż - Geist, Skierniewice - próba samobójstwa, Zasławek - posiadłość prezesowej.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      question:
+        "Które zdania dotyczące Izabeli Łęckiej są prawdziwe? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "jest córką zubożałego arystokraty",
+          "wychowała się w biedzie",
+          "jest inteligentna i wykształcona",
+          "traktuje Wokulskiego instrumentalnie",
+          "pochodzi z rodziny kupieckiej",
+        ],
+      },
+      correctAnswer: [0, 3],
+      metadata: {
+        explanation:
+          "Prawdziwe: Izabela jest córką zubożałego arystokraty Tomasza Łęckiego i traktuje Wokulskiego instrumentalnie. Fałszywe: wychowała się w luksusie, nie jest szczególnie inteligentna, nie pochodzi z rodziny kupieckiej.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "POSITIVISM",
+      question: "Dopasuj postaci do ich zawodów lub zajęć.",
+      content: {
+        matchingType: "characters_professions",
+        leftColumn: [
+          { id: "A", text: "Stanisław Wokulski" },
+          { id: "B", text: "Ignacy Rzecki" },
+          { id: "C", text: "Julian Ochocki" },
+          { id: "D", text: "Helena Stawska" },
+        ],
+        rightColumn: [
+          { id: 1, text: "nauczycielka, korepetytorka" },
+          { id: 2, text: "subiekt w sklepie" },
+          { id: 3, text: "właściciel sklepu galanteryjnego" },
+          { id: 4, text: "wynalazca, naukowiec" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 1],
+        [2, 3],
+        [3, 0],
+      ],
+      metadata: {
+        explanation:
+          "Wokulski - właściciel sklepu, Rzecki - subiekt, Ochocki - wynalazca, Helena - nauczycielka.",
+      },
+    },
+
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      question:
+        "Kim był Ignacy Rzecki i jaka była jego rola w życiu Wokulskiego?",
+      content: {
+        work: "Lalka",
+        instruction:
+          "Opisz Rzeckiego i jego relację z Wokulskim w 2-3 zdaniach. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "określenie Rzeckiego jako starego subiekta (1 pkt)",
+          "wskazanie, że był najbliższym przyjacielem Wokulskiego (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Ignacy Rzecki to stary subiekt prowadzący sklep Wokulskiego, jego najbliższy przyjaciel. Był bonapartystą i samotnikiem prowadzącym pamiętnik, w którym zapisywał swoje myśli o życiu i polityce.",
+        keyWords: ["subiekt", "przyjaciel", "bonapartysta", "pamiętnik"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      question: "Dlaczego Wokulski poślubił Małgorzatę Minclową?",
+      content: {
+        work: "Lalka",
+        instruction:
+          "Wyjaśnij powód małżeństwa Wokulskiego z Minclową. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie małżeństwa dla majątku (1 pkt)",
+          "wymienienie, co odziedziczył (sklep, pieniądze) (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Wokulski poślubił wdowę po Janie Minclu - Małgorzatę - dla pieniędzy. Po jej śmierci odziedziczył sklep galanteryjny i trzydzieści tysięcy rubli, co pozwoliło mu na dalszy rozwój biznesu.",
+        keyWords: ["majątek", "sklep", "pieniądze", "odziedziczył"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      question: "Kim była Helena Stawska i czym różniła się od Izabeli?",
+      content: {
+        work: "Lalka",
+        instruction:
+          "Scharakteryzuj Helenę Stawską i wskaż główną różnicę między nią a Izabelą. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "opis Heleny jako biednej wdowy (1 pkt)",
+          "kontrast: Helena życzliwa vs Izabela egoistyczna (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Helena Stawska to biedna wdowa utrzymująca się z korepetycji i nauczania. W przeciwieństwie do Izabeli była życzliwa, zaradna i opiekuńcza wobec rodziny. Stanowiła pozytywny kontrast dla pustej emocjonalnie Łęckiej.",
+        keyWords: ["wdowa", "biedna", "życzliwa", "kontrast", "Izabela"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      question:
+        "Wyjaśnij, dlaczego Wokulski kupił kamienicę Łęckich za wygórowaną cenę.",
+      content: {
+        work: "Lalka",
+        instruction:
+          "Podaj powód zakupu kamienicy i cenę, którą zapłacił. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie, że chciał pomóc rodzinie Izabeli (1 pkt)",
+          "podanie, że zapłacił 90 tys. zamiast 70 tys. rubli (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Wokulski kupił kamienicę Łęckich za 90 tysięcy rubli, choć była warta tylko 70 tysięcy. Zrobił to, aby pomóc finansowo rodzinie Izabeli, w której był zakochany, i zbliżyć się do niej.",
+        keyWords: ["90 tysięcy", "pomoc", "Izabela", "wygórowana cena"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      question: "Opisz dzielnicę Powiśle w \u201eLalce\u201d.",
+      content: {
+        work: "Lalka",
+        instruction:
+          "Wyjaśnij, jak Prus przedstawił Powiśle i co symbolizuje ta dzielnica. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "opis Powiśla jako biednej dzielnicy (1 pkt)",
+          "wskazanie symboliki biedy i zaniedbania (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Powiśle to dzielnica nad Wisłą pełna biedy, brudu i zaniedbania. Prus przedstawił ją w sposób naturalistyczny jako symbol warszawskiej nędzy i chaosu urbanistycznego. Dla Wokulskiego był to obraz polskiego społeczeństwa.",
+        keyWords: ["bieda", "brud", "zaniedbanie", "Wisła", "naturalizm"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      question: "Kim był profesor Geist i gdzie go spotkał Wokulski?",
+      content: {
+        work: "Lalka",
+        instruction:
+          "Opisz postać Geista i jego znaczenie dla Wokulskiego. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "określenie Geista jako naukowca-chemika (1 pkt)",
+          "wskazanie spotkania w Paryżu i szansy naukowej (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Profesor Geist to genialny chemik mieszkający w Paryżu, pracujący nad metalem lżejszym od powietrza. Wokulski spotkał go podczas pobytu w Paryżu i miał szansę zostać jego pomocnikiem naukowym, ale wybrał powrót do Polski dla Izabeli.",
+        keyWords: ["chemik", "Paryż", "naukowiec", "metal", "szansa"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "POSITIVISM",
+      question: "Z jakiej rodziny pochodził Stanisław Wokulski?",
+      content: {
+        work: "Lalka",
+        instruction: "Opisz pochodzenie społeczne Wokulskiego. (20-40 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie pochodzenia ze zubożałej szlachty (1 pkt)",
+          "wzmianka o ojcu procesującym się o majątek (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Wokulski pochodził ze zubożałej rodziny szlacheckiej. Jego ojciec ciągle procesował się o majątek po dziadku i zabierał synowi pieniądze przeznaczone na książki.",
+        keyWords: ["zubożała szlachta", "ojciec", "proces", "majątek"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      question: "Kim był Maruszewicz w powieści?",
+      content: {
+        work: "Lalka",
+        instruction:
+          "Scharakteryzuj postać Maruszewicza w 2-3 zdaniach. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "określenie jako zdeklasowany szlachcic (1 pkt)",
+          "wskazanie, że był oszustem (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Maruszewicz to zdeklasowany szlachcic i oszust. Wyłudzał pieniądze od różnych osób, w tym od Wokulskiego i barona Krzeszowskiego. Ostatecznie Wokulski okazał mu łaskę i zniszczył dowody jego oszustw.",
+        keyWords: ["zdeklasowany", "oszust", "wyłudzał", "szlachcic"],
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Ile pieniędzy Wokulski przywiózł z wojny w Bułgarii?",
+      content: {
+        options: [
+          "30 tysięcy rubli",
+          "100 tysięcy rubli",
+          "250 tysięcy rubli",
+          "500 tysięcy rubli",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Wokulski przywiózł z Bułgarii 250 tysięcy rubli i dużo złota, podczas gdy wyjechał z 30 tysiącami - pomnożył majątek dziesięciokrotnie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Kto był pierwszym pracodawcą młodego Wokulskiego?",
+      content: {
+        options: ["Mincel", "Hopfer", "Rzecki", "Suzin"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Wokulski jako młody człowiek pracował jako subiekt u Hopfera w winiarni, zanim rozpoczął studia.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Gdzie Rzecki walczył po śmierci ojca?",
+      content: {
+        options: [
+          "w powstaniu styczniowym",
+          "w powstaniu węgierskim",
+          "w powstaniu listopadowym",
+          "nigdzie nie walczył",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Po śmierci ojca Rzecki wraz z Augustem Katzem wyjechał walczyć w powstaniu węgierskim.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Ile lat miał Wokulski na początku akcji powieści?",
+      content: {
+        options: ["36 lat", "46 lat", "56 lat", "26 lat"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation: "Na początku powieści Stanisław Wokulski miał 46 lat.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      question: "Kto to była Florentyna w powieści?",
+      content: {
+        options: [
+          "służąca Łęckich",
+          "kuzynka i opiekunka Izabeli",
+          "przyjaciółka Wokulskiego",
+          "żona Tomasza Łęckiego",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Panna Florentyna to kuzynka Izabeli, która mieszkała z Łęckimi i pełniła rolę jej opiekunki.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      question: "Uzupełnij informacje o sklepie Wokulskiego.",
+      content: {
+        textWithGaps:
+          "Sklep należał wcześniej do [1], którego żona nazywała się [2]. Po jego śmierci Wokulski ożenił się z wdową i odziedziczył [3] tysięcy rubli oraz [4].",
+        gaps: [
+          {
+            id: 1,
+            options: ["Hopfera", "Jana Mincla", "Rzeckiego", "Suzina"],
+          },
+          {
+            id: 2,
+            options: ["Izabela", "Helena", "Małgorzata", "Florentyna"],
+          },
+          {
+            id: 3,
+            options: ["dziesięć", "trzydzieści", "pięćdziesiąt", "sto"],
+          },
+          {
+            id: 4,
+            options: ["kamienicę", "fabrykę", "sklep galanteryjny", "powóz"],
+          },
+        ],
+      },
+      correctAnswer: [1, 2, 1, 2],
+      metadata: {
+        explanation:
+          "Sklep należał do Jana Mincla, którego żona Małgorzata po śmierci męża wyszła za Wokulskiego. Odziedziczył 30 tysięcy rubli i sklep galanteryjny.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "POSITIVISM",
+      question:
+        "Które wydarzenia miały miejsce w życiu Wokulskiego? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "studiował w Szkole Głównej",
+          "brał udział w powstaniu styczniowym",
+          "był zesłany na Syberię",
+          "był profesorem uniwersytetu",
+          "zarabiał na wojnie turecko-rosyjskiej",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 4],
+      metadata: {
+        explanation:
+          "Prawdziwe: Wokulski studiował, brał udział w powstaniu, był zesłany i zarabiał na wojnie. Fałszywe: nie był profesorem.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "POSITIVISM",
+      question:
+        "Wyjaśnij, czym jest język ezopowy i jak Prus go stosuje w Lalce.",
+      content: {
+        work: "Lalka",
+        instruction:
+          "Zdefiniuj język ezopowy i podaj przykład jego zastosowania w powieści. (50-80 słów)",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "definicja języka ezopowego (1 pkt)",
+          "wskazanie kontekstu cenzury (1 pkt)",
+          "przykład z powieści (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Język ezopowy to technika używania niedomówień, metafor i metonimii, zrozumiałych dla czytelnika, ale nie dla cenzora. Prus stosował go przy opisywaniu kwestii historycznych i politycznych (powstanie styczniowe, sytuacja Polski). Pozwalało to ominąć cenzurę i przekazać czytelnikom ukryte treści narodowe.",
+        keyWords: [
+          "język ezopowy",
+          "cenzura",
+          "niedomówienia",
+          "metafory",
+          "polityka",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 4,
+      epoch: "POSITIVISM",
+      question:
+        "Wyjaśnij, dlaczego Wokulski rezygnuje z kariery naukowej u Geista w Paryżu.",
+      content: {
+        work: "Lalka",
+        instruction:
+          "Opisz dylematy Wokulskiego między nauką a miłością. Co ostatecznie zadecydowało o jego wyborze? (100-150 słów)",
+      },
+      rubric: {
+        maxScore: 4,
+        criteria: [
+          "opis szansy naukowej u Geista (1 pkt)",
+          "opis miłości do Izabeli jako przeciwwagi (1 pkt)",
+          "wskazanie decydującego czynnika (list od prezesowej) (1 pkt)",
+          "interpretacja tragizmu wyboru (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "W Paryżu Wokulski miał szansę zrealizować młodzieńcze marzenia o karierze naukowej u boku geniusza - profesora Geista. Był już prawie zdecydowany zostać, gdy otrzymał list od prezesowej Zasławskiej wzmiankujący o Izabeli. To zdecydowało - miłość do Łęckiej okazała się silniejsza niż pasja naukowa. Wybór ten pokazuje tragizm postaci Wokulskiego - romantycy nie potrafią wybrać rozumu zamiast serca.",
+        keyWords: [
+          "Geist",
+          "Paryż",
+          "nauka",
+          "Izabela",
+          "list",
+          "wybór",
+          "tragizm",
+        ],
+      },
+    },
     // Zadania o epoce współczesnej
     {
       type: "SHORT_ANSWER",

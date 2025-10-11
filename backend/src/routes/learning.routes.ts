@@ -653,9 +653,21 @@ export async function learningRoutes(fastify: FastifyInstance) {
         if (filters.category) baseWhere.category = filters.category;
 
         // DODAJ TO: Respektuj również epoch w FREE LEARNING!
-        if (filters.epoch) {
-          baseWhere.epoch = filters.epoch;
-          console.log(`FREE LEARNING with epoch filter: ${filters.epoch}`);
+        if (filters.work) {
+          // Używamy raw SQL condition dla Postgres
+          baseWhere.AND = baseWhere.AND || [];
+          baseWhere.AND.push({
+            content: {
+              path: ["work"],
+              string_contains: filters.work,
+            },
+          });
+          console.log(`Filtering by work: ${filters.work}`);
+        }
+
+        if (filters.work) {
+          baseWhere.work = filters.work;
+          console.log(`Filtering by work: ${filters.work}`);
         }
 
         let targetDifficulty: number[];
@@ -1825,6 +1837,116 @@ export async function learningRoutes(fastify: FastifyInstance) {
     } catch (error) {
       console.error("Error getting epoch stats:", error);
       return reply.code(500).send({ error: "Failed to get epoch stats" });
+    }
+  });
+
+  // Statystyki dla lektur - pobiera z istniejących ćwiczeń
+  fastify.get("/works-stats", async (request, reply) => {
+    try {
+      const userId = (request.user as any).userId;
+
+      console.log("=== FETCHING WORKS STATS ===");
+
+      // Pobierz wszystkie ćwiczenia z przypisaną lekturą (dedykowane pole 'work')
+      const exercisesWithWorks = await prisma.exercise.findMany({
+        where: {
+          work: {
+            not: null,
+          },
+        },
+        select: {
+          id: true,
+          work: true,
+          epoch: true,
+        },
+      });
+
+      console.log(`Found ${exercisesWithWorks.length} exercises with works`);
+
+      if (exercisesWithWorks.length > 0) {
+        console.log(
+          "Sample works:",
+          exercisesWithWorks.slice(0, 3).map((e) => e.work)
+        );
+      }
+
+      // Grupuj po tytule lektury
+      const worksMap = new Map<
+        string,
+        {
+          title: string;
+          epoch: string | null;
+          exerciseIds: string[];
+        }
+      >();
+
+      exercisesWithWorks.forEach((ex) => {
+        const workTitle = ex.work?.trim();
+        if (!workTitle) return;
+
+        if (!worksMap.has(workTitle)) {
+          worksMap.set(workTitle, {
+            title: workTitle,
+            epoch: ex.epoch,
+            exerciseIds: [],
+          });
+        }
+        worksMap.get(workTitle)!.exerciseIds.push(ex.id);
+      });
+
+      console.log(`Found ${worksMap.size} unique works`);
+
+      // Dla każdej lektury, policz statystyki
+      const stats: Record<string, any> = {};
+
+      for (const [workTitle, workData] of worksMap.entries()) {
+        const totalExercises = workData.exerciseIds.length;
+
+        // Policz ukończone zadania (unique exercises)
+        const completedSubmissions = await prisma.submission.findMany({
+          where: {
+            userId,
+            exerciseId: { in: workData.exerciseIds },
+          },
+          select: {
+            exerciseId: true,
+            score: true,
+            exercise: {
+              select: {
+                points: true,
+              },
+            },
+          },
+          distinct: ["exerciseId"],
+        });
+
+        const completed = completedSubmissions.length;
+        const avgScore =
+          completed > 0
+            ? completedSubmissions.reduce((sum, sub) => {
+                const percentage =
+                  ((sub.score || 0) / sub.exercise.points) * 100;
+                return sum + percentage;
+              }, 0) / completed
+            : 0;
+
+        stats[workTitle] = {
+          id: workTitle,
+          title: workTitle,
+          author: "",
+          epoch: workData.epoch,
+          total: totalExercises,
+          completed,
+          avgScore: Math.round(avgScore),
+        };
+      }
+
+      console.log(`Returning stats for ${Object.keys(stats).length} works`);
+
+      return reply.send(stats);
+    } catch (error) {
+      console.error("Error getting works stats:", error);
+      return reply.code(500).send({ error: "Failed to get works stats" });
     }
   });
 }

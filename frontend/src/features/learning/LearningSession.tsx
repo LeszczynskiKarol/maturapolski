@@ -3094,7 +3094,7 @@ const SessionStart: React.FC<{
                   </p>
                   <p className="text-yellow-50 text-sm">
                     Aby rozpocząć sesję nauki, potrzebujesz planu Premium.
-                    Odblouj pełny dostęp do AI i wszystkich funkcji
+                    Odblokuj pełny dostęp do AI i wszystkich funkcji
                     edukacyjnych.
                   </p>
                 </div>

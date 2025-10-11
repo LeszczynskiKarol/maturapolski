@@ -96,6 +96,7 @@ model Exercise {
   type          ExerciseType
   category      Category
   epoch         LiteraryEpoch?
+  work        String?
   difficulty    Int            @default(1)
   points        Int
   question      String
@@ -113,6 +114,9 @@ model Exercise {
   examQuestions ExamQuestion[]
   usageHistory  ExerciseUsage[]
   aiUsage       AiUsage[]
+
+  @@index([work])
+  @@index([category, work])
 }
 
 model TextSource {
