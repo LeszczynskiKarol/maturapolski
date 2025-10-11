@@ -587,6 +587,8 @@ export async function learningRoutes(fastify: FastifyInstance) {
       // Filtry sesji
       const filters = userSessionFilters.get(userId) || {};
       const isStudyPlanSession = !!filters.weekNumber;
+      const isWorkReview = !!filters.work;
+      const isEpochReview = !!filters.epoch && !filters.weekNumber;
 
       console.log(`\n=== INTELLIGENT SELECTION v3 ===`);
       console.log(
@@ -620,6 +622,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
         if (filters.type) baseWhere.type = filters.type;
         if (filters.category) baseWhere.category = filters.category;
         if (filters.epoch) baseWhere.epoch = filters.epoch;
+        if (filters.epoch) baseWhere.epoch = filters.epoch;
 
         if (filters.difficulty?.length > 0) {
           // NOWE: Filtruj tylko dostępne poziomy
@@ -650,10 +653,20 @@ export async function learningRoutes(fastify: FastifyInstance) {
         }
       } else {
         // FREE LEARNING - inteligentna adaptacja Z OGRANICZENIEM
-        if (filters.category) baseWhere.category = filters.category;
 
-        // Filtrowanie po lekturze - używamy dedykowanego pola 'work'
-        if (filters.work) {
+        // Dla WORK REVIEW i EPOCH REVIEW - NIE dodawaj kategorii (pobieraj ze wszystkich)
+        if (filters.category && !isWorkReview && !isEpochReview) {
+          baseWhere.category = filters.category;
+        }
+
+        // Dla EPOCH REVIEW - filtruj po epoce
+        if (filters.epoch && isEpochReview) {
+          baseWhere.epoch = filters.epoch;
+          console.log(`Filtering by epoch: ${filters.epoch}`);
+        }
+
+        // Dla WORK REVIEW - filtruj po lekturze
+        if (filters.work && isWorkReview) {
           baseWhere.work = filters.work;
           console.log(`Filtering by work: ${filters.work}`);
         }

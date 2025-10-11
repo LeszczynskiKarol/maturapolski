@@ -120,11 +120,17 @@ export const LearningSession: React.FC = () => {
   const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
   const [selectedRight, setSelectedRight] = useState<number | null>(null);
   const [matches, setMatches] = useState<Array<[number, number]>>([]);
+  const [selectedWork] = useState<string>("");
   const { data: subscription } = useQuery({
     queryKey: ["subscription-status"],
     queryFn: () => api.get("/api/subscription/status").then((r) => r.data),
   });
-
+  // Pobierz listę lektur (tylko te z ≥20 pytaniami)
+  const { data: worksStats } = useQuery({
+    queryKey: ["works-stats"],
+    queryFn: () => api.get("/api/learning/works-stats").then((r) => r.data),
+    enabled: !sessionActive, // Tylko gdy sesja nieaktywna
+  });
   const [, setIsPlanSession] = useState(false);
   const { data: levelProgress } = useQuery({
     queryKey: ["difficulty-progress"],
@@ -895,6 +901,22 @@ export const LearningSession: React.FC = () => {
         setIsPlanSession(false);
       }
 
+      // Jeśli wybrano lekturę, dodaj do filtrów
+      if (selectedWork) {
+        const workFilters = {
+          ...sessionFilters,
+          work: selectedWork,
+        };
+        setSessionFilters(workFilters);
+
+        // Wyślij filtry do backendu
+        try {
+          await api.post("/api/learning/session/filters", workFilters);
+        } catch (error) {
+          console.error("Failed to set work filter:", error);
+        }
+      }
+
       setSessionActive(true);
       setSessionComplete(false);
 
@@ -1113,6 +1135,7 @@ export const LearningSession: React.FC = () => {
     const isEpochReview = localStorage.getItem("isEpochReview");
     const autoStart = localStorage.getItem("autoStartSession");
     const isWorkReview = localStorage.getItem("isWorkReview");
+    setIsPlanSession(!!isStudyPlanSession || !!isEpochReview || !!isWorkReview);
 
     console.log("Raw localStorage filters:", storedFilters);
     console.log("Is StudyPlan session:", isStudyPlanSession);
@@ -2452,6 +2475,58 @@ export const LearningSession: React.FC = () => {
 
       {/* Session Header */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-4 mb-6 mt-6">
+        {/* ✅ AKTYWNE FILTRY - NOWA SEKCJA */}
+        {sessionFilters && Object.keys(sessionFilters).length > 0 && (
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-4 mb-4">
+            <div className="mb-2">
+              <h4 className="font-medium text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                {sessionFilters.work ? (
+                  <>📚 Powtórka z lektury</>
+                ) : sessionFilters.epoch ? (
+                  <>🔄 Powtórka z epoki</>
+                ) : (
+                  <>Aktywne filtry</>
+                )}
+              </h4>
+            </div>
+
+            <ul className="space-y-1 text-sm text-gray-800 dark:text-gray-200">
+              {/* Dla WORK REVIEW - pokaż tylko lekturę */}
+              {sessionFilters.work ? (
+                <li className="font-semibold flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
+                  {sessionFilters.work}
+                </li>
+              ) : null}
+
+              {/* Dla EPOCH REVIEW - pokaż tylko epokę */}
+              {sessionFilters.epoch && !sessionFilters.work ? (
+                <li className="font-semibold flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
+                  {getEpochLabel(sessionFilters.epoch)}
+                </li>
+              ) : null}
+
+              {/* Dla innych sesji - pokaż wszystkie filtry */}
+              {!sessionFilters.work && !sessionFilters.epoch && (
+                <>
+                  {sessionFilters.category && (
+                    <li className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                      {getCategoryLabel(sessionFilters.category)}
+                    </li>
+                  )}
+                  {sessionFilters.epoch && (
+                    <li className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                      {getEpochLabel(sessionFilters.epoch)}
+                    </li>
+                  )}
+                </>
+              )}
+            </ul>
+          </div>
+        )}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           {/* Stats Grid - 2 kolumny na mobile, wszystkie w linii na desktop */}
           <div className="grid grid-cols-2 xs:grid-cols-3 lg:flex lg:items-center gap-3 lg:gap-6 w-full sm:w-auto">
@@ -2635,6 +2710,7 @@ export const LearningSession: React.FC = () => {
               currentFilters={sessionFilters}
               onFiltersChange={applyFiltersAndRefresh}
               isLoading={isLoadingNext}
+              worksStats={worksStats}
             />
           </motion.div>
         )}
@@ -2748,7 +2824,8 @@ const InSessionFilters: React.FC<{
   currentFilters: SessionFilters;
   onFiltersChange: (filters: SessionFilters) => void;
   isLoading: boolean;
-}> = ({ currentFilters, onFiltersChange, isLoading }) => {
+  worksStats?: any;
+}> = ({ currentFilters, onFiltersChange, isLoading, worksStats }) => {
   const [localFilters, setLocalFilters] =
     useState<SessionFilters>(currentFilters);
   const [selectedDifficulties, setSelectedDifficulties] = useState<number[]>(
@@ -2904,6 +2981,44 @@ const InSessionFilters: React.FC<{
           </button>
         ))}
       </div>
+
+      {/* ✅ LEKTURA - tylko w FREE SESSION */}
+      {worksStats && Object.keys(worksStats).length > 0 && (
+        <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+          <label className="block text-xs font-medium text-blue-700 dark:text-blue-300 mb-2">
+            📚 Lektura (opcjonalnie)
+          </label>
+          <select
+            value={currentFilters.work || ""}
+            onChange={(e) => {
+              const newFilters = {
+                ...localFilters,
+                work: e.target.value || undefined,
+              };
+              setLocalFilters(newFilters);
+            }}
+            disabled={isLoading}
+            className="w-full px-3 py-2 border rounded-lg 
+               bg-white dark:bg-gray-800 
+               text-gray-900 dark:text-white
+               border-gray-300 dark:border-gray-600
+               focus:ring-2 focus:ring-blue-500
+               disabled:opacity-50"
+          >
+            <option value="">Wszystkie lektury</option>
+            {Object.values(worksStats)
+              .sort((a: any, b: any) => a.title.localeCompare(b.title, "pl"))
+              .map((work: any) => (
+                <option key={work.id} value={work.title}>
+                  {work.title} ({work.total} pytań)
+                </option>
+              ))}
+          </select>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Wybierz lekturę do powtórki lub zostaw puste
+          </p>
+        </div>
+      )}
 
       {/* ✅ EPOKI - pełny dark mode */}
       {localFilters.category === "HISTORICAL_LITERARY" && (
