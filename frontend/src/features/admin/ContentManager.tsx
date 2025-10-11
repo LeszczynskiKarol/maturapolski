@@ -5,6 +5,7 @@ import {
   Trash2,
   Edit,
   FileText,
+  Lightbulb,
   BookOpen,
   ImageIcon,
   Star,
@@ -24,7 +25,7 @@ interface Hub {
   id: string;
   slug: string;
   title: string;
-  type: "LITERARY_WORK" | "EPOCH" | "AUTHOR";
+  type: "LITERARY_WORK" | "EPOCH" | "AUTHOR" | "THEME";
   description?: string;
   author?: string;
   epoch?: string;
@@ -54,6 +55,7 @@ const HUB_TYPES = [
   { value: "LITERARY_WORK", label: "Lektura", icon: BookOpen },
   { value: "EPOCH", label: "Epoka", icon: Calendar },
   { value: "AUTHOR", label: "Autor/Twórca", icon: User },
+  { value: "THEME", label: "Motyw literacki", icon: Lightbulb },
 ];
 
 const EPOCHS = [
@@ -1039,6 +1041,35 @@ export default function ContentManager() {
                     </div>
                   </>
                 )}
+
+                {hubForm.type === "THEME" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Epoka (opcjonalnie)
+                      </label>
+                      <select
+                        value={hubForm.epoch}
+                        onChange={(e) =>
+                          setHubForm({ ...hubForm, epoch: e.target.value })
+                        }
+                        className="w-full px-4 py-2 border rounded"
+                      >
+                        <option value="">-- Wszystkie epoki --</option>
+                        {EPOCHS.map((e) => (
+                          <option key={e.value} value={e.value}>
+                            {e.label}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Możesz przypisać motyw do konkretnej epoki lub zostawić
+                        ogólnym
+                      </p>
+                    </div>
+                  </>
+                )}
+
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Zdjęcie główne (opcjonalne)
