@@ -43,6 +43,7 @@ interface SessionFilters {
   epoch?: string;
   difficulty?: number[];
   points?: { min: number; max: number };
+  work?: string;
 }
 
 const EPOCHS = [
@@ -880,6 +881,13 @@ export const LearningSession: React.FC = () => {
               sessionFilters.epoch
             )}`
           );
+        } else if (sessionFilters.work) {
+          console.log("📚 STARTING WORK REVIEW SESSION");
+          console.log("Work:", sessionFilters.work);
+
+          toast.success(
+            `Rozpoczynam powtórkę z lektury: ${sessionFilters.work}`
+          );
         } else {
           toast.success(`📚 Rozpoczęto sesję z filtrami`);
         }
@@ -946,6 +954,7 @@ export const LearningSession: React.FC = () => {
     localStorage.removeItem("sessionFilters");
     localStorage.removeItem("isStudyPlanSession");
     localStorage.removeItem("isEpochReview");
+    localStorage.removeItem("isWorkReview");
 
     // Resetuj statystyki
     setSessionStats({
@@ -1103,10 +1112,12 @@ export const LearningSession: React.FC = () => {
     const isStudyPlanSession = localStorage.getItem("isStudyPlanSession");
     const isEpochReview = localStorage.getItem("isEpochReview");
     const autoStart = localStorage.getItem("autoStartSession");
+    const isWorkReview = localStorage.getItem("isWorkReview");
 
     console.log("Raw localStorage filters:", storedFilters);
     console.log("Is StudyPlan session:", isStudyPlanSession);
     console.log("Is Epoch Review:", isEpochReview);
+    console.log("Is Work Review:", isWorkReview);
 
     if (
       storedFilters &&

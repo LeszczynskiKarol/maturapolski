@@ -652,19 +652,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
         // FREE LEARNING - inteligentna adaptacja Z OGRANICZENIEM
         if (filters.category) baseWhere.category = filters.category;
 
-        // DODAJ TO: Respektuj również epoch w FREE LEARNING!
-        if (filters.work) {
-          // Używamy raw SQL condition dla Postgres
-          baseWhere.AND = baseWhere.AND || [];
-          baseWhere.AND.push({
-            content: {
-              path: ["work"],
-              string_contains: filters.work,
-            },
-          });
-          console.log(`Filtering by work: ${filters.work}`);
-        }
-
+        // Filtrowanie po lekturze - używamy dedykowanego pola 'work'
         if (filters.work) {
           baseWhere.work = filters.work;
           console.log(`Filtering by work: ${filters.work}`);
@@ -1930,15 +1918,18 @@ export async function learningRoutes(fastify: FastifyInstance) {
               }, 0) / completed
             : 0;
 
-        stats[workTitle] = {
-          id: workTitle,
-          title: workTitle,
-          author: "",
-          epoch: workData.epoch,
-          total: totalExercises,
-          completed,
-          avgScore: Math.round(avgScore),
-        };
+        // Dodaj tylko lektury z minimum 20 pytaniami
+        if (totalExercises >= 20) {
+          stats[workTitle] = {
+            id: workTitle,
+            title: workTitle,
+            author: "",
+            epoch: workData.epoch,
+            total: totalExercises,
+            completed,
+            avgScore: Math.round(avgScore),
+          };
+        }
       }
 
       console.log(`Returning stats for ${Object.keys(stats).length} works`);
