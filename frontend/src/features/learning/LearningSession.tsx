@@ -2831,6 +2831,15 @@ const InSessionFilters: React.FC<{
   const [selectedDifficulties, setSelectedDifficulties] = useState<number[]>(
     currentFilters.difficulty || []
   );
+  const [selectedEpochs, setSelectedEpochs] = useState<string[]>(
+    currentFilters.epoch ? [currentFilters.epoch] : []
+  );
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(
+    currentFilters.type ? [currentFilters.type] : []
+  );
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    currentFilters.category ? [currentFilters.category] : []
+  );
   const [availableCount, setAvailableCount] = useState<number | null>(null);
   const [isCountLoading, setIsCountLoading] = useState(false);
 
@@ -2878,23 +2887,48 @@ const InSessionFilters: React.FC<{
     fetchAvailableCount(localFilters);
   }, [localFilters]);
 
-  const handleCategoryChange = (category: string | undefined) => {
+  const handleCategoryToggle = (categoryValue: string) => {
+    const newCategories = selectedCategories.includes(categoryValue)
+      ? selectedCategories.filter((c) => c !== categoryValue)
+      : [...selectedCategories, categoryValue];
+
+    setSelectedCategories(newCategories);
+
     const newFilters = {
       ...localFilters,
-      category,
-      epoch:
-        category === "HISTORICAL_LITERARY" ? localFilters.epoch : undefined,
+      category: newCategories.length > 0 ? newCategories.join(",") : undefined,
     };
     setLocalFilters(newFilters);
   };
 
-  const handleEpochChange = (epoch: string | undefined) => {
-    const newFilters = { ...localFilters, epoch };
+  const handleEpochToggle = (epochValue: string) => {
+    const newEpochs = selectedEpochs.includes(epochValue)
+      ? selectedEpochs.filter((e) => e !== epochValue)
+      : [...selectedEpochs, epochValue];
+
+    setSelectedEpochs(newEpochs);
+
+    const newFilters = {
+      ...localFilters,
+      epoch: newEpochs.length > 0 ? newEpochs.join(",") : undefined, // Backend dostanie "ROMANTICISM,POSITIVISM"
+      // ✅ Auto-zaznacz kategorię gdy wybrano epokę
+      category:
+        newEpochs.length > 0 ? "HISTORICAL_LITERARY" : localFilters.category,
+    };
     setLocalFilters(newFilters);
   };
 
-  const handleTypeChange = (type: string | undefined) => {
-    const newFilters = { ...localFilters, type };
+  const handleTypeToggle = (typeValue: string) => {
+    const newTypes = selectedTypes.includes(typeValue)
+      ? selectedTypes.filter((t) => t !== typeValue)
+      : [...selectedTypes, typeValue];
+
+    setSelectedTypes(newTypes);
+
+    const newFilters = {
+      ...localFilters,
+      type: newTypes.length > 0 ? newTypes.join(",") : undefined,
+    };
     setLocalFilters(newFilters);
   };
 
@@ -2941,9 +2975,7 @@ const InSessionFilters: React.FC<{
                   : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
               }`}
             >
-              {availableCount > 0
-                ? `${availableCount} dostępnych ćwiczeń`
-                : "Brak ćwiczeń spełniających kryteria"}
+              {availableCount > 0 ? `` : "Brak ćwiczeń spełniających kryteria"}
             </span>
           ) : null}
         </div>
@@ -2965,14 +2997,10 @@ const InSessionFilters: React.FC<{
         {CATEGORIES.map((cat) => (
           <button
             key={cat.value}
-            onClick={() =>
-              handleCategoryChange(
-                localFilters.category === cat.value ? undefined : cat.value
-              )
-            }
+            onClick={() => handleCategoryToggle(cat.value)}
             disabled={isLoading}
             className={`px-3 py-2 text-xs rounded-lg border transition-colors ${
-              localFilters.category === cat.value
+              selectedCategories.includes(cat.value)
                 ? "border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
                 : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300"
             } disabled:opacity-50`}
@@ -2999,14 +3027,28 @@ const InSessionFilters: React.FC<{
             }}
             disabled={isLoading}
             className="w-full px-3 py-2 border rounded-lg 
-               bg-white dark:bg-gray-800 
-               text-gray-900 dark:text-white
-               border-gray-300 dark:border-gray-600
-               focus:ring-2 focus:ring-blue-500
-               disabled:opacity-50"
+           bg-white dark:bg-gray-800 
+           text-gray-900 dark:text-white
+           border-gray-300 dark:border-gray-600
+           focus:ring-2 focus:ring-blue-500
+           disabled:opacity-50"
           >
-            <option value="">Wszystkie lektury</option>
+            <option value="">
+              {selectedEpochs.length > 0
+                ? `Wszystkie lektury z wybranych epok (${
+                    Object.values(worksStats).filter((work: any) =>
+                      selectedEpochs.includes(work.epoch)
+                    ).length
+                  })`
+                : "Wszystkie lektury"}
+            </option>
             {Object.values(worksStats)
+              .filter(
+                (work: any) =>
+                  // ✅ Filtruj po wybranych epokach
+                  selectedEpochs.length === 0 ||
+                  selectedEpochs.includes(work.epoch)
+              )
               .sort((a: any, b: any) => a.title.localeCompare(b.title, "pl"))
               .map((work: any) => (
                 <option key={work.id} value={work.title}>
@@ -3021,23 +3063,22 @@ const InSessionFilters: React.FC<{
       )}
 
       {/* ✅ EPOKI - pełny dark mode */}
-      {localFilters.category === "HISTORICAL_LITERARY" && (
+      {!localFilters.work && (
         <div className="mb-3 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
           <p className="text-xs font-medium text-purple-700 dark:text-purple-300 mb-2">
-            Epoka literacka:
+            Epoka literacka{" "}
+            {selectedEpochs.length > 0 &&
+              `(${selectedEpochs.length} wybranych)`}
+            :
           </p>
           <div className="flex flex-wrap gap-1">
             {EPOCHS.map((epoch) => (
               <button
                 key={epoch.value}
-                onClick={() =>
-                  handleEpochChange(
-                    localFilters.epoch === epoch.value ? undefined : epoch.value
-                  )
-                }
+                onClick={() => handleEpochToggle(epoch.value)}
                 disabled={isLoading}
                 className={`px-2 py-1 text-xs rounded transition-colors ${
-                  localFilters.epoch === epoch.value
+                  selectedEpochs.includes(epoch.value)
                     ? "bg-purple-600 dark:bg-purple-500 text-white"
                     : "bg-white dark:bg-gray-700 hover:bg-purple-100 dark:hover:bg-purple-900/40 text-gray-700 dark:text-gray-300"
                 } disabled:opacity-50`}
@@ -3052,20 +3093,26 @@ const InSessionFilters: React.FC<{
       {/* ✅ TYP ZADANIA - pełny dark mode */}
       <div className="mb-3">
         <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Typ zadania:
+          Typ zadania{" "}
+          {selectedTypes.length > 0 && `(${selectedTypes.length} wybranych)`}:
         </p>
         <div className="flex flex-wrap gap-1">
-          {EXERCISE_TYPES.map((type) => (
+          {EXERCISE_TYPES.filter((type) => {
+            // ✅ Ukryj jednokrotny i wielokrotny wybór gdy wybrano "Pisanie"
+            if (selectedCategories.includes("WRITING")) {
+              return (
+                type.value !== "CLOSED_SINGLE" &&
+                type.value !== "CLOSED_MULTIPLE"
+              );
+            }
+            return true;
+          }).map((type) => (
             <button
               key={type.value}
-              onClick={() =>
-                handleTypeChange(
-                  localFilters.type === type.value ? undefined : type.value
-                )
-              }
+              onClick={() => handleTypeToggle(type.value)}
               disabled={isLoading}
               className={`px-2 py-1 text-xs rounded flex items-center gap-1 transition-colors ${
-                localFilters.type === type.value
+                selectedTypes.includes(type.value)
                   ? "bg-blue-600 dark:bg-blue-500 text-white"
                   : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
               } disabled:opacity-50`}
@@ -3075,8 +3122,14 @@ const InSessionFilters: React.FC<{
             </button>
           ))}
         </div>
-      </div>
 
+        {/* ✅ Informacja gdy wybrano "Pisanie" */}
+        {selectedCategories.includes("WRITING") && (
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+            💡 Dla kategorii "Pisanie" dostępne są tylko zadania otwarte
+          </p>
+        )}
+      </div>
       {/* ✅ POZIOM TRUDNOŚCI - pełny dark mode */}
       <div>
         <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -3139,9 +3192,6 @@ const InSessionFilters: React.FC<{
       {/* ✅ AKTYWNE FILTRY - pełny dark mode */}
       {hasFilters && (
         <div className="mt-3 pt-3 border-t dark:border-gray-700">
-          <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-            Aktywne filtry:
-          </p>
           <div className="flex flex-wrap gap-1">
             {localFilters.category && (
               <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs text-gray-700 dark:text-gray-300">

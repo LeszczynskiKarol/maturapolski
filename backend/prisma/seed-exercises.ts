@@ -1,7 +1,28 @@
 // backend/prisma/seed-exercises.ts
-import { PrismaClient } from "@prisma/client";
+import {
+  PrismaClient,
+  ExerciseType,
+  Category,
+  LiteraryEpoch,
+} from "@prisma/client";
 
 const prisma = new PrismaClient();
+
+// Zdefiniuj typ dla exercise seed data
+type ExerciseSeedData = {
+  type: ExerciseType;
+  category: Category;
+  difficulty: number;
+  points: number;
+  question: string;
+  content: any;
+  correctAnswer?: any;
+  rubric?: any;
+  metadata?: any;
+  epoch?: LiteraryEpoch;
+  work?: string;
+  tags?: string[];
+};
 
 async function seedExercises() {
   console.log("🌱 Seeding exercises...");
@@ -9,35 +30,28 @@ async function seedExercises() {
   // Usuń w odpowiedniej kolejności (od najbardziej zależnych)
   console.log("🗑️  Usuwanie powiązanych danych...");
 
-  // 1. Assessment (zależy od Submission)
   await prisma.assessment.deleteMany({});
   console.log("✅ Usunięto assessments");
 
-  // 2. Submission (zależy od Exercise)
   await prisma.submission.deleteMany({});
   console.log("✅ Usunięto submissions");
 
-  // 3. SpacedRepetition (zależy od Exercise)
   await prisma.spacedRepetition.deleteMany({});
   console.log("✅ Usunięto spacedRepetitions");
 
-  // 4. ExerciseUsage (zależy od Exercise)
   await prisma.exerciseUsage.deleteMany({});
   console.log("✅ Usunięto exerciseUsage");
 
-  // 5. ExamQuestion (ma opcjonalne exerciseId, ale trzeba wyczyścić)
   await prisma.examQuestion.deleteMany({});
   console.log("✅ Usunięto examQuestions");
 
-  // 6. AiUsage (zależy od Exercise)
   await prisma.aiUsage.deleteMany({});
   console.log("✅ Usunięto aiUsage");
 
-  // 7. Teraz możemy bezpiecznie usunąć Exercise
   await prisma.exercise.deleteMany({});
   console.log("✅ Usunięto exercises");
 
-  const exercises = [
+  const exercises: ExerciseSeedData[] = [
     // ========== LANGUAGE_USE - CLOSED_SINGLE (20 pytań) ==========
     {
       type: "CLOSED_SINGLE",
@@ -14132,664 +14146,1331 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
         ],
       },
     },
-    [
-      {
-        type: "CLOSED_SINGLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 2,
-        points: 1,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question:
-          "Kto był wspólnikiem Wokulskiego podczas zarabiania majątku na wojnie?",
-        content: {
-          options: ["doktor Szuman", "Suzin", "stary Szlangbaum", "Geist"],
-        },
-        correctAnswer: 1,
-        metadata: {
-          explanation:
-            "Suzin to rosyjski kupiec, wspólnik Wokulskiego, który pomógł mu zarobić majątek podczas wojny turecko-rosyjskiej.",
-        },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Kto był wspólnikiem Wokulskiego podczas zarabiania majątku na wojnie?",
+      content: {
+        options: ["doktor Szuman", "Suzin", "stary Szlangbaum", "Geist"],
       },
-      {
-        type: "CLOSED_SINGLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 2,
-        points: 1,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question:
-          "Ile lat Rzecki mieszkał w swoim ciemnym pokoju przy sklepie?",
-        content: {
-          options: ["15 lat", "25 lat", "30 lat", "20 lat"],
-        },
-        correctAnswer: 1,
-        metadata: {
-          explanation:
-            "Rzecki mieszkał w ciemnym pokoju przy sklepie przez 25 lat, co podkreśla jego przywiązanie do miejsca i monotonię życia.",
-        },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Suzin to rosyjski kupiec, wspólnik Wokulskiego, który pomógł mu zarobić majątek podczas wojny turecko-rosyjskiej.",
       },
-      {
-        type: "CLOSED_SINGLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 3,
-        points: 2,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question:
-          "Dlaczego Wokulski nie mógł zostać naukowcem po powrocie z Syberii?",
-        content: {
-          options: [
-            "nie miał odpowiedniego wykształcenia",
-            "naukowcy widzieli w nim byłego subiekta, kupcy - naukowca",
-            "został mu zabroniony dostęp do uniwersytetu",
-            "wolał zajmować się handlem",
-          ],
-        },
-        correctAnswer: 1,
-        metadata: {
-          explanation:
-            "Wokulski nie został zaakceptowany ani przez świat nauki (widzieli w nim kupca), ani przez świat handlu (widzieli w nim naukowca) - symbolizuje to jego pozycję \u0084pomiędzy\u0094 i społeczne niezrozumienie.",
-        },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Ile lat Rzecki mieszkał w swoim ciemnym pokoju przy sklepie?",
+      content: {
+        options: ["15 lat", "25 lat", "30 lat", "20 lat"],
       },
-      {
-        type: "CLOSED_SINGLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 2,
-        points: 1,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question: "Gdzie Wokulski spotkał Izabelę po raz pierwszy?",
-        content: {
-          options: [
-            "w swoim sklepie",
-            "w teatrze podczas spektaklu",
-            "na balu u księcia",
-            "w Łazienkach",
-          ],
-        },
-        correctAnswer: 1,
-        metadata: {
-          explanation:
-            "Wokulski po raz pierwszy zobaczył Izabelę w teatrze podczas spektaklu i zakochał się w niej od pierwszego wejrzenia. To spotkanie całkowicie zmieniło jego życie.",
-        },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Rzecki mieszkał w ciemnym pokoju przy sklepie przez 25 lat, co podkreśla jego przywiązanie do miejsca i monotonię życia.",
       },
-      {
-        type: "CLOSED_SINGLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 3,
-        points: 2,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question:
-          "Co symbolizuje porównanie Warszawy do \u0084gąsienicy\u0094 przez Wokulskiego w Paryżu?",
-        content: {
-          options: [
-            "piękno polskiej stolicy",
-            "chaos i brak planu urbanistycznego Warszawy",
-            "dynamiczny rozwój miasta",
-            "bogactwo warszawskiej architektury",
-          ],
-        },
-        correctAnswer: 1,
-        metadata: {
-          explanation:
-            "Wokulski porównuje chaotyczną Warszawę do gąsienicy, kontrastując ją z logicznie zaplanowanym Paryżem. To symbol krytyki polskiej rzeczywistości przez pozytywistów.",
-        },
-      },
-      {
-        type: "CLOSED_SINGLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 2,
-        points: 1,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question:
-          "Kto uratował życie Wokulskiego podczas próby samobójstwa w Skierniewicach?",
-        content: {
-          options: ["Rzecki", "Szuman", "brat Wysockiego - dróżnik", "Ochocki"],
-        },
-        correctAnswer: 2,
-        metadata: {
-          explanation:
-            "Życie Wokulskiego uratował dróżnik - brat Wysockiego, któremu Stanisław wcześniej pomógł, załatwiając mu pracę na kolei. To pokazuje, jak dobro wraca.",
-        },
-      },
-      {
-        type: "CLOSED_SINGLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 3,
-        points: 2,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question: "Jaką cenę zapłacił Wokulski za kamienicę Łęckich?",
-        content: {
-          options: [
-            "70 tysięcy rubli (wartość rynkowa)",
-            "80 tysięcy rubli",
-            "90 tysięcy rubli (20 tys. ponad wartość)",
-            "100 tysięcy rubli",
-          ],
-        },
-        correctAnswer: 2,
-        metadata: {
-          explanation:
-            "Wokulski kupił kamienicę za 90 tysięcy rubli, choć była warta tylko 70 tysięcy, aby pomóc finansowo rodzinie Izabeli i zbliżyć się do niej.",
-        },
-      },
-      {
-        type: "CLOSED_SINGLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 4,
-        points: 2,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question:
-          "Dlaczego Wokulski zrezygnował z pracy u profesora Geista w Paryżu?",
-        content: {
-          options: [
-            "nie był zainteresowany nauką",
-            "otrzymał list od prezesowej wspominający o Izabeli",
-            "nie miał wystarczających kwalifikacji",
-            "musiał wracać do sklepu w Warszawie",
-          ],
-        },
-        correctAnswer: 1,
-        metadata: {
-          explanation:
-            "Wokulski był już prawie zdecydowany zostać w Paryżu i poświęcić się nauce, gdy otrzymał list od prezesowej Zasławskiej wspominający o Izabeli. Miłość okazała się silniejsza niż pasja naukowa.",
-        },
-      },
-      {
-        type: "CLOSED_MULTIPLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 3,
-        points: 3,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question: "Dopasuj wydarzenia do miejsc, w których się rozegrały.",
-        content: {
-          matchingType: "events_places",
-          leftColumn: [
-            { id: "A", text: "Wyścig konny i pojedynek z baronem" },
-            { id: "B", text: "Spotkanie z profesorem Geistem" },
-            { id: "C", text: "Proces o lalkę" },
-            { id: "D", text: "Spacery z Izabelą po ruinach zamku" },
-          ],
-          rightColumn: [
-            { id: 1, text: "Zasławek - posiadłość prezesowej" },
-            { id: 2, text: "Paryż" },
-            { id: 3, text: "tor wyścigowy w Warszawie" },
-            { id: 4, text: "sąd warszawski" },
-          ],
-        },
-        correctAnswer: [
-          [0, 2],
-          [1, 1],
-          [2, 3],
-          [3, 0],
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Dlaczego Wokulski nie mógł zostać naukowcem po powrocie z Syberii?",
+      content: {
+        options: [
+          "nie miał odpowiedniego wykształcenia",
+          "naukowcy widzieli w nim byłego subiekta, kupcy - naukowca",
+          "został mu zabroniony dostęp do uniwersytetu",
+          "wolał zajmować się handlem",
         ],
-        metadata: {
-          explanation:
-            "Wyścig i pojedynek - tor w Warszawie, Geist - Paryż, proces - sąd warszawski, spacery z Izabelą - Zasławek.",
-        },
       },
-      {
-        type: "CLOSED_MULTIPLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 2,
-        points: 2,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question: "Uzupełnij informacje o panu Tomaszu Łęckim.",
-        content: {
-          textWithGaps:
-            "Tomasz Łęcki to [1] arystokrata, który utracił majątek z powodu [2] i własnej rozrzutności. Ma córkę o imieniu [3], która jest obiektem miłości [4].",
-          gaps: [
-            {
-              id: 1,
-              options: ["bogaty", "zubożały", "młody", "starożytny"],
-            },
-            {
-              id: 2,
-              options: ["wojny", "hazardu", "wydarzeń politycznych", "pożaru"],
-            },
-            {
-              id: 3,
-              options: ["Helena", "Izabela", "Florentyna", "Ewelina"],
-            },
-            {
-              id: 4,
-              options: ["Rzeckiego", "Wokulskiego", "Ochockiego", "Szumana"],
-            },
-          ],
-        },
-        correctAnswer: [1, 2, 1, 1],
-        metadata: {
-          explanation:
-            "Tomasz Łęcki to zubożały arystokrata, który stracił majątek z powodu wydarzeń politycznych i rozrzutności. Ma córkę Izabelę, w której zakochany jest Wokulski.",
-        },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Wokulski nie został zaakceptowany ani przez świat nauki (widzieli w nim kupca), ani przez świat handlu (widzieli w nim naukowca) - symbolizuje to jego pozycję \u0084pomiędzy\u0094 i społeczne niezrozumienie.",
       },
-      {
-        type: "CLOSED_MULTIPLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 3,
-        points: 3,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question:
-          "Które zdania o Wokulskim są prawdziwe? (wybierz wszystkie poprawne)",
-        content: {
-          options: [
-            "Wyjechał na Syberię za udział w powstaniu styczniowym",
-            "Pochodził z bogatej rodziny kupieckiej",
-            "Odziedziczył sklep po Minclowej",
-            "Był profesorem chemii na uniwersytecie",
-            "Zarabiał pieniądze na dostawach broni podczas wojny",
-          ],
-        },
-        correctAnswer: [0, 2, 4],
-        metadata: {
-          explanation:
-            "Prawdziwe: Wokulski był na Syberii za powstanie styczniowe, odziedziczył sklep po Minclowej i zarabiał na broni podczas wojny. Fałszywe: pochodził ze zubożałej szlachty i nie był profesorem.",
-        },
-      },
-      {
-        type: "CLOSED_MULTIPLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 4,
-        points: 3,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question: "Dopasuj postaci do ich kluczowych decyzji życiowych.",
-        content: {
-          matchingType: "characters_decisions",
-          leftColumn: [
-            { id: "A", text: "Wokulski" },
-            { id: "B", text: "Ochocki" },
-            { id: "C", text: "Izabela" },
-            { id: "D", text: "Rzecki" },
-          ],
-          rightColumn: [
-            { id: 1, text: "Rezygnacja z małżeństwa dla nauki" },
-            { id: 2, text: "Oddanie życia sklepowi i pamięci o Napoleonie" },
-            { id: 3, text: "Wstąpienie do klasztoru po śmierci ojca" },
-            { id: 4, text: "Wybór miłości zamiast kariery naukowej w Paryżu" },
-          ],
-        },
-        correctAnswer: [
-          [0, 3],
-          [1, 0],
-          [2, 2],
-          [3, 1],
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Gdzie Wokulski spotkał Izabelę po raz pierwszy?",
+      content: {
+        options: [
+          "w swoim sklepie",
+          "w teatrze podczas spektaklu",
+          "na balu u księcia",
+          "w Łazienkach",
         ],
-        metadata: {
-          explanation:
-            "Wokulski wybrał miłość zamiast nauki, Ochocki zrezygnował z małżeństwa dla wynalazków, Izabela wstąpiła do klasztoru, Rzecki poświęcił życie sklepowi i bonapartyzmowi.",
-        },
       },
-      {
-        type: "CLOSED_SINGLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 2,
-        points: 1,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question: "Kto prowadził \u0084Pamiętnik starego subiekta\u0094?",
-        content: {
-          options: ["Wokulski", "Rzecki", "Szuman", "Ochocki"],
-        },
-        correctAnswer: 1,
-        metadata: {
-          explanation:
-            "Pamiętnik starego subiekta to dziennik Ignacego Rzeckiego, w którym zapisywał swoje myśli, emocje i obserwacje życia.",
-        },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Wokulski po raz pierwszy zobaczył Izabelę w teatrze podczas spektaklu i zakochał się w niej od pierwszego wejrzenia. To spotkanie całkowicie zmieniło jego życie.",
       },
-      {
-        type: "CLOSED_SINGLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 3,
-        points: 2,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question:
-          "Co było przyczyną wyjazdu Wokulskiego z pociągu w Skierniewicach?",
-        content: {
-          options: [
-            "pilna sprawa biznesowa",
-            "nagła choroba",
-            "podsłuchana rozmowa Izabeli ze Starskim po angielsku",
-            "spóźnienie pociągu",
-          ],
-        },
-        correctAnswer: 2,
-        metadata: {
-          explanation:
-            "Wokulski podsłuchał rozmowę Izabeli ze Starskim po angielsku, w której flirtowali i obmawiały go. To złamało mu serce i skłoniło do opuszczenia pociągu.",
-        },
-      },
-      {
-        type: "CLOSED_SINGLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 2,
-        points: 1,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question: "Ile pieniędzy Wokulski ofiarował podczas kwesty w kościele?",
-        content: {
-          options: ["10 rubli", "25 półimperiałów", "100 rubli", "5 rubli"],
-        },
-        correctAnswer: 1,
-        metadata: {
-          explanation:
-            "Podczas kwesty Wokulski hojnie ofiarował 25 półimperiałów, aby zrobić wrażenie na Izabeli i hrabinie Karolowej.",
-        },
-      },
-      {
-        type: "CLOSED_MULTIPLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 3,
-        points: 2,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question: "Uzupełnij informacje o finale powieści.",
-        content: {
-          textWithGaps:
-            "Po zerwaniu z Izabelą Wokulski najprawdopodobniej popełnił [1], wysadzając w powietrze [2]. Świadczy o tym [3] z napisem Non omnis moriar. Rzecki [4], układając towary w sklepie Szlangbauma.",
-          gaps: [
-            {
-              id: 1,
-              options: [
-                "ucieczkę zagranicę",
-                "samobójstwo",
-                "morderstwo",
-                "podpalenie",
-              ],
-            },
-            {
-              id: 2,
-              options: [
-                "sklep",
-                "pałac księcia",
-                "zamek w Zasławiu",
-                "kamienicę",
-              ],
-            },
-            {
-              id: 3,
-              options: ["list", "krzyż", "grób", "pomnik"],
-            },
-            {
-              id: 4,
-              options: ["uciekł", "umarł", "wyemigrował", "ożenił się"],
-            },
-          ],
-        },
-        correctAnswer: [1, 2, 1, 1],
-        metadata: {
-          explanation:
-            "Wokulski prawdopodobnie popełnił samobójstwo, wysadzając zamek w Zasławiu. Węgiełek postawił krzyż z napisem Non omnis moriar. Rzecki umarł w sklepie.",
-        },
-      },
-      {
-        type: "CLOSED_MULTIPLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 4,
-        points: 3,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question: "Dopasuj symbole do ich znaczenia w powieści.",
-        content: {
-          matchingType: "symbols_meanings",
-          leftColumn: [
-            { id: "A", text: "Lalka" },
-            { id: "B", text: "Paryż" },
-            { id: "C", text: "Powiśle" },
-            { id: "D", text: "Sklep galanteryjny" },
-          ],
-          rightColumn: [
-            { id: 1, text: "Miejsce uwięzienia i przyziemnej egzystencji" },
-            { id: 2, text: "Pustka emocjonalna i sztuczność" },
-            { id: 3, text: "Bieda i zaniedbanie polskiego społeczeństwa" },
-            { id: 4, text: "Cywilizacja, postęp i racjonalna organizacja" },
-          ],
-        },
-        correctAnswer: [
-          [0, 1],
-          [1, 3],
-          [2, 2],
-          [3, 0],
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Co symbolizuje porównanie Warszawy do \u0084gąsienicy\u0094 przez Wokulskiego w Paryżu?",
+      content: {
+        options: [
+          "piękno polskiej stolicy",
+          "chaos i brak planu urbanistycznego Warszawy",
+          "dynamiczny rozwój miasta",
+          "bogactwo warszawskiej architektury",
         ],
-        metadata: {
-          explanation:
-            "Lalka symbolizuje pustkę (jak Izabela), Paryż - postęp i cywilizację, Powiśle - polską biedę, sklep - uwięzienie w przyziemności.",
-        },
       },
-      {
-        type: "SHORT_ANSWER",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 2,
-        points: 2,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question:
-          "Wyjaśnij, dlaczego Wokulski zorganizował aplauz dla Rossiego.",
-        content: {
-          work: "Lalka",
-          instruction:
-            "Podaj powód zorganizowania oklasków i wyjaśnij cel tej akcji. (30-50 słów)",
-        },
-        rubric: {
-          maxScore: 2,
-          criteria: [
-            "wskazanie, że Izabela zachwycała się Rossim (1 pkt)",
-            "wyjaśnienie, że Wokulski chciał sprawić jej przyjemność (1 pkt)",
-          ],
-        },
-        metadata: {
-          expectedAnswer:
-            "Izabela zachwycała się włoskim tragikiem Rossim i krytykowała warszawską publiczność za brak entuzjazmu. Wokulski zorganizował owacje, aby sprawić jej przyjemność - wszystkie jego działania były podporządkowane zdobyciu serca Izabeli.",
-          keyWords: ["Rossi", "Izabela", "aplauz", "przyjemność", "miłość"],
-        },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Wokulski porównuje chaotyczną Warszawę do gąsienicy, kontrastując ją z logicznie zaplanowanym Paryżem. To symbol krytyki polskiej rzeczywistości przez pozytywistów.",
       },
-      {
-        type: "SHORT_ANSWER",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 3,
-        points: 3,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question: "Scharakteryzuj relację między Wokulskim a Rzeckim.",
-        content: {
-          work: "Lalka",
-          instruction:
-            "Opisz, jak się poznali i jaka była ich przyjaźń w 3-4 zdaniach. (50-80 słów)",
-        },
-        rubric: {
-          maxScore: 3,
-          criteria: [
-            "wskazanie, że poznali się w latach 50. XIX w. (1 pkt)",
-            "opis głębokiej przyjaźni i lojalności (1 pkt)",
-            "wspomnienie, że Rzecki wspierał Wokulskiego (1 pkt)",
-          ],
-        },
-        metadata: {
-          expectedAnswer:
-            "Rzecki i Wokulski poznali się w latach 1857-1858, gdy młody Stanisław pracował u Hopfera. Ignacy od razu dostrzegł w nim potencjał i wspierał jego naukowe ambicje. Ich przyjaźń była głęboka i lojalna - Rzecki pomagał Wokulskiemu w trudnych chwilach, a Stanisław dbał o przyjaciela finansowo. To była najbliższa relacja w życiu obu mężczyzn.",
-          keyWords: ["przyjaźń", "Hopfer", "wsparcie", "lojalność", "lata 50."],
-        },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Kto uratował życie Wokulskiego podczas próby samobójstwa w Skierniewicach?",
+      content: {
+        options: ["Rzecki", "Szuman", "brat Wysockiego - dróżnik", "Ochocki"],
       },
-      {
-        type: "SHORT_ANSWER",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 2,
-        points: 2,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question: "Wyjaśnij, czym zajmował się doktor Szuman.",
-        content: {
-          work: "Lalka",
-          instruction:
-            "Opisz zawód i główne zajęcia doktora Szumana. (30-50 słów)",
-        },
-        rubric: {
-          maxScore: 2,
-          criteria: [
-            "wskazanie, że był lekarzem i naukowcem (1 pkt)",
-            "wspomnienie, że leczył biednych za darmo (1 pkt)",
-          ],
-        },
-        metadata: {
-          expectedAnswer:
-            "Doktor Szuman był żydowskim lekarzem i naukowcem. Mimo posiadania majątku leczył biednych za darmo, traktując pacjentów jako materiał do badań. Badał włosy Polaków i prowadził obserwacje naukowe.",
-          keyWords: ["lekarz", "naukowiec", "za darmo", "badania", "Żyd"],
-        },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Życie Wokulskiego uratował dróżnik - brat Wysockiego, któremu Stanisław wcześniej pomógł, załatwiając mu pracę na kolei. To pokazuje, jak dobro wraca.",
       },
-      {
-        type: "SHORT_ANSWER",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 3,
-        points: 3,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question:
-          "Opisz proces sądowy o lalkę między Heleną Stawską a baronową Krzeszowską.",
-        content: {
-          work: "Lalka",
-          instruction:
-            "Wyjaśnij, o co toczyła się sprawa i jak się zakończyła. (50-80 słów)",
-        },
-        rubric: {
-          maxScore: 3,
-          criteria: [
-            "wskazanie oskarżenia o kradzież lalki (1 pkt)",
-            "wyjaśnienie, że lalka była kupiona w sklepie Wokulskiego (1 pkt)",
-            "informacja o uniewinnieniu Stawskiej (1 pkt)",
-          ],
-        },
-        metadata: {
-          expectedAnswer:
-            "Baronowa Krzeszowska oskarżyła Helenę Stawską o kradzież lalki, którą podglądając zauważyła u niej w mieszkaniu. W rzeczywistości Helena kupiła identyczną lalkę w sklepie Wokulskiego za 3 ruble. Podczas rozprawy służąca baronowej przyznała się, że oryginalna lalka się stłukła. Sąd uniewinnił panią Stawską.",
-          keyWords: ["baronowa", "kradzież", "lalka", "sklep", "uniewinniona"],
-        },
-      },
-      {
-        type: "CLOSED_SINGLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 2,
-        points: 1,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question: "Kto kupił sklep Wokulskiego?",
-        content: {
-          options: ["Rzecki", "młody Szlangbaum", "Suzin", "Ochocki"],
-        },
-        correctAnswer: 1,
-        metadata: {
-          explanation:
-            "Sklep Wokulskiego kupił młody Szlangbaum, syn starego Szlangbauma. Po przejęciu sklepu zaczął zwalniać pracowników i zachowywać się arogancko.",
-        },
-      },
-      {
-        type: "CLOSED_SINGLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 3,
-        points: 2,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question: "Co Wokulski planował zbudować na Powiślu?",
-        content: {
-          options: ["nową kamienicę", "fabrykę", "bulwary nad Wisłą", "teatr"],
-        },
-        correctAnswer: 2,
-        metadata: {
-          explanation:
-            "Wokulski planował wybudować na Powiślu bulwary, aby pomóc okolicznym nędzarzom i upiększyć zaniedbane nadwiślańskie tereny. To pokazuje jego pragnienie organicznej pracy.",
-        },
-      },
-      {
-        type: "CLOSED_SINGLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 2,
-        points: 1,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question:
-          "Jaki prezent Wokulski kupił Mariannie (byłej prostytutce) na ślub?",
-        content: {
-          options: [
-            "maszynę do szycia",
-            "nowe mieszkanie",
-            "500 rubli i wyprawkę",
-            "sklep",
-          ],
-        },
-        correctAnswer: 2,
-        metadata: {
-          explanation:
-            "Wokulski dał Węgiełkowi 500 rubli na ślub, a Mariannie zapewnił wyprawkę. Pokazuje to jego dobroć i chęć pomagania potrzebującym.",
-        },
-      },
-      {
-        type: "CLOSED_MULTIPLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 3,
-        points: 3,
-        epoch: "POSITIVISM",
-        work: "Lalka",
-        question:
-          "Dopasuj miejsca w Paryżu do ich symbolicznego znaczenia dla Wokulskiego.",
-        content: {
-          matchingType: "paris_places",
-          leftColumn: [
-            { id: "A", text: "Laboratorium profesora Geista" },
-            { id: "B", text: "Paryskie bulwary" },
-            { id: "C", text: "Hotel Wokulskiego" },
-            { id: "D", text: "Sesje z kontrahentami Suzina" },
-          ],
-          rightColumn: [
-            { id: 1, text: "Miejsce samotności i tęsknoty za Izabelą" },
-            { id: 2, text: "Symbol porządku i cywilizacji" },
-            { id: 3, text: "Możliwość kariery naukowej" },
-            { id: 4, text: "Świat interesów i pieniądza" },
-          ],
-        },
-        correctAnswer: [
-          [0, 2],
-          [1, 1],
-          [2, 0],
-          [3, 3],
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Jaką cenę zapłacił Wokulski za kamienicę Łęckich?",
+      content: {
+        options: [
+          "70 tysięcy rubli (wartość rynkowa)",
+          "80 tysięcy rubli",
+          "90 tysięcy rubli (20 tys. ponad wartość)",
+          "100 tysięcy rubli",
         ],
-        metadata: {
-          explanation:
-            "Laboratorium Geista - szansa naukowa, bulwary - porządek Paryża, hotel - samotność, sesje - świat interesów.",
-        },
       },
-      {
-        type: "CLOSED_MULTIPLE",
-        category: "HISTORICAL_LITERARY",
-        difficulty: 2,
-        points: 2,
-        epoch: "POSITIVISM",
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Wokulski kupił kamienicę za 90 tysięcy rubli, choć była warta tylko 70 tysięcy, aby pomóc finansowo rodzinie Izabeli i zbliżyć się do niej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Dlaczego Wokulski zrezygnował z pracy u profesora Geista w Paryżu?",
+      content: {
+        options: [
+          "nie był zainteresowany nauką",
+          "otrzymał list od prezesowej wspominający o Izabeli",
+          "nie miał wystarczających kwalifikacji",
+          "musiał wracać do sklepu w Warszawie",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Wokulski był już prawie zdecydowany zostać w Paryżu i poświęcić się nauce, gdy otrzymał list od prezesowej Zasławskiej wspominający o Izabeli. Miłość okazała się silniejsza niż pasja naukowa.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Dopasuj wydarzenia do miejsc, w których się rozegrały.",
+      content: {
+        matchingType: "events_places",
+        leftColumn: [
+          { id: "A", text: "Wyścig konny i pojedynek z baronem" },
+          { id: "B", text: "Spotkanie z profesorem Geistem" },
+          { id: "C", text: "Proces o lalkę" },
+          { id: "D", text: "Spacery z Izabelą po ruinach zamku" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Zasławek - posiadłość prezesowej" },
+          { id: 2, text: "Paryż" },
+          { id: 3, text: "tor wyścigowy w Warszawie" },
+          { id: 4, text: "sąd warszawski" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 1],
+        [2, 3],
+        [3, 0],
+      ],
+      metadata: {
+        explanation:
+          "Wyścig i pojedynek - tor w Warszawie, Geist - Paryż, proces - sąd warszawski, spacery z Izabelą - Zasławek.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Uzupełnij informacje o panu Tomaszu Łęckim.",
+      content: {
+        textWithGaps:
+          "Tomasz Łęcki to [1] arystokrata, który utracił majątek z powodu [2] i własnej rozrzutności. Ma córkę o imieniu [3], która jest obiektem miłości [4].",
+        gaps: [
+          {
+            id: 1,
+            options: ["bogaty", "zubożały", "młody", "starożytny"],
+          },
+          {
+            id: 2,
+            options: ["wojny", "hazardu", "wydarzeń politycznych", "pożaru"],
+          },
+          {
+            id: 3,
+            options: ["Helena", "Izabela", "Florentyna", "Ewelina"],
+          },
+          {
+            id: 4,
+            options: ["Rzeckiego", "Wokulskiego", "Ochockiego", "Szumana"],
+          },
+        ],
+      },
+      correctAnswer: [1, 2, 1, 1],
+      metadata: {
+        explanation:
+          "Tomasz Łęcki to zubożały arystokrata, który stracił majątek z powodu wydarzeń politycznych i rozrzutności. Ma córkę Izabelę, w której zakochany jest Wokulski.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Które zdania o Wokulskim są prawdziwe? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "Wyjechał na Syberię za udział w powstaniu styczniowym",
+          "Pochodził z bogatej rodziny kupieckiej",
+          "Odziedziczył sklep po Minclowej",
+          "Był profesorem chemii na uniwersytecie",
+          "Zarabiał pieniądze na dostawach broni podczas wojny",
+        ],
+      },
+      correctAnswer: [0, 2, 4],
+      metadata: {
+        explanation:
+          "Prawdziwe: Wokulski był na Syberii za powstanie styczniowe, odziedziczył sklep po Minclowej i zarabiał na broni podczas wojny. Fałszywe: pochodził ze zubożałej szlachty i nie był profesorem.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Dopasuj postaci do ich kluczowych decyzji życiowych.",
+      content: {
+        matchingType: "characters_decisions",
+        leftColumn: [
+          { id: "A", text: "Wokulski" },
+          { id: "B", text: "Ochocki" },
+          { id: "C", text: "Izabela" },
+          { id: "D", text: "Rzecki" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Rezygnacja z małżeństwa dla nauki" },
+          { id: 2, text: "Oddanie życia sklepowi i pamięci o Napoleonie" },
+          { id: 3, text: "Wstąpienie do klasztoru po śmierci ojca" },
+          { id: 4, text: "Wybór miłości zamiast kariery naukowej w Paryżu" },
+        ],
+      },
+      correctAnswer: [
+        [0, 3],
+        [1, 0],
+        [2, 2],
+        [3, 1],
+      ],
+      metadata: {
+        explanation:
+          "Wokulski wybrał miłość zamiast nauki, Ochocki zrezygnował z małżeństwa dla wynalazków, Izabela wstąpiła do klasztoru, Rzecki poświęcił życie sklepowi i bonapartyzmowi.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Kto prowadził \u0084Pamiętnik starego subiekta\u0094?",
+      content: {
+        options: ["Wokulski", "Rzecki", "Szuman", "Ochocki"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Pamiętnik starego subiekta to dziennik Ignacego Rzeckiego, w którym zapisywał swoje myśli, emocje i obserwacje życia.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Co było przyczyną wyjazdu Wokulskiego z pociągu w Skierniewicach?",
+      content: {
+        options: [
+          "pilna sprawa biznesowa",
+          "nagła choroba",
+          "podsłuchana rozmowa Izabeli ze Starskim po angielsku",
+          "spóźnienie pociągu",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Wokulski podsłuchał rozmowę Izabeli ze Starskim po angielsku, w której flirtowali i obmawiały go. To złamało mu serce i skłoniło do opuszczenia pociągu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Ile pieniędzy Wokulski ofiarował podczas kwesty w kościele?",
+      content: {
+        options: ["10 rubli", "25 półimperiałów", "100 rubli", "5 rubli"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Podczas kwesty Wokulski hojnie ofiarował 25 półimperiałów, aby zrobić wrażenie na Izabeli i hrabinie Karolowej.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Uzupełnij informacje o finale powieści.",
+      content: {
+        textWithGaps:
+          "Po zerwaniu z Izabelą Wokulski najprawdopodobniej popełnił [1], wysadzając w powietrze [2]. Świadczy o tym [3] z napisem Non omnis moriar. Rzecki [4], układając towary w sklepie Szlangbauma.",
+        gaps: [
+          {
+            id: 1,
+            options: [
+              "ucieczkę zagranicę",
+              "samobójstwo",
+              "morderstwo",
+              "podpalenie",
+            ],
+          },
+          {
+            id: 2,
+            options: [
+              "sklep",
+              "pałac księcia",
+              "zamek w Zasławiu",
+              "kamienicę",
+            ],
+          },
+          {
+            id: 3,
+            options: ["list", "krzyż", "grób", "pomnik"],
+          },
+          {
+            id: 4,
+            options: ["uciekł", "umarł", "wyemigrował", "ożenił się"],
+          },
+        ],
+      },
+      correctAnswer: [1, 2, 1, 1],
+      metadata: {
+        explanation:
+          "Wokulski prawdopodobnie popełnił samobójstwo, wysadzając zamek w Zasławiu. Węgiełek postawił krzyż z napisem Non omnis moriar. Rzecki umarł w sklepie.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Dopasuj symbole do ich znaczenia w powieści.",
+      content: {
+        matchingType: "symbols_meanings",
+        leftColumn: [
+          { id: "A", text: "Lalka" },
+          { id: "B", text: "Paryż" },
+          { id: "C", text: "Powiśle" },
+          { id: "D", text: "Sklep galanteryjny" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Miejsce uwięzienia i przyziemnej egzystencji" },
+          { id: 2, text: "Pustka emocjonalna i sztuczność" },
+          { id: 3, text: "Bieda i zaniedbanie polskiego społeczeństwa" },
+          { id: 4, text: "Cywilizacja, postęp i racjonalna organizacja" },
+        ],
+      },
+      correctAnswer: [
+        [0, 1],
+        [1, 3],
+        [2, 2],
+        [3, 0],
+      ],
+      metadata: {
+        explanation:
+          "Lalka symbolizuje pustkę (jak Izabela), Paryż - postęp i cywilizację, Powiśle - polską biedę, sklep - uwięzienie w przyziemności.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Wyjaśnij, dlaczego Wokulski zorganizował aplauz dla Rossiego.",
+      content: {
         work: "Lalka",
-        question:
-          "Które działania Wokulskiego były motywowane miłością do Izabeli? (wybierz wszystkie poprawne)",
-        content: {
-          options: [
-            "Wyjazd do Bułgarii na wojnę",
-            "Nauka języka angielskiego",
-            "Badania naukowe z Geistem",
-            "Kupno kamienicy Łęckich",
-            "Organizacja aplauzu dla Rossiego",
-          ],
-        },
-        correctAnswer: [0, 1, 3, 4],
-        metadata: {
-          explanation:
-            "Wokulski wyjechał na wojnę, żeby zarobić na Izabelę, uczył się angielskiego, bo ona mówiła po angielsku, kupił kamienicę Łęckich i zorganizował aplauz - wszystko dla niej. Badania z Geistem to była alternatywa dla miłości.",
-        },
+        instruction:
+          "Podaj powód zorganizowania oklasków i wyjaśnij cel tej akcji. (30-50 słów)",
       },
-    ],
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie, że Izabela zachwycała się Rossim (1 pkt)",
+          "wyjaśnienie, że Wokulski chciał sprawić jej przyjemność (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Izabela zachwycała się włoskim tragikiem Rossim i krytykowała warszawską publiczność za brak entuzjazmu. Wokulski zorganizował owacje, aby sprawić jej przyjemność - wszystkie jego działania były podporządkowane zdobyciu serca Izabeli.",
+        keyWords: ["Rossi", "Izabela", "aplauz", "przyjemność", "miłość"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Scharakteryzuj relację między Wokulskim a Rzeckim.",
+      content: {
+        work: "Lalka",
+        instruction:
+          "Opisz, jak się poznali i jaka była ich przyjaźń w 3-4 zdaniach. (50-80 słów)",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "wskazanie, że poznali się w latach 50. XIX w. (1 pkt)",
+          "opis głębokiej przyjaźni i lojalności (1 pkt)",
+          "wspomnienie, że Rzecki wspierał Wokulskiego (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Rzecki i Wokulski poznali się w latach 1857-1858, gdy młody Stanisław pracował u Hopfera. Ignacy od razu dostrzegł w nim potencjał i wspierał jego naukowe ambicje. Ich przyjaźń była głęboka i lojalna - Rzecki pomagał Wokulskiemu w trudnych chwilach, a Stanisław dbał o przyjaciela finansowo. To była najbliższa relacja w życiu obu mężczyzn.",
+        keyWords: ["przyjaźń", "Hopfer", "wsparcie", "lojalność", "lata 50."],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Wyjaśnij, czym zajmował się doktor Szuman.",
+      content: {
+        work: "Lalka",
+        instruction:
+          "Opisz zawód i główne zajęcia doktora Szumana. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie, że był lekarzem i naukowcem (1 pkt)",
+          "wspomnienie, że leczył biednych za darmo (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Doktor Szuman był żydowskim lekarzem i naukowcem. Mimo posiadania majątku leczył biednych za darmo, traktując pacjentów jako materiał do badań. Badał włosy Polaków i prowadził obserwacje naukowe.",
+        keyWords: ["lekarz", "naukowiec", "za darmo", "badania", "Żyd"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Opisz proces sądowy o lalkę między Heleną Stawską a baronową Krzeszowską.",
+      content: {
+        work: "Lalka",
+        instruction:
+          "Wyjaśnij, o co toczyła się sprawa i jak się zakończyła. (50-80 słów)",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "wskazanie oskarżenia o kradzież lalki (1 pkt)",
+          "wyjaśnienie, że lalka była kupiona w sklepie Wokulskiego (1 pkt)",
+          "informacja o uniewinnieniu Stawskiej (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Baronowa Krzeszowska oskarżyła Helenę Stawską o kradzież lalki, którą podglądając zauważyła u niej w mieszkaniu. W rzeczywistości Helena kupiła identyczną lalkę w sklepie Wokulskiego za 3 ruble. Podczas rozprawy służąca baronowej przyznała się, że oryginalna lalka się stłukła. Sąd uniewinnił panią Stawską.",
+        keyWords: ["baronowa", "kradzież", "lalka", "sklep", "uniewinniona"],
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Kto kupił sklep Wokulskiego?",
+      content: {
+        options: ["Rzecki", "młody Szlangbaum", "Suzin", "Ochocki"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Sklep Wokulskiego kupił młody Szlangbaum, syn starego Szlangbauma. Po przejęciu sklepu zaczął zwalniać pracowników i zachowywać się arogancko.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Co Wokulski planował zbudować na Powiślu?",
+      content: {
+        options: ["nową kamienicę", "fabrykę", "bulwary nad Wisłą", "teatr"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Wokulski planował wybudować na Powiślu bulwary, aby pomóc okolicznym nędzarzom i upiększyć zaniedbane nadwiślańskie tereny. To pokazuje jego pragnienie organicznej pracy.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Jaki prezent Wokulski kupił Mariannie (byłej prostytutce) na ślub?",
+      content: {
+        options: [
+          "maszynę do szycia",
+          "nowe mieszkanie",
+          "500 rubli i wyprawkę",
+          "sklep",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Wokulski dał Węgiełkowi 500 rubli na ślub, a Mariannie zapewnił wyprawkę. Pokazuje to jego dobroć i chęć pomagania potrzebującym.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Dopasuj miejsca w Paryżu do ich symbolicznego znaczenia dla Wokulskiego.",
+      content: {
+        matchingType: "paris_places",
+        leftColumn: [
+          { id: "A", text: "Laboratorium profesora Geista" },
+          { id: "B", text: "Paryskie bulwary" },
+          { id: "C", text: "Hotel Wokulskiego" },
+          { id: "D", text: "Sesje z kontrahentami Suzina" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Miejsce samotności i tęsknoty za Izabelą" },
+          { id: 2, text: "Symbol porządku i cywilizacji" },
+          { id: 3, text: "Możliwość kariery naukowej" },
+          { id: 4, text: "Świat interesów i pieniądza" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 1],
+        [2, 0],
+        [3, 3],
+      ],
+      metadata: {
+        explanation:
+          "Laboratorium Geista - szansa naukowa, bulwary - porządek Paryża, hotel - samotność, sesje - świat interesów.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Które działania Wokulskiego były motywowane miłością do Izabeli? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "Wyjazd do Bułgarii na wojnę",
+          "Nauka języka angielskiego",
+          "Badania naukowe z Geistem",
+          "Kupno kamienicy Łęckich",
+          "Organizacja aplauzu dla Rossiego",
+        ],
+      },
+      correctAnswer: [0, 1, 3, 4],
+      metadata: {
+        explanation:
+          "Wokulski wyjechał na wojnę, żeby zarobić na Izabelę, uczył się angielskiego, bo ona mówiła po angielsku, kupił kamienicę Łęckich i zorganizował aplauz - wszystko dla niej. Badania z Geistem to była alternatywa dla miłości.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Kto był ojcem chrzestnym dziecka Wysockiego?",
+      content: {
+        options: ["Rzecki", "Wokulski", "Szuman", "Ochocki"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Wokulski został ojcem chrzestnym dziecka Wysockiego, którego wcześniej uratował z biedy, dając mu pracę i pieniądze na konia.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Ile tysięcy rubli długów miał Kazimierz Starski?",
+      content: {
+        options: [
+          "50 tysięcy rubli",
+          "75 tysięcy rubli",
+          "100 tysięcy rubli",
+          "150 tysięcy rubli",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Starski miał 100 tysięcy rubli długów i uciekł zagranicę przed wierzycielami. Był utracjuszem i bawidamkiem.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Kto wygłosił przemówienie o małżeństwie jako związku rozumnym, a nie miłosnym?",
+      content: {
+        options: ["Wokulski", "Ochocki", "Starski", "baron Dalski"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Starski wygłosił wykład w altanie u prezesowej, twierdząc, że małżeństwo należy zawierać rozumnie, kierując się interesami, a nie miłością.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Jaki metal Geist chciał stworzyć jako swoje największe odkrycie?",
+      content: {
+        options: [
+          "metal cięższy od platyny",
+          "metal lżejszy od powietrza",
+          "szkło cięższe od żelaza",
+          "stal lekka jak piórko",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Największym, choć niedokończonym odkryciem Geista miał być materiał lżejszy od powietrza. Obawiał się jednak, że ludzkość użyje go w niewłaściwy sposób.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Ile pieniędzy Wokulski zapisał Ochockiemu w testamencie?",
+      content: {
+        options: [
+          "100 tysięcy rubli",
+          "120 tysięcy rubli",
+          "140 tysięcy rubli",
+          "160 tysięcy rubli",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "W testamencie Wokulski zapisał Ochockiemu 140 tysięcy rubli na badania naukowe, Rzeckiemu 25 tysięcy, a Helenie Stawskiej 20 tysięcy rubli.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Kto powiedział, że Wokulski to \u0084polski romantyk\u0094 i \u0084półgłówek\u0094?",
+      content: {
+        options: ["Rzecki", "Szuman", "Suzin", "książę"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Doktor Szuman nazwał Wokulskiego \u0084polskim romantykiem\u0094 i \u0084półgłówkiem\u0094, krytykując jego ślepą miłość do Izabeli i nierealistyczne oczekiwania.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Gdzie mieszkał Ludwik Stawski - zaginiony mąż Heleny?",
+      content: {
+        options: ["w Paryżu", "w Algierze", "w Moskwie", "w Wiedniu"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Mąż Heleny Stawskiej żył i mieszkał w Algierze pod zmienionym nazwiskiem. Później dotarła wiadomość o jego śmierci.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Dopasuj postacie do ich marzeń i aspiracji.",
+      content: {
+        matchingType: "characters_dreams",
+        leftColumn: [
+          { id: "A", text: "Wokulski" },
+          { id: "B", text: "Rzecki" },
+          { id: "C", text: "Ochocki" },
+          { id: "D", text: "Izabela" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Napoleończyk Bonaparte i wolna Polska" },
+          { id: 2, text: "Idealny arystokrata jako mąż" },
+          { id: 3, text: "Maszyna latająca i kariera naukowa" },
+          { id: 4, text: "Miłość Izabeli i szczęście rodzinne" },
+        ],
+      },
+      correctAnswer: [
+        [0, 3],
+        [1, 0],
+        [2, 2],
+        [3, 1],
+      ],
+      metadata: {
+        explanation:
+          "Wokulski marzył o Izabeli, Rzecki o Napoleonie i wolnej Polsce, Ochocki o wynalazkach naukowych, Izabela o idealnym arystokratycznym mężu.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Uzupełnij informacje o młodości Wokulskiego.",
+      content: {
+        textWithGaps:
+          "W młodości Wokulski pracował jako subiekt u [1], jednocześnie uczęszczając na wykłady w [2]. Za udział w [3] został zesłany na Syberię do [4], gdzie spędził kilka lat ucząc się i pracując.",
+        gaps: [
+          {
+            id: 1,
+            options: ["Mincla", "Hopfera", "Szlangbauma", "Suzina"],
+          },
+          {
+            id: 2,
+            options: [
+              "Uniwersytecie Warszawskim",
+              "Akademii",
+              "Szkole Głównej",
+              "Liceum",
+            ],
+          },
+          {
+            id: 3,
+            options: [
+              "powstaniu listopadowym",
+              "powstaniu styczniowym",
+              "manifestacjach",
+              "strajku",
+            ],
+          },
+          {
+            id: 4,
+            options: ["Moskwy", "Petersburga", "Irkucka", "Władywostoku"],
+          },
+        ],
+      },
+      correctAnswer: [1, 2, 1, 2],
+      metadata: {
+        explanation:
+          "Wokulski pracował u Hopfera, uczył się w Szkole Głównej, został zesłany za powstanie styczniowe do Irkucka.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Które cechy charakteryzują prezesową Zasławską? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "Szczodra i hojna wobec potrzebujących",
+          "Krytyczna wobec pustych arystokratek",
+          "Zakochana niegdyś w stryju Wokulskiego",
+          "Przekazała majątek Starskiemu",
+          "Prowadziła przytułek dla starców",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 4],
+      metadata: {
+        explanation:
+          "Prezesowa była szczodra, krytyczna wobec \u0084lalek\u0094 jak Izabela, kochała stryja Wokulskiego i prowadziła przytułek. Majątek przekazała na cele charytatywne, nie Starskiemu.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Dopasuj osoby do ich zawodów lub zajęć w powieści.",
+      content: {
+        matchingType: "people_professions",
+        leftColumn: [
+          { id: "A", text: "Jumar" },
+          { id: "B", text: "Węgiełek" },
+          { id: "C", text: "Pani Meliton" },
+          { id: "D", text: "Geist" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Kowal i stolarz z Zasławia" },
+          { id: 2, text: "Swatka i informatórka" },
+          { id: 3, text: "Profesor chemii i wynalazca" },
+          { id: 4, text: "Doktor filozofii służący w hotelu" },
+        ],
+      },
+      correctAnswer: [
+        [0, 3],
+        [1, 0],
+        [2, 1],
+        [3, 2],
+      ],
+      metadata: {
+        explanation:
+          "Jumar to doktor filozofii pracujący jako służący, Węgiełek - kowal, pani Meliton - swatka, Geist - profesor chemii.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Co Wokulski zobaczył w konfesjonale w kościele?",
+      content: {
+        options: [
+          "Izabelę i Starskiego",
+          "Izabelę z młodym mężczyzną (Ochockim)",
+          "księdza",
+          "biedną kobietę z córką",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Wokulski ukrył się w konfesjonale i zobaczył Izabelę z młodym mężczyzną, który sprawił jej radość - był to Julian Ochocki, kuzyn Łęckich.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Ile Wokulski zapłacił za klacz wyścigową od Maruszewicza?",
+      content: {
+        options: ["600 rubli", "800 rubli", "1000 rubli", "1200 rubli"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Wokulski kupił klacz za 800 rubli, choć baronowa oczekiwała za nią tylko 600 rubli. Pozostałe 200 rubli bezprawnie przejął Maruszewicz.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Ile wynosił zysk ze spółki handlującej z cesarstwem?",
+      content: {
+        options: ["10%", "15%", "18%", "20%"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Spółka przyniosła zysk 18%, podczas gdy optymistyczne założenia mówiły o 15%. To pokazało skuteczność zarządzania Wokulskiego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Kto odziedziczył 60 tysięcy rubli od ciotki Hortensji?",
+      content: {
+        options: ["Izabela", "Starski", "Ochocki", "Wokulski"],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Izabela otrzymała w spadku od ciotki Hortensji 60 tysięcy rubli, co poprawiło jej sytuację finansową.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Uzupełnij informacje o Henryku Szlangbaumie.",
+      content: {
+        textWithGaps:
+          "Henryk Szlangbaum próbował się zasymilować - przyjął [1] i zmienił nazwisko na [2]. Mimo ciężkiej pracy u Polaków nie znalazł [3], więc ostatecznie zrezygnował z [4] i wrócił do żydowskiej tożsamości.",
+        gaps: [
+          {
+            id: 1,
+            options: ["judaizm", "katolicyzm", "prawosławie", "luteranizm"],
+          },
+          {
+            id: 2,
+            options: ["Szlangowski", "Kowalski", "Nowak", "Henrykowski"],
+          },
+          {
+            id: 3,
+            options: ["pieniędzy", "pracy", "akceptacji", "mieszkania"],
+          },
+          {
+            id: 4,
+            options: ["religii", "pracy", "polonizacji", "nauki"],
+          },
+        ],
+      },
+      correctAnswer: [1, 0, 2, 2],
+      metadata: {
+        explanation:
+          "Szlangbaum przyjął katolicyzm, zmienił nazwisko na Szlangowski, ale nie znalazł akceptacji wśród Polaków i zrezygnował z polonizacji.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Dopasuj cytaty do postaci, które je wypowiedziały lub ich dotyczą.",
+      content: {
+        matchingType: "quotes_people",
+        leftColumn: [
+          { id: "A", text: "\u0084Farewell, miss Iza, farewell\u0094" },
+          { id: "B", text: "\u0084Non omnis moriar\u0094" },
+          {
+            id: "C",
+            text: "\u0084Świat to teatr, ludzie to marionetki\u0094",
+          },
+          { id: "D", text: "\u0084Polski romantyk i półgłówek\u0094" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Słowa na krzyżu Węgiełka" },
+          { id: 2, text: "Pożegnanie Wokulskiego z Izabelą" },
+          { id: 3, text: "Opinia Szumana o Wokulskim" },
+          { id: 4, text: "Refleksja Rzeckiego o życiu" },
+        ],
+      },
+      correctAnswer: [
+        [0, 1],
+        [1, 0],
+        [2, 3],
+        [3, 2],
+      ],
+      metadata: {
+        explanation:
+          "Wokulski powiedział 'Farewell' Izabeli, Non omnis moriar to napis na krzyżu, refleksja o teatrze to Rzecki, opinia o Wokulskim to Szuman.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Wyjaśnij, kim była pani Wąsowska i jaką rolę odegrała w życiu Wokulskiego.",
+      content: {
+        work: "Lalka",
+        instruction:
+          "Opisz postać pani Wąsowskiej i jej relacje z Wokulskim. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "określenie jako młoda wdowa (1 pkt)",
+          "wskazanie, że próbowała pomóc Wokulskiemu w zapomnieniu Izabeli (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Pani Wąsowska to młoda, inteligentna wdowa, która przebywała u prezesowej Zasławskiej. Próbowała pomóc Wokulskiemu zapomnieć o Izabeli, flirtowała z nim i dawała mu rady dotyczące kobiet. Rozumiała jego problemy i starała się go wesprzeć.",
+        keyWords: ["wdowa", "Zasławek", "pomoc", "Izabela", "rady"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Opisz, jak Wokulski pomagał ludziom w potrzebie.",
+      content: {
+        work: "Lalka",
+        instruction:
+          "Podaj co najmniej trzy przykłady pomocy Wokulskiego innym osobom. (50-80 słów)",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "pomoc Wysockiemu (pieniądze, koń, praca) (1 pkt)",
+          "pomoc Marii/prostytutce (pieniądze, maszyna do szycia, praca) (1 pkt)",
+          "pomoc innym (Helenie Stawskiej, Węgiełkowi, Obermanowi) (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Wokulski pomagał wielu osobom: dał Wysockiemu 10 rubli, kupił mu konia i zatrudnił w sklepie; pomógł Marii (byłej prostytutce), kupując jej maszynę do szycia i zapewniając pracę; zatrudnił Helenę Stawską jako kasjerkę; dał Węgiełkowi 500 rubli na ślub; oddał Obermanowi zgubione 400 rubli. Pokazuje to jego szlachetność i pozytywistyczną postawę organicznego pracownika.",
+        keyWords: [
+          "Wysocki",
+          "Maria",
+          "Helena",
+          "Węgiełek",
+          "Oberman",
+          "pomoc",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Wyjaśnij, dlaczego baron Dalski wyzwał Starskiego na pojedynek.",
+      content: {
+        work: "Lalka",
+        instruction: "Opisz powód pojedynku i jego konsekwencje. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie zdrady żony barona ze Starskim (1 pkt)",
+          "informacja o rozwodzie lub rozstaniu (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Baron Dalski wyzwał Starskiego na pojedynek, gdy Węgiełek powiedział mu, że jego żona Ewelina zdradza go ze Starskim w ruinach zamku w Zasławiu. Po tym zdarzeniu baron postanowił rozwieść się z żoną.",
+        keyWords: ["zdrada", "Ewelina", "Starski", "Zasławie", "rozwód"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Scharakteryzuj postać Maruszewicza.",
+      content: {
+        work: "Lalka",
+        instruction:
+          "Opisz Maruszewicza i jego działania w powieści w 3-4 zdaniach. (50-80 słów)",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "określenie jako zdeklasowany szlachcic (1 pkt)",
+          "wskazanie, że był oszustem (1 pkt)",
+          "wspomnienie o łasce Wokulskiego (zniszczenie dowodów) (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Maruszewicz to zdeklasowany szlachcic i oszust. Wyłudzał pieniądze od różnych osób, w tym od Wokulskiego i barona Krzeszowskiego. Sfałszował podpisy i oszukiwał przy transakcjach, jak przy sprzedaży klacz. Mimo że Wokulski odkrył jego oszustwa, okazał mu łaskę i zniszczył wszystkie dowody, aby nie trafił do więzienia.",
+        keyWords: ["zdeklasowany", "oszust", "wyłudzał", "łaska", "dowody"],
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Ile pieniędzy Wokulski ofiarował pierwszej napotkanej prostytutce?",
+      content: {
+        options: [
+          "wystarczająco, żeby spłacić dług i zacząć nowe życie",
+          "100 rubli",
+          "50 rubli",
+          "tylko radę i wsparcie moralne",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Wokulski obiecał Marii, że spłaci jej dług, załatwi pobyt u sióstr magdalenek i pomoże nauczyć się szyć, dając jej szansę na nowe życie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Za co Wokulski wypłacił premię dżokejowi po wyścigu?",
+      content: {
+        options: ["50 rubli", "100 rubli", "150 rubli", "200 rubli"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Wokulski obiecał dżokejowi 100 rubli dodatkowo (oprócz podstawowego wynagrodzenia) za wygraną w wyścigu z klaczą baronowej.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Które zdania o finale powieści są prawdziwe? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "Wokulski prawdopodobnie popełnił samobójstwo",
+          "Rzecki umarł w swoim ciemnym pokoju",
+          "Izabela wstąpiła do klasztoru",
+          "Ochocki został naukowcem w Polsce",
+          "Szlangbaum przejął wszystkie interesy Wokulskiego",
+        ],
+      },
+      correctAnswer: [0, 2, 4],
+      metadata: {
+        explanation:
+          "Prawdziwe: Wokulski prawdopodobnie popełnił samobójstwo, Izabela wstąpiła do klasztoru, Szlangbaum przejął interesy. Fałszywe: Rzecki umarł w sklepie (nie w swoim pokoju), Ochocki wyjechał zagranicę.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question: "Dopasuj wątki poboczne do ich funkcji w strukturze powieści.",
+      content: {
+        matchingType: "subplots_functions",
+        leftColumn: [
+          { id: "A", text: "Proces o lalkę" },
+          { id: "B", text: "Historia Szlangbauma" },
+          { id: "C", text: "Losy Heleny Stawskiej" },
+          { id: "D", text: "Pojedynek z baronem" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Krytyka antysemityzmu w społeczeństwie" },
+          { id: 2, text: "Kontrast z pustą Izabelą - ideał kobiety" },
+          { id: 3, text: "Symbol sądowej sprawiedliwości i zemsty" },
+          { id: 4, text: "Honor i kodeks szlachecki vs miłość" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 0],
+        [2, 1],
+        [3, 3],
+      ],
+      metadata: {
+        explanation:
+          "Proces o lalkę - sprawiedliwość, Szlangbaum - antysemityzm, Helena - kontrast z Izabelą, pojedynek - honor szlachecki.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 4,
+      epoch: "POSITIVISM",
+      work: "Lalka",
+      question:
+        "Porównaj postawy Wokulskiego i Ochockiego wobec kobiet i małżeństwa.",
+      content: {
+        work: "Lalka",
+        instruction:
+          "Opisz różnice w podejściu obu bohaterów do miłości i życia rodzinnego. (80-120 słów)",
+      },
+      rubric: {
+        maxScore: 4,
+        criteria: [
+          "opis Wokulskiego jako romantyka oddanego miłości (1 pkt)",
+          "opis Ochockiego jako idealisty naukowego (1 pkt)",
+          "kontrast: Wokulski poświęcił naukę dla miłości (1 pkt)",
+          "kontrast: Ochocki odrzucił małżeństwo dla nauki (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Wokulski i Ochocki reprezentują dwa różne podejścia do życia. Wokulski to romantyk, który całe życie podporządkował miłości do Izabeli - zrezygnował z kariery naukowej u Geista, zarabiał majątek tylko po to, aby ją zdobyć. Ochocki natomiast całkowicie poświęcił się nauce i wynalazkom - odmówił małżeństwa z Izabelą, bo jego pasją była maszyna latająca. Wokulski wybrał miłość zamiast nauki i był nieszczęśliwy, Ochocki wybrał naukę i spełnił się w niej.",
+        keyWords: [
+          "Wokulski",
+          "Ochocki",
+          "miłość",
+          "nauka",
+          "Izabela",
+          "wybór",
+        ],
+      },
+    },
 
     // ======================== KONIEC PYTAŃ LALKA ===================== //
 
@@ -14830,7 +15511,6 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
     },
   ];
 
-  // Dodaj tagi do wszystkich pytań
   const exercisesWithTags = exercises.map((exercise) => ({
     ...exercise,
     tags: [
@@ -14839,14 +15519,15 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       `difficulty-${exercise.difficulty}`,
       exercise.epoch ? exercise.epoch.toLowerCase() : null,
       `batch-2025-01`,
-    ].filter(Boolean),
+      ...(exercise.tags || []), // Dodaj istniejące tagi jeśli są
+    ].filter((tag): tag is string => tag !== null),
   }));
 
   // Wstaw do bazy
   for (const exercise of exercisesWithTags) {
     try {
       await prisma.exercise.create({
-        data: exercise as any,
+        data: exercise,
       });
       console.log(`✅ Created: ${exercise.question.substring(0, 50)}...`);
     } catch (error) {
