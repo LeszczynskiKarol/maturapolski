@@ -50,13 +50,15 @@ export function PageViewer() {
     if (!page) return;
 
     try {
-      // Import przez require-style dynamiczny import
-      // Import przez require-style dynamiczny import
       const pdfMakeModule: any = await import("pdfmake/build/pdfmake");
       const pdfFontsModule: any = await import("pdfmake/build/vfs_fonts");
 
       const pdfMake = pdfMakeModule.default;
       const pdfFonts = pdfFontsModule.default;
+
+      if (pdfMake && pdfFonts) {
+        pdfMake.vfs = pdfFonts.pdfMake ? pdfFonts.pdfMake.vfs : pdfFonts.vfs;
+      }
 
       // Przypisz fonty - cała magia w any
       if (pdfMake && pdfFonts) {
@@ -119,6 +121,7 @@ export function PageViewer() {
 
       const content: any[] = [];
 
+      // Główny tytuł dokumentu
       content.push(
         { text: page.title, fontSize: 22, bold: true, margin: [0, 0, 0, 10] },
         {
@@ -249,7 +252,116 @@ export function PageViewer() {
 
       const docDefinition: any = {
         content: content,
-        pageMargins: [40, 40, 40, 40],
+        pageMargins: [40, 60, 40, 50], // Zwiększone marginesy dla header/footer
+
+        // ============= NAGŁÓWEK NA KAŻDEJ STRONIE =============
+        header: (currentPage: number, pageCount: number) => {
+          return {
+            margin: [40, 20, 40, 10],
+            columns: [
+              {
+                // Logo + Nazwa serwisu
+                stack: [
+                  {
+                    text: [
+                      {
+                        text: "MaturaPolski.pl",
+                        fontSize: 10,
+                        bold: true,
+                        color: "#2563eb", // Niebieski
+                        link: "https://maturapolski.pl",
+                      },
+                    ],
+                  },
+                ],
+                width: "*",
+              },
+              {
+                // Numer strony (tylko jeśli więcej niż 1 strona)
+                text: pageCount > 1 ? `${currentPage} / ${pageCount}` : "",
+                fontSize: 9,
+                color: "#9ca3af",
+                alignment: "right",
+                width: "auto",
+              },
+            ],
+            // Subtelna linia pod nagłówkiem
+            canvas: [
+              {
+                type: "line",
+                x1: 0,
+                y1: 10,
+                x2: 515,
+                y2: 10,
+                lineWidth: 0.5,
+                lineColor: "#e5e7eb",
+              },
+            ],
+          };
+        },
+
+        // ============= STOPKA NA KAŻDEJ STRONIE =============
+        footer: (_currentPage: number, _pageCount: number) => {
+          return {
+            margin: [40, 10, 40, 20],
+            stack: [
+              // Linia nad stopką
+              {
+                canvas: [
+                  {
+                    type: "line",
+                    x1: 0,
+                    y1: 0,
+                    x2: 515,
+                    y2: 0,
+                    lineWidth: 0.5,
+                    lineColor: "#e5e7eb",
+                  },
+                ],
+                margin: [0, 0, 0, 8],
+              },
+              // Tekst copyright
+              {
+                columns: [
+                  {
+                    text: [
+                      {
+                        text: "© 2025 MaturaPolski.pl",
+                        fontSize: 8,
+                        color: "#6b7280",
+                      },
+                      {
+                        text: " • Wszelkie prawa zastrzeżone",
+                        fontSize: 8,
+                        color: "#9ca3af",
+                      },
+                    ],
+                    width: "*",
+                  },
+                  {
+                    text: "MaturaPolski.pl",
+                    fontSize: 8,
+                    color: "#2563eb",
+                    link: "https://maturapolski.pl",
+                    alignment: "right",
+                    width: "auto",
+                    decoration: "underline",
+                  },
+                ],
+              },
+            ],
+          };
+        },
+
+        // Opcjonalnie: Metadata PDF
+        info: {
+          title: page.title,
+          author: "MaturaPolski.pl",
+          subject: page.hub.title,
+          keywords: "matura, polski, lektura, opracowanie",
+          creator: "MaturaPolski.pl",
+          producer: "MaturaPolski.pl",
+        },
       };
 
       pdfMake
