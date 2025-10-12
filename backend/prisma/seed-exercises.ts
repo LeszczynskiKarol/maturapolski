@@ -16360,6 +16360,788 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
           "Gerwazy to Klucznik rodu Horeszków, wierny sługa pragnący zemsty za śmierć swojego pana. Posługuje się słynnym mieczem Scyzorykiem i organizuje zajazd na Soplicowo.",
       },
     },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Która postać reprezentuje typ romantycznego indywidualisty w 'Panu Tadeuszu'?",
+      content: {
+        options: ["Tadeusz", "Hrabia", "Sędzia", "Gerwazy"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Hrabia to jedyna postać o cechach romantycznego indywidualisty - melancholik, esteta, człowiek tajemniczy, marzyciel oderwany od rzeczywistości.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Jak można interpretować postać Telimeny w kontekście społecznym?",
+      content: {
+        options: [
+          "Przedstawicielka tradycyjnej szlachty",
+          "Symbol nowych, kosmopolitycznych wpływów kultury miejskiej",
+          "Typowa matka polska",
+          "Wzór cnót niewieścich",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Telimena reprezentuje nowe wpływy - mieszkała w Petersburgu, nosi modne stroje, jest kokieteryjną damą salonową, obcą tradycyjnemu światu szlacheckiemu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Dlaczego postać Jacka Soplicy/Robaka można uznać za tragiczną?",
+      content: {
+        options: [
+          "Bo był biedny",
+          "Bo popełnił zbrodnię z miłości i całe życie pokutował",
+          "Bo był księdzem",
+          "Bo umarł młodo",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Jacek to postać tragiczna - zabił z miłości, stracił wszystko (miłość, honor, ojczyznę), całe życie pokutował jako Robak, by odkupić winę.",
+      },
+    },
+
+    // SYMBOLIKA I MOTYWY - POZIOM 3
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Co symbolizuje spór o zamek między Hrabią a Soplicami?",
+      content: {
+        options: [
+          "Tylko chciwość szlachty",
+          "Konflikt między starą arystokracją a nową szlachtą",
+          "Spór rodzinny",
+          "Walkę o kobietę",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Spór o zamek symbolizuje konflikt między odchodzącą arystokracją (Horeszkowie/Hrabia) a wzmacniającą się szlachtą średnią (Soplicowie).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Jaka jest funkcja motywu polowania w strukturze utworu?",
+      content: {
+        options: [
+          "Tylko rozrywka dla czytelnika",
+          "Pokazanie obyczajów myśliwskich",
+          "Metafora sporów społecznych i walki o dominację",
+          "Wypełnienie fabuły",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Polowanie to metafora - spory o charty i niedźwiedzia odzwierciedlają konflikty społeczne, rywalizację między postaciami i walkę o pozycję.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Co symbolizuje ogród w Soplicowie?",
+      content: {
+        options: [
+          "Bogactwo rodziny",
+          "Arkadyjską sielankę i utracony raj dzieciństwa",
+          "Nowoczesne gospodarstwo",
+          "Tylko tło wydarzeń",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Ogród to symbol arkadii, utraconego raju dzieciństwa i harmonii. To przestrzeń idealizowana, związana z niewinnością i szczęściem.",
+      },
+    },
+
+    // KONTEKST HISTORYCZNY - POZIOM 2-3
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Dlaczego Mickiewicz umieścił akcję w latach 1811-1812?",
+      content: {
+        options: [
+          "Bo wtedy się urodził",
+          "To czas nadziei na odzyskanie niepodległości dzięki Napoleonowi",
+          "Przypadkowy wybór",
+          "Bo wtedy pisał utwór",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Lata 1811-1812 to czas wielkiej nadziei - Napoleon szedł na Moskwę, Polacy wierzyli że pomoże odbudować Rzeczpospolitą.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Jakie pokolenia idealistów reprezentują główne postacie według koncepcji 'trzech pokoleń'?",
+      content: {
+        options: [
+          "Wszyscy to jedno pokolenie",
+          "Rzecki (bonapartysta), Jacek (powstaniec), młodzież (nauka)",
+          "Maciej Dobrzyński (konfederaci barscy), Jacek (powstaniec), Tadeusz (nowe czasy)",
+          "Nie ma takiego podziału",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Trzy pokolenia idealistów: konfederaci barscy (Maciej), powstańcy (Jacek/Robak), młode pokolenie czekające na Napoleona (Tadeusz).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Jak Mickiewicz przedstawia stosunek do Napoleona?",
+      content: {
+        options: [
+          "Jednoznacznie pozytywny - Napoleon jako zbawca",
+          "Całkowicie negatywny",
+          "Ambiwalentny - nadzieja połączona z wątpliwościami (postać Macieja)",
+          "Nie porusza tego tematu",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Stosunek jest ambiwalentny - większość wierzy w Napoleona, ale Maciej Dobrzyński wyraża wątpliwości ('idzie do Moskwy bez Boga').",
+      },
+    },
+
+    // KOMPOZYCJA I NARRACJA - POZIOM 3
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Jaka jest funkcja retrospekcji w 'Panu Tadeuszu'?",
+      content: {
+        options: [
+          "Tylko wydłużenie fabuły",
+          "Wyjaśnienie tajemnic przeszłości kluczowych dla zrozumienia teraźniejszości",
+          "Urozmaicenie narracji",
+          "Pokazanie historii Polski",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Retrospekcje (np. historia Jacka i Stolnika) wyjaśniają motywy działań postaci i źródła konfliktów, są kluczowe dla zrozumienia fabuły.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Dlaczego 'Pan Tadeusz' określany jest mianem 'epopei odmienionej'?",
+      content: {
+        options: [
+          "Bo jest krótszy niż klasyczne epopeje",
+          "Bo łączy cechy eposu z sielanką, nie ma wielkiego bohatera epickiego",
+          "Bo jest napisany prozą",
+          "Bo nie ma bóstw",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "'Pan Tadeusz' to epopeja odmieniona - łączy epos z sielanką, zamiast heroicznych czynów opisuje codzienne życie szlachty.",
+      },
+    },
+
+    // JĘZYK I STYL - POZIOM 3
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Jaki zabieg stylistyczny dominuje w opisach przyrody?",
+      content: {
+        options: [
+          "Naturalizm",
+          "Animizacja i antropomorfizacja",
+          "Abstrakcja",
+          "Minimalizm",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Mickiewicz stosuje animizację i antropomorfizację - przyroda jest ożywiona, uczestniczy w wydarzeniach (np. drzewa 'patrzą', stawy 'rozmawiają').",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Jaka jest funkcja języka gawędowego w 'Panu Tadeuszu'?",
+      content: {
+        options: [
+          "Tylko ozdoba stylistyczna",
+          "Stworzenie atmosfery autentyczności i swojskości",
+          "Utrudnienie lektury",
+          "Pokazanie niewykształcenia szlachty",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Język gawędowy (dygresje, anegdoty, bezpośrednie zwroty) tworzy atmosferę swojskości, autentyczności i szlacheckiej gawędy.",
+      },
+    },
+
+    // INTERPRETACJA ZAKOŃCZENIA - POZIOM 3
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Jak interpretować scenę koncertu Jankiela?",
+      content: {
+        options: [
+          "Rozrywka podczas uczty",
+          "Muzyczna synteza historii Polski i pojednania narodowego",
+          "Pokaz umiejętności muzycznych",
+          "Element folklorystyczny",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Koncert Jankiela to muzyczna synteza - historia Polski od triumfu przez upadek po nadzieję, symbol pojednania wszystkich warstw narodu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Co oznacza gest uwolnienia chłopów przez Tadeusza?",
+      content: {
+        options: [
+          "Tylko hojność",
+          "Symbol nowego porządku społecznego i idei demokratycznych",
+          "Naśladowanie Napoleona",
+          "Chęć zubożenia Hrabiego",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Uwolnienie chłopów to symbol nowych idei demokratycznych, zapowiedź przemian społecznych i końca feudalizmu.",
+      },
+    },
+
+    // WIELOKROTNY WYBÓR - POZIOM 2-3
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Które elementy świadczą o nostalgicznym charakterze utworu? (wybierz wszystkie)",
+      content: {
+        options: [
+          "Idealizacja przeszłości",
+          "Inwokacja do ojczyzny",
+          "Epilog napisany na emigracji",
+          "Szczegółowe opisy obyczajów",
+          "Wątek miłosny",
+          "Motyw 'kraju lat dziecinnych'",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 3, 5],
+      metadata: {
+        explanation:
+          "O nostalgii świadczą: idealizacja przeszłości, tęsknota w inwokacji, epilog emigracyjny, dokumentowanie ginących obyczajów, motyw dzieciństwa. Wątek miłosny nie jest nostalgiczny.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 4,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Które konflikty społeczne przedstawia Mickiewicz? (wybierz wszystkie)",
+      content: {
+        options: [
+          "Arystokracja vs szlachta średnia",
+          "Szlachta zaściankowa vs szlachta zamożna",
+          "Starzy (tradycja) vs młodzi (nowoczesność)",
+          "Patrioci vs zdrajcy",
+          "Polacy vs Rosjanie",
+          "Idealiści vs realiści",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 3, 4],
+      metadata: {
+        explanation:
+          "Mickiewicz przedstawia konflikty: między warstwami szlachty, pokoleniami, patriotami i kolaborantami, Polakami i zaborcami. Konflikt idealistów z realistami jest marginalny.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Które elementy kultury sarmackiej przedstawione są w utworze? (wybierz wszystkie)",
+      content: {
+        options: [
+          "Kontusz i żupan",
+          "Zajazd",
+          "Gościnność",
+          "Kult przodków",
+          "Wolność szlachecka",
+          "Religijność",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 3, 4, 5],
+      metadata: {
+        explanation:
+          "Wszystkie wymienione to elementy kultury sarmackiej: strój, obyczaje (zajazd, gościnność), wartości (kult przodków, wolność), religijność.",
+      },
+    },
+
+    // DOPASOWANIA - POZIOM 3
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 4,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Dopasuj postać do jej funkcji symbolicznej w utworze.",
+      content: {
+        matchingType: "character_symbol",
+        leftColumn: [
+          { id: "A", text: "Jacek/Robak" },
+          { id: "B", text: "Hrabia" },
+          { id: "C", text: "Jankiel" },
+          { id: "D", text: "Maciej Dobrzyński" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Romantyczny indywidualista" },
+          { id: 2, text: "Pokuta i odkupienie" },
+          { id: 3, text: "Tradycja i konserwatyzm" },
+          { id: 4, text: "Integracja społeczna różnych grup" },
+        ],
+      },
+      correctAnswer: [
+        [0, 1], // Jacek - Pokuta
+        [1, 0], // Hrabia - Romantyk
+        [2, 3], // Jankiel - Integracja
+        [3, 2], // Maciej - Tradycja
+      ],
+      metadata: {
+        explanation:
+          "Jacek symbolizuje pokutę i odkupienie win, Hrabia - romantyzm, Jankiel - harmonijne współżycie różnych grup, Maciej - przywiązanie do tradycji.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 4,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Dopasuj motyw literacki do jego znaczenia w 'Panu Tadeuszu'.",
+      content: {
+        matchingType: "motif_meaning",
+        leftColumn: [
+          { id: "A", text: "Motyw ogrodu" },
+          { id: "B", text: "Motyw polowania" },
+          { id: "C", text: "Motyw uczty" },
+          { id: "D", text: "Motyw domu" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Pojednanie i wspólnota" },
+          { id: 2, text: "Arkadia i utracony raj" },
+          { id: 3, text: "Konflikty i rywalizacja" },
+          { id: 4, text: "Tradycja i ciągłość" },
+        ],
+      },
+      correctAnswer: [
+        [0, 1], // Ogród - Arkadia
+        [1, 2], // Polowanie - Konflikty
+        [2, 0], // Uczta - Pojednanie
+        [3, 3], // Dom - Tradycja
+      ],
+      metadata: {
+        explanation:
+          "Ogród = arkadyjski raj, polowanie = metafora konfliktów społecznych, uczta = moment pojednania, dom = symbol tradycji i ciągłości.",
+      },
+    },
+
+    // ANALIZA PORÓWNAWCZA - POZIOM 3
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Czym różni się 'Pan Tadeusz' od typowej epopei romantycznej?",
+      content: {
+        options: [
+          "Jest dłuższy",
+          "Ma więcej bohaterów",
+          "Opisuje codzienność zamiast czynów heroicznych",
+          "Jest napisany prozą",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "'Pan Tadeusz' różni się od romantycznych epopei skupieniem na codzienności, zwyczajnych ludziach i obyczajach, a nie na heroicznych czynach.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Jak Mickiewicz godzi elementy klasyczne z romantycznymi?",
+      content: {
+        options: [
+          "Nie godzi - są tylko elementy romantyczne",
+          "Klasyczna forma epopei z romantyczną nostalgią i uczuciowością",
+          "Są tylko elementy klasyczne",
+          "Przypadkowe połączenie",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Mickiewicz łączy klasyczną formę epopei (12 ksiąg, wers epicki) z romantyczną treścią (nostalgia, uczucia, indywidualizm Hrabiego).",
+      },
+    },
+
+    // PYTANIA KONTEKSTOWE - POZIOM 2-3
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Dlaczego Mickiewicz napisał 'Pana Tadeusza' na emigracji?",
+      content: {
+        options: [
+          "Dla zarobku",
+          "Z tęsknoty za ojczyzną po upadku powstania listopadowego",
+          "Na zamówienie wydawcy",
+          "Dla rozrywki",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Mickiewicz pisał 'Pana Tadeusza' w Paryżu z tęsknoty za utraconą ojczyzną po klęsce powstania listopadowego (1831).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Jak epilog zmienia perspektywę interpretacji całego utworu?",
+      content: {
+        options: [
+          "Nie zmienia",
+          "Ujawnia osobisty, nostalgiczny charakter i genezę utworu",
+          "Zaprzecza wcześniejszej treści",
+          "Jest tylko dodatkiem",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Epilog ujawnia osobistą perspektywę - utwór powstał z tęsknoty emigranta, jako próba ocalenia w literaturze ginącego świata.",
+      },
+    },
+
+    // PYTANIA OTWARTE - 20-30%
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 4,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Wyjaśnij, na czym polega tragizm postaci Jacka Soplicy.",
+      content: {
+        expectedKeywords: [
+          "miłość",
+          "zabójstwo",
+          "pokuta",
+          "honor",
+          "wygnanie",
+          "odkupienie",
+        ],
+        maxWords: 80,
+      },
+      metadata: {
+        explanation:
+          "Jacek to bohater tragiczny - z miłości do Ewy zabił jej ojca, stracił honor, ojczyznę, ukochana zmarła. Całe życie pokutował jako Robak, walcząc za Polskę.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Opisz rolę przyrody w 'Panu Tadeuszu' - podaj 2-3 funkcje.",
+      content: {
+        expectedKeywords: [
+          "tło",
+          "uczestnik",
+          "symbol",
+          "arkadia",
+          "ojczyzna",
+          "harmonia",
+        ],
+        maxWords: 70,
+      },
+      metadata: {
+        explanation:
+          "Przyroda: 1) tło wydarzeń i element sielanki, 2) uczestnik akcji (antropomorfizacja), 3) symbol ojczyzny i utraconego raju, 4) element harmonii świata.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 4,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Porównaj postacie Telimeny i Zosi - wskaż główne różnice.",
+      content: {
+        expectedKeywords: [
+          "wiek",
+          "doświadczenie",
+          "prostota",
+          "kokieteria",
+          "miasto",
+          "wieś",
+          "tradycja",
+          "nowoczesność",
+        ],
+        maxWords: 80,
+      },
+      metadata: {
+        explanation:
+          "Telimena: dojrzała, kokieteryjna, miejska, nowoczesna, wyrachowana. Zosia: młoda, niewinna, wiejska, tradycyjna, naturalna. Reprezentują dwa modele kobiecości.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 4,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Wyjaśnij symbolikę zajazdu jako 'ostatniego zajazdu na Litwie'.",
+      content: {
+        expectedKeywords: [
+          "tradycja",
+          "koniec",
+          "epoka",
+          "szlachta",
+          "obyczaje",
+          "przemiana",
+        ],
+        maxWords: 70,
+      },
+      metadata: {
+        explanation:
+          "Ostatni zajazd symbolizuje koniec epoki - staropolskich obyczajów, tradycyjnych sporów szlacheckich rozwiązywanych siłą. Zapowiada nowe czasy i nowy porządek.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Jak Mickiewicz przedstawia relacje polsko-żydowskie na przykładzie Jankiela?",
+      content: {
+        expectedKeywords: [
+          "harmonia",
+          "szacunek",
+          "patriotyzm",
+          "wspólnota",
+          "tolerancja",
+          "integracja",
+        ],
+        maxWords: 60,
+      },
+      metadata: {
+        explanation:
+          "Jankiel to przykład harmonijnego współżycia - szanowany przez szlachtę, patriota polski ('Żyd poczciwy Ojczyznę jako Polak kochał'), symbol tolerancji i integracji.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 5,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Zinterpretuj znaczenie słów 'Kochajmy się' jako przesłania utworu.",
+      content: {
+        expectedKeywords: [
+          "pojednanie",
+          "zgoda",
+          "jedność",
+          "naród",
+          "przebaczenie",
+          "wspólnota",
+          "miłość",
+        ],
+        maxWords: 90,
+      },
+      metadata: {
+        explanation:
+          "'Kochajmy się' to wezwanie do narodowej zgody, przebaczenia win, pojednania po sporach. To przesłanie jedności wobec nadziei na niepodległość, uniwersalne przesłanie miłości.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 4,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Wyjaśnij, dlaczego 'Pan Tadeusz' jest utworem nostalgicznym.",
+      content: {
+        expectedKeywords: [
+          "emigracja",
+          "tęsknota",
+          "przeszłość",
+          "idealizacja",
+          "utrata",
+          "pamięć",
+          "dzieciństwo",
+        ],
+        maxWords: 80,
+      },
+      metadata: {
+        explanation:
+          "Nostalgia wynika z: sytuacji autora (emigracja), idealizacji przeszłości, tęsknoty za utraconą ojczyzną, chęci ocalenia ginącego świata w pamięci, motywu 'kraju lat dziecinnych'.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Jakie cechy epopei zachowuje 'Pan Tadeusz'? Wymień 3-4.",
+      content: {
+        expectedKeywords: [
+          "inwokacja",
+          "księgi",
+          "narrator",
+          "wers",
+          "katalog",
+          "porównania",
+          "epitety",
+        ],
+        maxWords: 60,
+      },
+      metadata: {
+        explanation:
+          "Cechy epopei: inwokacja, podział na 12 ksiąg, narrator wszechwiedzący, wers epicki (13-zgłoskowiec), rozbudowana fabuła, katalogi postaci, porównania homeryckie, stały epitet.",
+      },
+    },
     // ======================= KONIEC PYTAŃ PAN TADEUSZ ===================//
 
     // Zadania o epoce współczesnej
