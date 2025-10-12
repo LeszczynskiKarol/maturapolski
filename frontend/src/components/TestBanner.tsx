@@ -12,7 +12,6 @@ interface TestBannerProps {
 }
 
 export function TestBanner({
-  hubSlug,
   hubTitle,
   hubType,
   variant = "full",

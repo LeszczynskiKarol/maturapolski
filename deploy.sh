@@ -8,10 +8,7 @@ echo "========================================="
 # Backend
 echo "[1/3] Updating Backend..."
 cd /var/www/maturapolski/backend
-npm install
 npm run build
-npx prisma generate
-npx prisma migrate deploy
 pm2 restart maturapolski-backend
 echo "✓ Backend updated"
 
@@ -19,7 +16,6 @@ echo "✓ Backend updated"
 echo ""
 echo "[2/3] Updating Frontend..."
 cd /var/www/maturapolski/frontend
-npm install
 npm run build
 echo "✓ Frontend updated"
 
