@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HubTestLandingPage } from "./features/content/HubTestLandingPage";
 import HubListPage from "./features/content/HubListPage";
+import { WorkReviewPage } from "./features/student/WorkReviewPage";
 import { HubDetailPage } from "./features/content/HubDetailPage";
 import { PageViewer } from "./features/content/PageViewer";
 import ContentManager from "./features/admin/ContentManager";
@@ -117,9 +118,7 @@ export const App: React.FC = () => {
               <Route path="/cookies" element={<CookiePolicyPage />} />
               <Route path="/rodo" element={<RodoPage />} />
               <Route path="/terms" element={<TermsOfServicePage />} />
-
               <Route path="/privacy" element={<PrivacyPolicyPage />} />
-
               <Route path="/verify-email" element={<VerifyEmailCodePage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
@@ -181,12 +180,22 @@ export const App: React.FC = () => {
                   }
                 />
 
-                {/* Epoch Review - NOWA STRONA */}
+                {/* Epoch Review */}
                 <Route
                   path="/epoch-review"
                   element={
                     <ProtectedRoute>
                       <EpochReviewPage />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* ✅ Work Review - PRZENIESIONE DO ŚRODKA LAYOUT */}
+                <Route
+                  path="/works"
+                  element={
+                    <ProtectedRoute>
+                      <WorkReviewPage />
                     </ProtectedRoute>
                   }
                 />
