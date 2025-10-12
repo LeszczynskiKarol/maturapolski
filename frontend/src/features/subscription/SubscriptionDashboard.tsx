@@ -933,10 +933,12 @@ export const SubscriptionDashboard: React.FC = () => {
             <div className="mb-4">
               <Calendar className="w-10 h-10 text-green-600 mb-3" />
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                Dostęp na 30 dni
+                Dostęp Premium na 30 dni
               </h3>
               <p className="text-gray-600 dark:text-gray-400 text-sm">
-                Jednorazowa płatność, pełny dostęp przez miesiąc
+                Jednorazowa płatność BLIK, Google Pay, Apple Pay, PayPal lub
+                kartą, pełny dostęp przez miesiąc. Te same funkcje co w
+                Subskrypcji.
               </p>
             </div>
 
@@ -1008,7 +1010,9 @@ export const SubscriptionDashboard: React.FC = () => {
                 Subskrypcja Premium
               </h3>
               <p className="text-gray-600 dark:text-gray-400 text-sm">
-                Miesięczna subskrypcja z automatycznym odnowieniem
+                Miesięczna subskrypcja z automatycznym odnowieniem. Płatność
+                cykliczna kartą, Google Pay lub PayPal. Te same funkcje co przy
+                płatności jednorazowej.
               </p>
             </div>
 
@@ -1040,7 +1044,7 @@ export const SubscriptionDashboard: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
                   <CheckCircle className="w-4 h-4 text-blue-600" />
-                  <span>Priorytetowe wsparcie</span>
+                  <span>Pełen dostęp do wszystkich zadań i ocen AI</span>
                 </div>
               </div>
             </div>
