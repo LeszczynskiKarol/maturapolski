@@ -217,8 +217,6 @@ export class SubscriptionService {
     });
   }
 
-  // backend/src/services/subscriptionService.ts
-
   async handleStripeWebhook(event: Stripe.Event): Promise<void> {
     console.log("🔔 Webhook received:", event.type, "ID:", event.id);
 
@@ -495,27 +493,69 @@ export class SubscriptionService {
     console.log("✅ Event processed successfully:", event.id);
   }
 
-  private async handleSubscriptionUpdated(subscription: Stripe.Subscription) {
-    const customerId = subscription.customer as string;
+  async handleSubscriptionUpdated(
+    subscription: Stripe.Subscription
+  ): Promise<void> {
+    try {
+      const userId = subscription.metadata?.userId;
+      const customerId = subscription.customer as string; // ✅ Pobierz customer ID
+      const { current_period_start, current_period_end } = subscription as any;
 
-    const dbSubscription = await prisma.subscription.findUnique({
-      where: { stripeCustomerId: customerId },
-    });
+      if (!userId) {
+        console.error("❌ No userId in subscription metadata");
+        return;
+      }
 
-    if (!dbSubscription) return;
+      console.log(`🔄 Updating subscription for user ${userId}`);
+      console.log(`📝 Customer ID from Stripe: ${customerId}`); // ✅ DODAJ LOG
 
-    await prisma.subscription.update({
-      where: { id: dbSubscription.id },
-      data: {
+      const dbSubscription = await prisma.subscription.findUnique({
+        where: { userId },
+      });
+
+      if (!dbSubscription) {
+        console.error(`❌ No subscription found for user ${userId}`);
+        return;
+      }
+
+      const updateData: any = {
+        stripeSubscriptionId: subscription.id,
+        stripeCustomerId: customerId, // ✅ ZAPISZ CUSTOMER ID!
         status: subscription.status === "active" ? "ACTIVE" : "INACTIVE",
-        stripeCurrentPeriodEnd: (subscription as any).current_period_end
-          ? new Date((subscription as any).current_period_end * 1000)
+        plan:
+          subscription.status === "active" ? "PREMIUM" : dbSubscription.plan,
+        isRecurring: true,
+        aiPointsLimit: 200,
+        startDate: current_period_start
+          ? new Date(current_period_start * 1000)
+          : new Date(),
+        endDate: null,
+        stripeCurrentPeriodEnd: current_period_end
+          ? new Date(current_period_end * 1000)
           : null,
-        cancelAt: (subscription as any).cancel_at
-          ? new Date((subscription as any).cancel_at * 1000)
-          : null,
-      },
-    });
+      };
+
+      // ✅ Jeśli to nowa subskrypcja, zresetuj punkty
+      if (
+        subscription.status === "active" &&
+        dbSubscription.status !== "ACTIVE"
+      ) {
+        updateData.aiPointsUsed = 0;
+        updateData.aiPointsReset = new Date();
+      }
+
+      await prisma.subscription.update({
+        where: { userId },
+        data: updateData,
+      });
+
+      console.log(
+        `✅ Subscription updated for user ${userId} with customer ${customerId}`
+      );
+    } catch (error) {
+      console.error("❌ Error in handleSubscriptionUpdated:", error);
+      throw error;
+    }
   }
 
   private async handleSubscriptionDeleted(subscription: Stripe.Subscription) {

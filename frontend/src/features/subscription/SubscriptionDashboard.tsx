@@ -1,6 +1,7 @@
 // frontend/src/features/subscription/SubscriptionDashboard.tsx
 
 import { ConfirmationModal } from "../../components/ConfirmationModal";
+import { PaymentHistory } from "../../components/PaymentHistory";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
@@ -102,6 +103,12 @@ export const SubscriptionDashboard: React.FC = () => {
   const { data: aiUsage, refetch: refetchAiUsage } = useQuery({
     queryKey: ["ai-usage"],
     queryFn: () => api.get("/api/subscription/ai-usage").then((r) => r.data),
+  });
+
+  const { data: paymentHistory } = useQuery({
+    queryKey: ["payment-history"],
+    queryFn: () =>
+      api.get("/api/subscription/payment-history").then((r) => r.data),
   });
 
   const { data: pointsPackages } = useQuery<PointsPackage[]>({
@@ -390,7 +397,7 @@ export const SubscriptionDashboard: React.FC = () => {
                 ? isOneTime
                   ? `Dostęp na 30 dni (pozostało ${daysLeft} dni)` // ✅ ZMIANA
                   : "Pełen dostęp do wszystkich funkcji"
-                : "Masz dostęp do nauki 😪 Wybierz swój plan i uzyskaj dostęp do wszystkich funkcji MaturaPolski.pl!"}
+                : "Odblokuj dostęp do nauki! Wybierz swój plan i uzyskaj dostęp do wszystkich funkcji MaturaPolski.pl"}
             </p>
           </div>
 
@@ -1112,6 +1119,9 @@ export const SubscriptionDashboard: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+      {isPremium && paymentHistory?.payments && (
+        <PaymentHistory payments={paymentHistory.payments} />
       )}
       <ConfirmationModal
         isOpen={confirmModal.isOpen}

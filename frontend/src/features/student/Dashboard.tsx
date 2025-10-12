@@ -1,6 +1,6 @@
 // frontend/src/features/student/Dashboard.tsx
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
   Award,
@@ -40,7 +40,6 @@ const EPOCHS = [
 ];
 
 export const StudentDashboard: React.FC = () => {
-  const [isUpgrading, setIsUpgrading] = useState(false);
   const [showStatsModal, setShowStatsModal] = useState(false);
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
@@ -99,35 +98,6 @@ export const StudentDashboard: React.FC = () => {
 
   const isPremium = subscription?.plan === "PREMIUM";
   const isFree = !isPremium;
-
-  const upgradeMutation = useMutation({
-    mutationFn: async () => {
-      const { data } = await api.post("/api/subscription/create-checkout", {
-        priceId: import.meta.env.VITE_STRIPE_PRICE_ID_PREMIUM,
-      });
-      return data;
-    },
-    onSuccess: (data) => {
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.error || "Błąd podczas tworzenia płatności"
-      );
-      setIsUpgrading(false);
-    },
-  });
-
-  const handleUpgrade = async () => {
-    setIsUpgrading(true);
-    try {
-      await upgradeMutation.mutateAsync();
-    } catch (error) {
-      setIsUpgrading(false);
-    }
-  };
 
   const startLearningSession = () => {
     if (isFree) {
@@ -314,20 +284,13 @@ export const StudentDashboard: React.FC = () => {
                     </div>
                   </div>
                   <button
-                    onClick={handleUpgrade}
-                    disabled={isUpgrading}
-                    className="w-full xs:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50 
-                     font-semibold transition-colors disabled:opacity-50 flex items-center justify-center gap-2
-                     text-sm sm:text-base"
+                    onClick={() => navigate("/subscription")} // ✅ ZMIEŃ onClick
+                    disabled={false} // ✅ Usuń isUpgrading
+                    className="w-full xs:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50
+            font-semibold transition-colors flex items-center justify-center gap-2
+            text-sm sm:text-base"
                   >
-                    {isUpgrading ? (
-                      <>
-                        <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                        Przekierowywanie...
-                      </>
-                    ) : (
-                      "Wykup Premium"
-                    )}
+                    Wykup Premium
                   </button>
                 </div>
                 <Lock className="hidden sm:block w-12 h-12 opacity-20 flex-shrink-0" />

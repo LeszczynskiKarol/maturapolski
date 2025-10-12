@@ -41,7 +41,7 @@ export const Layout: React.FC = () => {
     { name: "Dashboard", href: "/dashboard", icon: Home },
     { name: "Nauka", href: "/learn", icon: Brain },
     { name: "Powtórki z epok", href: "/epoch-review", icon: Repeat },
-    { name: "Subskcypcja", href: "/subscription", icon: CreditCard },
+    { name: "Twój plan", href: "/subscription", icon: CreditCard },
     { name: "Historia sesji", href: "/sessions", icon: Clock },
     { name: "Postępy", href: "/progress", icon: TrendingUp },
   ];
