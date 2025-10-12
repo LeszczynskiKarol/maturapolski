@@ -1,6 +1,7 @@
 // frontend/src/App.tsx
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { HubTestLandingPage } from "./features/content/HubTestLandingPage";
 import HubListPage from "./features/content/HubListPage";
 import { HubDetailPage } from "./features/content/HubDetailPage";
 import { PageViewer } from "./features/content/PageViewer";
@@ -134,7 +135,7 @@ export const App: React.FC = () => {
                 path="/baza-wiedzy/:hubSlug/:pageSlug"
                 element={<PageViewer />}
               />
-
+              <Route path="/test/:hubSlug" element={<HubTestLandingPage />} />
               {/* Public Materials routes */}
               <Route path="/materialy" element={<MaterialsPage />} />
               <Route path="/materialy/:slug" element={<MaterialDetailPage />} />

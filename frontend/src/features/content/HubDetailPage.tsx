@@ -4,9 +4,15 @@
 import { Helmet } from "react-helmet-async";
 import { PublicLayout } from "../../components/PublicLayout";
 import { useState, useEffect } from "react";
+import { TestBanner } from "../../components/TestBanner";
 import { useParams, Link } from "react-router-dom";
 import { contentService } from "../../services/contentService";
 import { FileText } from "lucide-react";
+
+// WYBIERZ TYLKO JEDEN wariant sticky:
+import { StickyTestCTA } from "../../components/StickyTestCTA";
+// import { FloatingTestButton } from "../../components/FloatingTestButton";
+// import { StickyTestTab } from "../../components/StickyTestTab";
 
 interface HubDetail {
   id: string;
@@ -90,6 +96,7 @@ export function HubDetailPage() {
             {" / "}
             <span className="text-gray-900">{hub.title}</span>
           </div>
+
           {/* Header */}
           <div className="bg-white rounded-lg shadow-sm p-8 mb-6">
             {hub.imageUrl && (
@@ -134,6 +141,14 @@ export function HubDetailPage() {
             )}
           </div>
 
+          {/* Test Banner - full variant */}
+          <TestBanner
+            hubSlug={hub.slug}
+            hubTitle={hub.title}
+            hubType={hub.type}
+            variant="full"
+          />
+
           {/* Menu stron */}
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-xl font-semibold mb-4">Spis treści</h2>
@@ -157,6 +172,27 @@ export function HubDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Sticky element - WYBIERZ TYLKO JEDEN! */}
+      <StickyTestCTA
+        hubSlug={hub.slug}
+        hubTitle={hub.title}
+        hubType={hub.type}
+      />
+
+      {/* Alternatywnie możesz użyć jednego z poniższych:
+      <FloatingTestButton
+        hubSlug={hub.slug}
+        hubTitle={hub.title}
+        hubType={hub.type}
+      />
+      
+      <StickyTestTab
+        hubSlug={hub.slug}
+        hubTitle={hub.title}
+        hubType={hub.type}
+      />
+      */}
     </PublicLayout>
   );
 }

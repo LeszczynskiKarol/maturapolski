@@ -57,6 +57,84 @@ export class ContentService {
     };
   }
 
+  async getHubTestLandingData(slug: string) {
+    const hub = await prisma.contentHub.findUnique({
+      where: { slug, isPublished: true },
+      include: {
+        pages: {
+          where: { isPublished: true },
+          orderBy: { order: "asc" },
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+          },
+        },
+      },
+    });
+
+    if (!hub) throw new Error("Hub not found");
+
+    // Pobierz statystyki (ile zadań jest dostępnych dla tego hub-a)
+    // Jeśli masz powiązanie Exercise -> work, użyj tego
+    let exerciseCount = 0;
+
+    if (hub.type === "LITERARY_WORK" && hub.title) {
+      exerciseCount = await prisma.exercise.count({
+        where: {
+          work: hub.title,
+        },
+      });
+    }
+
+    // Pobierz ostatnie oceny stron tego hub-a (dla social proof)
+    const recentRatings = await prisma.pageRating.findMany({
+      where: {
+        page: {
+          hubId: hub.id,
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+      select: {
+        rating: true,
+        createdAt: true,
+      },
+    });
+
+    // Oblicz średnią ocenę wszystkich stron w tym hub-ie
+    const avgRating =
+      recentRatings.length > 0
+        ? recentRatings.reduce((sum, r) => sum + r.rating, 0) /
+          recentRatings.length
+        : 0;
+
+    return {
+      hub: {
+        id: hub.id,
+        slug: hub.slug,
+        title: hub.title,
+        type: hub.type,
+        description: hub.description,
+        author: hub.author,
+        epoch: hub.epoch,
+        imageUrl: hub.imageUrl,
+        year: hub.year,
+        genre: hub.genre,
+        isRequired: hub.isRequired,
+        metaTitle: hub.metaTitle,
+        metaDescription: hub.metaDescription,
+        pages: hub.pages,
+      },
+      stats: {
+        exerciseCount,
+        avgRating: Math.round(avgRating * 10) / 10,
+        ratingsCount: recentRatings.length,
+        pagesCount: hub.pages.length,
+      },
+    };
+  }
+
   async getHub(slug: string) {
     const hub = await prisma.contentHub.findUnique({
       where: { slug, isPublished: true },

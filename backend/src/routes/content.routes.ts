@@ -30,6 +30,16 @@ export async function contentRoutes(fastify: FastifyInstance) {
     }
   });
 
+  fastify.get("/:hubSlug/test-landing", async (request, reply) => {
+    try {
+      const { hubSlug } = request.params as { hubSlug: string };
+      const data = await contentService.getHubTestLandingData(hubSlug);
+      return reply.send(data);
+    } catch (error: any) {
+      return reply.status(404).send({ error: error.message });
+    }
+  });
+
   // Pojedynczy HUB z listą jego stron
   // GET /api/content/lalka
   fastify.get("/:hubSlug", async (request, reply) => {

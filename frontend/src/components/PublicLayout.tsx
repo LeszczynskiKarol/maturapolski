@@ -91,7 +91,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                     to="/register"
                     className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all"
                   >
-                    Zarejestruj się
+                    Załóż konto
                   </Link>
                 </>
               ) : (
@@ -168,7 +168,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                     className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg text-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Zarejestruj się
+                    Załóż konto
                   </Link>
                 </div>
               ) : (
@@ -261,7 +261,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                     to="/register"
                     className="hover:text-white transition-colors"
                   >
-                    Zarejestruj się
+                    Załóż konto
                   </Link>
                 </li>
               </ul>

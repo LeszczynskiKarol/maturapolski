@@ -44,14 +44,10 @@ export const CookieBanner: React.FC = () => {
     return (
       <button
         onClick={() => setShowSettings(true)}
-        className="hidden lg:flex fixed bottom-4 left-4 z-[9999] items-center gap-2 
-                   bg-blue-600 hover:bg-blue-700 text-white 
-                   px-4 py-3 rounded-full shadow-2xl 
-                   transition-all hover:scale-105"
         aria-label="Pokaż ustawienia cookies"
         title="Zarządzaj cookies"
       >
-        <Cookie className="w-4 h-4" />
+        {/*<Cookie className="w-4 h-4" />*/}
       </button>
     );
   }

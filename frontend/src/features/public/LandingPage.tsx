@@ -120,7 +120,7 @@ export const LandingPage: React.FC = () => {
                     to="/register"
                     className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all"
                   >
-                    Zarejestruj się
+                    Załóż konto
                   </Link>
                 </>
               ) : (
@@ -274,7 +274,7 @@ export const LandingPage: React.FC = () => {
                 to="/register"
                 className="mt-8 block w-full text-center px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors"
               >
-                Zarejestruj się za 39 zł/mies
+                Załóż konto
               </Link>
             </motion.div>
           </div>
@@ -296,8 +296,8 @@ export const LandingPage: React.FC = () => {
           <div className="grid md:grid-cols-4 gap-8">
             <StepCard
               number="1"
-              title="Zarejestruj się"
-              description="Stwórz konto w 30 sekund i rozpocznij naukę od razu."
+              title="Załóż konto"
+              description="Stwórz konto w 30 sekund, zamów subskrypcję i rozpocznij naukę od razu."
               icon={<User className="w-8 h-8" />}
             />
             <StepCard
@@ -1132,7 +1132,7 @@ export const LandingPage: React.FC = () => {
                     to="/register"
                     className="hover:text-white transition-colors"
                   >
-                    Zarejestruj się
+                    Załóż konto
                   </Link>
                 </li>
               </ul>

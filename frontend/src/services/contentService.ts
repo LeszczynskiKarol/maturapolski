@@ -83,6 +83,12 @@ export const contentService = {
     return response.data;
   },
 
+  // Landing page dla testu
+  async getHubTestLandingData(hubSlug: string) {
+    const response = await api.get(`/api/content/${hubSlug}/test-landing`);
+    return response.data;
+  },
+
   // Admin - Ratings Management
   async getPageRatingsDetailed(pageId: string) {
     const response = await api.get(`/api/content/pages/${pageId}/ratings/all`);

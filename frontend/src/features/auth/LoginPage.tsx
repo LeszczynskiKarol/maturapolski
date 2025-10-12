@@ -224,7 +224,7 @@ export const LoginPage: React.FC = () => {
                 to="/register"
                 className="text-blue-600 hover:underline font-medium"
               >
-                Zarejestruj się za darmo
+                Załóż konto
               </Link>
             </p>
 

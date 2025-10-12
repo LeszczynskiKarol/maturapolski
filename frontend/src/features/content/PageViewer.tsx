@@ -10,12 +10,18 @@ import {
 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { useEffect, useState } from "react";
+import { TestBanner } from "../../components/TestBanner";
 import { Helmet } from "react-helmet-async";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { PublicLayout } from "../../components/PublicLayout";
 import { RatingWidget } from "../../components/RatingWidget";
 import { RelatedPages } from "../../components/RelatedPages";
 import { contentService } from "../../services/contentService";
+import { StickyTestCTA } from "../../components/StickyTestCTA";
+// LUB
+// import { FloatingTestButton } from "../../components/FloatingTestButton";
+// LUB
+//import { StickyTestTab } from "../../components/StickyTestTab";
 
 interface PageData {
   id: string;
@@ -30,6 +36,7 @@ interface PageData {
     title: string;
     slug: string;
     author?: string;
+    type: string;
     description: string;
   };
 }
@@ -850,6 +857,14 @@ export function PageViewer() {
                   </button>
                 </div>
 
+                {/* Test Banner - compact variant */}
+                <TestBanner
+                  hubSlug={hubSlug!}
+                  hubTitle={page.hub.title}
+                  hubType={page.hub.type}
+                  variant="compact"
+                />
+
                 <div className="flex items-center gap-4 text-sm text-gray-600 border-b pb-4 mb-6">
                   {page.readingTime && (
                     <span className="flex items-center gap-1">
@@ -1046,6 +1061,22 @@ export function PageViewer() {
           </div>
         </div>
       </div>
+      {/* Sticky element - wybierz jeden */}
+      <StickyTestCTA
+        hubSlug={hubSlug!}
+        hubTitle={page.hub.title}
+        hubType={page.hub.type}
+      />
+      {/*<FloatingTestButton
+        hubSlug={hubSlug!}
+        hubTitle={page.hub.title}
+        hubType={page.hub.type}
+      />
+      <StickyTestTab
+        hubSlug={hubSlug!}
+        hubTitle={page.hub.title}
+        hubType={page.hub.type}
+      />*/}
     </PublicLayout>
   );
 }
