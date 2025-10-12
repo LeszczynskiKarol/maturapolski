@@ -58,13 +58,14 @@ interface UserData {
     difficulty5Points: number;
   };
   subscription?: {
-    // DODAJ TO
     id: string;
     plan: "FREE" | "PREMIUM";
+    isRecurring: boolean;
     status: string;
     aiPointsUsed: number;
     aiPointsLimit: number;
     aiPointsReset: string;
+    endDate?: string;
   };
   stats: {
     totalSubmissions: number;
@@ -578,16 +579,46 @@ export const UserManager: React.FC = () => {
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
                           <CreditCard className="w-4 h-4 text-gray-400" />
-                          <span
-                            className={`text-sm font-medium ${
-                              user.subscription?.plan === "PREMIUM"
-                                ? "text-yellow-600"
-                                : "text-gray-600"
-                            }`}
-                          >
-                            {user.subscription?.plan || "FREE"}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`text-sm font-medium ${
+                                user.subscription?.plan === "PREMIUM"
+                                  ? "text-yellow-600"
+                                  : "text-gray-600"
+                              }`}
+                            >
+                              {user.subscription?.plan || "FREE"}
+                            </span>
+                            {/* ✅ NOWY BADGE */}
+                            {user.subscription?.plan === "PREMIUM" && (
+                              <span
+                                className={`px-2 py-0.5 text-xs rounded-full ${
+                                  user.subscription?.isRecurring
+                                    ? "bg-blue-100 text-blue-700"
+                                    : "bg-green-100 text-green-700"
+                                }`}
+                              >
+                                {user.subscription?.isRecurring
+                                  ? "Subskrypcja"
+                                  : "30 dni"}
+                              </span>
+                            )}
+                          </div>
                         </div>
+
+                        {/* ✅ DODAJ INFORMACJĘ O DACIE WYGAŚNIĘCIA */}
+                        {user.subscription?.plan === "PREMIUM" &&
+                          !user.subscription?.isRecurring &&
+                          user.subscription?.endDate && (
+                            <div className="flex items-center gap-2 text-xs text-orange-600">
+                              <Clock className="w-3 h-3" />
+                              Wygasa:{" "}
+                              {new Date(
+                                user.subscription.endDate
+                              ).toLocaleDateString("pl-PL")}
+                            </div>
+                          )}
+
                         <div className="flex items-center gap-2">
                           <Zap className="w-4 h-4 text-yellow-500" />
                           <span className="text-sm">
@@ -595,6 +626,7 @@ export const UserManager: React.FC = () => {
                             {user.subscription?.aiPointsLimit || 20}
                           </span>
                         </div>
+
                         <button
                           onClick={() =>
                             setSubscriptionEditorUser({

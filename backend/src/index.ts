@@ -14,6 +14,7 @@ console.log(
   process.env.AWS_SECRET_ACCESS_KEY ? "✅ SET" : "❌ MISSING"
 );
 console.log("=================");
+import cron from "node-cron";
 import multipart from "@fastify/multipart";
 import { uploadRoutes } from "./routes/upload.routes";
 import cors from "@fastify/cors";
@@ -21,6 +22,7 @@ import jwt from "@fastify/jwt";
 import Fastify from "fastify";
 import { initializeAI } from "./ai/aiService";
 import { adminRoutes } from "./routes/admin.routes";
+import { checkExpiredAccess } from "./jobs/checkExpiredAccess";
 import { examStructureRoutes } from "./routes/examStructure.routes";
 import { subscriptionRoutes } from "./routes/subscription.routes";
 import { authRoutes } from "./routes/auth.routes";
@@ -31,6 +33,16 @@ import { materialsRoutes } from "./routes/materials.routes";
 import { studentRoutes } from "./routes/student.routes";
 import { contentRoutes } from "./routes/content.routes";
 import { studyPlanRoutes } from "./routes/studyPlan.routes";
+
+// Uruchamiaj codziennie o 00:00
+cron.schedule("0 0 * * *", async () => {
+  console.log("⏰ Running daily job: check expired access");
+  try {
+    await checkExpiredAccess();
+  } catch (error) {
+    console.error("Error in expired access check:", error);
+  }
+});
 
 const fastify = Fastify({
   logger: {

@@ -696,6 +696,8 @@ model Subscription {
   userId          String            @unique
   user            User              @relation(fields: [userId], references: [id])
   
+  isRecurring        Boolean          @default(true)
+
   // Stripe
   stripeCustomerId      String?       @unique
   stripeSubscriptionId  String?       @unique

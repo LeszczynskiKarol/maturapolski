@@ -7,6 +7,7 @@ import {
   AlertTriangle,
   CheckCircle,
   ChevronLeft,
+  Clock,
   CreditCard,
   Crown,
   ExternalLink,
@@ -23,6 +24,7 @@ import { api } from "../../services/api";
 interface SubscriptionStatus {
   plan: "FREE" | "PREMIUM";
   status: string;
+  isRecurring: boolean;
   aiPointsUsed: number;
   aiPointsLimit: number;
   percentUsed: number;
@@ -109,6 +111,21 @@ export const SubscriptionDashboard: React.FC = () => {
     },
   });
 
+  const buyMonthlyMutation = useMutation({
+    mutationFn: async () => {
+      const { data } = await api.post("/api/subscription/buy-monthly-access");
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.error || "Błąd podczas zakupu dostępu");
+    },
+  });
+
   const buyPointsMutation = useMutation({
     mutationFn: async (packageId: string) => {
       const { data } = await api.post("/api/subscription/buy-points", {
@@ -179,6 +196,16 @@ export const SubscriptionDashboard: React.FC = () => {
   const isPremium = subscription.plan === "PREMIUM";
   const isCanceled =
     subscription.status === "CANCELED" || subscription.cancelAt;
+  const isOneTime = subscription.isRecurring === false; // ✅ NOWA ZMIENNA
+  const daysLeft = subscription.endDate
+    ? Math.max(
+        0,
+        Math.ceil(
+          (new Date(subscription.endDate).getTime() - Date.now()) /
+            (1000 * 60 * 60 * 24)
+        )
+      )
+    : null;
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
@@ -267,27 +294,45 @@ export const SubscriptionDashboard: React.FC = () => {
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
               {isPremium
-                ? "Pełen dostęp do wszystkich funkcji AI"
+                ? isOneTime
+                  ? `Dostęp na 30 dni (pozostało ${daysLeft} dni)` // ✅ ZMIANA
+                  : "Pełen dostęp do wszystkich funkcji AI"
                 : "Ograniczony dostęp do funkcji AI"}
             </p>
           </div>
 
           {isPremium ? (
             <div className="text-right">
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                39 zł
-              </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                /miesiąc
-              </p>
+              {isOneTime ? (
+                // ✅ NOWY WIDOK DLA JEDNORAZOWEJ PŁATNOŚCI
+                <>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                    49 zł
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    jednorazowo
+                  </p>
+                  <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
+                    Wygasa:{" "}
+                    {new Date(subscription.endDate!).toLocaleDateString(
+                      "pl-PL"
+                    )}
+                  </p>
+                </>
+              ) : (
+                // OBECNY WIDOK DLA SUBSKRYPCJI
+                <>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                    39 zł
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    /miesiąc
+                  </p>
+                </>
+              )}
             </div>
           ) : (
-            <div className="text-right">
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                0 zł
-              </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">zawsze</p>
-            </div>
+            <div className="text-right"></div>
           )}
         </div>
 
@@ -302,11 +347,10 @@ export const SubscriptionDashboard: React.FC = () => {
                 </span>
               </div>
               <span className="text-sm text-gray-600 dark:text-gray-400">
-                {subscription.aiPointsUsed} / {subscription.aiPointsLimit} (
-                {subscription.percentUsed}%)
+                Wykorzystane: {subscription.aiPointsUsed} /{" "}
+                {subscription.aiPointsLimit} ({subscription.percentUsed}%)
               </span>
             </div>
-
             <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
               <motion.div
                 className={`h-full ${
@@ -328,13 +372,30 @@ export const SubscriptionDashboard: React.FC = () => {
                 {subscription.aiPointsLimit - subscription.aiPointsUsed} punktów
               </span>
               <span>
-                Reset:{" "}
-                {new Date(subscription.resetDate).toLocaleDateString("pl-PL")}
+                {isOneTime ? (
+                  // ✅ NOWY WIDOK DLA JEDNORAZOWEJ PŁATNOŚCI
+                  <>
+                    Wygasa:{" "}
+                    {subscription.endDate
+                      ? new Date(subscription.endDate).toLocaleDateString(
+                          "pl-PL"
+                        )
+                      : "Brak daty"}
+                  </>
+                ) : (
+                  // OBECNY WIDOK DLA SUBSKRYPCJI
+                  <>
+                    Reset:{" "}
+                    {new Date(subscription.resetDate).toLocaleDateString(
+                      "pl-PL"
+                    )}
+                  </>
+                )}
               </span>
             </div>
           </div>
         )}
-        {/* Co dają punkty */}
+        {/* Co dają punkty 
         {isPremium && (
           <div className="grid grid-cols-3 gap-4 mb-6">
             <div className="text-center p-3 bg-white/50 dark:bg-gray-700/50 rounded-lg">
@@ -362,7 +423,7 @@ export const SubscriptionDashboard: React.FC = () => {
               </p>
             </div>
           </div>
-        )}
+        )}*/}
 
         {/* Warnings */}
         {subscription.percentUsed > 80 && !isPremium && (
@@ -383,6 +444,38 @@ export const SubscriptionDashboard: React.FC = () => {
           </div>
         )}
 
+        {isPremium && isOneTime && daysLeft !== null && daysLeft <= 7 && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl p-6 shadow-lg"
+          >
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-white/20 rounded-lg">
+                <Clock className="w-8 h-8" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold mb-2">
+                  Twój dostęp Premium wkrótce wygaśnie!
+                </h3>
+                <p className="text-white/90 mb-4">
+                  Pozostało tylko {daysLeft} {daysLeft === 1 ? "dzień" : "dni"}.
+                  Przedłuż dostęp, aby nie stracić możliwości korzystania z AI.
+                </p>
+                <button
+                  onClick={() => buyMonthlyMutation.mutate()}
+                  disabled={buyMonthlyMutation.isPending}
+                  className="px-6 py-3 bg-white text-orange-600 rounded-lg font-semibold 
+                     hover:bg-gray-100 transition-colors flex items-center gap-2"
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  Przedłuż o kolejne 30 dni
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {isCanceled && (
           <div className="p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg mb-4">
             <div className="flex items-start gap-3">
@@ -400,58 +493,83 @@ export const SubscriptionDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* Actions */}
-        <div className="flex gap-3">
-          {!isPremium ? (
-            <button
-              onClick={handleUpgrade}
-              disabled={isUpgrading}
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 
-                       text-white rounded-lg hover:from-blue-700 hover:to-purple-700 
-                       font-semibold flex items-center justify-center gap-2
-                       disabled:opacity-50 transition-all"
-            >
-              {isUpgrading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <>
-                  <TrendingUp className="w-5 h-5" />
-                  Ulepsz do Premium
-                </>
-              )}
-            </button>
-          ) : (
+        {/* Actions - PRZEPROJEKTOWANA SEKCJA */}
+        <div className="space-y-4">
+          {isPremium && (
             <>
-              {isCanceled ? (
-                <button
-                  onClick={() => resumeMutation.mutate()}
-                  className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg 
-                           hover:bg-green-700 font-semibold flex items-center justify-center gap-2"
-                >
-                  <CheckCircle className="w-5 h-5" />
-                  Wznów subskrypcję
-                </button>
-              ) : (
-                <button
-                  onClick={() => cancelMutation.mutate()}
-                  className="px-6 py-3 border border-gray-300 dark:border-gray-600 
-                           text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 
-                           dark:hover:bg-gray-700 font-semibold"
-                >
-                  Anuluj subskrypcję
-                </button>
-              )}
+              <div className="flex gap-3">
+                {isOneTime ? (
+                  // ✅ PRZYCISKI DLA JEDNORAZOWEJ PŁATNOŚCI
+                  <>
+                    <button
+                      onClick={() => buyMonthlyMutation.mutate()}
+                      disabled={buyMonthlyMutation.isPending}
+                      className="flex-1 px-6 py-3 bg-gradient-to-r from-green-600 to-teal-600 
+                     text-white rounded-lg hover:from-green-700 hover:to-teal-700 
+                     font-semibold flex items-center justify-center gap-2"
+                    >
+                      {buyMonthlyMutation.isPending ? (
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <>
+                          <ShoppingCart className="w-5 h-5" />
+                          Przedłuż o kolejne 30 dni (49 zł)
+                        </>
+                      )}
+                    </button>
 
-              <button
-                onClick={() => openPortalMutation.mutate()}
-                className="flex-1 px-6 py-3 bg-gray-800 dark:bg-gray-700 text-white 
-                         rounded-lg hover:bg-gray-900 dark:hover:bg-gray-600 font-semibold 
-                         flex items-center justify-center gap-2"
-              >
-                <CreditCard className="w-5 h-5" />
-                Zarządzaj płatnościami
-                <ExternalLink className="w-4 h-4" />
-              </button>
+                    <button
+                      onClick={handleUpgrade}
+                      disabled={isUpgrading}
+                      className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
+                     font-semibold flex items-center justify-center gap-2"
+                    >
+                      {isUpgrading ? (
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <>
+                          <TrendingUp className="w-5 h-5" />
+                          Przejdź na subskrypcję (39 zł/mies)
+                        </>
+                      )}
+                    </button>
+                  </>
+                ) : (
+                  // OBECNE PRZYCISKI DLA SUBSKRYPCJI - bez zmian
+                  <>
+                    {isCanceled ? (
+                      <button
+                        onClick={() => resumeMutation.mutate()}
+                        className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg 
+                       hover:bg-green-700 font-semibold flex items-center justify-center gap-2"
+                      >
+                        <CheckCircle className="w-5 h-5" />
+                        Wznów subskrypcję
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => cancelMutation.mutate()}
+                        className="px-6 py-3 border border-gray-300 dark:border-gray-600 
+                       text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 
+                       dark:hover:bg-gray-700 font-semibold"
+                      >
+                        Anuluj subskrypcję
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => openPortalMutation.mutate()}
+                      className="flex-1 px-6 py-3 bg-gray-800 dark:bg-gray-700 text-white 
+                     rounded-lg hover:bg-gray-900 dark:hover:bg-gray-600 font-semibold 
+                     flex items-center justify-center gap-2"
+                    >
+                      <CreditCard className="w-5 h-5" />
+                      Zarządzaj płatnościami
+                      <ExternalLink className="w-4 h-4" />
+                    </button>
+                  </>
+                )}
+              </div>
             </>
           )}
         </div>

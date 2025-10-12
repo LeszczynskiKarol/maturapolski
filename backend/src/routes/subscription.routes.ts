@@ -116,6 +116,7 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
       return reply.send({
         plan: subscription.plan,
         status: subscription.status,
+        isRecurring: subscription.isRecurring,
         aiPointsUsed: subscription.aiPointsUsed,
         aiPointsLimit: subscription.aiPointsLimit,
         percentUsed: Math.round(
@@ -124,7 +125,93 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
         resetDate: subscription.aiPointsReset,
         cancelAt: subscription.cancelAt,
         endDate: subscription.endDate,
+        stripeSubscriptionId: subscription.stripeSubscriptionId,
       });
+    });
+
+    protectedRoutes.post("/buy-monthly-access", async (request, reply) => {
+      try {
+        const userId = (request.user as any).userId;
+
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+          include: { subscription: true },
+        });
+
+        if (!user) {
+          return reply.code(404).send({ error: "User not found" });
+        }
+
+        // Sprawdź czy użytkownik już ma aktywny dostęp
+        const existingSub = user.subscription;
+        if (existingSub?.status === "ACTIVE" && existingSub.endDate) {
+          const now = new Date();
+          if (existingSub.endDate > now) {
+            return reply.code(400).send({
+              error: "Masz już aktywny dostęp Premium",
+              endDate: existingSub.endDate,
+            });
+          }
+        }
+
+        // Utwórz lub pobierz Stripe Customer
+        let customerId = user.subscription?.stripeCustomerId;
+
+        if (!customerId) {
+          const customer = await stripe.customers.create({
+            email: user.email,
+            metadata: { userId: user.id },
+          });
+          customerId = customer.id;
+
+          await prisma.subscription.upsert({
+            where: { userId },
+            create: {
+              userId,
+              stripeCustomerId: customerId,
+              status: "INACTIVE",
+              plan: "FREE",
+              aiPointsLimit: 20,
+              aiPointsUsed: 0,
+              aiPointsReset: new Date(),
+              isRecurring: false,
+            },
+            update: {
+              stripeCustomerId: customerId,
+            },
+          });
+        }
+
+        // Utwórz Checkout Session dla jednorazowej płatności
+        const session = await stripe.checkout.sessions.create({
+          customer: customerId,
+          mode: "payment", // ❗ PAYMENT zamiast SUBSCRIPTION
+          payment_method_types: ["card", "blik", "p24"],
+          line_items: [
+            {
+              price: process.env.STRIPE_PRICE_ID_MONTHLY!, // Nowe price ID
+              quantity: 1,
+            },
+          ],
+          success_url: `${process.env.FRONTEND_URL}/subscription?monthly_activated=true`,
+          cancel_url: `${process.env.FRONTEND_URL}/subscription`,
+          metadata: {
+            userId: user.id,
+            purchaseType: "MONTHLY_ACCESS", // ❗ WAŻNE: identyfikator typu płatności
+          },
+        });
+
+        return reply.send({
+          sessionId: session.id,
+          url: session.url,
+        });
+      } catch (error: any) {
+        console.error("Error creating monthly access checkout:", error);
+        return reply.code(500).send({
+          error: "Failed to create checkout session",
+          details: error.message,
+        });
+      }
     });
 
     // Utwórz Checkout Session

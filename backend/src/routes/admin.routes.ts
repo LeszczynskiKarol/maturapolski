@@ -1463,10 +1463,12 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
             userId,
             plan: "FREE",
             status: "INACTIVE",
+            isRecurring: true,
             aiPointsUsed: 0,
             aiPointsLimit: 20,
             aiPointsReset: new Date(),
             totalAiCalls: 0,
+            endDate: null,
           });
         }
 

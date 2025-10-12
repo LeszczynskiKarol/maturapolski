@@ -258,8 +258,15 @@ export class SubscriptionService {
         });
 
         if (session.mode === "payment") {
-          console.log("🛒 Processing points purchase...");
-          await this.handlePointsPurchaseCompleted(session);
+          const purchaseType = session.metadata?.purchaseType;
+
+          if (purchaseType === "MONTHLY_ACCESS") {
+            console.log("💰 Processing monthly access purchase...");
+            await this.handleMonthlyAccessPurchase(session);
+          } else {
+            console.log("🛒 Processing points purchase...");
+            await this.handlePointsPurchaseCompleted(session);
+          }
         } else if (session.mode === "subscription") {
           console.log("👑 Processing subscription activation...");
           await this.handleCheckoutCompleted(session);
@@ -302,6 +309,65 @@ export class SubscriptionService {
     });
 
     console.log("✅ Event processed successfully:", event.id);
+  }
+
+  private async handleMonthlyAccessPurchase(session: Stripe.Checkout.Session) {
+    const userId = session.metadata?.userId;
+
+    if (!userId) {
+      console.error("❌ No userId in session metadata!");
+      return;
+    }
+
+    const now = new Date();
+    const endDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // +30 dni
+
+    try {
+      const subscription = await prisma.subscription.upsert({
+        where: { userId },
+        create: {
+          userId,
+          status: "ACTIVE",
+          plan: "PREMIUM",
+          isRecurring: false, // ❗ To jest jednorazowa płatność
+          aiPointsLimit: 200,
+          aiPointsUsed: 0,
+          aiPointsReset: now,
+          startDate: now,
+          endDate: endDate, // ❗ WAŻNE: data wygaśnięcia
+          stripeCustomerId: session.customer as string,
+          // stripeSubscriptionId pozostaje null
+        },
+        update: {
+          status: "ACTIVE",
+          plan: "PREMIUM",
+          isRecurring: false,
+          aiPointsLimit: 200,
+          aiPointsUsed: 0,
+          aiPointsReset: now,
+          startDate: now,
+          endDate: endDate,
+        },
+      });
+
+      console.log(
+        `✅ Monthly access activated for user ${userId} until ${endDate}`
+      );
+
+      // Opcjonalnie: zapisz historię zakupu
+      await prisma.pointsPurchase.create({
+        data: {
+          userId,
+          subscriptionId: subscription.id,
+          pointsAmount: 0, // To nie jest zakup punktów
+          stripeSessionId: session.id,
+          amountPaid: session.amount_total || 0,
+        },
+      });
+    } catch (error) {
+      console.error("❌ Error activating monthly access:", error);
+      throw error;
+    }
   }
 
   private async handleCheckoutCompleted(session: Stripe.Checkout.Session) {

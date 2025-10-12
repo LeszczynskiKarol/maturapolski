@@ -7,6 +7,7 @@ import {
   Save,
   RefreshCw,
   CreditCard,
+  Clock,
   Zap,
   Plus,
   AlertCircle,
@@ -200,7 +201,9 @@ export const SubscriptionEditor: React.FC<SubscriptionEditorProps> = ({
               {/* Current Status */}
               <div className="bg-gray-50 rounded-lg p-6">
                 <h3 className="text-lg font-semibold mb-4">Aktualny status</h3>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-4 gap-4">
+                  {" "}
+                  {/* zmień z 3 na 4 */}
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
                     <p className="text-sm text-gray-600 mb-1">Plan</p>
                     <p
@@ -211,6 +214,23 @@ export const SubscriptionEditor: React.FC<SubscriptionEditorProps> = ({
                       }`}
                     >
                       {subscription?.plan === "PREMIUM" ? "Premium" : "Free"}
+                    </p>
+                  </div>
+                  {/* ✅ NOWA KARTA */}
+                  <div className="bg-white rounded-lg p-4 border border-gray-200">
+                    <p className="text-sm text-gray-600 mb-1">Typ</p>
+                    <p className="text-sm font-medium">
+                      <span
+                        className={`px-2 py-1 rounded-full ${
+                          subscription?.isRecurring
+                            ? "bg-blue-100 text-blue-700"
+                            : "bg-green-100 text-green-700"
+                        }`}
+                      >
+                        {subscription?.isRecurring
+                          ? "Subskrypcja"
+                          : "Jednorazowa"}
+                      </span>
                     </p>
                   </div>
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
@@ -237,6 +257,28 @@ export const SubscriptionEditor: React.FC<SubscriptionEditorProps> = ({
                   </div>
                 </div>
               </div>
+              {subscription?.endDate && !subscription?.isRecurring && (
+                <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                  <div className="flex items-center gap-2 text-orange-700">
+                    <Clock className="w-5 h-5" />
+                    <div>
+                      <p className="font-semibold">Dostęp wygasa:</p>
+                      <p className="text-sm">
+                        {new Date(subscription.endDate).toLocaleDateString(
+                          "pl-PL",
+                          {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* AI Points */}
               <div className="bg-gray-50 rounded-lg p-6">
