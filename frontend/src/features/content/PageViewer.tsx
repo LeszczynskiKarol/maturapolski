@@ -1,7 +1,14 @@
 // frontend/src/features/content/PageViewer.tsx
 
 // ==========================================
-import { ChevronLeft, ChevronRight, Clock, Download } from "lucide-react";
+import {
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Download,
+} from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useParams, useSearchParams } from "react-router-dom";
@@ -32,6 +39,8 @@ export function PageViewer() {
     hubSlug: string;
     pageSlug: string;
   }>();
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadComplete, setDownloadComplete] = useState(false);
   const isLalkaChapters =
     hubSlug === "lalka" &&
     pageSlug === "lalka-streszczenie-szczegolowe-dokladne-lektury";
@@ -47,7 +56,10 @@ export function PageViewer() {
     : [];
 
   const downloadAsPDF = async () => {
-    if (!page) return;
+    if (!page || isDownloading) return;
+
+    setIsDownloading(true);
+    setDownloadComplete(false);
 
     try {
       const pdfMakeModule: any = await import("pdfmake/build/pdfmake");
@@ -56,11 +68,6 @@ export function PageViewer() {
       const pdfMake = pdfMakeModule.default;
       const pdfFonts = pdfFontsModule.default;
 
-      if (pdfMake && pdfFonts) {
-        pdfMake.vfs = pdfFonts.pdfMake ? pdfFonts.pdfMake.vfs : pdfFonts.vfs;
-      }
-
-      // Przypisz fonty - cała magia w any
       if (pdfMake && pdfFonts) {
         pdfMake.vfs = pdfFonts.pdfMake ? pdfFonts.pdfMake.vfs : pdfFonts.vfs;
       }
@@ -252,32 +259,31 @@ export function PageViewer() {
 
       const docDefinition: any = {
         content: content,
-        pageMargins: [40, 60, 40, 50], // Zwiększone marginesy dla header/footer
+        pageMargins: [40, 60, 40, 50],
 
-        // ============= NAGŁÓWEK NA KAŻDEJ STRONIE =============
         header: (currentPage: number, pageCount: number) => {
           return {
             margin: [40, 20, 40, 10],
             columns: [
               {
-                // Logo + Nazwa serwisu
                 stack: [
                   {
-                    text: [
-                      {
-                        text: "MaturaPolski.pl",
-                        fontSize: 10,
-                        bold: true,
-                        color: "#2563eb", // Niebieski
-                        link: "https://maturapolski.pl",
-                      },
-                    ],
+                    text: "MaturaPolski.pl",
+                    fontSize: 10,
+                    bold: true,
+                    color: "#2563eb",
+                    link: "https://maturapolski.pl",
+                  },
+                  {
+                    text: page.title,
+                    fontSize: 8,
+                    color: "#9ca3af",
+                    margin: [0, 2, 0, 0],
                   },
                 ],
                 width: "*",
               },
               {
-                // Numer strony (tylko jeśli więcej niż 1 strona)
                 text: pageCount > 1 ? `${currentPage} / ${pageCount}` : "",
                 fontSize: 9,
                 color: "#9ca3af",
@@ -285,7 +291,6 @@ export function PageViewer() {
                 width: "auto",
               },
             ],
-            // Subtelna linia pod nagłówkiem
             canvas: [
               {
                 type: "line",
@@ -300,12 +305,10 @@ export function PageViewer() {
           };
         },
 
-        // ============= STOPKA NA KAŻDEJ STRONIE =============
         footer: (_currentPage: number, _pageCount: number) => {
           return {
             margin: [40, 10, 40, 20],
             stack: [
-              // Linia nad stopką
               {
                 canvas: [
                   {
@@ -320,7 +323,6 @@ export function PageViewer() {
                 ],
                 margin: [0, 0, 0, 8],
               },
-              // Tekst copyright
               {
                 columns: [
                   {
@@ -339,7 +341,7 @@ export function PageViewer() {
                     width: "*",
                   },
                   {
-                    text: "MaturaPolski.pl",
+                    text: "maturapolski.pl",
                     fontSize: 8,
                     color: "#2563eb",
                     link: "https://maturapolski.pl",
@@ -353,7 +355,6 @@ export function PageViewer() {
           };
         },
 
-        // Opcjonalnie: Metadata PDF
         info: {
           title: page.title,
           author: "MaturaPolski.pl",
@@ -369,9 +370,31 @@ export function PageViewer() {
         .download(
           `${page.title.replace(/[^a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s]/g, "_")}.pdf`
         );
+
+      // Sukces - pokaż ptaszek i toast
+      setDownloadComplete(true);
+      toast.success(`Pobrano: ${page.title}`, {
+        duration: 3000,
+        icon: "✓",
+        style: {
+          background: "#10b981",
+          color: "#fff",
+          fontWeight: "500",
+        },
+      });
+
+      // Zresetuj stan po 2 sekundach
+      setTimeout(() => {
+        setDownloadComplete(false);
+      }, 2000);
     } catch (error) {
       console.error("Błąd generowania PDF:", error);
-      alert("Nie udało się wygenerować PDF. Sprawdź konsolę.");
+      toast.error("Nie udało się wygenerować PDF", {
+        duration: 4000,
+        icon: "✕",
+      });
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -710,6 +733,8 @@ export function PageViewer() {
 
   return (
     <PublicLayout>
+      <Toaster position="top-right" />
+
       <Helmet>
         <title>{page?.metaTitle || page?.title || "MaturaPolski.pl"}</title>
         <meta
@@ -778,15 +803,50 @@ export function PageViewer() {
                 {/* Header */}
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <h1 className="text-3xl font-bold flex-1">{page.title}</h1>
+
                   <button
                     onClick={downloadAsPDF}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 
-               text-white rounded-lg transition-colors shadow-sm hover:shadow-md
-               flex-shrink-0"
-                    title="Pobierz jako PDF"
+                    disabled={isDownloading}
+                    className={`
+                      flex items-center gap-2 px-4 py-2 rounded-lg
+                      transition-all duration-300 shadow-sm hover:shadow-md
+                      flex-shrink-0 relative overflow-hidden
+                      ${
+                        downloadComplete
+                          ? "bg-green-600 hover:bg-green-700"
+                          : "bg-blue-600 hover:bg-blue-700"
+                      }
+                      text-white
+                      disabled:opacity-70 disabled:cursor-not-allowed
+                    `}
+                    title={downloadComplete ? "Pobrano!" : "Pobierz jako PDF"}
                   >
-                    <Download className="w-5 h-5" />
-                    <span className="hidden sm:inline">Pobierz PDF</span>
+                    {/* Animacja loading */}
+                    {isDownloading && (
+                      <div className="absolute inset-0 bg-blue-700 animate-pulse"></div>
+                    )}
+
+                    {/* Ikona i tekst */}
+                    <div className="relative flex items-center gap-2">
+                      {downloadComplete ? (
+                        <>
+                          <Check className="w-5 h-5 animate-bounce" />
+                          <span className="hidden sm:inline">Pobrano</span>
+                        </>
+                      ) : isDownloading ? (
+                        <>
+                          <Download className="w-5 h-5 animate-bounce" />
+                          <span className="hidden sm:inline">
+                            Generowanie...
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <Download className="w-5 h-5" />
+                          <span className="hidden sm:inline">Pobierz PDF</span>
+                        </>
+                      )}
+                    </div>
                   </button>
                 </div>
 
