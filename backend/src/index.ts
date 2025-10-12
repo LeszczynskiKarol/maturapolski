@@ -33,6 +33,7 @@ import { materialsRoutes } from "./routes/materials.routes";
 import { studentRoutes } from "./routes/student.routes";
 import { contentRoutes } from "./routes/content.routes";
 import { studyPlanRoutes } from "./routes/studyPlan.routes";
+import { startSubscriptionExpirationJob } from "./jobs/subscriptionExpirationJob";
 
 // Uruchamiaj codziennie o 00:00
 cron.schedule("0 0 * * *", async () => {
@@ -179,6 +180,7 @@ const start = async () => {
   try {
     const port = parseInt(process.env.PORT || "4000");
     const host = process.env.HOST || "0.0.0.0";
+    startSubscriptionExpirationJob();
 
     await fastify.listen({ port, host });
 

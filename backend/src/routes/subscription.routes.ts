@@ -61,11 +61,105 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
 
   // CHRONIONE ENDPOINTY - wymagają JWT
   fastify.register(async (protectedRoutes) => {
+    // ✅ DODAJ onRequest hook NA SAMYM POCZĄTKU
     protectedRoutes.addHook("onRequest", async (request, reply) => {
       try {
         await request.jwtVerify();
       } catch (err) {
         reply.code(401).send({ error: "Unauthorized" });
+      }
+    });
+
+    // ✅ JEDEN create-checkout endpoint z pełną logiką
+    protectedRoutes.post("/create-checkout", async (request, reply) => {
+      const userId = (request.user as any).userId;
+      const { priceId } = request.body as { priceId: string };
+
+      if (!priceId) {
+        return reply.code(400).send({ error: "Price ID required" });
+      }
+
+      try {
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+          include: { subscription: true },
+        });
+
+        if (!user) {
+          return reply.code(404).send({ error: "User not found" });
+        }
+
+        // ✅ Sprawdź czy ma aktywny pakiet jednorazowy
+        let trialEnd: number | undefined = undefined;
+
+        if (
+          user.subscription &&
+          user.subscription.plan === "PREMIUM" &&
+          !user.subscription.isRecurring &&
+          user.subscription.endDate &&
+          new Date(user.subscription.endDate) > new Date()
+        ) {
+          // ✅ Ustaw trial_end na datę wygaśnięcia pakietu
+          trialEnd = Math.floor(
+            new Date(user.subscription.endDate).getTime() / 1000
+          );
+
+          const daysLeft = Math.ceil(
+            (new Date(user.subscription.endDate).getTime() - Date.now()) /
+              (1000 * 60 * 60 * 24)
+          );
+
+          console.log(
+            `🔄 User has active one-time package until ${user.subscription.endDate}`
+          );
+          console.log(`Setting trial_end to: ${new Date(trialEnd * 1000)}`);
+
+          // ✅ Utwórz sesję z trial period
+          const session = await stripe.checkout.sessions.create({
+            customer_email: user.email,
+            line_items: [{ price: priceId, quantity: 1 }],
+            mode: "subscription",
+            subscription_data: {
+              trial_end: trialEnd, // ✅ Subskrypcja zacznie się dopiero po tym czasie
+              metadata: {
+                userId: user.id,
+                upgradedFromOneTime: "true",
+                originalEndDate: user.subscription.endDate.toISOString(),
+              },
+            },
+            success_url: `${process.env.FRONTEND_URL}/subscription?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.FRONTEND_URL}/subscription?canceled=true`,
+            metadata: { userId: user.id },
+          });
+
+          // Zwróć ostrzeżenie + URL
+          return reply.send({
+            warning: true,
+            type: "subscription",
+            message: `Masz aktywny pakiet na 30 dni (pozostało ${daysLeft} dni). Subskrypcja zostanie aktywowana automatycznie po jego wygaśnięciu (${new Date(
+              user.subscription.endDate
+            ).toLocaleDateString("pl-PL")}).`,
+            currentEndDate: user.subscription.endDate,
+            daysLeft,
+            url: session.url,
+            sessionId: session.id,
+          });
+        }
+
+        // ✅ Standardowa subskrypcja bez trial
+        const session = await stripe.checkout.sessions.create({
+          customer_email: user.email,
+          line_items: [{ price: priceId, quantity: 1 }],
+          mode: "subscription",
+          success_url: `${process.env.FRONTEND_URL}/subscription?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${process.env.FRONTEND_URL}/subscription?canceled=true`,
+          metadata: { userId },
+        });
+
+        return reply.send({ url: session.url });
+      } catch (error: any) {
+        console.error("Error creating checkout:", error);
+        return reply.code(500).send({ error: error.message });
       }
     });
 
@@ -126,7 +220,69 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
         cancelAt: subscription.cancelAt,
         endDate: subscription.endDate,
         stripeSubscriptionId: subscription.stripeSubscriptionId,
+        metadata: subscription.metadata,
       });
+    });
+
+    protectedRoutes.post("/cancel-pending", async (request, reply) => {
+      const userId = (request.user as any).userId;
+
+      try {
+        const subscription = await prisma.subscription.findUnique({
+          where: { userId },
+          include: { user: true },
+        });
+
+        if (!subscription) {
+          return reply.code(404).send({ error: "Subscription not found" });
+        }
+
+        const metadata = subscription.metadata as any;
+        const pendingSubscription = metadata?.pendingSubscription;
+
+        if (!pendingSubscription?.stripeSubscriptionId) {
+          return reply
+            .code(400)
+            .send({ error: "No pending subscription found" });
+        }
+
+        // Anuluj subskrypcję w Stripe
+        try {
+          await stripe.subscriptions.cancel(
+            pendingSubscription.stripeSubscriptionId
+          );
+          console.log(
+            `✅ Cancelled pending subscription: ${pendingSubscription.stripeSubscriptionId}`
+          );
+        } catch (stripeError: any) {
+          console.error("Error cancelling Stripe subscription:", stripeError);
+          // Kontynuuj nawet jeśli Stripe zwróci błąd (może już była anulowana)
+        }
+
+        // Usuń informację o pending subscription z metadata
+        await prisma.subscription.update({
+          where: { id: subscription.id },
+          data: {
+            stripeSubscriptionId: null, // Usuń link do subskrypcji
+            metadata: {
+              ...(metadata || {}),
+              pendingSubscription: null, // Usuń pending info
+              cancelledPendingAt: new Date().toISOString(),
+            },
+          },
+        });
+
+        return reply.send({
+          success: true,
+          message: "Pending subscription cancelled",
+        });
+      } catch (error: any) {
+        console.error("Error cancelling pending subscription:", error);
+        return reply.code(500).send({
+          error: "Failed to cancel pending subscription",
+          details: error.message,
+        });
+      }
     });
 
     protectedRoutes.post("/buy-monthly-access", async (request, reply) => {
@@ -142,16 +298,22 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
           return reply.code(404).send({ error: "User not found" });
         }
 
-        // Sprawdź czy użytkownik już ma aktywny dostęp
         const existingSub = user.subscription;
-        if (existingSub?.status === "ACTIVE" && existingSub.endDate) {
-          const now = new Date();
-          if (existingSub.endDate > now) {
-            return reply.code(400).send({
-              error: "Masz już aktywny dostęp Premium",
-              endDate: existingSub.endDate,
-            });
-          }
+
+        // ✅ ZAWSZE oblicz nową datę
+        let newEndDate = new Date();
+
+        if (
+          existingSub?.status === "ACTIVE" &&
+          existingSub.endDate &&
+          new Date(existingSub.endDate) > new Date()
+        ) {
+          // Przedłużenie - dodaj 30 dni od końca obecnego pakietu
+          newEndDate = new Date(existingSub.endDate);
+          newEndDate.setDate(newEndDate.getDate() + 30);
+        } else {
+          // Nowy pakiet - dodaj 30 dni od teraz
+          newEndDate.setDate(newEndDate.getDate() + 30);
         }
 
         // Utwórz lub pobierz Stripe Customer
@@ -182,14 +344,14 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
           });
         }
 
-        // Utwórz Checkout Session dla jednorazowej płatności
+        // ✅ ZAWSZE utwórz Checkout Session
         const session = await stripe.checkout.sessions.create({
           customer: customerId,
-          mode: "payment", // ❗ PAYMENT zamiast SUBSCRIPTION
+          mode: "payment",
           payment_method_types: ["card", "blik", "p24"],
           line_items: [
             {
-              price: process.env.STRIPE_PRICE_ID_MONTHLY!, // Nowe price ID
+              price: process.env.STRIPE_PRICE_ID_MONTHLY!,
               quantity: 1,
             },
           ],
@@ -197,10 +359,42 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
           cancel_url: `${process.env.FRONTEND_URL}/subscription`,
           metadata: {
             userId: user.id,
-            purchaseType: "MONTHLY_ACCESS", // ❗ WAŻNE: identyfikator typu płatności
+            purchaseType: "MONTHLY_ACCESS",
+            newEndDate: newEndDate.toISOString(),
           },
         });
 
+        // ✅ Sprawdź czy to przedłużenie (AFTER creating session)
+        if (
+          existingSub?.status === "ACTIVE" &&
+          existingSub.endDate &&
+          new Date(existingSub.endDate) > new Date()
+        ) {
+          const daysLeft = Math.ceil(
+            (new Date(existingSub.endDate).getTime() - Date.now()) /
+              (1000 * 60 * 60 * 24)
+          );
+
+          // Zwróć ostrzeżenie + URL
+          return reply.send({
+            warning: true,
+            type: "extend",
+            currentEndDate: existingSub.endDate,
+            newEndDate: newEndDate.toISOString(),
+            daysLeft,
+            message: `Masz aktywny dostęp ważny do ${new Date(
+              existingSub.endDate
+            ).toLocaleDateString(
+              "pl-PL"
+            )}. Wykupienie kolejnego pakietu przedłuży dostęp do ${newEndDate.toLocaleDateString(
+              "pl-PL"
+            )}.`,
+            url: session.url, // ✅ DODAJ URL!
+            sessionId: session.id,
+          });
+        }
+
+        // Standardowa odpowiedź bez ostrzeżenia
         return reply.send({
           sessionId: session.id,
           url: session.url,
@@ -211,26 +405,6 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
           error: "Failed to create checkout session",
           details: error.message,
         });
-      }
-    });
-
-    // Utwórz Checkout Session
-    protectedRoutes.post("/create-checkout", async (request, reply) => {
-      const userId = (request.user as any).userId;
-      const { priceId } = request.body as { priceId: string };
-
-      if (!priceId) {
-        return reply.code(400).send({ error: "Price ID required" });
-      }
-
-      try {
-        const { sessionId, url } =
-          await subscriptionService.createCheckoutSession(userId, priceId);
-
-        return reply.send({ sessionId, url });
-      } catch (error: any) {
-        console.error("Error creating checkout session:", error);
-        return reply.code(500).send({ error: error.message });
       }
     });
 
@@ -302,20 +476,17 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
           SMALL: {
             points: 50,
             price: process.env.STRIPE_PRICE_ID_SMALL!,
-
-            priceAmount: 1900, // 19 zł
+            priceAmount: 1900,
           },
           MEDIUM: {
             points: 150,
             price: process.env.STRIPE_PRICE_ID_MEDIUM!,
-
-            priceAmount: 4900, // 49 zł (oszczędność!)
+            priceAmount: 4900,
           },
           LARGE: {
             points: 300,
             price: process.env.STRIPE_PRICE_ID_LARGE!,
-
-            priceAmount: 7900, // 79 zł (największa oszczędność!)
+            priceAmount: 7900,
           },
         };
 
@@ -352,7 +523,7 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
         // Utwórz Checkout Session dla jednorazowej płatności
         const session = await stripe.checkout.sessions.create({
           customer: customerId,
-          mode: "payment", // PAYMENT zamiast SUBSCRIPTION!
+          mode: "payment",
           payment_method_types: ["card", "blik", "p24"],
           line_items: [
             {
