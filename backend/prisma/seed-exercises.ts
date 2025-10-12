@@ -11770,7 +11770,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       },
       tags: ["intertekstualność", "Norwid", "Shakespeare"],
     },
-    // =========== PYTANIA LALKA ===============//
+    // =========== POCZĄTEK PYTAŃ LALKA ===============//
 
     {
       type: "CLOSED_SINGLE",
@@ -15473,6 +15473,894 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
     },
 
     // ======================== KONIEC PYTAŃ LALKA ===================== //
+
+    // ======================== POCZĄTEK PYTAŃ PAN TADEUSZ ================= //
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Kto jest autorem 'Pana Tadeusza'?",
+      content: {
+        options: [
+          "Juliusz Słowacki",
+          "Adam Mickiewicz",
+          "Zygmunt Krasiński",
+          "Cyprian Kamil Norwid",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "'Pan Tadeusz' został napisany przez Adama Mickiewicza w latach 1832-1834 w Paryżu, podczas emigracji po upadku powstania listopadowego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Jaki jest pełny tytuł epopei Mickiewicza?",
+      content: {
+        options: [
+          "Pan Tadeusz",
+          "Pan Tadeusz czyli Ostatni zajazd na Litwie",
+          "Pan Tadeusz - historia szlachecka",
+          "Pan Tadeusz i Zosia",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Pełny tytuł brzmi: 'Pan Tadeusz czyli Ostatni zajazd na Litwie. Historia szlachecka z roku 1811 i 1812 we dwunastu księgach wierszem'.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "W jakich latach toczy się akcja 'Pana Tadeusza'?",
+      content: {
+        options: ["1795-1796", "1811-1812", "1830-1831", "1863-1864"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Akcja toczy się w latach 1811-1812, tuż przed wyprawą Napoleona na Moskwę, która dawała Polakom nadzieję na odzyskanie niepodległości.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Gdzie głównie toczy się akcja 'Pana Tadeusza'?",
+      content: {
+        options: [
+          "W Warszawie",
+          "W Krakowie",
+          "W Soplicowie na Litwie",
+          "W Wilnie",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Akcja toczy się głównie w Soplicowie - majątku rodziny Sopliców na Litwie, oraz w pobliskim zamku Horeszków.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Jak ma na imię główny bohater epopei?",
+      content: {
+        options: ["Stanisław", "Jacek", "Tadeusz", "Gerwazy"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Główny bohater to Tadeusz Soplica, młody szlachcic powracający z Wilna do rodzinnego Soplicowa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Kim jest Zosia?",
+      content: {
+        options: [
+          "Córką Sędziego",
+          "Córką Telimeny",
+          "Wychowanicą Sędziego, wnuczką Stolnika Horeszki",
+          "Służącą w Soplicowie",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Zosia jest wychowanicą Sędziego, a w rzeczywistości wnuczką zamordowanego Stolnika Horeszki. Jej rodzice zginęli na Syberii.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Kto jest ojcem Tadeusza?",
+      content: {
+        options: ["Sędzia Soplica", "Jacek Soplica", "Hrabia", "Gerwazy"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Ojcem Tadeusza jest Jacek Soplica, ukrywający się jako ksiądz Robak. Sędzia jest stryjem Tadeusza.",
+      },
+    },
+
+    // POSTACIE - POZIOM 1-2
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Kto ukrywa się pod postacią księdza Robaka?",
+      content: {
+        options: ["Gerwazy", "Jacek Soplica", "Hrabia", "Jankiel"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Pod postacią bernardyna księdza Robaka ukrywa się Jacek Soplica, zabójca Stolnika Horeszki, ojciec Tadeusza, który w ten sposób pokutuje za swój czyn.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Który z chartów wygrał zakład według orzeczenia Wojskiego?",
+      content: {
+        options: ["Sokół", "Kusy", "Oba wygrały równo", "Żaden nie wygrał"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Wojski orzekł remis - oba charty jednocześnie dopadły zająca, więc oba wygrały. 'Godzien jest pałac Paca, godzien Pac pałaca'.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Jak nazywa się słynna szabla Gerwazego?",
+      content: {
+        options: ["Szczerbiec", "Scyzoryk", "Rózeczka", "Kropidło"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Gerwazy władał słynnym mieczem zwanym Scyzorykiem - ogromnym rapierem, który na końcu utworu podarował generałowi Kniaziewiczowi.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Za kogo Tadeusz wziął Telimenę przy pierwszym spotkaniu?",
+      content: {
+        options: [
+          "Za służącą",
+          "Za matkę Zosi",
+          "Za białą postać na tle drzew - wziął ją za dziewczynę z portretu",
+          "Za Hrabinę",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Tadeusz zobaczył Telimenę w ogrodzie na tle brzóz i wziął ją za młodą dziewczynę z portretu, który wcześniej podziwiał w Soplicowie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Kto zabił niedźwiedzia podczas polowania?",
+      content: {
+        options: [
+          "Hrabia",
+          "Tadeusz i ksiądz Robak - obaj strzelili jednocześnie",
+          "Asesor",
+          "Rejent",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Niedźwiedzia zabili wspólnie Tadeusz i ksiądz Robak, strzelając jednocześnie. To wywołało spór o to, kto powinien otrzymać skórę.",
+      },
+    },
+
+    // FABUŁA - POZIOM 1-2
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Co było przyczyną zajazdu na Soplicowo?",
+      content: {
+        options: [
+          "Chęć rabunku majątku",
+          "Zemsta polityczna",
+          "Spór o własność zamku i gniew Dobrzyńskich na Sopliców",
+          "Rozkaz Napoleona",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Zajazd wywołał spór prawny o zamek Horeszków oraz urazy osobiste szlachty zaściankowej, zwłaszcza Dobrzyńskich, do Soplicy.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Kto dowodził obroną Soplicowa podczas zajazdu?",
+      content: {
+        options: ["Sędzia", "Tadeusz", "Ksiądz Robak", "Maciej Rózeczka"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Ksiądz Robak (Jacek Soplica) dowodził obroną, choć jako ksiądz nie walczył sam, tylko dawał rady i organizował obronę.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "W jakiej porze roku rozpoczyna się akcja 'Pana Tadeusza'?",
+      content: {
+        options: ["Wiosną", "Latem", "Jesienią", "Zimą"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Akcja rozpoczyna się latem - w inwokacji czytamy o 'pagórkach zielonych' i 'łąkach zielonych, szeroko nad błękitnym Niemnem rozciągnionych'.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Jak nazywał się ostatni żyjący niedźwiedź w okolicach Soplicowa?",
+      content: {
+        options: ["Kusy", "Dobrzyński", "Bestia", "Matecznik"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Niedźwiedź nazywał się 'Dobrzyński' od Macieja Dobrzyńskiego, który kiedyś próbował go zabić, ale tylko postrzał w ucho.",
+      },
+    },
+
+    // MOTYWY I SYMBOLE - POZIOM 2
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Co symbolizuje zegar w dworze Sopliców z kurantem grającym Mazurka Dąbrowskiego?",
+      content: {
+        options: [
+          "Bogactwo rodziny",
+          "Nowoczesność dworu",
+          "Pamięć o tradycji i nadzieję na niepodległość",
+          "Umiłowanie muzyki",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Zegar z kurantem grającym Mazurka Dąbrowskiego symbolizuje pamięć o polskiej tradycji i nadzieję na odzyskanie niepodległości.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Co oznacza tytuł 'Ostatni zajazd na Litwie'?",
+      content: {
+        options: [
+          "Ostatnie polowanie",
+          "Ostatni pojedynek",
+          "Koniec tradycji szlacheckich najazdów zbrojnych na sąsiadów",
+          "Ostatnia bitwa z Rosjanami",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Zajazd na Soplicowo to ostatni tradycyjny szlachecki najazd zbrojny w sporze sąsiedzkim - symbol odchodzącego świata staropolskich obyczajów.",
+      },
+    },
+
+    // PYTANIA WIELOKROTNEGO WYBORU
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Które postacie zakochane były w Zosi? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "Tadeusz Soplica",
+          "Hrabia",
+          "Sak Dobrzyński",
+          "Ksiądz Robak",
+          "Asesor",
+        ],
+      },
+      correctAnswer: [0, 2],
+      metadata: {
+        explanation:
+          "W Zosi zakochani byli Tadeusz (którego ona też pokochała) oraz Sak Dobrzyński (syn Macieja Chrzciciela). Hrabia był zainteresowany Telimeną.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Które zwierzęta odgrywają ważną rolę w fabule? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "Charty Kusy i Sokół",
+          "Niedźwiedź",
+          "Koń Hrabiego",
+          "Zając podczas polowania",
+          "Kogut w Soplicowie",
+        ],
+      },
+      correctAnswer: [0, 1, 3],
+      metadata: {
+        explanation:
+          "Ważne role odgrywają: charty (spór o lepszego), niedźwiedź (polowanie), zając (rozstrzygnięcie sporu o charty). Koń i kogut nie mają istotnego znaczenia.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Jakie warstwy społeczne są przedstawione w 'Panu Tadeuszu'? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "Szlachta zamożna (Sędzia, Telimena)",
+          "Szlachta zaściankowa (Dobrzyńscy)",
+          "Arystokracja (Hrabia)",
+          "Chłopi",
+          "Mieszczaństwo",
+          "Żydzi (Jankiel)",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 3, 5],
+      metadata: {
+        explanation:
+          "W utworze przedstawiona jest szlachta zamożna i zaściankowa, arystokracja, chłopi oraz Żydzi. Brak jest mieszczaństwa - akcja toczy się na wsi.",
+      },
+    },
+
+    // DOPASOWYWANIE
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 4,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Dopasuj postać do jej charakterystycznego przedmiotu lub atrybutu.",
+      content: {
+        matchingType: "character_attribute",
+        leftColumn: [
+          { id: "A", text: "Gerwazy" },
+          { id: "B", text: "Wojski" },
+          { id: "C", text: "Telimena" },
+          { id: "D", text: "Maciej Dobrzyński" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Rózeczka (szabla)" },
+          { id: 2, text: "tabakiera" },
+          { id: 3, text: "Scyzoryk" },
+          { id: 4, text: "modne stroje paryskie" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2], // Gerwazy - Scyzoryk
+        [1, 1], // Wojski - tabakiera
+        [2, 3], // Telimena - modne stroje
+        [3, 0], // Maciej - Rózeczka
+      ],
+      metadata: {
+        explanation:
+          "Gerwazy władał Scyzorykiem, Wojski słynął z tabakiery, Telimena nosiła modne stroje z Petersburga, a Maciej Rózeczka miał słynną szablę Rózeczkę.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Dopasuj zdarzenie do księgi, w której miało miejsce.",
+      content: {
+        matchingType: "event_book",
+        leftColumn: [
+          { id: "A", text: "Powrót Tadeusza do Soplicowa" },
+          { id: "B", text: "Polowanie na niedźwiedzia" },
+          { id: "C", text: "Zajazd na Soplicowo" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Księga I" },
+          { id: 2, text: "Księga IV" },
+          { id: 3, text: "Księga VIII" },
+        ],
+      },
+      correctAnswer: [
+        [0, 0], // Powrót - Księga I
+        [1, 1], // Polowanie - Księga IV
+        [2, 2], // Zajazd - Księga VIII
+      ],
+      metadata: {
+        explanation:
+          "Powrót Tadeusza to Księga I ('Gospodarstwo'), polowanie to Księga IV ('Dyplomatyka i łowy'), zajazd to Księga VIII ('Zajazd').",
+      },
+    },
+
+    // CYTATY - POZIOM 2
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Kto wypowiada słowa: 'Kochajmy się!'?",
+      content: {
+        options: [
+          "Tadeusz do Zosi",
+          "To tytuł ostatniej księgi",
+          "Sędzia podczas uczty",
+          "Ksiądz Robak przed śmiercią",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "'Kochajmy się' to tytuł XII (ostatniej) księgi Pana Tadeusza, będący zarazem przesłaniem całego utworu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Uzupełnij cytat z inwokacji: 'Litwo! Ojczyzno moja! ty jesteś jak...'",
+      content: {
+        options: ["słońce", "matka", "zdrowie", "raj"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Pełny cytat: 'Litwo! Ojczyzno moja! ty jesteś jak zdrowie. Ile cię trzeba cenić, ten tylko się dowie, kto cię stracił.'",
+      },
+    },
+
+    // WYDARZENIA HISTORYCZNE
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Jakie wydarzenie historyczne kończy akcję 'Pana Tadeusza'?",
+      content: {
+        options: [
+          "Bitwa pod Grunwaldem",
+          "Powstanie listopadowe",
+          "Wkroczenie wojsk Napoleona na Litwę w 1812",
+          "Trzeci rozbiór Polski",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Akcja kończy się wkroczeniem wojsk napoleońskich na Litwę w 1812 roku podczas wyprawy na Moskwę. To daje nadzieję na odzyskanie niepodległości.",
+      },
+    },
+
+    // GATUNEK I KOMPOZYCJA
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Ile ksiąg liczy 'Pan Tadeusz'?",
+      content: {
+        options: ["10", "12", "14", "24"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "'Pan Tadeusz' składa się z 12 ksiąg pisanych wierszem (13-zgłoskowcem). Jest to nawiązanie do tradycji epopei antycznych.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Jakim wierszem napisany jest 'Pan Tadeusz'?",
+      content: {
+        options: [
+          "8-zgłoskowcem",
+          "11-zgłoskowcem",
+          "13-zgłoskowcem",
+          "Wierszem białym",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "'Pan Tadeusz' napisany jest polskim 13-zgłoskowcem (7+6) z rymami parzystymi (aabbcc...). To tradycyjny polski wers epicki.",
+      },
+    },
+
+    // PYTANIA O SZCZEGÓŁY FABULARNE
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Co Zosia dała Tadeuszowi przed jego wyjazdem?",
+      content: {
+        options: ["Pierścionek", "List", "Obrazek i relikwiarz", "Chusteczkę"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Zosia dała Tadeuszowi obrazek ze świętą Genowefą i relikwiarz z suknią świętego Józefa, mówiąc 'niech pamięta o Zosi'.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Na jakim instrumencie grał Jankiel podczas ostatniej uczty?",
+      content: {
+        options: [
+          "Na skrzypcach",
+          "Na fortepianie",
+          "Na cymbałach",
+          "Na flecie",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Jankiel grał na cymbałach. Jego koncert był punktem kulminacyjnym uczty - zagrał poloneza Trzeciego Maja i 'Jeszcze Polska nie zginęła'.",
+      },
+    },
+
+    // TRADYCJE I OBYCZAJE
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Jakie polskie obyczaje szlacheckie przedstawione są w utworze? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "Polowanie",
+          "Zajazd",
+          "Polonez",
+          "Uczta",
+          "Sejmik",
+          "Zaręczyny",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 3, 4, 5],
+      metadata: {
+        explanation:
+          "Wszystkie wymienione to tradycyjne obyczaje szlacheckie przedstawione w 'Panu Tadeuszu' - polowania, zajazdy, tańce, uczty, sejmiki i zaręczyny.",
+      },
+    },
+
+    // PYTANIA INTERPRETACYJNE - POZIOM 2
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Dlaczego Jacek Soplica zabił Stolnika Horeszkę?",
+      content: {
+        options: [
+          "Z zemsty politycznej",
+          "Dla pieniędzy",
+          "Z zazdrości miłosnej - kochał córkę Stolnika",
+          "Z rozkazu Rosjan",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Jacek zabił Stolnika w afekcie z zazdrości - kochał jego córkę Ewę, ale Stolnik wydał ją za wojewodę. Jacek strzelił w przypływie rozpaczy i gniewu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Co symbolizuje koncert Jankiela w ostatniej księdze?",
+      content: {
+        options: [
+          "Tylko rozrywkę podczas uczty",
+          "Historię Polski i nadzieję na niepodległość",
+          "Talent muzyczny Żydów",
+          "Bogactwo Sopliców",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Koncert Jankiela to muzyczna historia Polski - od radości (Trzeci Maj), przez upadek (Targowica), rzeź Pragi, tułaczkę, po nadzieję (Mazurek Dąbrowskiego).",
+      },
+    },
+
+    // PROSTA ANALIZA LITERACKA
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Jaki typ narracji dominuje w 'Panu Tadeuszu'?",
+      content: {
+        options: [
+          "Pierwszoosobowa",
+          "Trzecioosobowa wszechwiedzący narrator",
+          "Drugoosobowa",
+          "Strumień świadomości",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "W 'Panu Tadeuszu' dominuje narracja trzecioosobowa z narratorem wszechwiedzącym, choć miejscami ujawnia się 'ja' narratora (np. w inwokacji i epilogu).",
+      },
+    },
+
+    // PYTANIA OTWARTE - PISEMNE (20-30% wszystkich)
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Wymień trzy główne rody szlacheckie występujące w 'Panu Tadeuszu'.",
+      content: {
+        expectedKeywords: ["Soplicowie", "Horeszkowie", "Dobrzyńscy"],
+        maxWords: 10,
+      },
+      metadata: {
+        explanation:
+          "Główne rody to: Soplicowie (Sędzia, Tadeusz), Horeszkowie (dawni właściciele zamku), Dobrzyńscy (szlachta zaściankowa).",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Krótko wyjaśnij, dlaczego 'Pan Tadeusz' nazywany jest 'epopeją narodową'.",
+      content: {
+        expectedKeywords: [
+          "historia",
+          "tradycja",
+          "obyczaje",
+          "Polska",
+          "naród",
+        ],
+        maxWords: 50,
+      },
+      metadata: {
+        explanation:
+          "'Pan Tadeusz' to epopeja narodowa, bo przedstawia historię i obyczaje polskiej szlachty, stanowi obraz ginącego świata Rzeczpospolitej i wyraża tęsknotę za ojczyzną.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question:
+        "Opisz krótko, jak zmieniają się uczucia Tadeusza - od Telimeny do Zosi.",
+      content: {
+        expectedKeywords: [
+          "zauroczenie",
+          "rozczarowanie",
+          "miłość",
+          "dojrzewanie",
+        ],
+        maxWords: 60,
+      },
+      metadata: {
+        explanation:
+          "Tadeusz najpierw ulega zauroczeniu dojrzałą Telimeną, ale szybko się rozczarowuje jej próżnością. Stopniowo odkrywa prawdziwe uczucie do młodej, skromnej Zosi.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Podaj tytuły trzech dowolnych ksiąg 'Pana Tadeusza'.",
+      content: {
+        expectedKeywords: [
+          "Gospodarstwo",
+          "Zamek",
+          "Umizgi",
+          "Dyplomatyka",
+          "Kłótnia",
+          "Zaścianek",
+          "Rada",
+          "Zajazd",
+          "Bitwa",
+          "Emigracja",
+          "Rok 1812",
+          "Kochajmy się",
+        ],
+        maxWords: 15,
+      },
+      metadata: {
+        explanation:
+          "Przykładowe tytuły: 'Gospodarstwo', 'Zamek', 'Umizgi', 'Dyplomatyka i łowy', 'Kłótnia', 'Zaścianek', 'Rada', 'Zajazd', 'Bitwa', 'Emigracja. Jacek', 'Rok 1812', 'Kochajmy się'.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 4,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Wyjaśnij symbolikę tytułu ostatniej księgi - 'Kochajmy się'.",
+      content: {
+        expectedKeywords: ["pojednanie", "zgoda", "miłość", "jedność", "naród"],
+        maxWords: 70,
+      },
+      metadata: {
+        explanation:
+          "'Kochajmy się' to wezwanie do narodowej zgody i jedności. Po wszystkich sporach i walkach następuje pojednanie - osobiste (małżeństwa) i narodowe (nadzieja na niepodległość).",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "ROMANTICISM",
+      work: "Pan Tadeusz",
+      question: "Opisz krótko postać Gerwazego - kim był i jaką rolę odgrywał.",
+      content: {
+        expectedKeywords: [
+          "Klucznik",
+          "Horeszków",
+          "wierny",
+          "zemsta",
+          "Scyzoryk",
+        ],
+        maxWords: 60,
+      },
+      metadata: {
+        explanation:
+          "Gerwazy to Klucznik rodu Horeszków, wierny sługa pragnący zemsty za śmierć swojego pana. Posługuje się słynnym mieczem Scyzorykiem i organizuje zajazd na Soplicowo.",
+      },
+    },
+    // ======================= KONIEC PYTAŃ PAN TADEUSZ ===================//
 
     // Zadania o epoce współczesnej
     {

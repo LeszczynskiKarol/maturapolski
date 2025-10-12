@@ -46,7 +46,7 @@ export function TestBanner({
             </div>
           </div>
           <Link
-            to={`/register}`}
+            to={`/register`}
             className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2 whitespace-nowrap"
           >
             Załóż konto i rozwiąż test

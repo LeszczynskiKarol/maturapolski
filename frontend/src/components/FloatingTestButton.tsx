@@ -111,7 +111,7 @@ export function FloatingTestButton({
               Test z {hubTitle}
             </p>
             <p className="text-xs text-blue-100 whitespace-nowrap">
-              {isLoggedIn ? "Rozpocznij teraz" : "Zacznij za darmo"}
+              {isLoggedIn ? "Rozpocznij teraz" : "Załóż konto"}
             </p>
           </div>
         </div>
