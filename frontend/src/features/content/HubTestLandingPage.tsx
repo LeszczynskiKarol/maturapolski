@@ -142,7 +142,7 @@ export function HubTestLandingPage() {
       <Helmet>
         <title>
           {hub.metaTitle ||
-            `Test z ${hub.title} - powtórka i sprawdzian wiedzy na maturę`}
+            `${hub.title} - test: powtórka i sprawdzian wiedzy na maturę`}
         </title>
         <meta
           name="description"
