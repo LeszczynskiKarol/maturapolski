@@ -101,9 +101,9 @@ export function RatingWidget({
       <script type="application/ld+json">
         {JSON.stringify({
           "@context": "https://schema.org",
-          "@type": "Article",
+          "@type": "Course",
           name: pageTitle,
-          about: hubTitle,
+          description: hubTitle,
           aggregateRating: {
             "@type": "AggregateRating",
             ratingValue: averageRating.toFixed(1),
