@@ -75,8 +75,6 @@ export class ContentService {
 
     if (!hub) throw new Error("Hub not found");
 
-    // Pobierz statystyki (ile zadań jest dostępnych dla tego hub-a)
-    // Jeśli masz powiązanie Exercise -> work, użyj tego
     let exerciseCount = 0;
 
     if (hub.type === "LITERARY_WORK" && hub.title) {
@@ -87,7 +85,6 @@ export class ContentService {
       });
     }
 
-    // Pobierz ostatnie oceny stron tego hub-a (dla social proof)
     const recentRatings = await prisma.pageRating.findMany({
       where: {
         page: {
@@ -102,7 +99,6 @@ export class ContentService {
       },
     });
 
-    // Oblicz średnią ocenę wszystkich stron w tym hub-ie
     const avgRating =
       recentRatings.length > 0
         ? recentRatings.reduce((sum, r) => sum + r.rating, 0) /
@@ -122,8 +118,9 @@ export class ContentService {
         year: hub.year,
         genre: hub.genre,
         isRequired: hub.isRequired,
-        metaTitle: hub.metaTitle,
-        metaDescription: hub.metaDescription,
+        // USUŃ te dwie linie - niech frontend używa fallbacka:
+        // metaTitle: hub.metaTitle,
+        // metaDescription: hub.metaDescription,
         pages: hub.pages,
       },
       stats: {
@@ -134,7 +131,6 @@ export class ContentService {
       },
     };
   }
-
   async getHub(slug: string) {
     const hub = await prisma.contentHub.findUnique({
       where: { slug, isPublished: true },
