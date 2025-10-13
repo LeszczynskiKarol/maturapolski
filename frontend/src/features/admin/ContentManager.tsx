@@ -796,6 +796,8 @@ export default function ContentManager() {
         title: pageForm.title,
         slug: pageForm.customSlug,
         content: pageForm.content,
+        metaTitle: pageForm.metaTitle || null,
+        metaDescription: pageForm.metaDescription || null,
         readingTime: pageForm.readingTime
           ? parseInt(pageForm.readingTime)
           : null,

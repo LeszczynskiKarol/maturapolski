@@ -11770,6 +11770,3827 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       },
       tags: ["intertekstualność", "Norwid", "Shakespeare"],
     },
+
+    // =========== POCZĄTEK PYTAŃ ANTYGONA ==============//
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Kto jest autorem tragedii Antygona?",
+      content: {
+        options: ["Ajschylos", "Sofokles", "Eurypides", "Arystofanes"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Autorem Antygony jest Sofokles - jeden z trzech wielkich tragików greckich obok Ajschylosa i Eurypidesa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Gdzie toczy się akcja tragedii Antygona?",
+      content: {
+        options: ["w Atenach", "w Sparcie", "w Tebach", "w Koryncie"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Akcja tragedii toczy się w Tebach, starożytnym mieście greckim, które było siedzibą rodu Labdakidów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Kim jest Antygona?",
+      content: {
+        options: ["córką Kreona", "córką Edypa", "żoną Hajmona", "królową Teb"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antygona jest córką Edypa i Jokasty, siostrą Eteoklesa, Polinika i Ismeny.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jak nazywa się siostra Antygony?",
+      content: {
+        options: ["Helena", "Ismena", "Eurydyka", "Ifigenia"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Ismena jest młodszą siostrą Antygony, córką Edypa i Jokasty.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Kim jest Kreon w tragedii?",
+      content: {
+        options: [
+          "ojcem Antygony",
+          "bratem Edypa",
+          "wujem Antygony i władcą Teb",
+          "wróżbitą",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Kreon jest bratem Jokasty, a więc wujem Antygony. Po śmierci Eteoklesa i Polinika obejmuje tron Teb.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jak nazywają się bracia Antygony?",
+      content: {
+        options: [
+          "Eteokles i Polinik",
+          "Kastor i Polluks",
+          "Agamemnon i Menelaos",
+          "Akwiles i Hektor",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Eteokles i Polinik to bracia Antygony, synowie Edypa, którzy zginęli w bratobójczej walce o władzę w Tebach.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Co zakazał Kreon po śmierci Polinika?",
+      content: {
+        options: [
+          "mówienia o nim",
+          "noszenia żałoby",
+          "pochowania go",
+          "modlitwy za jego duszę",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Kreon wydał edykt zakazujący pochowania Polinika, uznając go za zdrajcę ojczyzny, który napadł na rodzime Teby.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jakiej karze podlegał ten, kto złamał zakaz Kreona?",
+      content: {
+        options: [
+          "wygnaniu z miasta",
+          "więzieniu dożywotniemu",
+          "śmierci przez ukamienowanie",
+          "utracie majątku",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Kreon zagroził karą śmierci przez ukamienowanie każdemu, kto ośmieli się pogrzebać ciało Polinika.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Kto pochował ciało Polinika?",
+      content: {
+        options: ["Ismena", "Antygona", "Hajmon", "strażnicy"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antygona pogrzebała brata wbrew zakazowi Kreona, posypując jego ciało ziemią i dokonując obrzędów pogrzebowych.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Kim jest Hajmon?",
+      content: {
+        options: [
+          "bratem Antygony",
+          "synem Kreona i narzeczonym Antygony",
+          "strażnikiem miejskim",
+          "ślepym wieszczem",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Hajmon jest synem Kreona i narzeczonym Antygony. Kocha ją i próbuje przekonać ojca do zmiany wyroku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Do jakiej kary został zmieniony wyrok na Antygonę?",
+      content: {
+        options: [
+          "spalenia na stosie",
+          "zamurowania żywcem w grocie skalnej",
+          "utopienia",
+          "powieszenia",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Kreon zmienił wyrok z publicznego ukamienowania na zamurowanie Antygony żywcem w grocie skalnej, by formalnie uniknąć odpowiedzialności za przelanie krwi.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Kim jest Tejrezjasz?",
+      content: {
+        options: [
+          "ślepym wieszczem",
+          "strażnikiem",
+          "dowódcą wojsk",
+          "członkiem chóru",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Tejrezjasz to ślepý wróżbita, szanowany prorok, który ostrzega Kreona przed gniewem bogów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Dlaczego Antygona pogrzebała Polinika?",
+      content: {
+        options: [
+          "bo była zakochana w bracie",
+          "z obowiązku wobec praw boskich i rodzinnych",
+          "z zemsty na Kreonie",
+          "aby zostać bohaterką",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antygona pogrzebała brata kierując się prawami boskimi i niepisanymi prawami rodzinnymi, które dla niej były wyższe od edyktu Kreona.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Dlaczego Ismena odmówiła pomocy Antygonie?",
+      content: {
+        options: [
+          "nie kochała Polinika",
+          "ze strachu przed karą i poczucia słabości jako kobiety",
+          "była lojalna wobec Kreona",
+          "nie wierzyła w bogów",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Ismena odmówiła ze strachu przed śmiercią i z przekonania, że kobiety są zbyt słabe, by sprzeciwiać się władzy mężczyzn.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jakie argumenty przytacza Antygona broniąc swojego czynu?",
+      content: {
+        options: [
+          "mówi, że Polinik był niewinny",
+          "odwołuje się do niepisanych praw boskich starszych od dekretów Kreona",
+          "twierdzi, że Kreon nie ma prawa do wydawania dekretów",
+          "odmawia wyjaśnień",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antygona powołuje się na niepisane, niezmienne prawa boskie, które są wieczne i wyższe od praw ludzkich. Mówi: 'Nie Zeus ani Dike ogłosili ten zakaz'.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jak Hajmon próbuje przekonać ojca do zmiany wyroku?",
+      content: {
+        options: [
+          "groźbami i przemocą",
+          "odwołując się do opinii ludu i głosu rozumu",
+          "oferując pieniądze",
+          "planując zamach stanu",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Hajmon używa argumentów racjonalnych: mówi o opinii ludu, który sympatyzuje z Antygoną, ostrzega przed pycha ojca i radzi elastyczność w rządzeniu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Co przepowiada Tejrezjasz Kreonowi?",
+      content: {
+        options: [
+          "zwycięstwo w wojnie",
+          "gniew bogów i śmierć kogoś bliskiego",
+          "długie panowanie",
+          "bogactwo i chwałę",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Tejrezjasz ostrzega Kreona, że ściągnął na siebie gniew bogów i że zapłaci synem za swoje przewiny wobec zmarłych i żywych.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Kiedy Kreon zmienia zdanie i postanawia uwolnić Antygonę?",
+      content: {
+        options: [
+          "gdy Hajmon go o to błaga",
+          "gdy lud się zbuntuje",
+          "po przepowiedni Tejrezjasza",
+          "nigdy nie zmienia zdania",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Kreon zmienia zdanie dopiero po straszliwej przepowiedni Tejrezjasza, ale jest już za późno - Antygona popełniła samobójstwo.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jak ginie Antygona?",
+      content: {
+        options: [
+          "zostaje ukamienowana",
+          "popełnia samobójstwo przez powieszenie",
+          "umiera z głodu w grocie",
+          "zostaje zabita przez Kreona",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antygona popełnia samobójstwo, wieszając się w grocie, zanim Kreon zdąży ją uwolnić.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jak ginie Hajmon?",
+      content: {
+        options: [
+          "w bitwie",
+          "zostaje zabity przez Kreona",
+          "popełnia samobójstwo przy ciele Antygony",
+          "umiera z rozpaczy",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Hajmon popełnia samobójstwo przy ciele ukochanej Antygony, przepełniony rozpaczą i gniewem na ojca.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Kim jest Eurydyka?",
+      content: {
+        options: [
+          "matką Antygony",
+          "żoną Kreona i matką Hajmona",
+          "siostrą Ismeny",
+          "służącą w pałacu",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Eurydyka jest żoną Kreona i matką Hajmona. Ginie w finale tragedii.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jak ginie Eurydyka?",
+      content: {
+        options: [
+          "z choroby",
+          "popełnia samobójstwo po śmierci syna",
+          "zostaje zabita w walce",
+          "umiera ze starości",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Eurydyka popełnia samobójstwo po usłyszeniu wieści o śmierci syna Hajmona, obwiniając za to Kreona.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jaki los spotyka Kreona na końcu tragedii?",
+      content: {
+        options: [
+          "zostaje królem i rządzi mądrze",
+          "zostaje wygnany z Teb",
+          "traci syna i żonę, pozostaje zrujnowanym człowiekiem",
+          "popełnia samobójstwo",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Kreon traci wszystko: syna Hajmona i żonę Eurydykę. Pozostaje żywy, ale całkowicie zrujnowany psychicznie, uznając swoją głupotę i pychę.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jak nazywa się przeklęty ród, z którego pochodzi Antygona?",
+      content: {
+        options: ["Atryda", "Labdakida", "Pelopida", "Tantalida"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antygona jest ostatnią przedstawicielką przeklętego rodu Labdakidów, którego protoplastą był Labdakos, dziadek Edypa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Kto w dramacie greckim komentuje wydarzenia i wyraża opinie zbiorowe?",
+      content: {
+        options: ["narrator", "chór", "prorok", "strażnicy"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Chór w tragedii greckiej składa się z obywateli Teb i pełni funkcję komentatora wydarzeń, wyraża opinie zbiorowe i refleksje moralne.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jaki główny konflikt stanowi oś tragedii?",
+      content: {
+        options: [
+          "konflikt między Antygoną a Ismeną",
+          "konflikt między prawami boskimi a ludzkimi",
+          "konflikt między Tebami a wrogami",
+          "konflikt między Hajmonem a Kreonem",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Główny konflikt tragedii to starcie praw boskich (reprezentowanych przez Antygonę) z prawami ludzkimi, państwowymi (reprezentowanymi przez Kreona).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Która postać mówi: 'Współkochać przyszłam, nie współnienawidzieć'?",
+      content: {
+        options: ["Ismena", "Antygona", "Eurydyka", "Chór"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "To słowa Antygony, która wyjaśnia swoją motywację - przyszła na świat, aby kochać, nie nienawidzić. Wyraża to jej naturę i szlachetność.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Co oznacza greckie pojęcie 'hybris' w kontekście tragedii?",
+      content: {
+        options: [
+          "mądrość i rozsądek",
+          "pychę i przekroczenie granic wyznaczonych przez bogów",
+          "odwagę w walce",
+          "sprawiedliwość",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Hybris to pycha, zuchwałość i przekroczenie granic wyznaczonych przez bogów i naturę. W tragedii greckiej zawsze prowadzi do katastrofy.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Który z braci Antygony bronił Teb?",
+      content: {
+        options: ["Polinik", "Eteokles", "obaj", "żaden"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Eteokles bronił Teb i został pochowany z honorami jako bohater. Polinik natomiast zaatakował rodzinne miasto i został uznany za zdrajcę.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Który z braci Antygony został uznany za zdrajcę?",
+      content: {
+        options: ["Eteokles", "Polinik", "obaj", "żaden"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Polinik został uznany za zdrajcę, ponieważ przyprowadził obce wojska i zaatakował rodzinne Teby.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Dopasuj postacie do ich ról w tragedii.",
+      content: {
+        matchingType: "character_role",
+        leftColumn: [
+          { id: "A", text: "Antygona" },
+          { id: "B", text: "Kreon" },
+          { id: "C", text: "Tejrezjasz" },
+          { id: "D", text: "Hajmon" },
+        ],
+        rightColumn: [
+          { id: 1, text: "ślepý wieszcz ostrzegający przed gniewem bogów" },
+          { id: 2, text: "władca Teb wydający edykt" },
+          { id: 3, text: "córka Edypa grzebiąca brata" },
+          { id: 4, text: "syn Kreona, narzeczony Antygony" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 1],
+        [2, 0],
+        [3, 3],
+      ],
+      metadata: {
+        explanation:
+          "Antygona grzebie brata, Kreon jest władcą wydającym edykt, Tejrezjasz to wieszcz, Hajmon to syn Kreona i narzeczony Antygony.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Które cechy charakteryzują Antygonę? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "odważna i zdecydowana",
+          "podporządkowuje się prawom państwowym",
+          "lojalna wobec rodziny",
+          "kieruje się prawami boskimi",
+          "tchórzliwa i uległa",
+        ],
+      },
+      correctAnswer: [0, 2, 3],
+      metadata: {
+        explanation:
+          "Antygona jest odważna, lojalna wobec rodziny i kieruje się prawami boskimi. Nie podporządkowuje się prawom państwowym Kreona i nie jest tchórzliwa.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Dopasuj postacie do ich końcowego losu.",
+      content: {
+        matchingType: "character_fate",
+        leftColumn: [
+          { id: "A", text: "Antygona" },
+          { id: "B", text: "Hajmon" },
+          { id: "C", text: "Eurydyka" },
+          { id: "D", text: "Kreon" },
+        ],
+        rightColumn: [
+          { id: 1, text: "samobójstwo przy ciele ukochanej" },
+          { id: 2, text: "przeżywa, ale traci wszystko" },
+          { id: 3, text: "samobójstwo przez powieszenie w grocie" },
+          { id: 4, text: "samobójstwo po śmierci syna" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 0],
+        [2, 3],
+        [3, 1],
+      ],
+      metadata: {
+        explanation:
+          "Antygona wiesza się w grocie, Hajmon popełnia samobójstwo przy jej ciele, Eurydyka zabija się po śmierci syna, a Kreon przeżywa jako zrujnowany człowiek.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Uzupełnij informacje o fabule tragedii.",
+      content: {
+        textWithGaps:
+          "Po bratobójczej walce [1] i [2], władzę w Tebach obejmuje [3]. Wydaje on edykt zakazujący [4] Polinika.",
+        gaps: [
+          {
+            id: 1,
+            options: ["Eteoklesa", "Hajmona", "Kreona", "Edypa"],
+          },
+          {
+            id: 2,
+            options: ["Polinika", "Tejrezjasza", "Edypa", "Kreona"],
+          },
+          {
+            id: 3,
+            options: ["Eteokles", "Hajmon", "Kreon", "Edyp"],
+          },
+          {
+            id: 4,
+            options: ["chwalenia", "oplakiwania", "pochowania", "nazywania"],
+          },
+        ],
+      },
+      correctAnswer: [0, 0, 2, 2],
+      metadata: {
+        explanation:
+          "Po bratobójczej walce Eteoklesa i Polinika, władzę obejmuje Kreon, który zakazuje pochowania Polinika.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Które zdania dotyczące Kreona są prawdziwe? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "jest władcą Teb",
+          "wydaje edykt zakazujący pochówku Polinika",
+          "od początku słucha rad Tejrezjasza",
+          "traci syna i żonę",
+          "jest bratem Edypa",
+        ],
+      },
+      correctAnswer: [0, 1, 3],
+      metadata: {
+        explanation:
+          "Prawdziwe: Kreon jest władcą Teb, wydaje edykt i traci rodzinę. Fałszywe: nie słucha od razu Tejrezjasza, jest bratem Jokasty (nie Edypa).",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Dopasuj argumenty do postaci, które je wypowiadają.",
+      content: {
+        matchingType: "arguments_characters",
+        leftColumn: [
+          { id: "A", text: "Prawa boskie są wieczne i niezmienne" },
+          { id: "B", text: "Porządek państwowy jest najważniejszy" },
+          { id: "C", text: "Lud sympatyzuje z Antygoną" },
+          { id: "D", text: "Kobiety są zbyt słabe, by sprzeciwiać się władzy" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Ismena" },
+          { id: 2, text: "Hajmon" },
+          { id: 3, text: "Antygona" },
+          { id: 4, text: "Kreon" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 3],
+        [2, 1],
+        [3, 0],
+      ],
+      metadata: {
+        explanation:
+          "Antygona broni praw boskich, Kreon - porządku państwowego, Hajmon mówi o opinii ludu, Ismena o słabości kobiet.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Które motywy pojawiają się w tragedii Antygona? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "konflikt praw boskich i ludzkich",
+          "lojalność rodzinna",
+          "pycha władcy (hybris)",
+          "miłość romantyczna (Hajmon i Antygona)",
+          "podróż morska",
+          "pogrzeb i obrzędy",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 3, 5],
+      metadata: {
+        explanation:
+          "W tragedii występują: konflikt praw, lojalność rodzinna, pycha Kreona, miłość Hajmona i Antygony oraz motyw pogrzebowy. Nie ma motywu podróży morskiej.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Wyjaśnij, dlaczego Antygona zdecydowała się pogrzebać Polinika.",
+      content: {
+        instruction:
+          "Podaj główne powody decyzji Antygony i wyjaśnij, jakimi zasadami się kierowała. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie obowiązku wobec rodziny i brata (1 pkt)",
+          "odwołanie się do praw boskich jako wyższych od ludzkich (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Antygona pogrzebała Polinika kierując się obowiązkiem rodzinnym i prawami boskimi. Wierzyła, że niepisane, wieczne prawa bogów są wyższe od edyktów Kreona. Hades wymaga równych praw dla wszystkich zmarłych, niezależnie od ich czynów za życia.",
+        keyWords: [
+          "prawa boskie",
+          "rodzina",
+          "obowiązek",
+          "Hades",
+          "wieczne prawa",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Opisz, jakie argumenty używa Kreon broniąc swojego edyktu.",
+      content: {
+        instruction:
+          "Wyjaśnij, dlaczego Kreon uważa swój edykt za słuszny. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie na porządek państwowy i dobro Teb (1 pkt)",
+          "rozróżnienie na obrońców i zdrajców ojczyzny (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Kreon uważa, że porządek państwowy jest najważniejszy. Twierdzi, że Polinik był zdrajcą, który zaatakował Teby, dlatego nie zasługuje na honorowy pochówek. Eteokles bronił miasta i został pochowany z honorami. Kreon wierzy, że dobro państwa przewyższa prawa rodzinne.",
+        keyWords: [
+          "porządek państwowy",
+          "zdrajca",
+          "dobro Teb",
+          "Eteokles",
+          "obrońca",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Wyjaśnij, dlaczego Ismena odmówiła pomocy Antygonie.",
+      content: {
+        instruction: "Opisz powody odmowy Ismeny w 2-3 zdaniach. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie strachu przed śmiercią (1 pkt)",
+          "poczucie słabości jako kobiety wobec władzy mężczyzn (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Ismena odmówiła ze strachu przed karą śmierci. Czuła się zbyt słaba jako kobieta, by sprzeciwiać się edyktowi męskiego władcy. W przeciwieństwie do siostry, nie miała odwagi przeciwstawić się Kreonowi.",
+        keyWords: ["strach", "kara", "słabość", "kobieta", "władza"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Opisz, w jaki sposób Hajmon próbuje przekonać ojca do zmiany wyroku.",
+      content: {
+        instruction:
+          "Wymień główne argumenty Hajmona w rozmowie z Kreonem. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "odwołanie się do opinii ludu (1 pkt)",
+          "ostrzeżenie przed pychą i sztywnością w rządzeniu (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Hajmon mówi ojcu, że lud Teb sympatyzuje z Antygoną i uważa wyrok za niesprawiedliwy. Ostrzega przed pychą i brakiem elastyczności, porównując dobrego władcę do drzewa, które ugina się pod naporem wiatru. Radzi ojcu, by nie był zbyt uparty i wysłuchał głosu rozsądku.",
+        keyWords: [
+          "opinia ludu",
+          "pycha",
+          "elastyczność",
+          "drzewo",
+          "rozsądek",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Wyjaśnij, co przepowiada Tejrezjasz i dlaczego Kreon w końcu zmienia zdanie.",
+      content: {
+        instruction:
+          "Opisz przepowiednię wieszcza i reakcję Kreona. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "przepowiednia gniewu bogów i śmierci bliskiej osoby (1 pkt)",
+          "zmiana decyzji Kreona ze strachu przed karą (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Tejrezjasz przepowiada Kreonowi gniew bogów za bezczeszczenie zmarłego i skazanie żywej na śmierć. Ostrzega, że Kreon zapłaci synem za swoje przewiny. Przerażony prorok zmienia zdanie ze strachu przed straszliwą karą, ale jest już za późno - Antygona i Hajmon giną.",
+        keyWords: ["gniew bogów", "przepowiednia", "syn", "strach", "za późno"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Opisz końcowy los Kreona i wyjaśnij, czego go nauczyło cierpienie.",
+      content: {
+        instruction:
+          "Wyjaśnij, co traci Kreon i do jakich wniosków dochodzi. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "utrata syna Hajmona i żony Eurydyki (1 pkt)",
+          "uznanie własnej głupoty i pychy (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Kreon traci syna Hajmona, który popełnia samobójstwo, oraz żonę Eurydykę, która również się zabija obwiniając męża. Pozostaje żywy, ale całkowicie zrujnowany. Przyznaje się do własnej głupoty i pychy, prosząc o śmierć. Nauczył się, że pycha prowadzi do katastrofy.",
+        keyWords: [
+          "Hajmon",
+          "Eurydyka",
+          "samobójstwo",
+          "pycha",
+          "głupota",
+          "katastrofa",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Scharakteryzuj krótko postawę Ismeny wobec Antygony.",
+      content: {
+        instruction:
+          "Opisz różnicę między siostrami i ich wyborami. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "Ismena jest uległa i bojaźliwa (1 pkt)",
+          "Antygona jest odważna i bezkompromisowa (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Ismena jest uległa, bojaźliwa i pragmatyczna. Boi się śmierci i uważa, że kobiety nie powinny sprzeciwiać się mężczyznom. Antygona jest odważna, bezkompromisowa i kieruje się wyższymi wartościami. Ismena reprezentuje konformizm, Antygona - heroizm.",
+        keyWords: [
+          "uległa",
+          "bojaźliwa",
+          "odważna",
+          "bezkompromisowa",
+          "konformizm",
+          "heroizm",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Wyjaśnij, kim był Edyp i jaki związek miał z Antygoną.",
+      content: {
+        instruction:
+          "Opisz postać Edypa i jego relację rodzinną z Antygoną. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: ["Edyp był królem Teb (1 pkt)", "był ojcem Antygony (1 pkt)"],
+      },
+      metadata: {
+        expectedAnswer:
+          "Edyp był królem Teb i ojcem Antygony. Nieświadomie zabił swojego ojca Lajosa i poślubił własną matkę Jokastę. Z tego kazirodczego związku urodziły się czworo dzieci: Antygona, Ismena, Eteokles i Polinik. Ród Labdakidów był przeklęty.",
+        keyWords: [
+          "król Teb",
+          "ojciec",
+          "Jokasta",
+          "przeklęty ród",
+          "Labdakidzi",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Wyjaśnij, jaka jest rola chóru w tragedii Antygona.",
+      content: {
+        instruction:
+          "Opisz funkcję chóru w dramacie greckim na przykładzie Antygony. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "komentowanie wydarzeń (1 pkt)",
+          "wyrażanie opinii zbiorowej i refleksji moralnych (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Chór w Antygonie składa się z obywateli Teb i pełni funkcję komentatora wydarzeń. Wyraża opinie zbiorowe, filozofuje o kondycji ludzkiej i losie. Chór przestrzega przed pychą, mówi o potędze człowieka, a na końcu podsumowuje tragedię stwierdzając, że bogowie karzą pychę.",
+        keyWords: [
+          "obywatele Teb",
+          "komentarz",
+          "opinia zbiorowa",
+          "filozofia",
+          "pycha",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Wyjaśnij, co oznacza pojęcie 'tragizmu' na przykładzie sytuacji Antygony.",
+      content: {
+        instruction:
+          "Opisz sytuację tragiczną Antygony - dlaczego każdy wybór był zły. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "sytuacja bez wyjścia - każdy wybór jest zły (1 pkt)",
+          "konflikt wartości: obowiązek rodzinny vs posłuszeństwo władzy (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Tragizm to sytuacja bez wyjścia, gdzie każdy wybór prowadzi do utraty ważnej wartości. Antygona stoi przed dylematem: jeśli pogrzebie brata, zginie; jeśli nie pogrzebie, obrazi bogów i zdradzi rodzinę. Nie może wybrać dobrze - musi odrzucić coś, co jest dla niej ważne.",
+        keyWords: [
+          "sytuacja bez wyjścia",
+          "dylemat",
+          "wartości",
+          "konflikt",
+          "utrata",
+        ],
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "W jakiej epoce literackiej powstała tragedia Antygona?",
+      content: {
+        options: [
+          "w średniowieczu",
+          "w starożytności (antyk)",
+          "w renesansie",
+          "w oświeceniu",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antygona to dramat antyczny - powstał w starożytnej Grecji w V wieku p.n.e.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jaką funkcję pełni postać Tejrezjasza w strukturze tragedii?",
+      content: {
+        options: [
+          "komicznego reliffu",
+          "narratora opowiadającego historię",
+          "głosu bogów i ostrzeżenia przed katastrofą",
+          "sprzymierzeńca Kreona",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Tejrezjasz jako ślepý wieszcz reprezentuje wolę bogów, ostrzega Kreona przed katastrofą i przepowiada przyszłość - jest głosem wyższych sił.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Dlaczego Kreon zmienił karę z ukamienowania na zamurowanie w grocie?",
+      content: {
+        options: [
+          "z litości nad Antygoną",
+          "na prośbę Hajmona",
+          "aby formalnie uniknąć odpowiedzialności za przelanie krwi",
+          "z rozkazu bogów",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Kreon zmienił wyrok na zamurowanie żywcem w grocie, aby formalnie uniknąć odpowiedzialności za bezpośrednie przelanie krwi - Antygona miała umrzeć 'sama', z głodu lub pragnienia.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Co symbolizuje bratobójcza walka Eteoklesa i Polinika?",
+      content: {
+        options: [
+          "walkę dobra ze złem",
+          "konflikt pokoleń",
+          "ciągłość klątwy rodu i tragedii rodzinnej",
+          "walkę o niepodległość",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Bratobójcza walka to kolejny element klątwy ciążącej na rodzie Labdakidów - synowie Edypa zabijają się nawzajem, kontynuując tragiczne dziedzictwo rodziny.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Jaka jest główna różnica w podejściu do prawa między Antygoną a Kreonem?",
+      content: {
+        options: [
+          "Antygona wierzy w prawo ludzkie, Kreon w boskie",
+          "Antygona wierzy w prawa boskie i niepisane, Kreon w prawo stanowione przez władcę",
+          "oboje wierzą w te same prawa",
+          "Antygona nie wierzy w żadne prawa",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antygona kieruje się prawami boskimi i niepisanymi prawami natury, które są wieczne i niezmienne. Kreon natomiast uważa, że prawo stanowione przez władcę (edykt) jest najważniejsze i nadrzędne.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Które słowa Antygony najlepiej wyrażają jej pogląd na prawa boskie?",
+      content: {
+        options: [
+          "Muszę słuchać Kreona, bo jest władcą",
+          "Nie Zeus ani Dike ogłosili ten zakaz - niepisane prawa bogów są wieczne",
+          "Prawo ludzkie jest najważniejsze",
+          "Pogrzeb to tylko forma, nie ma znaczenia",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antygona mówi: 'Nie Zeus ani Dike ogłosili ten zakaz' - podkreśla, że edykt Kreona nie pochodzi od bogów, a niepisane prawa boskie są wieczne i nadrzędne wobec praw ludzkich.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Co oznacza stwierdzenie Antygony, że przyszła 'współkochać, nie współnienawidzieć'?",
+      content: {
+        options: [
+          "że jest zakochana w Hajmonie",
+          "że jej naturą jest miłość, nie nienawiść - nawet do wroga",
+          "że kocha tylko swoją rodzinę",
+          "że nienawidzi Kreona",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "To kluczowe zdanie charakteryzujące Antygonę - mówi, że przyszła na świat, aby kochać (nawet zdrajcę-brata), nie aby nienawidzić. Wyraża to jej naturę opartą na miłości i lojalności rodzinnej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jak Antygona postrzega swoją śmierć?",
+      content: {
+        options: [
+          "jako największe nieszczęście",
+          "jako zysk wobec życia pełnego cierpień",
+          "jako karę za grzechy",
+          "jako niesprawiedliwość",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antygona mówi, że przedwczesna śmierć to dla niej 'zysk wobec życia pełnego cierpień' - jako ostatnia z przeklętego rodu widzi śmierć jako wyzwolenie od tragicznego losu rodziny.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jaką wizję władzy reprezentuje Kreon?",
+      content: {
+        options: [
+          "demokratyczną - władza pochodzi z woli ludu",
+          "teokratyczną - władza pochodzi od bogów",
+          "absolutystyczną - władca ma nieograniczoną władzę",
+          "anarchistyczną - brak władzy",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Kreon reprezentuje władzę absolutną - uważa, że dobro państwa jest najważniejsze, a władca ma prawo stanowić prawa bez ograniczeń. Nie uznaje praw wyższych od woli monarchy.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Co symbolizuje metafora drzewa w mowie Hajmona?",
+      content: {
+        options: [
+          "siłę i potęgę władcy",
+          "elastyczność i umiar w rządzeniu - ugięcie zamiast złamania",
+          "słabość i tchórzostwo",
+          "stałość i niezmienność",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Hajmon mówi, że drzewo które się ugina przetrwa burzę, a sztywne - złamie się. Symbolizuje to potrzebę elastyczności, umiaru i mądrości w rządzeniu - władca musi umieć się ugąć, nie być sztywny.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jaka jest ironia tragiczna w losie Kreona?",
+      content: {
+        options: [
+          "chciał porządku, ale spowodował chaos i tragedię",
+          "stał się bogatym władcą",
+          "został obalony przez lud",
+          "zdobył uznanie bogów",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Ironia tragiczna polega na tym, że Kreon chciał być wzorowym władcą strzegącym porządku państwowego, a skończył jako zrujnowany człowiek, który przez własną pychę stracił syna i żonę - sam sprowadził na siebie katastrofę.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Dlaczego Kreon oskarża strażników o przekupstwo?",
+      content: {
+        options: [
+          "bo znalazł u nich pieniądze",
+          "bo nie może uwierzyć, że ktoś złamał edykt z zasad, więc szuka materialnej motywacji",
+          "bo strażnicy się przyznali",
+          "bo lud go o tym poinformował",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Kreon nie potrafi zrozumieć, że ktoś mógłby złamać jego edykt z wyższych pobudek moralnych, więc szuka materialistycznego wytłumaczenia - oskarża o przekupstwo przez wrogów miasta.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jak Kreon postrzega płeć w kontekście władzy?",
+      content: {
+        options: [
+          "uważa kobiety i mężczyzn za równych",
+          "silnie rozdziela sfery męską i żeńską, dla niego posłuszeństwo kobiecie to hańba",
+          "preferuje kobiety na stanowiskach władzy",
+          "nie ma zdania na ten temat",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Kreon 'silnie i zdecydowanie oddzielał sferę męską od sfery kobiecej'. Mówi, że jeśli Antygona wygra, to on przestanie być mężczyzną - posłuszeństwo kobiecie to dla niego hańba i zagrożenie męskiego porządku władzy.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jaki paradoks ujawnia się w postawie Kreona?",
+      content: {
+        options: [
+          "mówi o rozumie, ale zachowuje się emocjonalnie",
+          "kocha Antygonę, ale ją skazuje",
+          "nienawidzi Polinika, ale go grzebie",
+          "wierzy w bogów, ale ich nie słucha",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Paradoks polega na tym, że Kreon przypisuje kobietom emocjonalność a mężczyznom rozum, ale 'okazuje się, że to on zachowuje się emocjonalnie i poddaje się swojej emocjonalnej naturze' - działa impulsywnie, z pychy i gniewu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Co oznacza pojęcie 'hamartia' w tragedii greckiej?",
+      content: {
+        options: [
+          "nagrodę bogów",
+          "błąd tragiczny bohatera prowadzący do katastrofy",
+          "triumf nad wrogami",
+          "mądrość życiową",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Hamartia to błąd tragiczny - wadliwa decyzja lub cecha charakteru bohatera (np. pycha Kreona), która prowadzi do jego upadku i katastrofy zgodnie z logiką tragedii greckiej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Czym jest 'agon' w tragedii Antygona?",
+      content: {
+        options: [
+          "pieśnią chóru",
+          "sceną pojedynku słownego między bohaterami (Antygona vs Kreon)",
+          "monologiem bohatera",
+          "epilogiem tragedii",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Agon to formalna debata, pojedynek słowny między antagonistami w tragedii greckiej. W Antygonie główny agon to starcie między Antygoną a Kreonem, gdzie przedstawiają swoje argumenty.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jaka jest funkcja postaci Ismeny w strukturze tragedii?",
+      content: {
+        options: [
+          "komiczny relief",
+          "kontrast podkreślający heroizm Antygony",
+          "główna antagonistka",
+          "narratorka",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Ismena pełni funkcję postaci kontrastowej (foil character) - jej tchórzostwo, uległość i pragmatyzm podkreślają przez kontrast odwagę, bezkompromisowość i heroizm Antygony.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Co symbolizuje zakaz pochówku Polinika?",
+      content: {
+        options: [
+          "tylko karę za zdradę",
+          "konflikt między prawem państwowym a prawami boskimi i rodzinnymi",
+          "lenistwo władcy",
+          "obojętność wobec zmarłych",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Zakaz pochówku symbolizuje główny konflikt tragedii - starcie prawa państwowego (edykt Kreona) z prawami boskimi i niepisanymi prawami rodzinnymi, które nakazują godny pochówek każdego zmarłego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Co oznacza zdanie Chóru: 'Siła jest dziwy, lecz nad wszystkie sięga / Dziwy człowieka potęga'?",
+      content: {
+        options: [
+          "że człowiek jest słaby",
+          "że człowiek ma wielką moc i zdolności, ale też może je użyć źle",
+          "że tylko bogowie są potężni",
+          "że natura jest potężniejsza od człowieka",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "To oda o człowieku (stasimon) wyrażająca ambiwalencję: człowiek ma wielką potęgę (umysł, mowę, technikę), ale może użyć jej zarówno na dobre jak i na złe - może być cudem lub straszną siłą niszczącą.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jaka jest funkcja sceny z wieszczem Tejrezjaszem?",
+      content: {
+        options: [
+          "tylko przepowiada przyszłość",
+          "stanowi punkt zwrotny - perypetia, po którym Kreon zmienia zdanie",
+          "wprowadza komizm",
+          "oskarża Antygonę",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Scena z Tejrezjaszem to perypetia (punkt zwrotny akcji) - przepowiednia wieszcza powoduje nagłą zmianę w postawie Kreona, który wreszcie decyduje się uwolnić Antygonę, ale jest już za późno.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Dlaczego Ismena próbuje później przyznać się do współudziału w pogrzebie?",
+      content: {
+        options: [
+          "bo naprawdę pomagała",
+          "z lojalności wobec siostry i poczucia winy",
+          "bo chce być sławna",
+          "z nienawiści do Kreona",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Ismena, widząc skazanie siostry, czuje poczucie winy za swoją wcześniejszą odmowę i lojalność rodzinną. Próbuje podzielić los siostry, choć Antygona odrzuca jej 'spóźniony heroizm'.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "W jaki sposób tragedia kończy się dla wszystkich głównych postaci?",
+      content: {
+        options: [
+          "wszyscy żyją szczęśliwie",
+          "wszyscy giną fizycznie",
+          "Antygona, Hajmon i Eurydyka giną, Kreon żyje jako 'żywy trup'",
+          "tylko Kreon ginie",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Antygona, Hajmon i Eurydyka popełniają samobójstwo. Kreon przeżywa, ale Posłaniec nazywa go 'żywym trupem' - jest psychicznie zniszczony, co jest najgorszą karą.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Co oznacza stwierdzenie, że Kreon 'ponosi klęskę nie przez to, kim był, ale kim nie był'?",
+      content: {
+        options: [
+          "że był złym człowiekiem",
+          "że nie był wystarczająco mądry, odważny i sprawiedliwy by być dobrym władcą",
+          "że był zbyt dobry",
+          "że był zbyt młody",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Ta diagnoza oznacza, że Kreon nie był ani wystarczająco inteligentny, ani odważny, by być dobrym i sprawiedliwym władcą - jego ograniczenia i pycha doprowadziły do tragedii.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Jaka jest rola motywu pieniądza w przemowie Kreona do strażników?",
+      content: {
+        options: [
+          "Kreon krytykuje pieniądz jako źródło wszelkiej zbrodni i korupcji",
+          "Kreon chwali pieniądz",
+          "Kreon jest obojętny na pieniądze",
+          "Kreon rozdaje pieniądze strażnikom",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Kreon mówi: 'nie ma gorszej potęgi jak pieniądz który burzy miasta, krzywi prawe dusze i jest mistrzem wszelkiej zbrodni' - oskarża strażników o przekupstwo i krytykuje destrukcyjną moc pieniądza.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Dopasuj koncepcje do postaci, które je reprezentują.",
+      content: {
+        matchingType: "concepts_characters",
+        leftColumn: [
+          { id: "A", text: "Prawa boskie i niepisane" },
+          { id: "B", text: "Racja stanu i porządek państwowy" },
+          { id: "C", text: "Pragmatyzm i strach" },
+          { id: "D", text: "Miłość i próba mediacji" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Hajmon" },
+          { id: 2, text: "Kreon" },
+          { id: 3, text: "Antygona" },
+          { id: 4, text: "Ismena" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 1],
+        [2, 3],
+        [3, 0],
+      ],
+      metadata: {
+        explanation:
+          "Antygona reprezentuje prawa boskie, Kreon - rację stanu, Ismena - pragmatyzm i strach, Hajmon - miłość i próbę znalezienia kompromisu.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Które elementy składają się na tragizm sytuacji Antygony? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "konflikt wartości nie do pogodzenia",
+          "każdy wybór prowadzi do utraty czegoś ważnego",
+          "ciężar klątwy rodzinnej",
+          "możliwość uniknięcia konfliktu",
+          "brak odpowiedzialności za czyny",
+          "świadomość konsekwencji",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 5],
+      metadata: {
+        explanation:
+          "Tragizm Antygony to: konflikt niekompatybilnych wartości, sytuacja bez wyjścia (każdy wybór to strata), klątwa rodu Labdakidów i pełna świadomość konsekwencji. Nie mogła uniknąć konfliktu i była odpowiedzialna za swój wybór.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Dopasuj cechy do typu bohatera tragicznego.",
+      content: {
+        matchingType: "tragic_hero_traits",
+        leftColumn: [
+          { id: "A", text: "Antygona" },
+          { id: "B", text: "Kreon" },
+          { id: "C", text: "Hajmon" },
+        ],
+        rightColumn: [
+          {
+            id: 1,
+            text: "bohater świadomy, heroiczny - wybiera wartości wyższe",
+          },
+          { id: 2, text: "ofiara miłości i konfliktu pokoleń" },
+          {
+            id: 3,
+            text: "bohater z hamartią (pycha) prowadzącą do katastrofy",
+          },
+        ],
+      },
+      correctAnswer: [
+        [0, 0],
+        [1, 2],
+        [2, 1],
+      ],
+      metadata: {
+        explanation:
+          "Antygona to bohaterka heroiczna świadomie wybierająca śmierć dla wartości. Kreon to klasyczny bohater tragiczny z hamartią (pychą). Hajmon to ofiara miłości i konfliktu między ojcem a ukochaną.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Uzupełnij analizę konfliktu w tragedii.",
+      content: {
+        textWithGaps:
+          "Główny konflikt w Antygonie to starcie [1] reprezentowanych przez Antygonę z [2] reprezentowanymi przez Kreona. Antygona odwołuje się do [3], podczas gdy Kreon do [4].",
+        gaps: [
+          {
+            id: 1,
+            options: [
+              "praw państwowych",
+              "praw boskich",
+              "praw rodzinnych",
+              "praw ludzkich",
+            ],
+          },
+          {
+            id: 2,
+            options: [
+              "praw boskich",
+              "praw rodzinnych",
+              "praw państwowych",
+              "tradycji",
+            ],
+          },
+          {
+            id: 3,
+            options: [
+              "woli ludu",
+              "edyktu",
+              "niepisanych praw bogów",
+              "tradycji",
+            ],
+          },
+          {
+            id: 4,
+            options: [
+              "woli bogów",
+              "tradycji",
+              "racji stanu i edyktu",
+              "opinii ludu",
+            ],
+          },
+        ],
+      },
+      correctAnswer: [1, 2, 2, 2],
+      metadata: {
+        explanation:
+          "Konflikt to starcie praw boskich (Antygona) z prawami państwowymi (Kreon). Antygona odwołuje się do niepisanych praw bogów, Kreon do racji stanu i swojego edyktu.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Które elementy struktury tragedii greckiej występują w Antygonie? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "prolog - wprowadzenie w sytuację",
+          "agon - pojedynek słowny",
+          "stasimon - pieśń chóru",
+          "perypetia - punkt zwrotny (scena z Tejrezjaszem)",
+          "katastrofa - finalne nieszczęście",
+          "happy end",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 3, 4],
+      metadata: {
+        explanation:
+          "Antygona ma wszystkie klasyczne elementy tragedii greckiej: prolog (rozmowa sióstr), agon (Antygona vs Kreon), stasimon (pieśni chóru), perypetia (Tejrezjasz), katastrofa (śmierci i upadek Kreona). Nie ma happy endu.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Dopasuj cytaty do ich znaczenia w tragedii.",
+      content: {
+        matchingType: "quotes_meaning",
+        leftColumn: [
+          { id: "A", text: "Współkochać przyszłam, nie współnienawidzieć" },
+          { id: "B", text: "Nie Zeus ani Dike ogłosili ten zakaz" },
+          { id: "C", text: "Zginie - to śmiercią sprowadzi zgon inny" },
+          { id: "D", text: "Zmieniam swe serce, zrobię to" },
+        ],
+        rightColumn: [
+          { id: 1, text: "ostrzeżenie Hajmona o samobójstwie" },
+          { id: 2, text: "natura Antygony - miłość, nie nienawiść" },
+          { id: 3, text: "odmowa uznania edyktu Kreona za boskie prawo" },
+          { id: 4, text: "spóźniona zmiana decyzji Kreona" },
+        ],
+      },
+      correctAnswer: [
+        [0, 1],
+        [1, 2],
+        [2, 0],
+        [3, 3],
+      ],
+      metadata: {
+        explanation:
+          "Cytaty wyrażają: naturę Antygony (miłość), odrzucenie edyktu jako prawa boskiego, ostrzeżenie o samobójstwie i spóźnioną przemianę Kreona.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Które stwierdzenia o Kreonie są prawdziwe? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "jest negatywnym odbiciem Antygony",
+          "reprezentuje rozum, ale działa emocjonalnie",
+          "od początku jest gotów na kompromis",
+          "jego pycha (hybris) prowadzi do katastrofy",
+          "uosabia ideał sprawiedliwego władcy",
+          "kończy jako 'żywy trup' - zrujnowany psychicznie",
+        ],
+      },
+      correctAnswer: [0, 1, 3, 5],
+      metadata: {
+        explanation:
+          "Prawdziwe: Kreon to negatywne odbicie Antygony, deklaruje rozum ale jest emocjonalny, jego pycha prowadzi do tragedii, kończy zrujnowany. Fałszywe: nie jest gotów na kompromis i nie jest ideałem władcy.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Dopasuj sceny do ich funkcji dramaturgicznych.",
+      content: {
+        matchingType: "scenes_functions",
+        leftColumn: [
+          { id: "A", text: "Rozmowa Antygony i Ismeny na początku" },
+          { id: "B", text: "Pojedynek Antygony z Kreonem" },
+          { id: "C", text: "Przyjście Tejrezjasza" },
+          { id: "D", text: "Doniesienie o śmierci Hajmona i Eurydyki" },
+        ],
+        rightColumn: [
+          { id: 1, text: "agon - główny konflikt ideowy" },
+          { id: 2, text: "katastrofa - finalne nieszczęście" },
+          { id: 3, text: "perypetia - punkt zwrotny" },
+          { id: 4, text: "ekspozycja - przedstawienie sytuacji" },
+        ],
+      },
+      correctAnswer: [
+        [0, 3],
+        [1, 0],
+        [2, 2],
+        [3, 1],
+      ],
+      metadata: {
+        explanation:
+          "Rozmowa sióstr to ekspozycja, pojedynek z Kreonem to agon, przyjście Tejrezjasza to perypetia (punkt zwrotny), doniesienia o śmierciach to katastrofa.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Wyjaśnij, na czym polega konflikt tragiczny w sytuacji Antygony.",
+      content: {
+        instruction:
+          "Opisz dylemat Antygony i dlaczego każdy jej wybór był tragiczny. (50-80 słów)",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "wskazanie konfliktu między obowiązkiem rodzinnym a posłuszeństwem władzy (1 pkt)",
+          "wyjaśnienie, że każdy wybór prowadzi do utraty wartości (1 pkt)",
+          "odniesienie do praw boskich vs ludzkich (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Antygona stoi przed tragicznym dylematem: jeśli pogrzebie brata, złamie edykt i zginie; jeśli nie pogrzebie, obrazi bogów i zdradzi rodzinę. Każdy wybór oznacza utratę fundamentalnej wartości - nie może wybrać dobrze. To klasyczna sytuacja tragiczna: konflikt praw boskich z ludzkimi, gdzie bohaterka musi poświęcić jedno dla drugiego.",
+        keyWords: [
+          "dylemat",
+          "konflikt wartości",
+          "prawa boskie",
+          "prawa ludzkie",
+          "utrata",
+          "sytuacja bez wyjścia",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Porównaj postawy Antygony i Ismeny wobec edyktu Kreona.",
+      content: {
+        instruction:
+          "Wskaż różnice w motywacji, argumentach i wyborach obu sióstr. (60-90 słów)",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "charakterystyka postawy Antygony (bezkompromisowa, heroiczna) (1 pkt)",
+          "charakterystyka postawy Ismeny (pragmatyczna, bojaźliwa) (1 pkt)",
+          "wyjaśnienie różnic w wartościach i motywacji (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Antygona jest bezkompromisowa i heroiczna - kieruje się prawami boskimi i lojalnością rodzinną, gotowa umrzeć za zasady. Ismena jest pragmatyczna i bojaźliwa - uznaje słabość kobiet wobec męskiej władzy, wybiera życie nad zasady. Antygona wierzy w wartości wyższe od życia, Ismena w rozsądne przetrwanie. Ich kontrast pokazuje różne odpowiedzi na sytuację tragiczną.",
+        keyWords: [
+          "Antygona",
+          "Ismena",
+          "heroizm",
+          "pragmatyzm",
+          "prawa boskie",
+          "strach",
+          "kontrast",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 4,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Przeanalizuj ewolucję postaci Kreona w tragedii.",
+      content: {
+        instruction:
+          "Opisz przemianę Kreona od pewnego siebie władcy do zrujnowanego człowieka. (80-120 słów)",
+      },
+      rubric: {
+        maxScore: 4,
+        criteria: [
+          "opis początkowej postawy - pewność siebie, pycha (1 pkt)",
+          "odrzucanie rad Hajmona i Tejrezjasza (1 pkt)",
+          "punkt zwrotny - przepowiednia i zmiana decyzji (1 pkt)",
+          "finał - upadek, uznanie winy, żywy trup (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Na początku Kreon jest pewnym siebie władcą, który wierzy w swoją rację i porządek państwowy. Odrzuca rady syna i chóru z pychy. Dopiero straszliwa przepowiednia Tejrezjasza przeraża go i powoduje zmianę decyzji, ale jest już za późno. Traci syna i żonę przez własną głupotę i sztywność. Kończy jako 'żywy trup' - zrujnowany psychicznie, błagający o śmierć, przyznający się do winy. Jego ewolucja pokazuje mechanizm tragedii: pycha prowadzi do katastrofy.",
+        keyWords: [
+          "ewolucja",
+          "pycha",
+          "pewność siebie",
+          "Tejrezjasz",
+          "punkt zwrotny",
+          "katastrofa",
+          "uznanie winy",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Wyjaśnij znaczenie metafory drzewa w przemowie Hajmona do ojca.",
+      content: {
+        instruction:
+          "Zinterpretuj metaforę i wyjaśnij, czego Hajmon próbuje nauczyć ojca. (50-70 słów)",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "wyjaśnienie metafory: drzewo ugina się, nie łamie (1 pkt)",
+          "odniesienie do elastyczności w rządzeniu (1 pkt)",
+          "ostrzeżenie przed sztywnością i pychą (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Hajmon porównuje dobrego władcę do drzewa, które ugina się pod naporem wiatru i dzięki temu przetrwa, podczas gdy sztywne drzewo się złamie. Metafora symbolizuje potrzebę elastyczności, umiaru i mądrości w rządzeniu. Hajmon ostrzega ojca, że sztywność i pycha doprowadzą do katastrofy - władca musi umieć się ugąć i słuchać głosu rozsądku.",
+        keyWords: [
+          "metafora",
+          "drzewo",
+          "elastyczność",
+          "umiar",
+          "pycha",
+          "sztywność",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 4,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Omów funkcję postaci Tejrezjasza w strukturze dramatu.",
+      content: {
+        instruction:
+          "Wyjaśnij rolę wieszcza i znaczenie jego przepowiedni dla rozwoju akcji. (80-100 słów)",
+      },
+      rubric: {
+        maxScore: 4,
+        criteria: [
+          "określenie Tejrezjasza jako głosu bogów (1 pkt)",
+          "przepowiednia jako punkt zwrotny (perypetia) (1 pkt)",
+          "wymuszenie zmiany decyzji Kreona (1 pkt)",
+          "ujawnienie prawdy o gniewie bogów (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Tejrezjasz to ślepý wieszcz reprezentujący wolę bogów i głos wyższego porządku. Jego przyjście stanowi perypetię - punkt zwrotny akcji. Przepowiednia gniewu bogów i śmierci syna wreszcie przeraża Kreona i wymusza zmianę decyzji. Tejrezjasz ujawnia prawdę: edykt Kreona obraził bogów, bezczeszcząc zmarłego i skazując żywą na śmierć. Jest głosem transcendencji i sprawiedliwości kosmicznej, która musi zwyciężyć.",
+        keyWords: [
+          "Tejrezjasz",
+          "wieszcz",
+          "głos bogów",
+          "perypetia",
+          "przepowiednia",
+          "punkt zwrotny",
+          "sprawiedliwość",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Wyjaśnij pojęcie 'hybris' na przykładzie Kreona.",
+      content: {
+        instruction:
+          "Zdefiniuj hybris i wskaż konkretne przejawy pychy Kreona. (50-80 słów)",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "definicja hybris jako pychy, przekroczenia granic (1 pkt)",
+          "przykłady pychy Kreona (edykt, odrzucanie rad) (1 pkt)",
+          "konsekwencja - kara bogów (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Hybris to pycha i przekroczenie granic wyznaczonych przez bogów i naturę. Kreon przejawia hybris gdy: wydaje edykt przeciwny prawom boskim, odmawia pochówku zmarłemu, odrzuca rady syna i chóru, uważa się za wyższego od praw boskich. Jego pycha prowadzi do nieuchronnej kary - traci wszystko. W tragedii greckiej hybris zawsze kończy się katastrofą.",
+        keyWords: [
+          "hybris",
+          "pycha",
+          "przekroczenie granic",
+          "edykt",
+          "prawa boskie",
+          "kara",
+          "katastrofa",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 4,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Przeanalizuj rolę chóru w Antygonie.",
+      content: {
+        instruction:
+          "Opisz funkcje chóru: komentującą, filozoficzną i dramaturgiczną. (90-120 słów)",
+      },
+      rubric: {
+        maxScore: 4,
+        criteria: [
+          "funkcja komentująca - głos zbiorowy (1 pkt)",
+          "funkcja filozoficzna - refleksje o życiu, losie (1 pkt)",
+          "stasimon - oda o człowieku (1 pkt)",
+          "morał końcowy o pysze i mądrości (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Chór w Antygonie pełni kilka funkcji. Po pierwsze, komentuje wydarzenia jako głos zbiorowy obywateli Teb, wyrażając opinie pośrednie między skrajnymi postawami. Po drugie, filozofuje o kondycji ludzkiej, losie i granicach ludzkiej potęgi - szczególnie w słynnej odzie 'Siła jest dziwy, lecz nad wszystkie sięga dziwy człowieka potęga'. Po trzecie, wyznacza strukturę dramatu przez stasimon (pieśni). Końcowy morał chóru podsumowuje tragedię: bogowie karzą pychę, największym skarbem jest rozum i umiar, a mądrości uczymy się przez cierpienie.",
+        keyWords: [
+          "chór",
+          "komentarz",
+          "filozofia",
+          "oda",
+          "człowiek",
+          "potęga",
+          "morał",
+          "pycha",
+          "mądrość",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Wyjaśnij paradoks w postawie Kreona wobec emocji i rozumu.",
+      content: {
+        instruction:
+          "Opisz, jak Kreon postrzega sfery męską i żeńską, a jak faktycznie się zachowuje. (60-90 słów)",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "poglądy Kreona: mężczyźni = rozum, kobiety = emocje (1 pkt)",
+          "faktyczne zachowanie: Kreon działa emocjonalnie (1 pkt)",
+          "ironia - odwrócenie stereotypów (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Kreon silnie rozdziela sferę męską od żeńskiej, przypisując mężczyznom rozum a kobietom emocjonalność. Paradoks polega na tym, że to właśnie Kreon zachowuje się emocjonalnie - działa z pychy, gniewu, urażonej dumy. Antygona natomiast postępuje racjonalnie według swoich zasad. Sofokles odwraca stereotypy płciowe pokazując, że to władca kieruje się emocjami, nie rozumem.",
+        keyWords: [
+          "paradoks",
+          "Kreon",
+          "emocje",
+          "rozum",
+          "stereotypy płciowe",
+          "pycha",
+          "gniew",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Wyjaśnij znaczenie stwierdzenia Antygony o śmierci jako 'zysku'.",
+      content: {
+        instruction:
+          "Zinterpretuj, dlaczego Antygona postrzega przedwczesną śmierć jako zysk. (50-70 słów)",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "odniesienie do życia pełnego cierpień (1 pkt)",
+          "klątwa rodu Labdakidów (1 pkt)",
+          "śmierć jako wyzwolenie i zachowanie honoru (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Antygona mówi, że przedwczesna śmierć to dla niej 'zysk wobec życia pełnego cierpień'. Jako ostatnia przedstawicielka przeklętego rodu Labdakidów nosi ciężar tragedii rodzinnej. Śmierć traktuje jako wyzwolenie od dalszych nieszczęść i sposób na zachowanie honoru. Woli umrzeć wierna zasadom niż żyć w hańbie.",
+        keyWords: [
+          "śmierć",
+          "zysk",
+          "cierpienie",
+          "klątwa",
+          "ród Labdakidów",
+          "wyzwolenie",
+          "honor",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 4,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Omów funkcję postaci Hajmona jako mediatora między skrajnościami.",
+      content: {
+        instruction:
+          "Wyjaśnij, w jaki sposób Hajmon próbuje pogodzić konflikt i dlaczego ponosi porażkę. (80-110 słów)",
+      },
+      rubric: {
+        maxScore: 4,
+        criteria: [
+          "Hajmon jako postać pośrednia, próba mediacji (1 pkt)",
+          "argumenty: głos ludu, rozum, elastyczność (1 pkt)",
+          "odrzucenie przez ojca z powodu pychy (1 pkt)",
+          "tragiczny los - samobójstwo jako konsekwencja niemożności pogodzenia (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Hajmon pełni rolę mediatora - próbuje pogodzić ojca z Antygoną i znaleźć kompromis. Używa argumentów racjonalnych: odwołuje się do opinii ludu, przestrzega przed pychą, radzi elastyczność w rządzeniu. Jest rozdarty między miłością do Antygony a posłuszeństwem ojcu. Jego próba mediacji kończy się porażką - Kreon odrzuca rady syna z pychy. Hajmon popełnia samobójstwo przy ciele ukochanej, stając się ofiarą niemożliwego do pogodzenia konfliktu. Jego śmierć pokazuje, że w tragedii nie ma miejsca na kompromis.",
+        keyWords: [
+          "Hajmon",
+          "mediator",
+          "kompromis",
+          "miłość",
+          "racjonalne argumenty",
+          "odrzucenie",
+          "samobójstwo",
+          "tragedia",
+        ],
+      },
+    },
+    {
+      type: "SYNTHESIS_NOTE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 6,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Napisz notatkę syntetyzującą o konflikcie tragicznym w Antygonie.",
+      content: {
+        topic:
+          "Konflikt tragiczny między prawami boskimi a ludzkimi w Antygonie",
+        requirements: [
+          "charakterystyka praw boskich reprezentowanych przez Antygonę",
+          "charakterystyka praw państwowych reprezentowanych przez Kreona",
+          "niemożność pogodzenia obu systemów wartości",
+          "konsekwencje konfliktu dla bohaterów",
+          "150-200 słów",
+        ],
+      },
+      rubric: {
+        maxScore: 6,
+        criteria: [
+          "omówienie praw boskich i argumentów Antygony (1,5 pkt)",
+          "omówienie praw państwowych i argumentów Kreona (1,5 pkt)",
+          "wyjaśnienie niemożności kompromisu (1,5 pkt)",
+          "przedstawienie konsekwencji dla bohaterów (1,5 pkt)",
+        ],
+      },
+    },
+    {
+      type: "SYNTHESIS_NOTE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 7,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Porównaj dwie główne postacie kobiece w tragedii.",
+      content: {
+        topic: "Kontrast między Antygoną a Ismeną jako dwa modele kobiecości",
+        requirements: [
+          "charakterystyka Antygony: heroizm, bezkompromisowość",
+          "charakterystyka Ismeny: pragmatyzm, strach",
+          "różnice w motywacji i wyborach",
+          "funkcja kontrastu w strukturze dramatu",
+          "200-250 słów",
+        ],
+      },
+      rubric: {
+        maxScore: 7,
+        criteria: [
+          "charakterystyka Antygony (2 pkt)",
+          "charakterystyka Ismeny (2 pkt)",
+          "analiza różnic (2 pkt)",
+          "funkcja kontrastu (1 pkt)",
+        ],
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jaki typ bohatera reprezentuje Antygona w tragedii greckiej?",
+      content: {
+        options: [
+          "bohatera z hamartią prowadzącą do upadku",
+          "bohatera komicznego",
+          "bohatera heroicznego świadomie wybierającego śmierć dla zasad",
+          "bohatera bez wad",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Antygona to bohaterka heroiczna, która świadomie wybiera śmierć dla wyższych wartości. Nie ma hamartii (błędu) jak Kreon - jej wybór jest świadomy i szlachetny.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jaką funkcję pełni w tragedii motyw klątwy rodu Labdakidów?",
+      content: {
+        options: [
+          "tylko element fabularny",
+          "tło zwiększające tragizm - bohaterowie dziedziczą ciężar przeszłości",
+          "komiczny relief",
+          "rozwiązanie konfliktu",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Klątwa rodu Labdakidów stanowi tło zwiększające tragizm sytuacji - Antygona i jej rodzeństwo dziedziczą brzęmię grzechów Edypa, co potęguje fatalność ich losów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Co oznacza pojęcie 'katharsis' w kontekście tragedii?",
+      content: {
+        options: [
+          "oczyszczenie emocjonalne widza przez litość i trwogę",
+          "zemstę bohaterów",
+          "happy end",
+          "komizm sytuacyjny",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Katharsis to oczyszczenie emocjonalne widza - przeżywając litość i trwogę wobec losu bohaterów, widz dokonuje wewnętrznej puryfikacji według Arystotelesa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "W jaki sposób tragedia realizuje zasadę jedności akcji?",
+      content: {
+        options: [
+          "ma wiele równoległych wątków",
+          "wszystko podporządkowane jednej akcji: pogrzeb Polinika i jego konsekwencje",
+          "nie ma spójnej akcji",
+          "akcja toczy się w wielu miejscach",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antygona realizuje klasyczną jedność akcji - wszystkie wydarzenia (pogrzeb, konfrontacje, śmierci) wynikają z jednej akcji: decyzji Antygony o pogrzebaniu brata wbrew edyktowi.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jaka jest relacja między Kreonem a Hajmonem?",
+      content: {
+        options: [
+          "bracia",
+          "ojciec i syn, konflikt pokoleń",
+          "wrogowie polityczni",
+          "przyjaciele",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Kreon i Hajmon to ojciec i syn. Ich konflikt reprezentuje także konflikt pokoleń - młody Hajmon reprezentuje nowe wartości (miłość, elastyczność), stary Kreon - sztywność i władzę.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Co symbolizuje samobójstwo Hajmona przy ciele Antygony?",
+      content: {
+        options: [
+          "zwykłe nieszczęście",
+          "triumf miłości nad władzą ojca i niemożność życia bez ukochanej",
+          "tchórzostwo",
+          "przypadek",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Samobójstwo Hajmona symbolizuje triumf miłości nad władzą tyrańskiego ojca oraz niemożność życia bez ukochanej. Jest też zemstą na ojcu - Kreon traci syna przez swoją pychę.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jak interpretować samobójstwo Eurydyki?",
+      content: {
+        options: [
+          "jako przypadkową śmierć",
+          "jako akt oskarżenia Kreona i dopełnienie jego kary",
+          "jako oznakę tchórzostwa",
+          "jako happy end",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Eurydyka popełnia samobójstwo obwiniając męża za śmierć syna. To dopełnienie kary Kreona - traci nie tylko syna ale i żonę, zostaje całkowicie sam ze swoją winą.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Dlaczego Kreon nazywany jest 'żywym trupem' na końcu?",
+      content: {
+        options: [
+          "bo faktycznie umarł",
+          "bo jest zrujnowany psychicznie - żyje ale cierpi więcej niż gdyby umarł",
+          "bo jest chory",
+          "bo został wygnany",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Posłaniec nazywa Kreona 'żywym trupem' bo choć żyje fizycznie, jest całkowicie zniszczony psychicznie. Życie w poczuciu winy i bólu jest gorsze niż śmierć.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Dopasuj terminy z tragedii greckiej do ich znaczeń.",
+      content: {
+        matchingType: "terms_meanings",
+        leftColumn: [
+          { id: "A", text: "Hybris" },
+          { id: "B", text: "Hamartia" },
+          { id: "C", text: "Katharsis" },
+          { id: "D", text: "Perypetia" },
+        ],
+        rightColumn: [
+          { id: 1, text: "punkt zwrotny akcji" },
+          { id: 2, text: "pycha, przekroczenie granic" },
+          { id: 3, text: "oczyszczenie emocjonalne" },
+          { id: 4, text: "błąd tragiczny bohatera" },
+        ],
+      },
+      correctAnswer: [
+        [0, 1],
+        [1, 3],
+        [2, 2],
+        [3, 0],
+      ],
+      metadata: {
+        explanation:
+          "Hybris to pycha, hamartia to błąd tragiczny, katharsis to oczyszczenie emocjonalne widza, perypetia to punkt zwrotny akcji.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Które cechy charakteryzują tragedię jako gatunek? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "bohater szlachetny, o wysokim statusie",
+          "konflikt nie do rozwiązania",
+          "komizm i happy end",
+          "katastrofa w finale",
+          "obecność chóru",
+          "wątek miłosny jako główny",
+        ],
+      },
+      correctAnswer: [0, 1, 3, 4],
+      metadata: {
+        explanation:
+          "Tragedia cechuje się: bohaterem szlachetnym, konfliktem tragicznym (bez rozwiązania), katastrofą w finale i obecnością chóru. Nie ma komizmu ani happy endu, wątek miłosny nie jest główny.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Jaka jest fundamentalna różnica między koncepcją sprawiedliwości Antygony a Kreona?",
+      content: {
+        options: [
+          "Antygona wierzy w sprawiedliwość proceduralną, Kreon w naturalną",
+          "Antygona wierzy w sprawiedliwość uniwersalną opartą na prawach boskich, Kreon w sprawiedliwość relatywną opartą na racji stanu",
+          "oboje wierzą w tę samą sprawiedliwość",
+          "żadne z powyższych",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Fundamentalny konflikt dotyczy natury sprawiedliwości: Antygona reprezentuje sprawiedliwość uniwersalną (prawa boskie niezmienne dla wszystkich), Kreon - relatywną (zależną od kontekstu politycznego i dobra państwa).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "W jaki sposób Sofokles problematyzuje tradycyjny podział ról płciowych?",
+      content: {
+        options: [
+          "nie problematyzuje go wcale",
+          "pokazuje, że przypisane kobietom emocje faktycznie cechują Kreona, a przypisany mężczyznom rozum - Antygonę",
+          "potwierdza stereotypy płciowe",
+          "wprowadza tylko postaci męskie",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Sofokles subwertuje stereotypy: Kreon, reprezentujący męską sferę władzy, działa emocjonalnie (gniew, pycha), podczas gdy Antygona postępuje konsekwentnie według racjonalnego systemu wartości. To odwrócenie tradycyjnych ról.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Jaki filozoficzny problem podejmuje Sofokles w konflikcie Antygony i Kreona?",
+      content: {
+        options: [
+          "problem hedonizmu",
+          "problem relacji między prawem naturalnym a prawem stanowionym",
+          "problem sceptycyzmu",
+          "problem istnienia Boga",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Sofokles podejmuje fundamentalny problem filozofii prawa: czy istnieje prawo naturalne (boskie, uniwersalne) nadrzędne wobec prawa stanowionego przez władcę? To pytanie aktualne do dziś.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Co oznacza stwierdzenie, że Kreon jest 'negatywnym odbiciem' Antygony?",
+      content: {
+        options: [
+          "że jest jej wrogiem",
+          "że reprezentuje odwróconą hierarchię wartości - państwo nad rodziną, prawo ludzkie nad boskie",
+          "że jest jej lustrzanym odbiciem we wszystkim",
+          "że nie ma z nią nic wspólnego",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Kreon to negatywne odbicie Antygony - odwraca jej hierarchię wartości. Gdzie ona stawia prawa boskie, on stawia państwowe; gdzie ona rodzinę, on rację stanu. Są lustrzanymi przeciwieństwami w systemie aksjologicznym.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Jaką funkcję retoryczną pełni oda o człowieku (stasimon) w strukturze tragedii?",
+      content: {
+        options: [
+          "tylko wypełnia czas między scenami",
+          "wyraża ambiwalencję wobec ludzkiej potęgi - może budować lub niszczyć",
+          "tylkochwali człowieka",
+          "nie ma znaczenia",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Oda 'Siła jest dziwy...' wyraża ambiwalentną wizję człowieka: z jednej strony podziw dla jego mocy (język, myśl, technika), z drugiej ostrzeżenie - ta moc może służyć dobru lub złu. Odnosi się do Kreona i Antygony.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "W jakim sensie Antygona jest tragedią 'bez winnego'?",
+      content: {
+        options: [
+          "wszyscy są winni",
+          "konflikt wynika z kolizji dwóch słusznych racji (prawa boskie vs dobro państwa), nie z moralnej winy",
+          "nikt nie jest winny",
+          "tylko Kreon jest winny",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antygonę nazywa się tragedią 'bez winnego' bo konflikt wynika z kolizji dwóch legitymnych wartości - prawa boskie Antygony i dobro państwa Kreona mają swoje racje. To nie kwestia winy, ale nie do pogodzenia wartości.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Jak Sofokles wykorzystuje kategorię 'philia' (przyjaźni/miłości rodzinnej)?",
+      content: {
+        options: [
+          "ignoruje ją",
+          "pokazuje ją jako najwyższą wartość dla Antygony, nadrzędną wobec życia",
+          "krytykuje ją",
+          "przedstawia jako słabość",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Philia (miłość/lojalność rodzinna) to dla Antygony wartość nadrzędna - mówi 'współkochać przyszłam'. Sofokles pokazuje, że więzy rodzinne mogą być ważniejsze od życia i prawa państwowego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Jaka jest funkcja motywu 'niepisanych praw' (agraphoi nomoi)?",
+      content: {
+        options: [
+          "tylko ozdoba retoryczna",
+          "wprowadzenie koncepcji prawa naturalnego uniwersalnego i wiecznego",
+          "krytyka wszelkich praw",
+          "pochwała chaosu",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Niepisane prawa (agraphoi nomoi) to u Sofoklesa koncepcja prawa naturalnego - uniwersalnego, wiecznego, pochodzącego od bogów, nadrzędnego wobec edyktów władców. To fundamentalna kategoria filozofii prawa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Co symbolizuje odmowa Antygony przyjęcia pomocy Ismeny w finale?",
+      content: {
+        options: [
+          "nienawiść do siostry",
+          "że heroizm wymaga autentyczności - nie można 'dołączyć' do bohaterstwa post factum",
+          "chęć samotności",
+          "przypadkową decyzję",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antygona odrzuca 'spóźniony heroizm' Ismeny pokazując, że bohaterstwo wymaga autentycznego wyboru w momencie próby, nie deklaracji po fakcie. Nie można kupić sobie udziału w heroizmie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Jaka jest relacja między 'dike' (sprawiedliwością boską) a 'nomos' (prawem ludzkim) w tragedii?",
+      content: {
+        options: [
+          "są identyczne",
+          "są w nierozwiązywalnym konflikcie - to esencja tragedii",
+          "nomos zawsze przeważa",
+          "dike zawsze przeważa",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Konflikt dike (sprawiedliwość boska, Antygona) i nomos (prawo ludzkie, Kreon) to esencja tragedii. Sofokles pokazuje, że mogą być w nierozwiązywalnym konflikcie - to właśnie tworzy sytuację tragiczną.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Co oznacza określenie Kreona jako człowieka 'który mocno dystansuje się od tragicznych aspiracji Edypa'?",
+      content: {
+        options: [
+          "że Kreon jest lepszy od Edypa",
+          "że Kreon to pragmatyk odrzucający wielkie ideały, co jest jego ograniczeniem",
+          "że Kreon jest mądrzejszy",
+          "że Edyp był zły",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Kreon 'dystansuje się od tragicznych aspiracji Edypa' - jest pragmatykiem, nie poszukiwaczem prawdy. Brakuje mu wielkości Edypa, co paradoksalnie prowadzi do jego upadku - nie rozumie wyższych zasad.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Jaka jest różnica między tragizmem Antygony a tragizmem Kreona?",
+      content: {
+        options: [
+          "nie ma różnicy",
+          "Antygona to tragizm heroiczny (świadomy wybór wartości), Kreon to tragizm hamartii (błąd prowadzący do upadku)",
+          "oba są identyczne",
+          "żadne nie jest tragiczne",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "To dwa różne typy tragizmu: Antygona reprezentuje tragizm heroiczny (świadomy wybór śmierci dla zasad), Kreon - klasyczny tragizm hamartii (wada charakteru - pycha - prowadzi do katastrofy).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Jak interpretować stwierdzenie, że 'bez edyktu Kreona Antygona nie mogłaby dowieść swojego bohaterstwa'?",
+      content: {
+        options: [
+          "że Kreon jest bohaterem",
+          "że bohaterstwo wymaga oporu wobec niesprawiedliwości - konflikt jest konieczny",
+          "że Antygona nie jest bohaterką",
+          "że nie ma znaczenia",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "To paradoks tragedii: bohaterstwo Antygony wymaga niesprawiedliwości Kreona jako 'tła'. Bez konfliktu nie byłoby heroizmu. Zło jest konieczne, by dobro mogło się ujawnić - dialektyka tragiczna.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Jaka jest funkcja motywu 'żywego grobu' (zamurowanie Antygony)?",
+      content: {
+        options: [
+          "tylko sposób egzekucji",
+          "symbolizuje odwrócenie porządku życia i śmierci - żywa w grobie, zmarły bez grobu",
+          "przypadkowy wybór",
+          "najłagodniejsza kara",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Żywy grób symbolizuje odwrócenie porządku: Antygona żywa trafia do grobu, Polinik martwy zostaje bez grobu. To obrazuje chaos wprowadzony przez edykt Kreona - naruszenie granic między życiem a śmiercią.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Co oznacza pojęcie 'ananke' (konieczności) w kontekście tragedii?",
+      content: {
+        options: [
+          "wolną wolę",
+          "nieuchronność losu i przymus wynikający z charakteru bohaterów i sytuacji",
+          "przypadek",
+          "szczęście",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Ananke to konieczność, nieuchronność - połączenie przeznaczenia i charakteru bohaterów. Kreon mówi 'nie można walczyć przeciw konieczności' - rozumie za późno, że jego natura i sytuacja musiały doprowadzić do tragedii.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Jaka jest funkcja paraleli między Antygoną a Niobe w tragedii?",
+      content: {
+        options: [
+          "nie ma paraleli",
+          "obie są matkami skazanymi na cierpienie i przemianę w kamień - symbol застывшего żalu",
+          "obie są szczęśliwe",
+          "nie mają nic wspólnego",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antygona porównuje się do Niobe - mitycznej matki skazanej przez bogów, która zamieniła się w kamień ciągle ronący łzy. Symbol wiecznego, skamieniałego cierpienia. Antygona również czuje się żywym pomnikiem bólu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Co oznacza stwierdzenie, że Antygona reprezentuje 'etykę przekonań', a Kreon 'etykę odpowiedzialności'?",
+      content: {
+        options: [
+          "że oba podejścia są identyczne",
+          "Antygona działa według absolutnych zasad niezależnie od konsekwencji, Kreon bierze pod uwagę skutki dla państwa",
+          "że Kreon jest etyczny a Antygona nie",
+          "nie ma różnicy",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "To rozróżnienie Maxa Webera: etyka przekonań (Antygona) opiera się na absolutnych zasadach moralnych bez względu na konsekwencje; etyka odpowiedzialności (Kreon) bierze pod uwagę skutki działań dla dobra zbiorowego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Jaka jest relacja między 'pathos' (cierpieniem) a poznaniem w tragedii?",
+      content: {
+        options: [
+          "nie ma żadnej relacji",
+          "cierpienie prowadzi do poznania - 'pathei mathos' (przez cierpienie do wiedzy)",
+          "tylko cierpienie bez poznania",
+          "tylko poznanie bez cierpienia",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Starożytna zasada 'pathei mathos' (przez cierpienie do wiedzy) realizuje się w Kreonie - dopiero utrata wszystkiego uczy go prawdy o pysze i sprawiedliwości. To esencja tragedii jako narzędzia poznania.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Co symbolizuje fakt, że Antygona grzebie brata dwukrotnie?",
+      content: {
+        options: [
+          "przypadek",
+          "demonstrację siły woli i świadomego wyboru pomimo konsekwencji",
+          "głupotę",
+          "nie ma znaczenia",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Drugie pogrzebanie (po usunięciu pierwszej warstwy ziemi) to demonstracja: Antygona pokazuje, że to świadomy, powtarzalny wybór, nie impuls. Potwierdza swoją decyzję pomimo świadomości konsekwencji.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 4,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Dopasuj typy ironii do ich przykładów w tragedii.",
+      content: {
+        matchingType: "irony_types",
+        leftColumn: [
+          { id: "A", text: "Ironia tragiczna" },
+          { id: "B", text: "Ironia dramatyczna" },
+          { id: "C", text: "Ironia sytuacyjna" },
+          { id: "D", text: "Ironia werbalna" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Widz wie o samobójstwie, Kreon nie" },
+          { id: 2, text: "Kreon chce porządku, ale tworzy chaos" },
+          { id: 3, text: "Racjonalny Kreon działa emocjonalnie" },
+          { id: 4, text: "Hajmon udaje posłuszeństwo ojcu" },
+        ],
+      },
+      correctAnswer: [
+        [0, 1],
+        [1, 0],
+        [2, 2],
+        [3, 3],
+      ],
+      metadata: {
+        explanation:
+          "Różne typy ironii: tragiczna (efekt odwrotny od zamierzonego), dramatyczna (widz wie więcej), sytuacyjna (paradoks racjonalista/emocjonalność), werbalna (pozorna zgoda Hajmona).",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 4,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Przeanalizuj funkcję motywu 'niepisanych praw' (agraphoi nomoi) w argumentacji Antygony.",
+      content: {
+        instruction:
+          "Wyjaśnij, czym są niepisane prawa, dlaczego Antygona uważa je za nadrzędne i jakie ma to implikacje filozoficzne. (100-130 słów)",
+      },
+      rubric: {
+        maxScore: 4,
+        criteria: [
+          "definicja niepisanych praw jako wiecznych i boskich (1 pkt)",
+          "argumentacja Antygony: nie Zeus ani Dike nie ogłosili edyktu (1 pkt)",
+          "nadrzędność wobec praw ludzkich (1 pkt)",
+          "implikacje: koncepcja prawa naturalnego, uniwersalizm moralny (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Niepisane prawa (agraphoi nomoi) to u Antygony prawa boskie, wieczne i niezmienne, pochodzące od Zeusa i Dike. Antygona argumentuje, że edykt Kreona nie pochodzi od bogów - 'Nie Zeus ani Dike ogłosili ten zakaz'. Te prawa są nadrzędne wobec dekretów władców, bo są uniwersalne i wieczne. Filozoficznie wprowadza to koncepcję prawa naturalnego - istnieją normy moralne niezależne od stanowienia ludzkiego, obowiązujące zawsze i wszędzie. To fundament późniejszej filozofii prawa i teorii praw człowieka - uniwersalizm moralny przeciw relatywizmowi.",
+        keyWords: [
+          "niepisane prawa",
+          "agraphoi nomoi",
+          "Zeus",
+          "Dike",
+          "wieczne",
+          "uniwersalne",
+          "prawo naturalne",
+          "nadrzędność",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 4,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Wyjaśnij, w jaki sposób Sofokles problematizuje relację między jednostką a państwem.",
+      content: {
+        instruction:
+          "Przeanalizuj argumenty obu stron i wyjaśnij, dlaczego konflikt pozostaje nierozwiązany. (110-140 słów)",
+      },
+      rubric: {
+        maxScore: 4,
+        criteria: [
+          "przedstawienie racji Kreona: dobro państwa, bezpieczeństwo (1 pkt)",
+          "przedstawienie racji Antygony: godność jednostki, prawa człowieka (1 pkt)",
+          "wyjaśnienie, że obie strony mają legitymację (1 pkt)",
+          "brak syntezy - tragiczność konfliktu (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Sofokles nie daje prostej odpowiedzi na pytanie o relację jednostka-państwo. Kreon ma rację argumentując, że porządek państwowy i bezpieczeństwo zbiorowe wymagają posłuszeństwa prawu - bez tego chaos. Antygona ma rację broniąc godności jednostki i praw wyższych od państwa - są granice władzy. Problem w tym, że obie racje są legitymne ale nie do pogodzenia. Sofokles nie wskazuje syntezy - to właśnie czyni sytuację tragiczną. Pokazuje, że pytanie o granice władzy państwa wobec sumienia jednostki nie ma prostej odpowiedzi i pozostaje aktualne przez wieki.",
+        keyWords: [
+          "jednostka",
+          "państwo",
+          "Kreon",
+          "Antygona",
+          "racje",
+          "konflikt",
+          "brak syntezy",
+          "tragizm",
+          "legitymacja",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 4,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Przeanalizuj funkcję kontrastu między 'wiedzieć' a 'być mądrym' w tragedii.",
+      content: {
+        instruction:
+          "Wyjaśnij różnicę między wiedzą a mądrością na przykładzie Kreona i znaczenie zasady 'pathei mathos'. (100-130 słów)",
+      },
+      rubric: {
+        maxScore: 4,
+        criteria: [
+          "rozróżnienie wiedzy i mądrości (1 pkt)",
+          "Kreon ma wiedzę (władza, prawo), ale brak mu mądrości (1 pkt)",
+          "zasada pathei mathos - przez cierpienie do wiedzy (1 pkt)",
+          "dopiero utrata uczy go prawdziwej mądrości (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Tragedia rozróżnia wiedzę od mądrości. Kreon ma wiedzę - rozumie politykę, prawo, władzę. Ale brakuje mu mądrości - głębszego zrozumienia ludzkiej natury, granic władzy, wartości. Chór kończy mówiąc, że 'mądrości uczymy się w późnym wieku przez cierpienie' - to zasada 'pathei mathos' (przez cierpienie do wiedzy). Dopiero katastrofa - utrata syna i żony - uczy Kreona prawdziwej mądrości o pysze i sprawiedliwości. Wiedza intelektualna nie zastąpi mądrości nabytej przez doświadczenie egzystencjalne.",
+        keyWords: [
+          "wiedza",
+          "mądrość",
+          "Kreon",
+          "pathei mathos",
+          "cierpienie",
+          "doświadczenie",
+          "pycha",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 5,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Omów paradoks tragiczny: bohaterowie mają rację i popełniają błąd jednocześnie.",
+      content: {
+        instruction:
+          "Wyjaśnij, w jaki sposób zarówno Antygona jak i Kreon są jednocześnie 'w słuszności' i 'w błędzie'. (120-150 słów)",
+      },
+      rubric: {
+        maxScore: 5,
+        criteria: [
+          "racja Antygony: prawa boskie, lojalność rodzinna (1 pkt)",
+          "błąd Antygony: bezkompromisowość, brak elastyczności (1 pkt)",
+          "racja Kreona: porządek państwowy, dobro wspólne (1 pkt)",
+          "błąd Kreona: pycha, przekroczenie granic (1 pkt)",
+          "wyjaśnienie paradoksu: tragizm wynika z konfliktu dwóch słuszności (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "To esencja tragizmu: obie strony mają rację i popełniają błąd. Antygona ma rację broniąc praw boskich i lojalności rodzinnej - są wartości wyższe od edyktu. Ale popełnia błąd przez skrajny ry­goryzm - nie próbuje dialogu, odrzuca Ismenę. Kreon ma rację dbając o porządek państwowy - władca musi zapewnić bezpieczeństwo. Ale popełnia błąd przez pychę - przekracza granice, nie słucha rad, stawia się ponad bogami. Paradoks polega na tym, że tragedia nie wynika z prostego zła - wynika z kolizji dwóch legitymnych racji. Gdyby jedna strona była po prostu zła, nie byłoby tragedii - byłby tylko konflikt dobra ze złem.",
+        keyWords: [
+          "paradoks",
+          "racja",
+          "błąd",
+          "Antygona",
+          "Kreon",
+          "tragizm",
+          "kolizja wartości",
+          "legitymacja",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 4,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Przeanalizuj funkcję motywu 'zamurowania żywcem' w symbolice tragedii.",
+      content: {
+        instruction:
+          "Wyjaśnij symboliczne znaczenie kary zamurowania i jej związek z odwróceniem porządku życia/śmierci. (100-130 słów)",
+      },
+      rubric: {
+        maxScore: 4,
+        criteria: [
+          "zamurowanie jako forma 'żywego grobu' (1 pkt)",
+          "odwrócenie porządku: żywa w grobie, zmarły bez grobu (1 pkt)",
+          "zakłócenie granic między życiem a śmiercią (1 pkt)",
+          "symbolika chaosu wprowadzonego przez edykt (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Zamurowanie Antygony żywcem to 'żywy grób' - paradoksalna kara symbolizująca odwrócenie porządku. Antygona żywa trafia do grobu (królestwo śmierci), podczas gdy Polinik martwy pozostaje bez grobu (w królestwie żywych). To obrazuje chaos wprowadzony przez edykt Kreona - naruszenie granic między życiem a śmiercią, sferą żywych i umarłych. W myśleniu greckim takie zakłócenie kosmicznego porządku musi doprowadzić do katastrofy. Zamurowanie ma też znaczenie praktyczne dla Kreona - formalnie unika przelania krwi, więc odpowiedzialność spada na bogów.",
+        keyWords: [
+          "zamurowanie",
+          "żywy grób",
+          "odwrócenie porządku",
+          "życie",
+          "śmierć",
+          "chaos",
+          "granice",
+          "kosmiczny ład",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 5,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Omów relację między 'physis' (naturą) a 'nomos' (prawem/konwencją) w tragedii.",
+      content: {
+        instruction:
+          "Wyjaśnij ten fundamentalny konflikt sofistyczny i jego reprezentację w Antygonie. (130-160 słów)",
+      },
+      rubric: {
+        maxScore: 5,
+        criteria: [
+          "definicja physis jako natury, porządku naturalnego (1 pkt)",
+          "definicja nomos jako prawa stanowionego, konwencji (1 pkt)",
+          "Antygona reprezentuje physis (prawa naturalne) (1 pkt)",
+          "Kreon reprezentuje nomos (prawo ustanowione) (1 pkt)",
+          "kontekst sofistyczny: debata V wieku p.n.e. (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Konflikt physis-nomos to fundamentalna debata V wieku p.n.e. Physis to natura, porządek naturalny, prawa wynikające z natury rzeczy - niezmienne i uniwersalne. Nomos to prawo stanowione, konwencja społeczna, ustalenia ludzi - zmienne i relatywne. Antygona reprezentuje physis - odwołuje się do naturalnego obowiązku pochówku, praw boskich wpisanych w naturę. Kreon reprezentuje nomos - jego edykt to konwencja polityczna, ustalenie władcy. Sofiści pytali: co jeśli nomos (prawo ludzkie) sprzeciwia się physis (naturze)? Sofokles nie daje jednoznacznej odpowiedzi - pokazuje tragiczność sytuacji, gdy oba porządki kolidują. To kluczowa debata o źródłach prawa aktualna do dziś.",
+        keyWords: [
+          "physis",
+          "nomos",
+          "natura",
+          "prawo",
+          "konwencja",
+          "Antygona",
+          "Kreon",
+          "sofiści",
+          "konflikt",
+          "porządek",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 4,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Przeanalizuj znaczenie metafory 'państwo jako statek' w przemowie Kreona.",
+      content: {
+        instruction:
+          "Wyjaśnij tę metaforę i jej implikacje dla koncepcji władzy Kreona. (90-120 słów)",
+      },
+      rubric: {
+        maxScore: 4,
+        criteria: [
+          "wyjaśnienie metafory: państwo to statek, władca to sternik (1 pkt)",
+          "implikacja: potrzeba jednego dowódcy, hierarchii (1 pkt)",
+          "usprawiedliwienie autorytaryzmu (1 pkt)",
+          "krytyka Sofoklesa: sztywne sterowanie prowadzi do katastrofy (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Kreon używa metafory państwa jako statku: 'nasza ojczyzna to statek, który niesie nas bezpiecznie'. Implikacje: państwo potrzebuje jednego sternika (władcy), hierarchii, dyscypliny. Jak statek w burzy, państwo wymaga silnej ręki. To usprawiedliwienie dla autorytaryzmu Kreona. Jednak Hajmon odwraca tę metaforę: sztywny sternik prowadzi statek na skały, dobry sternik musi być elastyczny. Sofokles pokazuje, że metafora może służyć obu stronom - i uzasadnieniu władzy, i jej krytyce. Kreon kończy jako sternik, który zatopił własny statek przez sztywność.",
+        keyWords: [
+          "metafora",
+          "państwo",
+          "statek",
+          "sternik",
+          "władza",
+          "autorytaryzm",
+          "elastyczność",
+          "Kreon",
+          "Hajmon",
+        ],
+      },
+    },
+    {
+      type: "SYNTHESIS_NOTE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 8,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Napisz notatkę syntetyzującą o wielowymiarowości konfliktu tragicznego.",
+      content: {
+        topic:
+          "Wielowymiarowość konfliktu w Antygonie - poziomy i interpretacje",
+        requirements: [
+          "poziom teologiczny: bogowie vs ludzie",
+          "poziom polityczny: jednostka vs państwo",
+          "poziom rodzinny: lojalność krwi vs lojalność państwowa",
+          "poziom płciowy: kobiece vs męskie",
+          "poziom filozoficzny: prawo naturalne vs stanowione",
+          "syntetyczne ujęcie: wszystkie wymiary się przenikają",
+          "250-300 słów",
+        ],
+      },
+      rubric: {
+        maxScore: 8,
+        criteria: [
+          "omówienie poziomu teologicznego (1,5 pkt)",
+          "omówienie poziomu politycznego (1,5 pkt)",
+          "omówienie poziomu rodzinnego (1 pkt)",
+          "omówienie poziomu płciowego (1 pkt)",
+          "omówienie poziomu filozoficznego (1,5 pkt)",
+          "synteza: wzajemne przenikanie się wymiarów (1,5 pkt)",
+        ],
+      },
+    },
+    {
+      type: "SYNTHESIS_NOTE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 9,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Omów Antygonę jako tragedię 'dialektyczną bez syntezy'.",
+      content: {
+        topic: "Struktura dialektyczna Antygony: teza, antyteza i brak syntezy",
+        requirements: [
+          "wyjaśnienie struktury dialektycznej (Hegel)",
+          "teza: prawa boskie, rodzina, jednostka (Antygona)",
+          "antyteza: prawa państwowe, porządek, władza (Kreon)",
+          "brak syntezy: konflikt pozostaje nierozwiązany",
+          "dlaczego brak syntezy tworzy tragizm",
+          "implikacje filozoficzne: nie wszystkie konflikty mają rozwiązanie",
+          "300-350 słów",
+        ],
+      },
+      rubric: {
+        maxScore: 9,
+        criteria: [
+          "wyjaśnienie struktury dialektycznej (1,5 pkt)",
+          "charakterystyka tezy - Antygona (2 pkt)",
+          "charakterystyka antytezy - Kreon (2 pkt)",
+          "wyjaśnienie braku syntezy (2 pkt)",
+          "implikacje filozoficzne (1,5 pkt)",
+        ],
+      },
+    },
+    {
+      type: "ESSAY",
+      category: "WRITING",
+      difficulty: 5,
+      points: 20,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Napisz rozprawkę: Czy w konflikcie Antygony i Kreona można mówić o 'zwycięzcy'? Omów problem na podstawie tragedii Sofoklesa.",
+      content: {
+        thesis: "Czy w konflikcie Antygony i Kreona można mówić o 'zwycięzcy'?",
+        structure: {
+          introduction: "Wprowadzenie: natura konfliktu tragicznego",
+          arguments: [
+            "Racja Antygony: triumf moralny, wierność zasadom, ale śmierć fizyczna",
+            "Racja Kreona: przeżywa, ale w rozpaczy - 'żywy trup', moralna klęska",
+            "Paradoks: obie strony przegrywają - to esencja tragedii",
+            "Interpretacja: w tragedii nie ma zwycięzców, tylko ofiary konfliktu wartości",
+          ],
+          conclusion: "Wnioski: tragizm polega na niemożności wygranej",
+        },
+        requirements: [
+          "struktura: wstęp - rozwinięcie - zakończenie",
+          "argumenty filozoficzne i literackie",
+          "odniesienie do tekstu tragedii",
+          "kontekst: teoria tragedii, konfliktu tragicznego",
+          "język eseistyczny, akademicki",
+          "400-500 słów",
+        ],
+        wordLimit: {
+          min: 400,
+          max: 500,
+        },
+      },
+      rubric: {
+        maxScore: 20,
+        formalScore: 2,
+        literaryScore: 10,
+        compositionScore: 4,
+        languageScore: 4,
+        criteria: {
+          formal: "Zachowanie wymogów formalnych (objętość, struktura, tytuł)",
+          literary:
+            "Znajomość tragedii, głębokość analizy, argumenty filozoficzne, kontekst teoretyczny",
+          composition:
+            "Logika wywodu, spójność, teza, argumentacja, kontrargumenty",
+          language: "Język akademicki, precyzja, styl eseistyczny, poprawność",
+        },
+      },
+    },
+    {
+      type: "ESSAY",
+      category: "WRITING",
+      difficulty: 5,
+      points: 20,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Napisz esej interpretacyjny: Antygona Sofoklesa jako traktat o granicach władzy państwowej. Omów aktualność problematyki.",
+      content: {
+        thesis:
+          "Antygona jako traktat o granicach władzy państwowej i jej aktualność",
+        structure: {
+          introduction:
+            "Problem: gdzie kończą się prawa państwa wobec jednostki?",
+          main_body: [
+            "Pozycja Kreona: władza absolutna, racja stanu",
+            "Pozycja Antygony: sumienie jednostki, prawa nadrzędne",
+            "Sofokles nie rozstrzyga - pokazuje tragiczność",
+            "Aktualność: totalitaryzmy XX w., prawa człowieka, nieposłuszeństwo obywatelskie",
+          ],
+          conclusion: "Pytanie pozostaje otwarte - to znak wielkości dzieła",
+        },
+        requirements: [
+          "forma eseju interpretacyjnego",
+          "analiza filozoficzna i polityczna",
+          "przykłady historyczne (XX wiek)",
+          "odniesienia do tekstu tragedii",
+          "język akademicki, eseistyczny",
+          "perspektywa krytyczna",
+          "450-550 słów",
+        ],
+        wordLimit: {
+          min: 450,
+          max: 550,
+        },
+      },
+      rubric: {
+        maxScore: 20,
+        formalScore: 2,
+        literaryScore: 10,
+        compositionScore: 4,
+        languageScore: 4,
+        criteria: {
+          formal: "Forma eseju, objętość, struktura",
+          literary:
+            "Interpretacja tekstu, kontekst filozoficzny i historyczny, aktualność problemu",
+          composition: "Logika argumentacji, spójność, perspektywa krytyczna",
+          language:
+            "Język akademicki, precyzja terminologiczna, styl eseistyczny",
+        },
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Co oznacza określenie Antygony jako tragedii 'bez katharsis dla Kreona'?",
+      content: {
+        options: [
+          "że Kreon nie przeżywa oczyszczenia emocjonalnego",
+          "że poznanie prawdy nie przynosi mu ulgi, tylko wieczne cierpienie",
+          "że Kreon jest szczęśliwy",
+          "że nie ma tragedii",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Kreon poznaje prawdę (anagnorisis), ale zamiast oczyszczenia (katharsis) dostaje wieczne cierpienie - musi żyć ze świadomością winy. To pesymistyczna wersja tragedii.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Jaka jest relacja między 'ethos' (charakterem) a 'daimon' (bóstwem/losem) u Heraklita: 'ethos anthropoi daimon'?",
+      content: {
+        options: {
+          contextLinks: [
+            {
+              trigger: "ethos anthropoi daimon",
+              title: "Heraklitejska sentencja",
+              type: "text",
+              content:
+                "Sentencja Heraklita 'ethos anthropoi daimon' (charakter jest dla człowieka losem/bóstwem) wyraża ideę, że los człowieka nie jest całkowicie zewnętrzny, ale wynika z jego charakteru. To, kim jesteśmy, determinuje to, co nam się przydarzy.",
+              moreInfoLink: "",
+            },
+          ],
+          options: [
+            "los jest całkowicie zewnętrzny",
+            "charakter człowieka jest jego losem - natura determinuje przeznaczenie",
+            "los i charakter są niezależne",
+            "nie ma żadnej relacji",
+          ],
+        },
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Sentencja Heraklita 'ethos anthropoi daimon' (charakter jest losem) doskonale opisuje Antygonę: pycha Kreona jest jego losem, heroizm Antygony - jej przeznaczeniem. Charakter determinuje los.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question: "Co oznacza pojęcie 'anagnorisis' w kontekście Kreona?",
+      content: {
+        options: [
+          "poznanie prawdy o sobie za późno by zmienić los",
+          "szczęśliwe zakończenie",
+          "brak świadomości",
+          "triumf",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Anagnorisis (rozpoznanie) to moment, gdy bohater poznaje prawdę. Kreon rozpoznaje swoją pychę i błąd, ale za późno - nie może już uratować rodziny. To klasyczny element tragedii.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Jak interpretować fakt, że Antygona wybiera śmierć 'niezamężna, bez potomstwa'?",
+      content: {
+        options: [
+          "nie ma to znaczenia",
+          "podkreśla tragizm - rezygnuje z pełni życia (małżeństwo, macierzyństwo) dla zasad",
+          "to przypadek",
+          "Antygona tego nie chce",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antygona lamentuje, że umiera 'bez małżeństwa, bez dzieci' - to w kulturze greckiej oznacza niepełne życie. Podkreśla wagę poświęcenia: rezygnuje z podstawowych kobiecych ról dla wyższych wartości.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Co symbolizuje dwukrotne posypanie ciała ziemią przez Antygonę?",
+      content: {
+        options: [
+          "przypadek",
+          "demonstrację świadomego, powtarzalnego wyboru - nie impuls, ale przemyślana decyzja",
+          "błąd",
+          "chęć zemsty",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Drugie pogrzebanie po usunięciu ziemi przez strażników to dowód, że to nie impuls ale świadoma, powtarzalna decyzja. Antygona potwierdza swój wybór pomimo konsekwencji.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Jaka jest funkcja motywu 'pustego grobu' i 'pełnego grobu' w finale?",
+      content: {
+        options: [
+          "tylko realistyczny szczegół",
+          "Hades/grób Polinika pusty (ptaki), grób Antygony pełny (ciała) - odwrócony porządek",
+          "przypadek",
+          "nie ma znaczenia",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Finałowe odkrycie: grób Polinika pusty (ciało rozszarpane), grób Antygony pełny (ona, Hajmon). To symboliczne odwrócenie - chaos wprowadzony przez edykt materializuje się w obrazie.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 4,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Dopasuj interpretacje filozoficzne tragedii do ich autorów/szkół.",
+      content: {
+        matchingType: "interpretations_schools",
+        leftColumn: [
+          {
+            id: "A",
+            text: "Tragedia jako konfliktu praw równie usprawiedliwionych",
+          },
+          {
+            id: "B",
+            text: "Tragedia jako konflikt jednostki z totalitaryzmem",
+          },
+          { id: "C", text: "Tragedia jako konflikt kultury i natury" },
+          { id: "D", text: "Tragedia jako ilustracja hybris i nemezis" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Interpretacja klasyczna grecka" },
+          { id: 2, text: "Hegel - dialektyka ducha" },
+          { id: 3, text: "Lektura strukturalistyczna" },
+          { id: 4, text: "Lektura polityczna XX wieku" },
+        ],
+      },
+      correctAnswer: [
+        [0, 1],
+        [1, 3],
+        [2, 2],
+        [3, 0],
+      ],
+      metadata: {
+        explanation:
+          "Różne interpretacje: Hegel (równorzędne prawa), XX wiek (jednostka vs totalitaryzm), strukturalizm (kultura vs natura), klasyczna (hybris-nemezis).",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 4,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Które stwierdzenia o teorii tragedii Arystotelesa są prawdziwe? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "tragedia powinna wywoływać litość (eleos) i trwogę (phobos)",
+          "bohater musi być absolutnie doskonały",
+          "katharsis to oczyszczenie emocjonalne przez przeżycie tragedii",
+          "hamartia to zawsze grzech moralny",
+          "perypetia to nagłe odwrócenie fortuny",
+          "anagnorisis to moment rozpoznania prawdy",
+        ],
+      },
+      correctAnswer: [0, 2, 4, 5],
+      metadata: {
+        explanation:
+          "Według Arystotelesa: tragedia wywołuje litość i trwogę prowadząc do katharsis, ma perypetię i anagnorisis. Bohater nie jest doskonały (miara), hamartia to nie zawsze grzech (może być cecha charakteru).",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 4,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Dopasuj modele sprawiedliwości do ich reprezentacji w tragedii.",
+      content: {
+        matchingType: "justice_models",
+        leftColumn: [
+          { id: "A", text: "Sprawiedliwość wyrównawcza" },
+          { id: "B", text: "Sprawiedliwość dystrybutywna" },
+          { id: "C", text: "Sprawiedliwość naprawcza" },
+          { id: "D", text: "Sprawiedliwość retrybutywna" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Nemezis - bogowie karzą Kreona za pychę" },
+          { id: 2, text: "Hades - równe prawa dla wszystkich zmarłych" },
+          { id: 3, text: "próba Kreona naprawienia błędu (za późno)" },
+          { id: 4, text: "edykt Kreona - rozdział nagród/kar" },
+        ],
+      },
+      correctAnswer: [
+        [0, 1],
+        [1, 3],
+        [2, 2],
+        [3, 0],
+      ],
+      metadata: {
+        explanation:
+          "Różne modele sprawiedliwości: wyrównawcza (równość - Hades), dystrybutywna (podział - edykt), naprawcza (Kreon próbuje naprawić), retrybutywna (kara - nemezis).",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 5,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Omów Heglowską interpretację Antygony jako konfliktu 'dwóch równie usprawiedliwionych racji'.",
+      content: {
+        instruction:
+          "Wyjaśnij interpretację Hegla, przedstaw obie racje jako równorzędne i omów implikacje dla pojmowania tragedii. (140-170 słów)",
+      },
+      rubric: {
+        maxScore: 5,
+        criteria: [
+          "Hegel: tragedia to konflikt równorzędnych zasad (1 pkt)",
+          "Antygona reprezentuje rodzinę, bogów, jednostkę (1 pkt)",
+          "Kreon reprezentuje państwo, prawo, wspólnotę (1 pkt)",
+          "obie strony mają rację i to tworzy tragizm (1 pkt)",
+          "implikacje: tragedia wyższego rzędu niż dobro vs zło (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Hegel interpretuje Antygonę jako konflikt 'dwóch równie usprawiedliwionych racji' - to kluczowa teoria tragedii. Antygona reprezentuje prawo rodziny, bogów, sfery prywatnej i jednostkowej - zasady równie ważne i prawdziwe. Kreon reprezentuje prawo państwa, porządku publicznego, dobra wspólnoty - zasady również ważne i prawdziwe. Tragizm wynika właśnie z tego, że obie strony mają rację - nie jest to konflikt dobra ze złem, ale kolizja dwóch dóbr. Dla Hegla to wyższa forma tragedii: nie prostota moralności, ale dialektyka ducha, gdzie teza i antyteza nie mogą się pogodzić. Tragedia ukazuje ograniczenia jednostronnych zasad i konieczność ich przezwyciężenia w syntezie - której w Antygonie brakuje.",
+        keyWords: [
+          "Hegel",
+          "równorzędne racje",
+          "rodzina",
+          "państwo",
+          "dialektyka",
+          "tragizm",
+          "kolizja dóbr",
+          "synteza",
+        ],
+      },
+    },
+    {
+      type: "ESSAY",
+      category: "WRITING",
+      difficulty: 5,
+      points: 20,
+      epoch: "ANTIQUITY",
+      work: "Antygona",
+      question:
+        "Napisz esej krytycznoliteracki: Antygona jako arcydzieło tragedii - analiza wielowymiarowości konfliktu i uniwersalności problematyki.",
+      content: {
+        thesis:
+          "Dlaczego Antygona uznawana jest za jedno z arcydzieł tragedii światowej?",
+        structure: {
+          introduction:
+            "Teza: wielowymiarowość i uniwersalność czynią Antygonę ponadczasową",
+          main_body: [
+            "Doskonałość konstrukcji dramatycznej (jedności, perypetia, katharsis)",
+            "Wielowymiarowość konfliktu (teologiczny, polityczny, rodzinny, płciowy)",
+            "Głębia filozoficzna (prawo naturalne, granice władzy)",
+            "Uniwersalność: problemy aktualne przez 2500 lat",
+            "Postaci wielowymiarowe, nie schematyczne",
+            "Język poetycki i retoryka",
+          ],
+          conclusion:
+            "Synteza: arcydzieło bo łączy doskonałość formy z głębią treści",
+        },
+        requirements: [
+          "forma eseju krytycznoliterackiego",
+          "analiza formalna i treściowa",
+          "kontekst teoretyczny (teoria tragedii)",
+          "język akademicki, precyzyjny",
+          "perspektywa komparatystyczna (odniesienia do innych dzieł)",
+          "500-600 słów",
+        ],
+        wordLimit: {
+          min: 500,
+          max: 600,
+        },
+      },
+      rubric: {
+        maxScore: 20,
+        formalScore: 2,
+        literaryScore: 10,
+        compositionScore: 4,
+        languageScore: 4,
+        criteria: {
+          formal: "Forma eseju, struktura, objętość",
+          literary:
+            "Analiza formalna i treściowa, kontekst teoretyczny, głębia interpretacji, perspektywa komparatystyczna",
+          composition: "Logika wywodu, spójność argumentacji, synteza",
+          language: "Język akademicki, terminologia literacka, precyzja, styl",
+        },
+      },
+    },
+
+    // =========== KONIEC PYTAŃ ANTYGONA ==============//
+
     // =========== POCZĄTEK PYTAŃ LALKA ===============//
 
     {
