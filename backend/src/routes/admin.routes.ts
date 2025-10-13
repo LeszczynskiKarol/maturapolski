@@ -3,6 +3,11 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../lib/prisma";
 import { z } from "zod";
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2025-08-27.basil",
+});
 
 const ExerciseSchema = z.object({
   type: z.enum([
@@ -1492,14 +1497,20 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
       aiPointsLimit?: number;
       aiPointsUsed?: number;
       resetPoints?: boolean;
+      isRecurring?: boolean;
     };
   }>("/users/:userId/subscription", async (request, reply) => {
     try {
       const { userId } = request.params;
-      const { plan, status, aiPointsLimit, aiPointsUsed, resetPoints } =
-        request.body;
+      const {
+        plan,
+        status,
+        aiPointsLimit,
+        aiPointsUsed,
+        resetPoints,
+        isRecurring,
+      } = request.body;
 
-      // Get or create subscription
       let subscription = await prisma.subscription.findUnique({
         where: { userId },
       });
@@ -1513,6 +1524,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
             aiPointsLimit: aiPointsLimit || 20,
             aiPointsUsed: 0,
             aiPointsReset: new Date(),
+            isRecurring: isRecurring !== undefined ? isRecurring : false,
           },
         });
       } else {
@@ -1520,7 +1532,6 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
 
         if (plan !== undefined) {
           updateData.plan = plan;
-          // Auto-set limits based on plan
           if (plan === "FREE") {
             updateData.aiPointsLimit = 20;
             updateData.status = "INACTIVE";
@@ -1534,6 +1545,118 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
         if (aiPointsLimit !== undefined)
           updateData.aiPointsLimit = aiPointsLimit;
         if (aiPointsUsed !== undefined) updateData.aiPointsUsed = aiPointsUsed;
+
+        // ✅ OBSŁUGA ZMIANY TYPU SUBSKRYPCJI
+        if (isRecurring !== undefined) {
+          // ✅ Zmiana z CYKLICZNEJ na JEDNORAZOWĄ
+          if (
+            subscription.isRecurring &&
+            !isRecurring &&
+            subscription.stripeSubscriptionId
+          ) {
+            try {
+              const stripeSubscription = await stripe.subscriptions.retrieve(
+                subscription.stripeSubscriptionId
+              );
+
+              if (
+                stripeSubscription.status === "active" ||
+                stripeSubscription.status === "trialing"
+              ) {
+                console.log(
+                  `🔄 Admin is converting recurring subscription to one-time for user ${userId}`
+                );
+
+                // ✅ 1. Anuluj subskrypcję w Stripe (na koniec okresu)
+                await stripe.subscriptions.update(
+                  subscription.stripeSubscriptionId,
+                  {
+                    cancel_at_period_end: true,
+                  }
+                );
+
+                // ✅ LEPSZE ROZWIĄZANIE: użyj już zapisanego stripeCurrentPeriodEnd
+                let endDate: Date;
+
+                if (subscription.stripeCurrentPeriodEnd) {
+                  // Mamy już zapisane w bazie
+                  endDate = subscription.stripeCurrentPeriodEnd;
+                } else {
+                  // Fallback - pobierz ze Stripe
+                  const { current_period_end } = stripeSubscription as any;
+                  endDate = new Date(current_period_end * 1000);
+                }
+
+                console.log(
+                  `✅ Stripe subscription cancelled, will end at: ${endDate}`
+                );
+
+                // ✅ 2. Ustaw jednorazowy pakiet który zacznie się po wygaśnięciu
+                const newEndDate = new Date(endDate);
+                newEndDate.setDate(newEndDate.getDate() + 30);
+
+                const existingMetadata =
+                  (subscription.metadata as Record<string, any>) || {};
+
+                updateData.isRecurring = false;
+                updateData.cancelAt = endDate;
+                updateData.metadata = {
+                  ...existingMetadata,
+                  pendingOneTimeAccess: {
+                    startDate: endDate.toISOString(),
+                    endDate: newEndDate.toISOString(),
+                    convertedByAdmin: true,
+                    convertedAt: new Date().toISOString(),
+                    adminId: (request.user as any).userId,
+                  },
+                };
+
+                console.log(
+                  `✅ One-time access scheduled from ${endDate} to ${newEndDate}`
+                );
+              }
+            } catch (stripeError) {
+              console.error(
+                "Error cancelling Stripe subscription:",
+                stripeError
+              );
+              return reply.code(500).send({
+                error: "Failed to cancel Stripe subscription",
+                details: stripeError,
+              });
+            }
+          }
+          // ✅ Zmiana z JEDNORAZOWEJ na CYKLICZNĄ
+          else if (!subscription.isRecurring && isRecurring) {
+            updateData.isRecurring = true;
+            updateData.endDate = null;
+            updateData.cancelAt = null;
+
+            // ✅ Usuń pending one-time access
+            const existingMetadata =
+              (subscription.metadata as Record<string, any>) || {};
+            delete existingMetadata.pendingOneTimeAccess;
+            updateData.metadata = existingMetadata;
+
+            console.log(
+              `✅ Converted one-time to recurring for user ${userId}`
+            );
+          }
+          // ✅ Standardowa zmiana bez aktywnej subskrypcji Stripe
+          else {
+            updateData.isRecurring = isRecurring;
+
+            if (!isRecurring && !subscription.endDate) {
+              const endDate = new Date();
+              endDate.setDate(endDate.getDate() + 30);
+              updateData.endDate = endDate;
+            }
+
+            if (isRecurring) {
+              updateData.endDate = null;
+            }
+          }
+        }
 
         if (resetPoints) {
           updateData.aiPointsUsed = 0;

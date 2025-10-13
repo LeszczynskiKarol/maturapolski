@@ -34,6 +34,7 @@ export const SubscriptionEditor: React.FC<SubscriptionEditorProps> = ({
 }) => {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<"details" | "history">("details");
+  const [isRecurring, setIsRecurring] = useState(false);
 
   // Fetch subscription
   const { data: subscription, isLoading } = useQuery({
@@ -67,6 +68,7 @@ export const SubscriptionEditor: React.FC<SubscriptionEditorProps> = ({
       setStatus(subscription.status);
       setAiPointsLimit(subscription.aiPointsLimit);
       setAiPointsUsed(subscription.aiPointsUsed);
+      setIsRecurring(subscription.isRecurring);
     }
   }, [subscription]);
 
@@ -120,6 +122,7 @@ export const SubscriptionEditor: React.FC<SubscriptionEditorProps> = ({
       status,
       aiPointsLimit,
       aiPointsUsed,
+      isRecurring,
     });
   };
 
@@ -441,7 +444,7 @@ export const SubscriptionEditor: React.FC<SubscriptionEditorProps> = ({
               <div className="bg-gray-50 rounded-lg p-6">
                 <h3 className="text-lg font-semibold mb-4">Plan i status</h3>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Plan subskrypcji
@@ -473,13 +476,67 @@ export const SubscriptionEditor: React.FC<SubscriptionEditorProps> = ({
                   </div>
                 </div>
 
+                {/* ✅ NOWA SEKCJA - Typ subskrypcji */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Typ subskrypcji
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setIsRecurring(false)}
+                      className={`p-4 border-2 rounded-lg transition-all ${
+                        !isRecurring
+                          ? "border-green-500 bg-green-50 text-green-700"
+                          : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <Calendar className="w-5 h-5" />
+                        <span className="font-semibold">Jednorazowa</span>
+                      </div>
+                      <p className="text-xs text-left">
+                        Pakiet na 30 dni, wymaga ręcznego przedłużenia
+                      </p>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsRecurring(true)}
+                      className={`p-4 border-2 rounded-lg transition-all ${
+                        isRecurring
+                          ? "border-blue-500 bg-blue-50 text-blue-700"
+                          : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <RefreshCw className="w-5 h-5" />
+                        <span className="font-semibold">Cykliczna</span>
+                      </div>
+                      <p className="text-xs text-left">
+                        Automatyczne odnowienie co miesiąc
+                      </p>
+                    </button>
+                  </div>
+                </div>
+
                 <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                   <div className="flex items-start gap-2 text-sm text-yellow-700">
                     <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                    <p>
-                      Zmiana planu automatycznie ustawi odpowiedni limit
-                      punktów: Free = 0 pkt, Premium = 200 pkt
-                    </p>
+                    <div className="space-y-1">
+                      <p>
+                        • Zmiana planu automatycznie ustawi odpowiedni limit
+                        punktów: Free = 0 pkt, Premium = 200 pkt
+                      </p>
+                      <p>
+                        • Zmiana typu z cyklicznej na jednorazową nie anuluje
+                        aktywnej subskrypcji w Stripe
+                      </p>
+                      <p>
+                        • Dla jednorazowych pakietów, ustaw również datę
+                        wygaśnięcia (endDate)
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -447,19 +447,34 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
 
         const existingSub = user.subscription;
 
-        // ✅ ZAWSZE oblicz nową datę
+        // ✅ Sprawdź czy ma aktywną subskrypcję (zwykłą LUB anulowaną)
+        const hasActiveSubscription =
+          existingSub?.stripeSubscriptionId &&
+          existingSub.status === "ACTIVE" &&
+          existingSub.isRecurring;
+
+        const hasActiveOneTime =
+          existingSub?.status === "ACTIVE" &&
+          !existingSub.isRecurring &&
+          existingSub.endDate &&
+          new Date(existingSub.endDate) > new Date();
+
+        // ✅ NOWA LOGIKA: określ datę początkową
+        let newStartDate = new Date();
         let newEndDate = new Date();
 
-        if (
-          existingSub?.status === "ACTIVE" &&
-          existingSub.endDate &&
-          new Date(existingSub.endDate) > new Date()
-        ) {
-          // Przedłużenie - dodaj 30 dni od końca obecnego pakietu
-          newEndDate = new Date(existingSub.endDate);
+        if (hasActiveSubscription && existingSub.cancelAt) {
+          // ✅ Ma anulowaną subskrypcję - pakiet zacznie się po jej wygaśnięciu
+          newStartDate = new Date(existingSub.cancelAt);
+          newEndDate = new Date(existingSub.cancelAt);
+          newEndDate.setDate(newEndDate.getDate() + 30);
+        } else if (hasActiveOneTime) {
+          // ✅ Ma aktywny pakiet jednorazowy - przedłuż od końca
+          newStartDate = new Date(existingSub.endDate!);
+          newEndDate = new Date(existingSub.endDate!);
           newEndDate.setDate(newEndDate.getDate() + 30);
         } else {
-          // Nowy pakiet - dodaj 30 dni od teraz
+          // ✅ Brak aktywnego dostępu - zacznij od teraz
           newEndDate.setDate(newEndDate.getDate() + 30);
         }
 
@@ -495,7 +510,7 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
         const session = await stripe.checkout.sessions.create({
           customer: customerId,
           mode: "payment",
-          payment_method_types: ["card", "blik"],
+          payment_method_types: ["card", "blik", "p24"],
           line_items: [
             {
               price: process.env.STRIPE_PRICE_ID_MONTHLY!,
@@ -507,22 +522,43 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
           metadata: {
             userId: user.id,
             purchaseType: "MONTHLY_ACCESS",
+            newStartDate: newStartDate.toISOString(),
             newEndDate: newEndDate.toISOString(),
+            hasActiveSub: hasActiveSubscription ? "true" : "false",
+            hasCancelledSub:
+              hasActiveSubscription && existingSub.cancelAt ? "true" : "false",
           },
         });
 
-        // ✅ Sprawdź czy to przedłużenie (AFTER creating session)
-        if (
-          existingSub?.status === "ACTIVE" &&
-          existingSub.endDate &&
-          new Date(existingSub.endDate) > new Date()
-        ) {
+        // ✅ Sprawdź czy trzeba pokazać ostrzeżenie
+        if (hasActiveSubscription && existingSub.cancelAt) {
           const daysLeft = Math.ceil(
-            (new Date(existingSub.endDate).getTime() - Date.now()) /
+            (new Date(existingSub.cancelAt).getTime() - Date.now()) /
               (1000 * 60 * 60 * 24)
           );
 
-          // Zwróć ostrzeżenie + URL
+          return reply.send({
+            warning: true,
+            type: "extend",
+            currentEndDate: existingSub.cancelAt,
+            newEndDate: newEndDate.toISOString(),
+            daysLeft,
+            message: `Masz aktywną subskrypcję ważną do ${new Date(
+              existingSub.cancelAt
+            ).toLocaleDateString(
+              "pl-PL"
+            )}. Pakiet 30-dniowy zostanie aktywowany automatycznie po wygaśnięciu subskrypcji i będzie ważny do ${newEndDate.toLocaleDateString(
+              "pl-PL"
+            )}.`,
+            url: session.url,
+            sessionId: session.id,
+          });
+        } else if (hasActiveOneTime) {
+          const daysLeft = Math.ceil(
+            (new Date(existingSub.endDate!).getTime() - Date.now()) /
+              (1000 * 60 * 60 * 24)
+          );
+
           return reply.send({
             warning: true,
             type: "extend",
@@ -530,13 +566,13 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
             newEndDate: newEndDate.toISOString(),
             daysLeft,
             message: `Masz aktywny dostęp ważny do ${new Date(
-              existingSub.endDate
+              existingSub.endDate!
             ).toLocaleDateString(
               "pl-PL"
             )}. Wykupienie kolejnego pakietu przedłuży dostęp do ${newEndDate.toLocaleDateString(
               "pl-PL"
             )}.`,
-            url: session.url, // ✅ DODAJ URL!
+            url: session.url,
             sessionId: session.id,
           });
         }

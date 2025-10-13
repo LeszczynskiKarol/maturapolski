@@ -11,9 +11,9 @@ import {
   CheckCircle,
   ChevronLeft,
   Clock,
-  CreditCard,
+  //CreditCard,
   Crown,
-  ExternalLink,
+  //  ExternalLink,
   ShoppingCart,
   Sparkles,
   TrendingUp,
@@ -60,7 +60,7 @@ export const SubscriptionDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
-    type: "subscription" | "extend" | "cancel-pending";
+    type: "subscription" | "extend" | "cancel-pending" | "cancel-subscription"; // ✅ DODAJ nowy typ
     data?: any;
   }>({
     isOpen: false,
@@ -227,12 +227,14 @@ export const SubscriptionDashboard: React.FC = () => {
     },
   });
 
-  const openPortalMutation = useMutation({
+  {
+    /*const openPortalMutation = useMutation({
     mutationFn: () => api.post("/api/subscription/create-portal-session"),
     onSuccess: (response: any) => {
       window.location.href = response.data.url;
     },
-  });
+  });*/
+  }
 
   const handleUpgrade = async () => {
     setIsUpgrading(true);
@@ -264,6 +266,10 @@ export const SubscriptionDashboard: React.FC = () => {
     if (confirmModal.type === "cancel-pending") {
       // ✅ Anuluj zaplanowaną subskrypcję
       cancelPendingSubscriptionMutation.mutate();
+    } else if (confirmModal.type === "cancel-subscription") {
+      // ✅ NOWY: Anuluj aktywną subskrypcję
+      cancelMutation.mutate();
+      setConfirmModal({ ...confirmModal, isOpen: false });
     } else {
       // ✅ Standardowy flow - przekieruj do płatności
       const url = confirmModal.data?.url;
@@ -716,7 +722,15 @@ export const SubscriptionDashboard: React.FC = () => {
                         </button>
                       ) : (
                         <button
-                          onClick={() => cancelMutation.mutate()}
+                          onClick={() => {
+                            setConfirmModal({
+                              isOpen: true,
+                              type: "cancel-subscription",
+                              data: {
+                                cancelAt: subscription.cancelAt,
+                              },
+                            });
+                          }}
                           className="px-6 py-3 border border-gray-300 dark:border-gray-600 
                      text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 
                      dark:hover:bg-gray-700 font-semibold"
@@ -725,7 +739,7 @@ export const SubscriptionDashboard: React.FC = () => {
                         </button>
                       )}
 
-                      <button
+                      {/*<button
                         onClick={() => openPortalMutation.mutate()}
                         className="flex-1 px-6 py-3 bg-gray-800 dark:bg-gray-700 text-white 
                    rounded-lg hover:bg-gray-900 dark:hover:bg-gray-600 font-semibold 
@@ -734,7 +748,7 @@ export const SubscriptionDashboard: React.FC = () => {
                         <CreditCard className="w-5 h-5" />
                         Zarządzaj płatnościami
                         <ExternalLink className="w-4 h-4" />
-                      </button>
+                      </button>*/}
                     </>
                   )}
                 </div>
@@ -1134,6 +1148,8 @@ export const SubscriptionDashboard: React.FC = () => {
         title={
           confirmModal.type === "cancel-pending"
             ? "Anuluj zaplanowaną subskrypcję"
+            : confirmModal.type === "cancel-subscription"
+            ? "Anuluj subskrypcję Premium"
             : confirmModal.type === "subscription"
             ? "Aktywny pakiet Premium"
             : "Przedłuż dostęp Premium"
@@ -1147,6 +1163,8 @@ export const SubscriptionDashboard: React.FC = () => {
                     )
                   : ""
               }, ale po tym czasie stracisz dostęp Premium - chyba że przedłużysz plan lub wykupisz subskrypcję, do czego zachęcamy!`
+            : confirmModal.type === "cancel-subscription"
+            ? "Czy na pewno chcesz anulować subskrypcję Premium? Zachowasz dostęp do końca obecnego okresu rozliczeniowego, ale subskrypcja nie odnowi się automatycznie. Będziesz mógł wznowić subskrypcję w każdej chwili."
             : confirmModal.data?.message || ""
         }
         currentEndDate={confirmModal.data?.currentEndDate}
@@ -1154,11 +1172,14 @@ export const SubscriptionDashboard: React.FC = () => {
         confirmText={
           confirmModal.type === "cancel-pending"
             ? "Tak, anuluj subskrypcję"
+            : confirmModal.type === "cancel-subscription"
+            ? "Tak, anuluj subskrypcję"
             : "Przejdź do płatności"
         }
         cancelText="Nie, zostaw"
         type={
-          confirmModal.type === "cancel-pending"
+          confirmModal.type === "cancel-pending" ||
+          confirmModal.type === "cancel-subscription"
             ? "danger"
             : confirmModal.type === "subscription"
             ? "warning"

@@ -249,14 +249,18 @@ export class SubscriptionService {
         const session = event.data.object as Stripe.Checkout.Session;
 
         if (session.mode === "payment") {
-          // ✅ Obsługa jednorazowych płatności (30 dni)
           const userId = session.metadata?.userId;
           const purchaseType = session.metadata?.purchaseType;
 
           if (!userId) break;
 
           if (purchaseType === "MONTHLY_ACCESS") {
-            const endDate = session.metadata?.newEndDate
+            const hasCancelledSub =
+              session.metadata?.hasCancelledSub === "true";
+            const newStartDate = session.metadata?.newStartDate
+              ? new Date(session.metadata.newStartDate)
+              : new Date();
+            const newEndDate = session.metadata?.newEndDate
               ? new Date(session.metadata.newEndDate)
               : (() => {
                   const date = new Date();
@@ -264,25 +268,56 @@ export class SubscriptionService {
                   return date;
                 })();
 
-            await prisma.subscription.update({
+            const currentSub = await prisma.subscription.findUnique({
               where: { userId },
-              data: {
-                plan: "PREMIUM",
-                status: "ACTIVE",
-                isRecurring: false,
-                aiPointsLimit: 200,
-                startDate: new Date(),
-                endDate: endDate,
-                metadata: {
-                  lastPurchaseType: "MONTHLY_ACCESS",
-                  purchasedAt: new Date().toISOString(),
-                },
-              },
             });
 
-            console.log(
-              `✅ Activated 30-day access for user ${userId} until ${endDate.toISOString()}`
-            );
+            // ✅ Jeśli ma anulowaną subskrypcję, nie nadpisuj - zapisz jako pending
+            if (hasCancelledSub && currentSub?.cancelAt) {
+              // ✅ POPRAW: rzutuj metadata na any lub Record<string, any>
+              const existingMetadata =
+                (currentSub.metadata as Record<string, any>) || {};
+
+              await prisma.subscription.update({
+                where: { userId },
+                data: {
+                  metadata: {
+                    ...existingMetadata, // ✅ Teraz TypeScript wie że to obiekt
+                    pendingOneTimeAccess: {
+                      startDate: newStartDate.toISOString(),
+                      endDate: newEndDate.toISOString(),
+                      purchasedAt: new Date().toISOString(),
+                      sessionId: session.id,
+                    },
+                  },
+                },
+              });
+
+              console.log(
+                `✅ Saved pending one-time access for user ${userId} starting ${newStartDate.toISOString()}`
+              );
+            } else {
+              // ✅ Standardowy flow - aktywuj od razu
+              await prisma.subscription.update({
+                where: { userId },
+                data: {
+                  plan: "PREMIUM",
+                  status: "ACTIVE",
+                  isRecurring: false,
+                  aiPointsLimit: 200,
+                  startDate: newStartDate,
+                  endDate: newEndDate,
+                  metadata: {
+                    lastPurchaseType: "MONTHLY_ACCESS",
+                    purchasedAt: new Date().toISOString(),
+                  },
+                },
+              });
+
+              console.log(
+                `✅ Activated 30-day access for user ${userId} until ${newEndDate.toISOString()}`
+              );
+            }
           } else if (session.metadata?.pointsPackage) {
             // ✅ Obsługa zakupu punktów
             const pointsAmount = parseInt(session.metadata.pointsAmount || "0");
@@ -390,6 +425,57 @@ export class SubscriptionService {
 
             console.log(
               `✅ Subscription activated immediately for user ${userId}: ${subscriptionId}`
+            );
+          }
+        }
+        break;
+      }
+
+      case "customer.subscription.deleted": {
+        const subscription = event.data.object as Stripe.Subscription;
+
+        console.log("❌ Processing subscription deletion...");
+        await this.handleSubscriptionDeleted(subscription);
+
+        // ✅ NOWE: Sprawdź czy jest pending one-time access
+        const userId = subscription.metadata?.userId;
+        if (userId) {
+          const dbSub = await prisma.subscription.findUnique({
+            where: { userId },
+          });
+
+          const metadata = dbSub?.metadata as any;
+          const pendingAccess = metadata?.pendingOneTimeAccess;
+
+          if (pendingAccess) {
+            console.log(
+              `🔄 Activating pending one-time access for user ${userId}`
+            );
+
+            await prisma.subscription.update({
+              where: { userId },
+              data: {
+                plan: "PREMIUM",
+                status: "ACTIVE",
+                isRecurring: false,
+                aiPointsLimit: 200,
+                aiPointsUsed: 0,
+                aiPointsReset: new Date(),
+                startDate: new Date(pendingAccess.startDate),
+                endDate: new Date(pendingAccess.endDate),
+                stripeSubscriptionId: null,
+                cancelAt: null,
+                canceledAt: null,
+                metadata: {
+                  lastPurchaseType: "MONTHLY_ACCESS",
+                  activatedAt: new Date().toISOString(),
+                  previouslyPendingAccess: pendingAccess,
+                },
+              },
+            });
+
+            console.log(
+              `✅ Activated pending one-time access for user ${userId}`
             );
           }
         }
