@@ -23,6 +23,13 @@ export const contentService = {
     return response.data;
   },
 
+  async getHubsWithTests(limit?: number) {
+    const response = await api.get("/api/content/hubs/with-tests", {
+      params: { limit },
+    });
+    return response.data;
+  },
+
   // Ratings
   async submitRating(pageId: string, rating: number, fingerprint?: string) {
     const response = await api.post(`/api/content/pages/${pageId}/rate`, {

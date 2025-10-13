@@ -5,10 +5,18 @@ import { contentService } from "../services/contentService";
 import { Link } from "react-router-dom";
 import { BookOpen, ChevronDown, ArrowLeft, X } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
-import { CookieSettingsLink } from "./CookieSettingsLink";
 
 interface PublicLayoutProps {
   children: React.ReactNode;
+}
+
+interface TestHub {
+  id: string;
+  slug: string;
+  title: string;
+  author?: string;
+  type: string;
+  isRequired?: boolean;
 }
 
 export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
@@ -16,10 +24,29 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
   const isLoggedIn = !!user;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [featuredHubs, setFeaturedHubs] = useState<any[]>([]);
+  const [testHubs, setTestHubs] = useState<TestHub[]>([]);
 
   useEffect(() => {
     loadFeaturedHubs();
   }, []);
+
+  useEffect(() => {
+    loadFooterData();
+  }, []);
+
+  const loadFooterData = async () => {
+    try {
+      // Pobierz huby z testami
+      const tests = await contentService.getHubsWithTests(5);
+      setTestHubs(tests);
+
+      // Pobierz featured huby dla bazy wiedzy (jak masz obecnie)
+      const hubs = await contentService.getHubs({ limit: 5 });
+      setFeaturedHubs(hubs.hubs || []);
+    } catch (error) {
+      console.error("Error loading footer data:", error);
+    }
+  };
 
   const loadFeaturedHubs = async () => {
     try {
@@ -292,23 +319,20 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
               </ul>
             </div>
 
+            {/* NOWA SEKCJA - Testy */}
             <div>
-              <h4 className="font-bold mb-4 text-lg">Firma</h4>
+              <h4 className="font-bold mb-4 text-lg">Popularne testy</h4>
               <ul className="space-y-3 text-gray-400">
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    O nas
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Kontakt
-                  </a>
-                </li>
-
-                <li>
-                  <CookieSettingsLink />
-                </li>
+                {testHubs.slice(0, 4).map((hub) => (
+                  <li key={hub.id}>
+                    <a
+                      href={`/test/${hub.slug}`}
+                      className="hover:text-white transition-colors"
+                    >
+                      {hub.title}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>

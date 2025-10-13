@@ -503,6 +503,37 @@ export class ContentService {
     };
   }
 
+  async getHubsWithTests({
+    limit = 10,
+  }: {
+    limit?: number;
+  } = {}) {
+    // Pobierz tylko huby, które mają testy (LITERARY_WORK lub EPOCH)
+    const hubs = await prisma.contentHub.findMany({
+      where: {
+        isPublished: true,
+        type: {
+          in: ["LITERARY_WORK", "EPOCH"],
+        },
+      },
+      orderBy: [
+        { isRequired: "desc" }, // Najpierw lektury obowiązkowe
+        { title: "asc" },
+      ],
+      take: limit,
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        author: true,
+        type: true,
+        isRequired: true,
+      },
+    });
+
+    return hubs;
+  }
+
   async deleteRating(ratingId: string) {
     const rating = await prisma.pageRating.findUnique({
       where: { id: ratingId },

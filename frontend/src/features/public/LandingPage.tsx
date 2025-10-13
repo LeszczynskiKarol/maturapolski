@@ -40,25 +40,37 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
+interface TestHub {
+  id: string;
+  slug: string;
+  title: string;
+  author?: string;
+  type: string;
+  isRequired?: boolean;
+}
+
 export const LandingPage: React.FC = () => {
+  const [testHubs, setTestHubs] = useState<TestHub[]>([]);
   const [featuredHubs, setFeaturedHubs] = useState<any[]>([]);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const user = useAuthStore((state) => state.user);
   const isLoggedIn = !!user;
 
   useEffect(() => {
-    loadFeaturedHubs();
+    loadFooterData();
   }, []);
 
-  const loadFeaturedHubs = async () => {
+  const loadFooterData = async () => {
     try {
-      const response = await contentService.getHubs({
-        type: "LITERARY_WORK",
-        limit: 5,
-      });
-      setFeaturedHubs(response.hubs || []);
+      // Pobierz huby z testami
+      const tests = await contentService.getHubsWithTests(5);
+      setTestHubs(tests);
+
+      // Pobierz featured huby dla bazy wiedzy (jak masz obecnie)
+      const hubs = await contentService.getHubs({ limit: 5 });
+      setFeaturedHubs(hubs.hubs || []);
     } catch (error) {
-      console.error("Error loading featured hubs:", error);
+      console.error("Error loading footer data:", error);
     }
   };
 
@@ -1142,14 +1154,6 @@ export const LandingPage: React.FC = () => {
             <div>
               <h4 className="font-bold mb-4 text-lg">Baza wiedzy</h4>
               <ul className="space-y-3 text-gray-400">
-                <li>
-                  <a
-                    href="/baza-wiedzy"
-                    className="hover:text-white transition-colors font-medium"
-                  >
-                    Zobacz wszystkie →
-                  </a>
-                </li>
                 {featuredHubs.slice(0, 4).map((hub) => (
                   <li key={hub.id}>
                     <a
@@ -1160,34 +1164,31 @@ export const LandingPage: React.FC = () => {
                     </a>
                   </li>
                 ))}
+                <li>
+                  <a
+                    href="/baza-wiedzy"
+                    className="hover:text-white transition-colors font-medium"
+                  >
+                    Zobacz wszystkie →
+                  </a>
+                </li>
               </ul>
             </div>
 
+            {/* NOWA SEKCJA - Testy */}
             <div>
-              <h4 className="font-bold mb-4 text-lg">Firma</h4>
+              <h4 className="font-bold mb-4 text-lg">Testy lektur</h4>
               <ul className="space-y-3 text-gray-400">
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    O nas
-                  </a>
-                </li>
-
-                <li>
-                  <a
-                    href="/terms"
-                    className="hover:text-white transition-colors"
-                  >
-                    Regulamin
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/privacy"
-                    className="hover:text-white transition-colors"
-                  >
-                    Prywatność
-                  </a>
-                </li>
+                {testHubs.slice(0, 4).map((hub) => (
+                  <li key={hub.id}>
+                    <a
+                      href={`/test/${hub.slug}`}
+                      className="hover:text-white transition-colors"
+                    >
+                      {hub.title}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>

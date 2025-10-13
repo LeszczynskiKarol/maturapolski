@@ -218,6 +218,21 @@ export async function contentRoutes(fastify: FastifyInstance) {
     }
   );
 
+  // GET /api/content/hubs/with-tests
+  fastify.get("/hubs/with-tests", async (request, reply) => {
+    try {
+      const { limit } = request.query as { limit?: string };
+
+      const hubs = await contentService.getHubsWithTests({
+        limit: limit ? parseInt(limit) : 10,
+      });
+
+      return reply.send(hubs);
+    } catch (error: any) {
+      return reply.status(400).send({ error: error.message });
+    }
+  });
+
   // Usuwanie strony
   fastify.delete(
     "/pages/:id",
