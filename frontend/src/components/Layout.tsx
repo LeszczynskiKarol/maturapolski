@@ -217,22 +217,28 @@ export const Layout: React.FC = () => {
             )}
           </div>
 
-          <button
-            onClick={handleLogout}
-            className={`w-full flex items-center gap-2 px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors ${
-              isSidebarCollapsed ? "justify-center" : "justify-center"
-            }`}
-            title={isSidebarCollapsed ? "Wyloguj" : undefined}
-          >
-            <LogOut className="w-4 h-4" />
-            {!isSidebarCollapsed && <span>Wyloguj</span>}
-          </button>
-
-          {/* Link do Cookies */}
-          {!isSidebarCollapsed && (
-            <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-              <CookieSettingsLink />
+          {/* Wyloguj i Cookies w jednym wierszu */}
+          {!isSidebarCollapsed ? (
+            <div className="flex items-center gap-2">
+              <div className="w-1/4 flex items-center justify-center">
+                <CookieSettingsLink />
+              </div>
+              <button
+                onClick={handleLogout}
+                className="w-3/4 flex items-center justify-center gap-2 px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Wyloguj</span>
+              </button>
             </div>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+              title="Wyloguj"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           )}
         </div>
       </div>
@@ -331,23 +337,24 @@ export const Layout: React.FC = () => {
                 </div>
               </div>
 
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
-              >
-                <LogOut className="w-4 h-4" />
-                Wyloguj
-              </button>
-
-              {/* Link do Cookies w mobile */}
-              <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 text-center">
-                <Link
-                  to="/cookies"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+              {/* Wyloguj i Cookies w jednym wierszu - wersja mobile */}
+              <div className="flex items-center gap-2">
+                <div className="w-1/4 flex items-center justify-center">
+                  <Link
+                    to="/cookies"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                  >
+                    🍪
+                  </Link>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="w-3/4 flex items-center justify-center gap-2 px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                 >
-                  Polityka Cookies
-                </Link>
+                  <LogOut className="w-4 h-4" />
+                  <span>Wyloguj</span>
+                </button>
               </div>
             </div>
           </div>
