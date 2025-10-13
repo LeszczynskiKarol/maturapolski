@@ -308,14 +308,6 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                     </a>
                   </li>
                 ))}
-                <li>
-                  <a
-                    href="/baza-wiedzy"
-                    className="hover:text-white transition-colors font-medium"
-                  >
-                    Zobacz wszystkie →
-                  </a>
-                </li>
               </ul>
             </div>
 

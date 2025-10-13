@@ -1164,14 +1164,6 @@ export const LandingPage: React.FC = () => {
                     </a>
                   </li>
                 ))}
-                <li>
-                  <a
-                    href="/baza-wiedzy"
-                    className="hover:text-white transition-colors font-medium"
-                  >
-                    Zobacz wszystkie →
-                  </a>
-                </li>
               </ul>
             </div>
 
