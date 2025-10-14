@@ -18442,6 +18442,1282 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
 
     // =========== KONIEC PYTAŃ ŚREDNIOWIECZE =========== //
 
+    // ============ POCZĄTEK PYTAŃ BAROK (NA RAZIE TYLKO POZIOMY 1 i 2!!!!!!!!!!!!)
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Jakie są ramy czasowe baroku w Europie?",
+      content: {
+        options: [
+          "XV-XVI wiek",
+          "XVI-XVII wiek",
+          "XVII-XVIII wiek",
+          "XVIII-XIX wiek",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Barok w Europie trwał od końca XVI wieku do połowy XVIII wieku (ok. 1600-1750).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Skąd pochodzi nazwa 'barok'?",
+      content: {
+        options: [
+          "od łacińskiego słowa oznaczającego piękno",
+          "od portugalskiego określenia nieregularnej perły",
+          "od nazwiska artysty",
+          "od nazwy miasta",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Nazwa 'barok' pochodzi z portugalskiego 'barroco' - nieregularna, dziwaczna perła. Początkowo miała charakter pejoratywny.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question:
+        "Jaka koncepcja filozoficzna głosiła, że źródłem poznania są zmysły?",
+      content: {
+        options: ["racjonalizm", "idealizm", "realizm", "sensualizm"],
+      },
+      correctAnswer: 3,
+      metadata: {
+        explanation:
+          "Sensualizm to kierunek filozoficzny głoszący, że źródłem poznania są zmysły i doświadczenie zmysłowe.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question:
+        "Kto stworzył filozofię racjonalizmu opartą na haśle 'Cogito ergo sum'?",
+      content: {
+        options: ["Kartezjusz (Descartes)", "Pascal", "Spinoza", "Leibniz"],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "René Descartes (Kartezjusz) stworzył filozofię racjonalizmu z hasłem 'Cogito ergo sum' - myślę, więc jestem.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co oznacza łacińskie wyrażenie 'vanitas'?",
+      content: {
+        options: ["piękno", "mądrość", "marność", "wieczność"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Vanitas oznacza 'marność' - kluczowe pojęcie baroku wyrażające przekonanie o przemijaniu i marności dóbr doczesnych.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co oznacza hasło 'carpe diem'?",
+      content: {
+        options: [
+          "pamiętaj o śmierci",
+          "chwytaj dzień, korzystaj z chwili",
+          "wszystko przemija",
+          "poznaj samego siebie",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Carpe diem (łac. 'chwytaj dzień') to hasło epikurejskie nakazujące korzystanie z przyjemności chwili obecnej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co oznacza pojęcie 'theatrum mundi'?",
+      content: {
+        options: [
+          "teatr miejski",
+          "teatr dworski",
+          "świat jako teatr, życie jako gra pozorów",
+          "dramat barokowy",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Theatrum mundi (teatr świata) to barokowa koncepcja życia jako teatru, gdzie ludzie odgrywają role, a świat jest pełen pozorów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Jak nazywa się polski nurt ideologiczny baroku?",
+      content: {
+        options: ["humanizm", "sarmatyzm", "oświecenie", "romantyzm"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Sarmatyzm to specyficznie polski nurt ideologiczny baroku, gloryfikujący szlachtę jako potomków starożytnych Sarmatów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Która cecha NIE charakteryzuje baroku?",
+      content: {
+        options: [
+          "kontrast i antyteza",
+          "umiłowanie przepychu",
+          "prostota i harmonia",
+          "paradoks",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Prostota i harmonia charakteryzowały klasycyzm i renesans. Barok cechował się kontrastem, przepychem i złożonością.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest koncept w literaturze barokowej?",
+      content: {
+        options: [
+          "rodzaj wiersza",
+          "pomysłowa gra słowna, dowcipne skojarzenie",
+          "teoria filozoficzna",
+          "gatunek dramatyczny",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Koncept to charakterystyczny dla baroku pomysłowy zwrot, dowcipne skojarzenie, gra słowna oparta na nieoczekiwanym połączeniu pojęć.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Jaki styl architektoniczny dominował w baroku?",
+      content: {
+        options: [
+          "monumentalny, pełen ozdób i złoceń",
+          "surowy i minimalistyczny",
+          "prosty i funkcjonalny",
+          "asymetryczny i chaotyczny",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Architektura barokowa była monumentalna, bogata w zdobienia, złocenia, rzeźby - miała olśniewać przepychem.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest antytet(e)za?",
+      content: {
+        options: [
+          "rodzaj wiersza",
+          "zestawienie przeciwieństw",
+          "powtórzenie słów",
+          "pytanie retoryczne",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antyteza to figura retoryczna polegająca na zestawieniu przeciwstawnych pojęć - bardzo charakterystyczna dla baroku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest oksymoron?",
+      content: {
+        options: [
+          "połączenie sprzecznych pojęć",
+          "powtórzenie słów",
+          "pytanie retoryczne",
+          "przesada",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Oksymoron to połączenie sprzecznych, wykluczających się pojęć (np. 'głośna cisza', 'żywy trup') - typowe dla baroku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest kontrreformacja?",
+      content: {
+        options: [
+          "reforma Kościoła katolickiego",
+          "ruch przeciw reformacji protestanckiej",
+          "nurt filozoficzny",
+          "styl w sztuce",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Kontrreformacja to ruch w łonie Kościoła katolickiego mający na celu walkę z reformacją protestancką i odnowę katolicyzmu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Który zakon odegrał kluczową rolę w kontrreformacji?",
+      content: {
+        options: ["benedyktyni", "franciszkanie", "jezuici", "cystersi"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Jezuici (Towarzystwo Jezusowe założone przez św. Ignacego Loyolę) odegrali kluczową rolę w kontrreformacji, prowadząc szkoły i misje.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest marinizm?",
+      content: {
+        options: [
+          "styl w malarstwie",
+          "nurt w literaturze barokowej pełen kunsztu i ozdób słownych",
+          "teoria filozoficzna",
+          "typ architektury",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Marinizm (od włoskiego poety Marina) to nurt w poezji barokowej charakteryzujący się wyszukanym stylem, koncep­tami i ozdobnością.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest emblematyka w baroku?",
+      content: {
+        options: [
+          "rodzaj malarstwa",
+          "połączenie obrazu, motta i komentarza niosące przesłanie moralne",
+          "typ architektury",
+          "gatunek literacki",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Emblematy to charakterystyczne dla baroku kompozycje składające się z obrazu (pictura), sentencji (inscriptio) i komentarza (subscriptio).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest fraszka?",
+      content: {
+        options: [
+          "krótki utwór satyryczny o charakterze żartobliwym",
+          "długi poemat epickie",
+          "dramat",
+          "powieść",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Fraszka to krótki utwór poetycki o charakterze satyrycznym, żartobliwym lub moraliza­torskim - gatunek uprawiany w polskim baroku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest sonet?",
+      content: {
+        options: [
+          "14-wersowy wiersz o określonym układzie rymów",
+          "krótkie opowiadanie",
+          "utwór dramatyczny",
+          "pieśń ludowa",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Sonet to 14-wersowy wiersz składający się z dwóch czterowierszy i dwóch trójwierszy, o określonym układzie rymów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest oda?",
+      content: {
+        options: [
+          "krótki wiersz satyryczny",
+          "uroczysty wiersz pochwalny",
+          "utwór dramatyczny",
+          "powieść",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Oda to uroczysty utwór poetycki o charakterze pochwalnym, wzniosłym, często adresowany do ważnej osoby lub idei.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co charakteryzowało sarmatyzm?",
+      content: {
+        options: [
+          "krytykę szlachty",
+          "pochwałę mieszczaństwa",
+          "gloryfikację szlachty jako potomków Sarmatów",
+          "krytykę Kościoła",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Sarmatyzm gloryfikował polską szlachtę jako potomków starożytnych Sarmatów, podkreślał jej wyjątkowość i cnoty rycerskie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co oznacza pojęcie 'vanitas vanitatum'?",
+      content: {
+        options: [
+          "piękno piękności",
+          "marność nad marnościami",
+          "chwała chwały",
+          "wieczność wieków",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Vanitas vanitatum to łacińskie wyrażenie oznaczające 'marność nad marnościami' - kluczowy motyw barokowy o przemijaniu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Jaka funkcja języka dominowała w literaturze barokowej?",
+      content: {
+        options: [
+          "emotywna",
+          "fatyczna",
+          "perswazyjna (retoryczna)",
+          "poetycka",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "W baroku dominowała funkcja perswazyjna - literatura miała przekonywać, wpływać na odbiorcę poprzez retorykę.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest trompe-l'oeil w sztuce barokowej?",
+      content: {
+        options: [
+          "rodzaj rzeźby",
+          "iluzja optyczna - malarstwo oszukujące oko",
+          "typ architektury",
+          "technika snycerska",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Trompe-l'oeil (fr. 'oszukanie oka') to technika malarska tworząca iluzję trójwymiarowości - typowa dla baroku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co symbolizowała czaszka w malarstwie barokowym?",
+      content: {
+        options: [
+          "mądrość",
+          "przemijanie i śmierć",
+          "życie wieczne",
+          "młodość",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Czaszka w malarstwie vanitas symbolizowała śmierć, przemijanie i marność dóbr ziemskich - memento mori.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest alegoreza?",
+      content: {
+        options: [
+          "rodzaj wiersza",
+          "interpretacja alegoryczna tekstu",
+          "figura retoryczna",
+          "gatunek dramatu",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Alegoreza to interpretacja tekstu w sposób alegoryczny, poszukiwanie ukrytych, symbolicznych znaczeń - typowa dla baroku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest hiperbola?",
+      content: {
+        options: [
+          "przesada, wyolbrzymienie",
+          "niedopowiedzenie",
+          "porównanie",
+          "powtórzenie",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Hiperbola to figura retoryczna polegająca na przesadzie, wyolbrzymieniu - bardzo charakterystyczna dla baroku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Jaki typ miłości propagowano w poezji barokowej?",
+      content: {
+        options: [
+          "tylko platoniczną",
+          "tylko zmysłową",
+          "zarówno duchową jak i zmysłową - kontrast",
+          "tylko małżeńską",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Barok pokazywał dwoistość miłości - kontrast między miłością duchową, platoniczną a zmysłową, cielesną.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest koncetyzm?",
+      content: {
+        options: [
+          "teoria filozoficzna",
+          "nadużywanie konceptów, dowcipnych skojarzeń",
+          "styl w malarstwie",
+          "typ budowli",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Koncetyzm (konceptyzm) to tendencja w literaturze barokowej do nadużywania konceptów - pomysłowych, dowcipnych skojarzeń.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co charakteryzowało barokowe malarstwo iluzjonistyczne?",
+      content: {
+        options: [
+          "realizm fotograficzny",
+          "abstrakcję",
+          "tworzenie złudzeń przestrzennych na płaskich powierzchniach",
+          "minimalizm",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Malarstwo iluzjonistyczne baroku tworzyło złudzenia przestrzenne - np. sklepienia wydające się niebiańskimi przestrzeniami.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest silva rerum?",
+      content: {
+        options: [
+          "gatunek poetycki",
+          "pamiętnik szlachecki - zbiór różnych zapisków",
+          "kronika",
+          "dramat",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Silva rerum (łac. 'las rzeczy') to szlachecki pamiętnik-album zawierający różnorodne zapiski, wspomnienia, dokumenty.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest diariusz?",
+      content: {
+        options: [
+          "gatunek dramatu",
+          "dziennik, opis wydarzeń z życia autora",
+          "poemat epickie",
+          "traktat filozoficzny",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Diariusz to dziennik, relacja z podróży lub wydarzeń politycznych - gatunek popularny w baroku polskim.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest anachronizm?",
+      content: {
+        options: [
+          "figura retoryczna",
+          "błąd chronologiczny - umieszczenie czegoś w niewłaściwej epoce",
+          "rodzaj wiersza",
+          "styl w sztuce",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Anachronizm to błąd chronologiczny, częsty w baroku - np. przedstawianie postaci antycznych w strojach współczesnych.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co oznacza pojęcie 'festina lente'?",
+      content: {
+        options: [
+          "chwytaj dzień",
+          "spiesz się powoli",
+          "pamiętaj o śmierci",
+          "wszystko przemija",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Festina lente (łac. 'spiesz się powoli') to paradoksalne hasło barokowe wyrażające potrzebę rozwagi w działaniu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest petrarkizm w poezji barokowej?",
+      content: {
+        options: [
+          "nurt filozoficzny",
+          "tradycja liryki miłosnej nawiązująca do Petrarki",
+          "typ budowli",
+          "teoria polityczna",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Petrarkizm to tradycja liryki miłosnej nawiązująca do poezji Petrarki - idealizacja kobiety, cierpienie miłosne.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co charakteryzuje epicką twórczość baroku?",
+      content: {
+        options: [
+          "realizm i prostota",
+          "mitologizacja, kontrast komizmu i patosu",
+          "obiektywizm",
+          "minimalizm stylistyczny",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Epika barokowa cechowała się mitologizacją, kontraste komizmu i patosu, barokowymi ozdobnikami stylistycznymi.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest topos?",
+      content: {
+        options: [
+          "rodzaj wiersza",
+          "utarty motyw, schemat literacki",
+          "figura retoryczna",
+          "gatunek dramatu",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Topos to utarty motyw, schemat tematyczny często powtarzający się w literaturze - np. topos vanitas, locus amoenus.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest locus amoenus?",
+      content: {
+        options: [
+          "miejsce straszne",
+          "miejsce przyjemne - idealizowany pejzaż sielankowy",
+          "miasto",
+          "pustkowia",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Locus amoenus (łac. 'miejsce przyjemne') to topos literacki - idealizowany krajobraz sielankowy, zazwyczaj miejsce miłosnych spotkań.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest inwokacja w poezji barokowej?",
+      content: {
+        options: [
+          "zakończenie utworu",
+          "wezwanie do muz, bóstwa lub osoby o pomoc w tworzeniu",
+          "figura retoryczna",
+          "typ wiersza",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Inwokacja to wezwanie do muz, bóstwa lub patrona na początku utworu o pomoc i natchnienie w tworzeniu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Który motyw NIE jest typowy dla baroku?",
+      content: {
+        options: [
+          "vanitas - marność",
+          "carpe diem - korzystaj z chwili",
+          "harmonia i równowaga",
+          "theatrum mundi - świat jako teatr",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Harmonia i równowaga są typowe dla renesansu i klasycyzmu, nie dla baroku pełnego kontrastów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co symbolizowały klepsydry w sztuce barokowej?",
+      content: {
+        options: [
+          "mądrość",
+          "bogactwo",
+          "upływający czas i przemijanie",
+          "radość życia",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Klepsydra (zegar piaskowy) symbolizowała upływający czas, przemijanie życia - element malarstwa vanitas.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest panegiryzm?",
+      content: {
+        options: [
+          "krytyka władzy",
+          "przesadne wychwalanie, pochlebstwo",
+          "obiektywny opis",
+          "satyra",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Panegiryzm to przesadne wychwalanie, pochlebstwo - cecha literatury barokowej, szczególnie polskiej (magnackie mecenaty).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Jak nazywano wiersze o tematyce żałobnej w baroku?",
+      content: {
+        options: ["sielanki", "epitafia", "ody", "hymny"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Epitafium to wiersz żałobny napisany na cześć zmarłego - gatunek popularny w baroku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest sielanka?",
+      content: {
+        options: [
+          "wiersz satyryczny",
+          "utwór przedstawiający idealizowane życie pasterskie",
+          "dramat",
+          "pieśń religijna",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Sielanka to gatunek literacki przedstawiający idealizowane, spokojne życie pasterzy na łonie natury.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest enargeia?",
+      content: {
+        options: [
+          "figura retoryczna",
+          "obrazowość, plastyczność opisu",
+          "rodzaj wiersza",
+          "teoria filozoficzna",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Enargeia to obrazowość, plastyczność opisu - cecha charakterystyczna barokowej retoryki mająca wywołać wrażenie 'widzenia' sceny.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest apoftegmat?",
+      content: {
+        options: [
+          "krótkie, trafne powiedzenie, sentencja",
+          "długi poemat",
+          "dramat",
+          "powieść",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Apoftegmat to krótkie, trafne powiedzenie, sentencja zawierająca mądrość życiową - popularne w baroku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Jak zaczyna się typowy barokowy sonet?",
+      content: {
+        options: [
+          "od dwóch tercyn",
+          "od jednego ośmiowiersza",
+          "od dwóch czterowierszy (kwadryny)",
+          "od swobodnej strofy",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Klasyczny sonet składa się z dwóch kwadryn (czterowierszy) i dwóch tercyn (trójwierszy).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "BAROQUE",
+      question: "Co to jest acumen?",
+      content: {
+        options: [
+          "figura retoryczna",
+          "dowcip, pomysłowość, koncept",
+          "rodzaj wiersza",
+          "gatunek dramatu",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Acumen (łac.) to dowcip, pomysłowość, zdolność do tworzenia konceptów - ceniona w baroku cecha poetycka.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "BAROQUE",
+      question: "Dopasuj pojęcia do ich znaczeń.",
+      content: {
+        matchingType: "concepts_meanings",
+        leftColumn: [
+          { id: "A", text: "Vanitas" },
+          { id: "B", text: "Carpe diem" },
+          { id: "C", text: "Memento mori" },
+          { id: "D", text: "Theatrum mundi" },
+        ],
+        rightColumn: [
+          { id: 1, text: "pamiętaj o śmierci" },
+          { id: 2, text: "marność dóbr doczesnych" },
+          { id: 3, text: "chwytaj dzień" },
+          { id: 4, text: "świat jako teatr" },
+        ],
+      },
+      correctAnswer: [
+        [0, 1],
+        [1, 2],
+        [2, 0],
+        [3, 3],
+      ],
+      metadata: {
+        explanation:
+          "Vanitas - marność, carpe diem - chwytaj dzień, memento mori - pamiętaj o śmierci, theatrum mundi - świat jako teatr.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "BAROQUE",
+      question:
+        "Które cechy charakteryzują barok? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "kontrast i antyteza",
+          "prostota i harmonia",
+          "przepych i ozdobność",
+          "paradoks",
+          "umiłowanie natury i prostoty",
+        ],
+      },
+      correctAnswer: [0, 2, 3],
+      metadata: {
+        explanation:
+          "Barok charakteryzują: kontrast, antyteza, przepych, ozdobność i paradoks. Prostota i harmonia to cechy klasycyzmu.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "BAROQUE",
+      question: "Dopasuj gatunki literackie do ich charakterystyki.",
+      content: {
+        matchingType: "genres_characteristics",
+        leftColumn: [
+          { id: "A", text: "Sonet" },
+          { id: "B", text: "Fraszka" },
+          { id: "C", text: "Oda" },
+          { id: "D", text: "Sielanka" },
+        ],
+        rightColumn: [
+          { id: 1, text: "krótki utwór satyryczny" },
+          { id: 2, text: "utwór o życiu pasterskim" },
+          { id: 3, text: "14-wersowy wiersz" },
+          { id: 4, text: "uroczysty wiersz pochwalny" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 0],
+        [2, 3],
+        [3, 1],
+      ],
+      metadata: {
+        explanation:
+          "Sonet - 14 wersów, fraszka - satyra, oda - pochwalny, sielanka - o życiu pasterskim.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "BAROQUE",
+      question:
+        "Które symbole występowały w malarstwie vanitas? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "czaszka",
+          "klepsydra (zegar piaskowy)",
+          "kwiaty",
+          "tęcza",
+          "instrumenty muzyczne",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 4],
+      metadata: {
+        explanation:
+          "W malarstwie vanitas występowały: czaszki, klepsydry, zwiędłe kwiaty, instrumenty - symbole przemijania. Tęcza nie była typowym symbolem vanitas.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "BAROQUE",
+      question: "Uzupełnij informacje o baroku.",
+      content: {
+        textWithGaps:
+          "Barok to epoka trwająca w Europie od [1] do [2] wieku. Nazwa pochodzi od portugalskiego słowa oznaczającego [3]. Główną cechą baroku był [4].",
+        gaps: [
+          {
+            id: 1,
+            options: ["XV", "XVI", "XVII", "XVIII"],
+          },
+          {
+            id: 2,
+            options: ["XVII", "XVIII", "XIX", "XX"],
+          },
+          {
+            id: 3,
+            options: ["piękno", "perłę nieregularną", "złoto", "światło"],
+          },
+          {
+            id: 4,
+            options: ["minimalizm", "kontrast", "harmonia", "prostota"],
+          },
+        ],
+      },
+      correctAnswer: [2, 1, 1, 1],
+      metadata: {
+        explanation:
+          "Barok trwał od XVII do XVIII wieku, nazwa od perły nieregularnej, główna cecha to kontrast.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "BAROQUE",
+      question:
+        "Wyjaśnij, na czym polegała koncepcja 'theatrum mundi' w baroku.",
+      content: {
+        instruction:
+          "Opisz barokową koncepcję świata jako teatru. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wyjaśnienie metafory świata jako teatru (1 pkt)",
+          "wskazanie na pozory i role społeczne (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Theatrum mundi (teatr świata) to barokowa koncepcja życia jako przedstawienia teatralnego. Świat to scena, ludzie to aktorzy odgrywający przydzielone im role społeczne. Życie pełne jest pozorów, masek, udawania. Ta koncepcja wyrażała barokowe przekonanie o iluzoryczności rzeczywistości, grze pozorów i niemożności poznania prawdy. Człowiek nigdy nie jest sobą, zawsze gra rolę.",
+        keyWords: ["teatr", "role", "pozory", "maski", "iluzja"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "BAROQUE",
+      question: "Opisz główne cechy sarmatyzmu jako nurtu ideologicznego.",
+      content: {
+        instruction:
+          "Wyjaśnij, czym charakteryzował się sarmatyzm. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie gloryfikacji szlachty (1 pkt)",
+          "opisanie cech sarmatyzmu (cnoty, pochodzenie) (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Sarmatyzm to specyficznie polski nurt ideologiczny baroku gloryfikujący szlachtę. Szlachta uważała się za potomków starożytnych Sarmatów - wojowniczego ludu. Sarmatyzm podkreślał: poczucie wyższości szlachty, cnoty rycerskie (męstwo, honor), przywiązanie do tradycji, religijność katolicką, wolność szlachecką, ksenofobię. Wyrażał się w stroju (żupan, kontusz, szabla), obyczajach i literaturze panegirycznej.",
+        keyWords: [
+          "szlachta",
+          "Sarmaci",
+          "cnoty rycerskie",
+          "wolność",
+          "tradycja",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "BAROQUE",
+      question:
+        "Wyjaśnij różnicę między hasłami 'carpe diem' a 'memento mori'.",
+      content: {
+        instruction: "Porównaj oba hasła i ich przesłanie. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wyjaśnienie carpe diem (1 pkt)",
+          "wyjaśnienie memento mori (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Carpe diem ('chwytaj dzień') to hasło epikurejskie nakazujące korzystanie z przyjemności życia, radość z chwili obecnej. Memento mori ('pamiętaj o śmierci') to hasło przypominające o przemijaniu i śmierci, nakazujące przygotowanie na koniec. Oba hasła współistniały w baroku, tworząc charakterystyczny kontrast między radością życia a świadomością śmierci.",
+        keyWords: [
+          "chwytaj dzień",
+          "radość",
+          "śmierć",
+          "przemijanie",
+          "kontrast",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "BAROQUE",
+      question: "Opisz, czym charakteryzowała się barokowa architektura.",
+      content: {
+        instruction: "Wymień główne cechy architektury barokowej. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie przepychu i monumentalności (1 pkt)",
+          "opisanie elementów dekoracyjnych (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Architektura barokowa charakteryzowała się monumentalnością, przepychem i bogactwem dekoracji. Budowle miały dynamiczne, faliste formy, obfitowały w złocenia, rzeźby, freski. Fasady były bogate w detale, kolumny, pilastry. Wnętrza kościołów miały olśniewać wiernych - malowidła iluzjonistyczne na sklepieniach, bogate ołtarze. Celem było wywołanie zachwytu, wzruszenia, ukazanie potęgi Kościoła i monarchii.",
+        keyWords: [
+          "przepych",
+          "monumentalność",
+          "złocenia",
+          "dynamika",
+          "iluzjonizm",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "BAROQUE",
+      question:
+        "Wyjaśnij, czym jest koncept w literaturze barokowej i podaj przykład.",
+      content: {
+        instruction: "Zdefiniuj koncept i zilustruj przykładem. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "definicja konceptu (1 pkt)",
+          "podanie przykładu lub wyjaśnienie mechanizmu (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Koncept to pomysłowy, dowcipny zwrot słowny oparty na nieoczekiwanym skojarzeniu, grze słów lub paradoksie. Był oznaką kunsztu poetyckiego w baroku. Przykład: porównanie łez do pereł, oczu do słońc, włosów do złotych nici. Koncept łączył odległe pojęcia tworząc zaskakujące metafory. Celem było wywołanie zadziwienia czytelnika pomysłowością poety, pokazanie jego acumen - dowcipu.",
+        keyWords: [
+          "pomysłowość",
+          "gra słów",
+          "nieoczekiwane skojarzenie",
+          "metafora",
+          "zaskoczenie",
+        ],
+      },
+    },
+
+    // =========== KONIEC PYTAŃ BAROK =========== //
+
     // =========== POCZĄTEK PYTAŃ ANTYGONA ============== //
 
     {
