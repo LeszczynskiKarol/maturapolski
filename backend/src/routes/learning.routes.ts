@@ -515,6 +515,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
                 difficulty: true,
                 epoch: true,
                 tags: true,
+                work: true,
               },
             },
           },
@@ -554,6 +555,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
       const recentCategoryCount = new Map<string, number>();
       const recentEpochCount = new Map<string, number>();
       const recentTagsSet = new Set<string>();
+      const recentWorkCount = new Map<string, number>();
 
       lastExercises.forEach((usage) => {
         if (usage.exercise) {
@@ -571,6 +573,13 @@ export async function learningRoutes(fastify: FastifyInstance) {
               (recentEpochCount.get(usage.exercise.epoch) || 0) + 1
             );
           }
+          if (usage.exercise.work) {
+            recentWorkCount.set(
+              usage.exercise.work,
+              (recentWorkCount.get(usage.exercise.work) || 0) + 1
+            );
+          }
+
           usage.exercise.tags?.forEach((tag) => recentTagsSet.add(tag));
         }
       });
@@ -831,6 +840,23 @@ export async function learningRoutes(fastify: FastifyInstance) {
           }
         }
 
+        // ✅✅✅ 4.5 RÓŻNORODNOŚĆ DZIEŁ LITERACKICH ✅✅✅
+        // UWAGA: Nie stosuj w trybie powtórki z konkretnej lektury!
+        if (exercise.work && !isWorkReview) {
+          const workCount = recentWorkCount.get(exercise.work) || 0;
+          if (workCount > 1) {
+            // Silna kara za powtarzanie tego samego dzieła
+            const workPenalty = workCount * 100;
+            score -= workPenalty;
+            penalties.push(`-${workPenalty} WORK_REPEAT`);
+          } else if (workCount === 0) {
+            // Duży bonus za nowe dzieło
+            score += 150;
+            bonuses.push("+150 NEW_WORK");
+          }
+        }
+        // ✅✅✅ KONIEC NOWEJ SEKCJI ✅✅✅
+
         // 5. PROGRESJA TRUDNOŚCI
         const lastDiff = lastExercises[0]?.exercise?.difficulty;
         if (lastDiff) {
@@ -890,6 +916,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
             category: exercise.category,
             difficulty: exercise.difficulty,
             epoch: exercise.epoch,
+            work: exercise.work, // ✅ DODANE do debugowania
             isNew: !usedIds.has(exercise.id),
             bonuses: bonuses.join(", "),
             penalties: penalties.join(", "),

@@ -1263,6 +1263,13 @@ export const LearningSession: React.FC = () => {
               <div className="flex flex-col gap-3">
                 {/* Badges - wrap on mobile */}
                 <div className="flex flex-wrap items-center gap-2">
+                  {/* ✅ NOWY BADGE - Dzieło literackie */}
+                  {currentExercise.work && (
+                    <span className="px-2 sm:px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-xs sm:text-sm font-medium">
+                      📚 {currentExercise.work}
+                    </span>
+                  )}
+
                   <span className="px-2 sm:px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs sm:text-sm">
                     {getCategoryLabel(currentExercise.category)}
                   </span>

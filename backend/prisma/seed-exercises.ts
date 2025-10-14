@@ -8,22 +8,6 @@ import {
 
 const prisma = new PrismaClient();
 
-// Zdefiniuj typ dla exercise seed data
-type ExerciseSeedData = {
-  type: ExerciseType;
-  category: Category;
-  difficulty: number;
-  points: number;
-  question: string;
-  content: any;
-  correctAnswer?: any;
-  rubric?: any;
-  metadata?: any;
-  epoch?: LiteraryEpoch;
-  work?: string;
-  tags?: string[];
-};
-
 async function seedExercises() {
   console.log("🌱 Seeding exercises...");
 
@@ -51,7 +35,24 @@ async function seedExercises() {
   await prisma.exercise.deleteMany({});
   console.log("✅ Usunięto exercises");
 
-  const exercises: ExerciseSeedData[] = [
+  const exercises = [
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Odyseja",
+      question: "Jak nazywał się syn Odyseusza?",
+      content: {
+        options: ["Telemach", "Parys", "Hektor", "Patrokles"],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Telemach był synem Odyseusza i Penelopy. W Odysei opisane są także jego przygody.",
+      },
+    },
     // ========== LANGUAGE_USE - CLOSED_SINGLE (20 pytań) ==========
     {
       type: "CLOSED_SINGLE",
@@ -1652,17 +1653,7 @@ async function seedExercises() {
       },
       correctAnswer: [0, 2, 4],
     },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "LANGUAGE_USE",
-      difficulty: 1,
-      points: 2,
-      question: "Które wyrazy są czasownikami?",
-      content: {
-        options: ["czytać", "książka", "pisać", "szybki", "biegać"],
-      },
-      correctAnswer: [0, 2, 4],
-    },
+
     {
       type: "CLOSED_MULTIPLE",
       category: "LANGUAGE_USE",
@@ -2123,32 +2114,7 @@ async function seedExercises() {
       },
       correctAnswer: [1, 3],
     },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "LANGUAGE_USE",
-      difficulty: 2,
-      points: 3,
-      question: "Uzupełnij zdania odpowiednimi zaimkami.",
-      content: {
-        textWithGaps:
-          "[1] poszedłem do kina. Spotkałem tam [2] przyjaciela. Razem obejrzeliśmy [3] ulubiony film.",
-        gaps: [
-          {
-            id: 1,
-            options: ["Ja", "Ty", "On", "My"],
-          },
-          {
-            id: 2,
-            options: ["mój", "twój", "jego", "nasz"],
-          },
-          {
-            id: 3,
-            options: ["mój", "twój", "jego", "nasz"],
-          },
-        ],
-      },
-      correctAnswer: [0, 0, 3],
-    },
+
     {
       type: "CLOSED_MULTIPLE",
       category: "HISTORICAL_LITERARY",
@@ -3127,17 +3093,6 @@ async function seedExercises() {
         [1, 1],
         [2, 2],
       ],
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "LANGUAGE_USE",
-      difficulty: 2,
-      points: 2,
-      question: "Które wyrazy są czasownikami?",
-      content: {
-        options: ["czytać", "książka", "biegać", "szybki", "pisać"],
-      },
-      correctAnswer: [0, 2, 4],
     },
 
     // POZIOM 3 - bardziej złożone
@@ -6015,17 +5970,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
         explanation: "Dyftongi to połączenia samogłosek: au-to, Eu-ropa.",
       },
     },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "LANGUAGE_USE",
-      difficulty: 2,
-      points: 2,
-      question: "Które wyrazy są czasownikami?",
-      content: {
-        options: ["biegać", "bieg", "biegnący", "pobiec"],
-      },
-      correctAnswer: [0, 3], // A i D
-    },
+
     {
       type: "CLOSED_MULTIPLE",
       category: "LANGUAGE_USE",
@@ -10024,17 +9969,6 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
         explanation: "Epistemiczna - wniosek o prawdopodobieństwie",
       },
     },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "LANGUAGE_USE",
-      difficulty: 1,
-      points: 2,
-      question: "Które wyrazy są CZASOWNIKAMI?",
-      content: {
-        options: ["czytać", "szybki", "biegać", "dom", "pisać"],
-      },
-      correctAnswer: [0, 2, 4],
-    },
 
     {
       type: "CLOSED_SINGLE",
@@ -11771,6 +11705,3033 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       tags: ["intertekstualność", "Norwid", "Shakespeare"],
     },
 
+    // =========== POCZĄTEK PYTAŃ STAROŻYTNOŚĆ/ANTYK ==============//
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Która data oznacza koniec epoki starożytności?",
+      content: {
+        options: [
+          "323 r. p.n.e.",
+          "44 r. p.n.e.",
+          "476 r. n.e.",
+          "1453 r. n.e.",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Koniec starożytności to rok 476 n.e., kiedy germański wódz Odoaker obalił ostatniego cesarza rzymskiego Romulusa Augustulusa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Skąd pochodzi nazwa 'antyk'?",
+      content: {
+        options: [
+          "z greckiego słowa 'antikos'",
+          "z łacińskiego słowa 'antiquus'",
+          "z egipskiego słowa 'antykwa'",
+          "z fenickiego słowa 'antik'",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Nazwa antyk pochodzi od łacińskiego słowa 'antiquus', co oznacza 'dawny, zamierzchły, stary'.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co oznacza greckie słowo 'philosophia'?",
+      content: {
+        options: [
+          "miłość do piękna",
+          "miłość do mądrości",
+          "miłość do prawdy",
+          "miłość do nauki",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Filozofia pochodzi z greckiego: phileo – miłuję, sophia – mądrość. Oznacza 'umiłowanie mądrości'.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Który filozof wypowiedział słynne zdanie 'Wiem, że nic nie wiem'?",
+      content: {
+        options: ["Platon", "Arystoteles", "Sokrates", "Heraklit"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Sokrates powtarzał 'Wiem, że nic nie wiem', przyznając się do niewiedzy i ciągłego dążenia do poznania.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Kto był uczniem Sokratesa i założycielem Akademii Platońskiej?",
+      content: {
+        options: ["Arystoteles", "Platon", "Diogenes", "Epikur"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Platon był uczniem Sokratesa i założył Akademię Platońską, tworząc filozofię idealistyczną.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Który filozof powiedział 'Wszystko płynie' i 'Nie można wejść dwa razy do tej samej rzeki'?",
+      content: {
+        options: [
+          "Sokrates",
+          "Heraklit z Efezu",
+          "Tales z Miletu",
+          "Pitagoras",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Heraklit z Efezu głosił, że wszystko się zmienia. Jego maksyma to 'Panta rhei' – 'Wszystko płynie'.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kto założył szkołę filozoficzną stoików?",
+      content: {
+        options: ["Epikur", "Zenon z Kition", "Diogenes", "Arystyp"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Zenon z Kition założył szkołę stoików, która głosiła życie w zgodzie z rozumem i naturą.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Który filozof był twórcą epikureizmu?",
+      content: {
+        options: ["Zenon", "Arystyp", "Epikur z Samos", "Diogenes"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Epikur z Samos był twórcą epikureizmu – filozofii dążenia do szczęścia przez przyjemność rozumianą jako brak cierpienia.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Co głosili cynicy, czyli przedstawiciele greckiej szkoły filozoficznej?",
+      content: {
+        options: [
+          "że trzeba dążyć do przyjemności",
+          "że trzeba żyć w zgodzie z naturą i rozumem, odrzucając normy społeczne",
+          "że prawda jest względna",
+          "że trzeba zachować wewnętrzny spokój",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Cynicy głosili ideał życia w zgodzie z naturą, kierując się rozumem i odrzucając ogólnie przyjęte normy. Najsławniejszy cynik to Diogenes, zwany 'filozofem z beczki'.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co było maksymą epikurejczyków?",
+      content: {
+        options: [
+          "'Wiem, że nic nie wiem'",
+          "'Carpe diem' - chwytaj dzień",
+          "'Wszystko płynie'",
+          "'Poznaj samego siebie'",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Maksyma epikurejczyków to 'Carpe diem' – 'chwytaj dzień'. Epikur kazał powiesić na frontonie szkoły: 'Gościu, tutaj będzie Ci dobrze, tutaj najwyższym dobrem jest przyjemność'.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kto był uczniem Platona i nauczycielem Aleksandra Wielkiego?",
+      content: {
+        options: ["Sokrates", "Arystoteles", "Epikur", "Pitagoras"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Arystoteles był uczniem Platona, a później nauczycielem Aleksandra Wielkiego. Jest twórcą podstaw logiki, botaniki, psychologii i retoryki.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest stoicyzm jako postawa życiowa?",
+      content: {
+        options: [
+          "dążenie do przyjemności",
+          "niewzruszony spokój, panowanie nad sobą, równowaga duchowa",
+          "odrzucenie wszelkich norm społecznych",
+          "relatywizm w poznaniu prawdy",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Stoicyzm to postawa życiowa polegająca na niewzruszonym spokoju, panowaniu nad sobą i równowadze duchowej. Stoicy cenili hart ducha i wewnętrzny spokój.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim byli sofiści?",
+      content: {
+        options: [
+          "żołnierzami spartańskimi",
+          "wędrowymi nauczycielami uczącymi retoryki i filozofii",
+          "kapłanami świątyń greckich",
+          "rzeźbiarzami",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Sofiści byli wędrowymi nauczycielami, którzy za pieniądze uczyli retoryki, polityki, filozofii i etyki. Ich maksymą było 'człowiek jest miarą rzeczy'.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Który filozof został nazwany 'ojcem medycyny'?",
+      content: {
+        options: ["Arystoteles", "Tales", "Hipokrates", "Pitagoras"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Hipokrates został nazwany 'ojcem medycyny'. Uważał, że środowisko ma decydujący wpływ na zdrowie człowieka.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Który filozof stworzył dualizm świata – teorię o współistnieniu świata idei i świata materialnego?",
+      content: {
+        options: ["Sokrates", "Platon", "Arystoteles", "Heraklit"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Platon stworzył platonizm – dualizm świata. Według niego istnieje świat idei (niedostępny zmysłom) i świat materialny (niedoskonała kopia idei).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kto napisał eposy 'Iliada' i 'Odyseja'?",
+      content: {
+        options: ["Hezjod", "Wergiliusz", "Homer", "Horacy"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Homer jest autorem dwóch najsławniejszych eposów antycznych: 'Iliady' i 'Odysei'.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Iliada",
+      question: "Ile dni wojny trojańskiej opisuje 'Iliada'?",
+      content: {
+        options: ["10 dni", "50 dni", "100 dni", "cały okres 10 lat wojny"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "'Iliada' opisuje ostatnie pięćdziesiąt dni wojny trojańskiej, nie całą wojnę.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Odyseja",
+      question: "Ile lat trwał powrót Odyseusza do Itaki?",
+      content: {
+        options: ["5 lat", "10 lat", "15 lat", "20 lat"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Powrót Odyseusza do Itaki po wojnie trojańskiej trwał 10 lat, wypełnionych licznymi przygodami.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Odyseja",
+      question: "Jak nazywała się żona Odyseusza?",
+      content: {
+        options: ["Helena", "Penelopa", "Ifigenia", "Andromache"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Penelopa była wierną żoną Odyseusza, która czekała na niego przez 10 lat, odpierając zaloty pretendentów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Odyseja",
+      question: "Jak nazywał się syn Odyseusza?",
+      content: {
+        options: ["Telemach", "Parys", "Hektor", "Patrokles"],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Telemach był synem Odyseusza i Penelopy. W 'Odysei' opisane są także jego przygody.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Jakim metrum zostały napisane 'Iliada' i 'Odyseja'?",
+      content: {
+        options: [
+          "heksametrem daktylicznym",
+          "pentametrem jambicznym",
+          "trochejem",
+          "amfibrachem",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Oba eposy Homera zostały napisane heksametrem daktylicznym – rytmem składającym się z sześciu stóp.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest 'kwestia homerycka'?",
+      content: {
+        options: [
+          "pytanie o tematykę dzieł Homera",
+          "spór o to, czy Homer rzeczywiście istniał i czy był autorem eposów",
+          "problem z tłumaczeniem dzieł Homera",
+          "zagadnienie moralności w eposach",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Kwestia homerycka to spór z XVIII wieku o to, czy Homer istniał. Przypuszczano, że utwory mogły być dziełem wędrownych śpiewaków – aojdów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest epos?",
+      content: {
+        options: [
+          "krótki utwór liryczny",
+          "rozbudowany utwór wierszowany opowiadający o legendarnych bohaterach",
+          "utwór dramatyczny",
+          "krótka forma epicka",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Epos to najstarszy gatunek literacki epiki – długi, wierszowany utwór opowiadający o legendarnych i historycznych bohaterach na tle ważnych wydarzeń.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kto napisał 'Teogonię' – utwór o pochodzeniu bogów?",
+      content: {
+        options: ["Homer", "Hezjod", "Horacy", "Safona"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Hezjod był autorem 'Teogonii' – eposu religijnego opisującego narodziny bogów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim byli trzej wielcy tragicy greccy?",
+      content: {
+        options: [
+          "Homer, Hezjod, Wergiliusz",
+          "Sofokles, Ajschylos, Eurypides",
+          "Horacy, Safona, Anakreont",
+          "Platon, Arystoteles, Sokrates",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Trzej wielcy tragicy greccy to: Sofokles ('Antygona'), Ajschylos ('Oresteja') i Eurypides ('Medea').",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Skąd wywodzi się teatr grecki?",
+      content: {
+        options: [
+          "z obrzędów ku czci Afrodyty",
+          "z obrzędów ku czci Dionizosa – dionizji",
+          "z obrzędów ku czci Zeusa",
+          "z obrzędów ku czci Apollina",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Teatr grecki wywodzi się z dionizji – obrzędów ku czci boga Dionizosa. Były to święta związane z winem i zabawami ludowymi.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest katharsis?",
+      content: {
+        options: [
+          "rodzaj tragedii",
+          "oczyszczenie, rozładowanie emocji pod wpływem sztuki",
+          "styl w architekturze",
+          "część teatru greckiego",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Katharsis (z greckiego katharos – oczyszczenie) to rozładowanie doznawanych wzruszeń pod wpływem sztuki, zwłaszcza tragedii.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Ile aktorów mogło występować jednocześnie na scenie w tragedii greckiej?",
+      content: {
+        options: ["dwóch", "trzech", "czterech", "pięciu"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "W tragedii greckiej liczba aktorów występujących na scenie nie mogła przekraczać trzech.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest mimesis?",
+      content: {
+        options: [
+          "rodzaj tragedii",
+          "naśladowanie natury przez sztukę",
+          "zasada filozoficzna",
+          "styl architektoniczny",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Mimesis to naśladowanie rzeczywistości przez sztukę. Według tej zasady należy odtwarzać świat, a nie go wymyślać.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest fatum?",
+      content: {
+        options: [
+          "rodzaj tragedii",
+          "przeznaczenie, los wyznaczony przez bogów",
+          "część chóru",
+          "styl w rzeźbie",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Fatum to przeznaczenie, to co przewidziane i zrządzone przez bogów, zły los. W tragedii greckiej losy ludzi są podporządkowane fatum.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Która poetka grecka była nazywana 'dziesiątą Muzą'?",
+      content: {
+        options: ["Helena", "Ifigenia", "Safona", "Penelopa"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Safona była wybitną poetką z wyspy Lesbos, którą Platon nazywał 'dziesiątą Muzą'. Pisała pieśni miłosne i weselne.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest strofa saficka?",
+      content: {
+        options: [
+          "zwrotka składająca się z trzech wierszy jedenastozgłoskowych i czwartego pięciogłoskowego",
+          "zwrotka złożona z czterech wersów ośmiozgłoskowych",
+          "dwuwers elegijny",
+          "czterowiersz rymowany",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Strofa saficka, nazwana od imienia poetki Safony, składa się z trzech wierszy jedenastozgłoskowych i czwartego pięciogłoskowego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to są anakreontyki?",
+      content: {
+        options: [
+          "długie eposy bohaterskie",
+          "krótkie utwory o tematyce biesiadnej lub miłosnej",
+          "tragedie greckie",
+          "hymny ku czci bogów",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Anakreontyki to krótkie utwory o lekkiej tematyce biesiadnej lub miłosnej, nazwane od imienia poety Anakronta.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Kto tworzył poezję tyrtejską – patriotyczną, nawołującą do walki?",
+      content: {
+        options: ["Anakreont", "Tyrtajos", "Safona", "Pindar"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Tyrtajos tworzył elegie patriotyczne, zachęcając do walki w obronie ojczyzny. Od jego imienia pochodzi określenie 'poezja tyrtejska'.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Ile stylów architektonicznych wyróżniano w starożytnej Grecji?",
+      content: {
+        options: ["dwa", "trzy", "cztery", "pięć"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "W greckiej architekturze wyróżniano trzy style: dorycki, joński i koryncki.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Który styl architektoniczny charakteryzował się zdobieniami w kształcie ślimaków przypominających baranie rogi?",
+      content: {
+        options: ["dorycki", "joński", "koryncki", "toskański"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Styl joński charakteryzował się zdobieniami w postaci ślimaczków przypominających baranie rogi oraz wysmuklonym trzonem kolumny.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Który styl architektoniczny był najpóźniejszy i najbardziej zdobny, z ornamentami w kształcie liści?",
+      content: {
+        options: ["dorycki", "joński", "koryncki", "rzymski"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Styl koryncki był najpóźniejszym stylem w architekturze greckiej, charakteryzował się zdobieniami w kształcie pionowych liści wygiętych do tyłu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Którzy z wymienionych byli najsłynniejszymi rzeźbiarzami starożytnej Grecji?",
+      content: {
+        options: [
+          "Fidiasz, Praksyteles, Poliklet",
+          "Homer, Hezjod, Horacy",
+          "Sofokles, Ajschylos, Eurypides",
+          "Sokrates, Platon, Arystoteles",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Najsłynniejszymi rzeźbiarzami starożytnej Grecji byli: Fidiasz, Praksyteles i Poliklet.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest politeizm?",
+      content: {
+        options: [
+          "wiara w jednego Boga",
+          "wiara w wielu bogów",
+          "brak wiary w bogów",
+          "wiara w siły natury",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Politeizm to wiara w wielu bogów. Taki charakter miała religia starożytnej Grecji i Rzymu (mitologia).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest monoteizm?",
+      content: {
+        options: [
+          "wiara w wielu bogów",
+          "wiara w jednego Boga",
+          "brak wiary",
+          "wiara w bogów natury",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Monoteizm to wiara w jednego Boga. W starożytności monoteistycznym wyznaniem było chrześcijaństwo.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Co według mitologii greckiej było na początku, przed powstaniem świata?",
+      content: {
+        options: ["Chaos", "Zeus", "Gaja", "Eros"],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Według mitologii greckiej na początku był Chaos – bezkształtna masa, otchłań łącząca ogień, wodę, powietrze i ziemię.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kto był ojcem pierwszych bogów greckich?",
+      content: {
+        options: ["Zeus", "Uranos", "Kronos", "Hades"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Uranos (Niebo) był ojcem pierwszych bogów – tytanów, cyklopów i sturękich olbrzymów. Został zabity przez swojego syna Kronosa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim była Gaja w mitologii greckiej?",
+      content: {
+        options: [
+          "boginią miłości",
+          "Ziemią, matką pierwszych bogów",
+          "boginią mądrości",
+          "boginią polowań",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Gaja to Ziemia, matka pierwszych bogów. Z Uranosem (Niebem) zrodziła tytanów i inne istoty.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kto był głównym bogiem w panteonie greckim?",
+      content: {
+        options: ["Hades", "Posejdon", "Zeus", "Apollo"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Zeus był najwyższym bogiem w panteonie greckim, władcą nieba i piorunów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Która bogini rzuciła złote jabłko z napisem 'dla najpiękniejszej', wywołując wojnę trojańską?",
+      content: {
+        options: ["Afrodyta", "Hera", "Eris - bogini niezgody", "Atena"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Bogini niezgody Eris rzuciła złote jabłko z napisem 'dla najpiękniejszej' między Herę, Atenę i Afrodytę, co stało się przyczyną wojny trojańskiej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kto był królem Sparty, którego żonę Helenę porwał Parys?",
+      content: {
+        options: ["Agamemnon", "Achilles", "Menelaos", "Odyseusz"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Menelaos był królem Sparty i mężem Heleny. Jej porwanie przez Parysa stało się przyczyną wojny trojańskiej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kto wpadł na pomysł drewnianego konia trojańskiego?",
+      content: {
+        options: ["Achilles", "Agamemnon", "Odyseusz", "Hektor"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Odyseusz wymyślił podstęp z drewnianym koniem, w którym ukryli się greccy żołnierze. Dzięki temu Grecy zdobyli Troję.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Ile ksiąg zawiera Biblia?",
+      content: {
+        options: ["46", "66", "73", "80"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Biblia zawiera 73 księgi – 46 w Starym Testamencie i 27 w Nowym Testamencie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Jak nazywa się pierwszych pięć ksiąg Starego Testamentu?",
+      content: {
+        options: ["Ewangelie", "Tora (Pięcioksiąg)", "Psalmy", "Prorocy"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Pierwsze pięć ksiąg Starego Testamentu to Tora, czyli Pięcioksiąg: Księga Rodzaju, Wyjścia, Kapłańska, Liczb i Powtórzonego Prawa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Ile ewangelii znajduje się w Nowym Testamencie?",
+      content: {
+        options: ["dwie", "trzy", "cztery", "pięć"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "W Nowym Testamencie znajdują się cztery ewangelie: św. Mateusza, św. Marka, św. Łukasza i św. Jana.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest konflikt tragiczny w tragedii antycznej?",
+      content: {
+        options: [
+          "walka bohatera z wrogiem",
+          "starcie dwóch równorzędnych racji moralnych, między którymi nie można dokonać wyboru",
+          "spór między bogami",
+          "kłótnia w rodzinie królewskiej",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Konflikt tragiczny to starcie dwóch równorzędnych racji moralnych. Bohater musi wybierać między wartościami, które są jednakowo ważne, co prowadzi do katastrofy.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest wina tragiczna (hamartia)?",
+      content: {
+        options: [
+          "celowe popełnienie zbrodni",
+          "złamanie prawa boskiego",
+          "błędna ocena własnej sytuacji prowadząca do klęski",
+          "zdrada ojczyzny",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Wina tragiczna (hamartia) to błędna ocena własnej sytuacji przez bohatera. Podejmuje on decyzje, które - mimo dobrych intencji - prowadzą go do klęski.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest hybris w kontekście tragedii greckiej?",
+      content: {
+        options: [
+          "mądrość i rozsądek",
+          "pycha i przekroczenie granic wyznaczonych przez bogów",
+          "sprawiedliwość królewska",
+          "odwaga w walce",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Hybris to pycha, zuchwałość i przekroczenie granic wyznaczonych przez bogów i naturę. W tragedii greckiej hybris zawsze prowadzi do nemezis - kary ze strony bogów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Jak nazywa się pierwsza część tragedii greckiej, która wprowadza w akcję?",
+      content: {
+        options: ["parodos", "prologos", "stasimon", "eksodos"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Prologos (prolog) to pierwsza część tragedii, która pełniła funkcję przedmowy i wprowadzała widzów w akcję.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Jak nazywa się wstępna pieśń chóru wchodzącego na orchestrę?",
+      content: {
+        options: ["eksodos", "stasimon", "parodos", "kommos"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Parodos to wstępna, wejściowa pieśń chóru wchodzącego na orchestrę.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Jak nazywa się punkt kulminacyjny tragedii, w którym bohater wyraża swój lament?",
+      content: {
+        options: ["stasimon", "parodos", "kommos", "epejsodion"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Kommos to punkt kulminacyjny tragedii – lament bohatera wyrażający szczyt rozpaczy.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Która zasada tragedii antycznej mówi, że nie wolno przeplatać scen tragicznych z komicznymi?",
+      content: {
+        options: [
+          "zasada trzech jedności",
+          "zasada decorum",
+          "zasada jedności estetyki",
+          "zasada mimesis",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Zasada jedności estetyki głosiła, że nie wolno przeplatać scen tragicznych z komicznymi. Tragedia musiała zachować jednolity, podniosły ton.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co oznacza zasada decorum w tragedii antycznej?",
+      content: {
+        options: [
+          "zachowanie jedności miejsca",
+          "podniosły język i styl, brak krwawych scen na scenie",
+          "występowanie trzech aktorów",
+          "obecność chóru",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Zasada decorum oznaczała zachowanie stosowności – podniosły język i styl oraz brak przedstawiania krwawych scen na scenie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Jaka była rola chóru w tragedii greckiej?",
+      content: {
+        options: [
+          "grał głównego bohatera",
+          "komentował wydarzenia i wyrażał opinie zbiorowe",
+          "tworzył scenografię",
+          "zastępował narratora epicką opowieścią",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Chór komentował wydarzenia, wyrażał opinie zbiorowe społeczeństwa, dokonywał refleksji moralnych i filozoficznych nad losem bohaterów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest paralelizm fabuły w eposie antycznym?",
+      content: {
+        options: [
+          "powtarzanie tych samych scen",
+          "równoczesne występowanie dwóch ciągów wydarzeń w fabule",
+          "porównywanie bohaterów",
+          "podział na księgi",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Paralelizm fabuły to cecha eposu antycznego, w której równocześnie występują dwa ciągi wydarzeń (np. w Odysei: przygody Telemacha i wędrówka Odyseusza).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Jaki typ eposu reprezentuje 'Iliada'?",
+      content: {
+        options: [
+          "epos religijny",
+          "epos rycerski",
+          "epos fantastyczny",
+          "epos dydaktyczny",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "'Iliada' to epos rycerski, opisujący wojnę trojańską i czyny bohaterów wojennych.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Jaki typ eposu reprezentuje 'Odyseja'?",
+      content: {
+        options: [
+          "epos religijny",
+          "epos rycerski",
+          "epos fantastyczny",
+          "epos historyczny",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "'Odyseja' to epos fantastyczny, pełen niezwykłych przygód, mitycznych stworzeń i magicznych miejsc.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Która technika narracyjna występuje w 'Odysei', gdy Odyseusz opowiada o swoich przygodach na dworze Alkinoosa?",
+      content: {
+        options: ["prospekcja", "retrospekcja", "paralelizm", "inwokacja"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "W 'Odysei' występuje retrospekcja – Odyseusz na dworze króla Alkinoosa opowiada o swoich wcześniejszych przygodach.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest inwokacja w eposie?",
+      content: {
+        options: [
+          "zakończenie utworu",
+          "wezwanie do Muzy na początku utworu",
+          "opis bitwy",
+          "dialog bohaterów",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Inwokacja to wezwanie do Muzy na początku eposu, w którym poeta prosi o natchnienie i pomoc w opowiadaniu historii.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Która cecha NIE jest typowa dla eposu antycznego?",
+      content: {
+        options: [
+          "wszechwiedzący narrator",
+          "uroczysty, patetyczny styl",
+          "intymny ton wypowiedzi",
+          "nagromadzenie epitetów",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Intymny ton wypowiedzi jest charakterystyczny dla liryki, nie dla eposu. Epos cechuje się uroczystym, patetycznym stylem.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest oda?",
+      content: {
+        options: [
+          "krótki utwór satyryczny",
+          "utwór liryczny o patetycznym stylu i pochwalnym charakterze",
+          "długi epos bohaterski",
+          "tragedia w trzech aktach",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Oda to utwór liryczny o patetycznym stylu i pochwalnym charakterze, opiewający ważne wydarzenie, osobę lub idee.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Kto był najsławniejszym twórcą poezji chóralnej, sławiącym zwycięzców igrzysk olimpijskich?",
+      content: {
+        options: ["Anakreont", "Safona", "Pindar", "Tyrtajos"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Pindar był najwybitniejszym twórcą poezji chóralnej, sławił zwycięzców igrzysk olimpijskich w uroczystych odach.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Która poetka prowadziła szkołę dla dziewcząt na wyspie Lesbos?",
+      content: {
+        options: ["Helena", "Penelopa", "Safona", "Andromache"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Safona prowadziła szkołę dla dziewcząt z arystokratycznych domów na wyspie Lesbos, ucząc muzyki, poezji i tańca.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest elegia?",
+      content: {
+        options: [
+          "wesoły utwór biesiadny",
+          "utwór liryczny o smutnej tematyce",
+          "długi epos",
+          "komedia satyryczna",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Elegia to gatunek liryczny o zazwyczaj smutnej, melancholijnej tematyce, często związanej ze śmiercią lub stratą.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest tren?",
+      content: {
+        options: [
+          "utwór weselny",
+          "pieśń żałobna, lament nad zmarłym",
+          "hymn pochwalny",
+          "utwór biesiadny",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Tren to pieśń żałobna, lament nad zmarłym. Gatunek ten powstał w antyku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kto był najsławniejszym komiediopisarzem greckim?",
+      content: {
+        options: ["Sofokles", "Arystofanes", "Menander", "Plautus"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Arystofanes był najsławniejszym komiediopisarzem greckim. Jego komedie miały charakter satyryczny i polityczny.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to są mity teogoniczne?",
+      content: {
+        options: [
+          "mity o powstawaniu świata",
+          "mity o pochodzeniu bogów",
+          "mity o powstawaniu człowieka",
+          "mity o pochodzeniu bohaterów",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Mity teogoniczne to mity mówiące o pochodzeniu i narodzinach bogów (z greckiego theos – bóg).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to są mity kosmogoniczne?",
+      content: {
+        options: [
+          "mity o pochodzeniu bogów",
+          "mity o powstawaniu świata i kosmosu",
+          "mity o bohaterach",
+          "mity o wojnach",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Mity kosmogoniczne to mity mówiące o powstawaniu świata i kosmosu (z greckiego kosmos – świat, porządek).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to są mity genealogiczne?",
+      content: {
+        options: [
+          "mity o powstawaniu świata",
+          "mity o pochodzeniu bogów",
+          "mity mówiące o pochodzeniu bohaterów i rodów",
+          "mity o końcu świata",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Mity genealogiczne to mity mówiące o pochodzeniu bohaterów i rodów, przedstawiające ich historię rodzinną.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Jaki tytan zabił swojego ojca Uranosa i został później obalony przez własnego syna?",
+      content: {
+        options: ["Atlas", "Kronos", "Prometeusz", "Epimeteusz"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Kronos zabił swojego ojca Uranosa, a później został obalony przez własnego syna Zeusa, co zapoczątkowało erę bogów olimpijskich.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim była Reja w mitologii greckiej?",
+      content: {
+        options: [
+          "żoną Uranosa",
+          "żoną Kronosa i matką Zeusa",
+          "żoną Zeusa",
+          "córką Zeusa",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Reja była tytanidą, żoną Kronosa i matką głównych bogów olimpijskich: Zeusa, Hery, Posejdona, Hadesa, Demeter i Hestii.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim była Hera w mitologii greckiej?",
+      content: {
+        options: [
+          "boginią mądrości",
+          "boginią miłości",
+          "żoną Zeusa, boginią małżeństwa",
+          "boginią polowań",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Hera była żoną Zeusa i boginią małżeństwa, opiekunką rodziny i wierności małżeńskiej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim był Posejdon?",
+      content: {
+        options: [
+          "bogiem wojny",
+          "bogiem mórz i oceanów",
+          "bogiem podziemi",
+          "bogiem słońca",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Posejdon był bogiem mórz, oceanów i trzęsień ziemi, bratem Zeusa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim był Hades?",
+      content: {
+        options: [
+          "bogiem wojny",
+          "bogiem mórz",
+          "władcą podziemi i królestwa zmarłych",
+          "bogiem słońca",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Hades był władcą podziemi i królestwa zmarłych, bratem Zeusa i Posejdona.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim była Atena?",
+      content: {
+        options: [
+          "boginią miłości",
+          "boginią mądrości, wojny sprawiedliwej i rzemiosła",
+          "boginią polowań",
+          "boginią małżeństwa",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Atena była boginią mądrości, wojny sprawiedliwej, rzemiosła i strategii. Według mitu narodziła się z głowy Zeusa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim była Afrodyta?",
+      content: {
+        options: [
+          "boginią mądrości",
+          "boginią miłości i piękna",
+          "boginią polowań",
+          "boginią rolnictwa",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Afrodyta była boginią miłości, piękna i pożądania. Według mitu narodziła się z piany morskiej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim był Apollo?",
+      content: {
+        options: [
+          "bogiem wojny",
+          "bogiem słońca, muzyki, poezji i wróżbiarstwa",
+          "bogiem morza",
+          "bogiem podziemi",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Apollo był bogiem słońca, światła, muzyki, poezji, sztuki i wróżbiarstwa. Patron delickiej wyroczni.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim była Artemida?",
+      content: {
+        options: [
+          "boginią miłości",
+          "boginią mądrości",
+          "boginią polowań i księżyca",
+          "boginią wojny",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Artemida była boginią polowań, księżyca i dziewictwa, siostrą bliźniaczką Apollina.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim był Ares?",
+      content: {
+        options: [
+          "bogiem miłości",
+          "bogiem wojny i przemocy",
+          "bogiem rzemiosła",
+          "bogiem handlu",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Ares był bogiem wojny, przemocy i krwawych bitew, synem Zeusa i Hery.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim był Hermes?",
+      content: {
+        options: [
+          "bogiem wojny",
+          "posłańcem bogów, opiekunem podróżnych i handlarzy",
+          "bogiem morza",
+          "bogiem rolnictwa",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Hermes był posłańcem bogów, opiekunem podróżnych, handlarzy i złodziei, przewodnikiem dusz do Hadesu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim był Hefajstos?",
+      content: {
+        options: [
+          "bogiem wojny",
+          "bogiem ognia, kowalstwa i rzemiosła",
+          "bogiem morza",
+          "bogiem wina",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Hefajstos był bogiem ognia, kowalstwa, rzemiosła i metalurgii. Wytwarzał broń i przedmioty dla bogów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim był Dionizos?",
+      content: {
+        options: [
+          "bogiem wojny",
+          "bogiem wina, radości i teatru",
+          "bogiem morza",
+          "bogiem słońca",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Dionizos był bogiem wina, radości, płodności i teatru. Na jego cześć odbywały się dionizje, z których wywodzi się teatr grecki.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim była Demeter?",
+      content: {
+        options: [
+          "boginią wojny",
+          "boginią rolnictwa, żniw i płodności ziemi",
+          "boginią polowań",
+          "boginią mądrości",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Demeter była boginią rolnictwa, żniw, płodności ziemi i pór roku. Matka Persefony.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kto był najsłynniejszym dowódcą greckim w wojnie trojańskiej?",
+      content: {
+        options: ["Achilles", "Agamemnon", "Odyseusz", "Menelaos"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Agamemnon, król Miken i brat Menelaosa, był naczelnym dowódcą wojsk greckich w wojnie trojańskiej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kto był największym wojownikiem greckim w wojnie trojańskiej?",
+      content: {
+        options: ["Agamemnon", "Odyseusz", "Achilles", "Patrokles"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Achilles był największym wojownikiem greckim, niemal nieśmiertelnym bohaterem o nadludzkiej sile.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim był Hektor w wojnie trojańskiej?",
+      content: {
+        options: [
+          "królem Sparty",
+          "największym wojownikiem trojańskim, bratem Parysa",
+          "królem Itaki",
+          "wróżbitą",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Hektor był największym wojownikiem trojańskim i głównym obrońcą Troi, bratem Parysa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim był Patrokles?",
+      content: {
+        options: [
+          "królem Itaki",
+          "przyjacielem Achillesa zabitym przez Hektora",
+          "królem Troi",
+          "prorokiem",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Patrokles był ukochanym przyjacielem Achillesa. Jego śmierć z rąk Hektora sprowadziła Achillesa z powrotem do walki.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Kim był Priam?",
+      content: {
+        options: [
+          "królem Sparty",
+          "królem Troi, ojcem Hektora i Parysa",
+          "królem Itaki",
+          "wodzem greckim",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Priam był królem Troi, ojcem Hektora i Parysa. Zginął podczas zdobycia miasta.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Która księga Biblii zawiera historię stworzenia świata?",
+      content: {
+        options: [
+          "Księga Wyjścia",
+          "Księga Rodzaju",
+          "Księga Psalmów",
+          "Księga Mądrości",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Księga Rodzaju (Genesis) zawiera historię stworzenia świata w sześć dni oraz dzieje pierwszych ludzi.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "W której księdze Biblii opisane jest wyjście Izraelitów z Egiptu?",
+      content: {
+        options: [
+          "Księga Rodzaju",
+          "Księga Wyjścia (Exodus)",
+          "Księga Liczb",
+          "Księga Jozuego",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Księga Wyjścia (Exodus) opisuje wyjście Izraelitów z niewoli egipskiej pod wodzą Mojżesza.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Którą księgę Biblii stanowią modlitwy i pieśni?",
+      content: {
+        options: [
+          "Księga Przysłów",
+          "Księga Psalmów",
+          "Księga Mądrości",
+          "Pieśń nad Pieśniami",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Księga Psalmów zawiera 150 modlitw i pieśni, tradycyjnie przypisywanych królowi Dawidowi.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Co to jest Apokalipsa św. Jana?",
+      content: {
+        options: [
+          "ewangelia opisująca życie Jezusa",
+          "księga prorocza o końcu świata i Sądzie Ostatecznym",
+          "zbiór przypowieści",
+          "historia pierwszych chrześcijan",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Apokalipsa (Objawienie) św. Jana to księga prorocza opisująca wizje końca świata i Sądu Ostatecznego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "W jakich językach została napisana Biblia?",
+      content: {
+        options: [
+          "tylko po grecku",
+          "tylko po hebrajsku",
+          "po aramejsku, hebrajsku i grecku",
+          "po łacinie",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Biblia została napisana w trzech językach: aramejskim, hebrajskim (Stary Testament) i grecku (Nowy Testament).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Który filozof rzymski był nauczycielem cesarza Nerona?",
+      content: {
+        options: ["Cyceron", "Seneka", "Marek Aureliusz", "Pliniusz"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Seneka był filozofem stoickim, nauczycielem i opiekunem cesarza Nerona. Tworzył pisma etyczne i tragedie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Który cesarz rzymski był nazywany 'filozofem na tronie'?",
+      content: {
+        options: ["Neron", "Marek Aureliusz", "August", "Kaligula"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Marek Aureliusz był cesarzem rzymskim i filozofem stoickim, nazywanym 'filozofem na tronie'. Głosił idee humanitaryzmu i sprawiedliwości.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Kto był doskonałym mówcą rzymskim, autorem mów sądowych i politycznych?",
+      content: {
+        options: ["Seneka", "Cyceron", "Horacy", "Wergiliusz"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Cyceron był doskonałym mówcą, autorem wielu mów sądowych i politycznych oraz dzieł z retoryki.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Który filozof starożytny uważał, że podstawowym elementem świata jest ogień?",
+      content: {
+        options: [
+          "Tales z Miletu",
+          "Heraklit z Efezu",
+          "Anaksymenes",
+          "Pitagoras",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Heraklit z Efezu uważał, że podstawowym elementem świata jest ogień. Jako pierwszy zainteresował się poznaniem poprzez zgłębianie ludzkiej duszy.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Który filozof starożytny uważał, że podstawowym elementem świata jest woda?",
+      content: {
+        options: ["Heraklit", "Tales z Miletu", "Anaksymenes", "Sokrates"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Tales z Miletu uważał, że główną przyczyną powstania świata była woda.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Który filozof starożytny uważał, że podstawowym elementem świata jest powietrze?",
+      content: {
+        options: ["Tales", "Heraklit", "Anaksymenes", "Pitagoras"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Anaksymenes za podstawowy element świata uznawał powietrze. W zależności od jego gęstości powstawał ogień, woda, człowiek czy ziemia.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Który filozof wysunął teorię kulistości ziemi?",
+      content: {
+        options: ["Sokrates", "Anaksymander", "Tales", "Heraklit"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Anaksymander wysunął teorię kulistości ziemi i uważał, że pod wpływem ruchu wyłoniło się ciepło i zimno.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Który filozof jest twórcą Twierdzenia Pitagorasa?",
+      content: {
+        options: ["Sokrates", "Platon", "Pitagoras", "Euklides"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Pitagoras był znakomitym matematykiem i filozofem, twórcą Twierdzenia Pitagorasa. Uważał, że ziemia ma kształt kuli.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Który rzymski poeta był autorem 'Eneidy'?",
+      content: {
+        options: ["Horacy", "Owidiusz", "Wergiliusz", "Cyceron"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Wergiliusz był autorem 'Eneidy' – eposu o Eneasz, trojańskim bohaterze, który stał się przodkiem Rzymian.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Który poeta rzymski tworzył pieśni i ody, m.in. 'Carpe diem'?",
+      content: {
+        options: ["Wergiliusz", "Horacy", "Owidiusz", "Katullus"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Horacy był twórcą pieśni i od. Jego słynne 'Carpe diem' (chwytaj dzień) stało się maksymą epikurejską.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Dopasuj filozofów do ich głównych twierdzeń.",
+      content: {
+        matchingType: "philosopher_thesis",
+        leftColumn: [
+          { id: "A", text: "Sokrates" },
+          { id: "B", text: "Heraklit" },
+          { id: "C", text: "Platon" },
+          { id: "D", text: "Arystoteles" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Wszystko płynie, nic nie stoi w miejscu" },
+          { id: 2, text: "Świat idei i świat materialny" },
+          { id: 3, text: "Do poznania potrzebne są rozum i zmysły" },
+          { id: 4, text: "Wiem, że nic nie wiem" },
+        ],
+      },
+      correctAnswer: [
+        [0, 3],
+        [1, 0],
+        [2, 1],
+        [3, 2],
+      ],
+      metadata: {
+        explanation:
+          "Sokrates: 'Wiem, że nic nie wiem', Heraklit: 'Wszystko płynie', Platon: dualizm światów, Arystoteles: poznanie przez rozum i zmysły.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Dopasuj szkoły filozoficzne do ich głównych założeń.",
+      content: {
+        matchingType: "school_principle",
+        leftColumn: [
+          { id: "A", text: "Stoicy" },
+          { id: "B", text: "Epikurejczycy" },
+          { id: "C", text: "Cynicy" },
+          { id: "D", text: "Sofiści" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Człowiek jest miarą rzeczy" },
+          {
+            id: 2,
+            text: "Życie w zgodzie z naturą, odrzucenie norm społecznych",
+          },
+          { id: 3, text: "Carpe diem - chwytaj dzień" },
+          { id: 4, text: "Niewzruszony spokój i równowaga duchowa" },
+        ],
+      },
+      correctAnswer: [
+        [0, 3],
+        [1, 2],
+        [2, 1],
+        [3, 0],
+      ],
+      metadata: {
+        explanation:
+          "Stoicy głosili spokój i równowagę, epikurejczycy - carpe diem, cynicy - życie zgodne z naturą, sofiści - relatywizm poznania.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Dopasuj bogów greckich do ich rzymskich odpowiedników.",
+      content: {
+        matchingType: "gods_equivalents",
+        leftColumn: [
+          { id: "A", text: "Zeus" },
+          { id: "B", text: "Hera" },
+          { id: "C", text: "Afrodyta" },
+          { id: "D", text: "Ares" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Mars" },
+          { id: 2, text: "Jowisz (Jupiter)" },
+          { id: 3, text: "Juno" },
+          { id: 4, text: "Wenus" },
+        ],
+      },
+      correctAnswer: [
+        [0, 1],
+        [1, 2],
+        [2, 3],
+        [3, 0],
+      ],
+      metadata: {
+        explanation:
+          "Zeus = Jowisz, Hera = Juno, Afrodyta = Wenus, Ares = Mars.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Dopasuj bogów do ich funkcji w mitologii greckiej.",
+      content: {
+        matchingType: "gods_functions",
+        leftColumn: [
+          { id: "A", text: "Apollo" },
+          { id: "B", text: "Artemida" },
+          { id: "C", text: "Hermes" },
+          { id: "D", text: "Dionizos" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Bóg wina i teatru" },
+          { id: 2, text: "Posłaniec bogów" },
+          { id: 3, text: "Bogini polowań" },
+          { id: 4, text: "Bóg słońca i muzyki" },
+        ],
+      },
+      correctAnswer: [
+        [0, 3],
+        [1, 2],
+        [2, 1],
+        [3, 0],
+      ],
+      metadata: {
+        explanation:
+          "Apollo - słońce i muzyka, Artemida - polowania, Hermes - posłaniec, Dionizos - wino i teatr.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Które cechy charakteryzują sztukę antyczną? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "mimesis - naśladowanie natury",
+          "asymetria i chaos",
+          "piękno, symetria i harmonia",
+          "przedstawianie młodości, zdrowia i siły",
+          "unikanie przedstawiania człowieka",
+          "pokazywanie brzydoty i starości",
+        ],
+      },
+      correctAnswer: [0, 2, 3],
+      metadata: {
+        explanation:
+          "Sztuka antyczna charakteryzowała się mimesis, pięknem, symetrią, harmonią i przedstawianiem młodości oraz zdrowia. Unikano brzydoty i starości.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Które elementy należą do budowy tragedii antycznej? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "prologos",
+          "rozwikłanie",
+          "parodos",
+          "stasimon",
+          "monolog wewnętrzny",
+          "eksodos",
+        ],
+      },
+      correctAnswer: [0, 2, 3, 5],
+      metadata: {
+        explanation:
+          "Budowa tragedii: prologos, parodos, epejsodion, stasimon, kommos, eksodos. Rozwikłanie i monolog wewnętrzny nie należą do klasycznej struktury.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Które zasady obowiązywały w tragedii antycznej? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "zasada trzech jedności (miejsca, czasu, akcji)",
+          "dowolna liczba aktorów",
+          "ograniczenie liczby aktorów do trzech",
+          "losy ludzi zależne od fatum",
+          "obecność scen krwawych na scenie",
+          "rola komentatora pełniona przez chór",
+        ],
+      },
+      correctAnswer: [0, 2, 3, 5],
+      metadata: {
+        explanation:
+          "Zasady tragedii: trzech jedności, max. trzech aktorów, fatum, chór jako komentator. Sceny krwawe nie były pokazywane na scenie (zasada decorum).",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Dopasuj typy mitów do ich treści.",
+      content: {
+        matchingType: "myth_types",
+        leftColumn: [
+          { id: "A", text: "Mity kosmogoniczne" },
+          { id: "B", text: "Mity teogoniczne" },
+          { id: "C", text: "Mity antropogeniczne" },
+          { id: "D", text: "Mity genealogiczne" },
+        ],
+        rightColumn: [
+          { id: 1, text: "O pochodzeniu bohaterów i rodów" },
+          { id: 2, text: "O powstawaniu świata" },
+          { id: 3, text: "O pochodzeniu bogów" },
+          { id: 4, text: "O powstawaniu człowieka" },
+        ],
+      },
+      correctAnswer: [
+        [0, 1],
+        [1, 2],
+        [2, 3],
+        [3, 0],
+      ],
+      metadata: {
+        explanation:
+          "Kosmogoniczne - powstanie świata, teogoniczne - pochodzenie bogów, antropogeniczne - powstanie człowieka, genealogiczne - dzieje rodów.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Uzupełnij informacje o eposie homeryckim.",
+      content: {
+        textWithGaps:
+          "Homerydy eposy zostały napisane [1], który składa się z sześciu stóp. 'Iliada' opisuje ostatnie [2] dni wojny trojańskiej i jest przykładem eposu [3]. Natomiast 'Odyseja' to epos [4], opisujący powrót Odyseusza do Itaki.",
+        gaps: [
+          {
+            id: 1,
+            options: [
+              "pentametrem",
+              "heksametrem daktylicznym",
+              "trochejem",
+              "jambem",
+            ],
+          },
+          {
+            id: 2,
+            options: ["10", "30", "50", "100"],
+          },
+          {
+            id: 3,
+            options: [
+              "religijnego",
+              "rycerskiego",
+              "fantastycznego",
+              "dydaktycznego",
+            ],
+          },
+          {
+            id: 4,
+            options: ["religijny", "rycerski", "fantastyczny", "historyczny"],
+          },
+        ],
+      },
+      correctAnswer: [1, 2, 1, 2],
+      metadata: {
+        explanation:
+          "Eposy Homera napisane są heksametrem daktylicznym. 'Iliada' opisuje 50 dni wojny i jest eposem rycerskim, 'Odyseja' to epos fantastyczny.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Które gatunki literackie powstały w antyku? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "epopeja (epos)",
+          "sonet",
+          "tragedia",
+          "oda",
+          "ballada",
+          "elegia",
+          "hymn",
+          "nowela",
+        ],
+      },
+      correctAnswer: [0, 2, 3, 5, 6],
+      metadata: {
+        explanation:
+          "W antyku powstały: epopeja, tragedia, komedia, oda, elegia, hymn, tren, bajka, sielanka. Sonet, ballada i nowela to gatunki późniejsze.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Wyjaśnij, czym jest mimesis w sztuce antycznej i podaj przykład jej zastosowania.",
+      content: {
+        instruction:
+          "Zdefiniuj pojęcie mimesis i wyjaśnij, jak realizowano je w sztuce starożytnej. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "definicja mimesis jako naśladowania natury (1 pkt)",
+          "przykład zastosowania w rzeźbie, malarstwie lub literaturze (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Mimesis to zasada naśladowania rzeczywistości przez sztukę. W starożytności artyści nie wymyślali świata, lecz wiernie go odtwarzali. Rzeźbiarze jak Fidiasz czy Praksyteles tworzyli realistyczne posągi bogów i ludzi, przedstawiając harmonię i piękno ciała. W literaturze Homer szczegółowo opisywał przedmioty i sytuacje.",
+        keyWords: [
+          "naśladowanie",
+          "rzeczywistość",
+          "realizm",
+          "natura",
+          "wierność",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Opisz, na czym polegała zasada trzech jedności w tragedii antycznej.",
+      content: {
+        instruction:
+          "Wymień i krótko scharakteryzuj trzy jedności obowiązujące w tragedii greckiej. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wymienienie trzech jedności (1 pkt)",
+          "krótkie wyjaśnienie każdej z nich (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Zasada trzech jedności obejmowała: jedność miejsca (akcja toczy się w jednym miejscu), jedność czasu (wydarzenia trwają maksymalnie 24 godziny) oraz jedność akcji (występuje jeden główny wątek fabularny bez wątków pobocznych). Zasady te miały zapewnić spójność i wiarygodność przedstawienia.",
+        keyWords: ["miejsce", "czas", "akcja", "24 godziny", "jeden wątek"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Wyjaśnij pojęcie hybris i podaj, jakie skutki wywoływała w tragedii greckiej.",
+      content: {
+        instruction:
+          "Zdefiniuj hybris i opisz jej konsekwencje dla bohatera tragicznego. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "definicja hybris jako pychy i przekroczenia granic (1 pkt)",
+          "wskazanie konsekwencji - nemezis, katastrofa (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Hybris to pycha, zuchwałość i przekroczenie granic wyznaczonych przez bogów oraz naturę. W tragedii greckiej hybris zawsze prowadziła do nemezis - kary ze strony bogów. Bohater wykazujący hybris nieuchronnie zmierzał ku katastrofie i upadkowi, gdyż bogowie nie tolerowali ludzkiej zarozumiałości.",
+        keyWords: [
+          "pycha",
+          "przekroczenie granic",
+          "nemezis",
+          "kara bogów",
+          "katastrofa",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Scharakteryzuj rolę chóru w tragedii greckiej.",
+      content: {
+        instruction:
+          "Wyjaśnij, jakie funkcje pełnił chór w przedstawieniu tragicznym. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie funkcji komentatora wydarzeń (1 pkt)",
+          "wskazanie innych funkcji: głos społeczeństwa, refleksje moralne (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Chór pełnił funkcję komentatora wydarzeń, wyrażał opinie zbiorowe społeczeństwa i dokonywał refleksji moralnych. Śpiewał pieśni w kluczowych momentach tragedii, pomagając widzom zrozumieć działania bohaterów. Reprezentował głos rozsądku i tradycji, często ostrzegając przed konsekwencjami pochopnych decyzji.",
+        keyWords: [
+          "komentator",
+          "opinie zbiorowe",
+          "refleksje moralne",
+          "pieśni",
+          "głos społeczeństwa",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Wyjaśnij, czym różni się konflikt tragiczny od zwykłego konfliktu dramatycznego.",
+      content: {
+        instruction:
+          "Scharakteryzuj specyfikę konfliktu tragicznego w tragedii antycznej. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie równorzędności racji moralnych (1 pkt)",
+          "wyjaśnienie niemożności dokonania wyboru bez konsekwencji (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Konflikt tragiczny to starcie dwóch równorzędnych racji moralnych, między którymi bohater nie może dokonać wyboru bez poważnych konsekwencji. Obie strony konfliktu mają słuszne argumenty i wartości. Wybór jednej opcji oznacza naruszenie drugiej równie ważnej wartości, co prowadzi do nieuchronnej katastrofy.",
+        keyWords: [
+          "równorzędne racje",
+          "niemożność wyboru",
+          "obie strony słuszne",
+          "katastrofa",
+          "wartości",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Opisz główne założenia stoicyzmu jako postawy życiowej.",
+      content: {
+        instruction:
+          "Wyjaśnij, w czym według stoików tkwiło szczęście i jak powinien żyć człowiek. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie spokoju, hartu ducha i opanowania (1 pkt)",
+          "życie w zgodzie z naturą i rozumem (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Stoicy głosili, że szczęście osiąga się przez życie w zgodzie z naturą i rozumem. Cenili niewzruszony spokój, opanowanie, hart ducha i wewnętrzną równowagę duchową nawet w trudnych chwilach. Człowiek powinien zachować stoicki spokój wobec przeciwności losu i sumiennie wykonywać swoje obowiązki.",
+        keyWords: [
+          "spokój",
+          "hart ducha",
+          "natura",
+          "rozum",
+          "równowaga duchowa",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Wyjaśnij, czym różniła się filozofia epikurejczyków od hedonizmu.",
+      content: {
+        instruction:
+          "Opisz, jak epikurejczycy rozumieli przyjemność i szczęście. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "przyjemność jako brak cierpienia, bólu i strachu (1 pkt)",
+          "zachowanie zasad moralnych, umiarkowanie (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Epikurejczycy, w przeciwieństwie do hedonistów, rozumieli przyjemność jako brak bólu, strachu i cierpienia, nie jako doznawanie zmysłowych uciech. Szczęście osiągano przez spokój ducha (ataraksja) i przestrzeganie zasad moralnych. Epikur głosił umiarkowanie i prostotę życia, nie rozpustę.",
+        keyWords: [
+          "brak cierpienia",
+          "spokój ducha",
+          "ataraksja",
+          "umiarkowanie",
+          "zasady moralne",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Scharakteryzuj dualizm platońskiego świata idei i świata materialnego.",
+      content: {
+        instruction:
+          "Wyjaśnij koncepcję dwóch światów według Platona i ich wzajemną relację. (50-70 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "opisanie świata idei jako doskonałego i niezmiennego (1 pkt)",
+          "opisanie świata materialnego jako niedoskonałej kopii idei (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Według Platona istnieją dwa światy: świat idei i świat materialny. Świat idei jest doskonały, niezmienny i wieczny, niedostępny zmysłom, poznawalny tylko rozumem. Świat materialny to jedynie niedoskonała kopia, cień świata idei, dostępny naszym zmysłom. Wszystko co widzimy to tylko odbicie doskonałych pierwowzorów - idei.",
+        keyWords: [
+          "świat idei",
+          "doskonały",
+          "niezmienny",
+          "kopia",
+          "cień",
+          "pierwowzór",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question:
+        "Opisz mit o wojnie trojańskiej - jej przyczynę i sposób zakończenia.",
+      content: {
+        instruction:
+          "Wyjaśnij, jak doszło do wojny i w jaki sposób Grecy zdobyli Troję. (50-70 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie przyczyny: porwanie Heleny przez Parysa (1 pkt)",
+          "opisanie podstępu z koniem trojańskim (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Wojna trojańska wybuchła, gdy Parys porwał Helenę, żonę spartańskiego króla Menelaosa. W odwecie wojska greckie pod wodzą Agamemnona oblegały Troję przez 10 lat. Grecy zdobyli miasto dzięki podstępowi Odyseusza - zbudowali drewnianego konia, w którym ukryli się wojownicy. Trojańczycy wprowadzili konia do miasta, a w nocy Grecy wyszli i zdobyli Troję.",
+        keyWords: ["Helena", "Parys", "koń trojański", "podstęp", "Odyseusz"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "ANTIQUITY",
+      work: null,
+      question: "Wyjaśnij koncepcję katharsis w kontekście tragedii greckiej.",
+      content: {
+        instruction:
+          "Opisz, czym jest katharsis i jak działała na widzów tragedii. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "definicja katharsis jako oczyszczenia emocjonalnego (1 pkt)",
+          "mechanizm działania - rozładowanie emocji poprzez oglądanie tragedii (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Katharsis (z greckiego katharos – oczyszczenie) to rozładowanie doznawanych wzruszeń pod wpływem sztuki. Widzowie tragedii, obserwując cierpienie bohaterów, przeżywali strach i litość, co pozwalało im na oczyszczenie z własnych negatywnych emocji. Teatr pełnił funkcję terapeutyczną dla społeczeństwa.",
+        keyWords: [
+          "oczyszczenie",
+          "emocje",
+          "strach",
+          "litość",
+          "rozładowanie",
+        ],
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Sztuka",
+      question:
+        "Który styl greckiej architektury charakteryzował się masywnym trzonem kolumny bez zdobień?",
+      content: {
+        options: [
+          "styl koryncki",
+          "styl joński",
+          "styl dorycki",
+          "styl attycki",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Styl dorycki cechował się surowością, masywnym trzonem kolumny i brakiem upiększeń.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Sztuka",
+      question:
+        "Który styl architektury greckiej miał charakterystyczne 'ślimaczki' przypominające baranie rogi?",
+      content: {
+        options: [
+          "styl joński",
+          "styl dorycki",
+          "styl koryncki",
+          "styl attycki",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Styl joński charakteryzował się zdobieniami w kształcie ślimaczków przypominających baranie rogi.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Sztuka",
+      question:
+        "Który styl był najpóźniejszy w architekturze greckiej i miał zdobienia w kształcie liści?",
+      content: {
+        options: [
+          "styl dorycki",
+          "styl attycki",
+          "styl joński",
+          "styl koryncki",
+        ],
+      },
+      correctAnswer: 3,
+      metadata: {
+        explanation:
+          "Styl koryncki był najpóźniejszy i wyróżniał się pionowymi liśćmi pnącymi się ku kapitelowi.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Sztuka",
+      question: "Jak nazywa się słynna świątynia Ateny na greckim Akropolu?",
+      content: {
+        options: ["Koloseum", "Panteon", "Partenon", "Forum"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Partenon to świątynia Ateny znajdująca się na ateńskim Akropolu.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Sztuka",
+      question:
+        "Jak nazywa się rzymski amfiteatr, w którym odbywały się walki gladiatorów?",
+      content: {
+        options: ["Koloseum", "Panteon", "Partenon", "Akropol"],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Koloseum to rzymski amfiteatr, w którym odbywały się walki gladiatorów i inne widowiska.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Sztuka",
+      question: "Kim był Fidiasz?",
+      content: {
+        options: ["filozofem", "poetą", "rzeźbiarzem", "wodzem"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Fidiasz był jednym z najbardziej znanych rzeźbiarzy starożytnej Grecji.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Pojęcia",
+      question: "Co oznacza pojęcie 'fatum'?",
+      content: {
+        options: [
+          "mądrość",
+          "odwaga",
+          "przeznaczenie zrządzone przez bogów",
+          "szczęście",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Fatum to przeznaczenie, to co przewidziane i zrządzone przez bogów, nieuchronny los.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Pojęcia",
+      question: "Co to jest epos?",
+      content: {
+        options: [
+          "krótki wiersz liryczny",
+          "utwór dramatyczny",
+          "długi, wierszowany utwór opowiadający o legendarnych bohaterach",
+          "pieśń religijna",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Epos to długi, wierszowany utwór epicki opowiadający o legendarnych i historycznych bohaterach na tle ważnych wydarzeń.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Pojęcia",
+      question: "Co to jest oda?",
+      content: {
+        options: [
+          "utwór dramatyczny",
+          "utwór liryczny o patetycznym stylu i pochwalnym charakterze",
+          "opowieść mitologiczna",
+          "krótki wiersz miłosny",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Oda to utwór liryczny o patetycznym stylu i pochwalnym charakterze, opiewający ważne wydarzenia, osoby lub idee.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Pojęcia",
+      question: "Co to jest mit?",
+      content: {
+        options: [
+          "dokument historyczny",
+          "bajeczna opowieść wyjaśniająca powstanie świata i bogów",
+          "traktat filozoficzny",
+          "pieśń religijna",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Mit to bajeczna opowieść narracyjna wyjaśniająca powstawanie świata, bogów, herosów i ludzi.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "ANTIQUITY",
+      work: "Pojęcia",
+      question: "Jakie mity wyjaśniają pochodzenie bogów?",
+      content: {
+        options: [
+          "kosmogoniczne",
+          "antropologiczne",
+          "teogoniczne",
+          "genealogiczne",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Mity teogoniczne to te, które opowiadają o pochodzeniu i narodzinach bogów.",
+      },
+    },
+
     // =========== POCZĄTEK PYTAŃ ANTYGONA ==============//
 
     {
@@ -12635,7 +15596,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 2,
       epoch: "ANTIQUITY",
       work: "Antygona",
-      question: "Opisz, jakie argumenty używa Kreon broniąc swojego edyktu.",
+      question: "Opisz, jakich argumentów używa Kreon, broniąc swojego edyktu.",
       content: {
         instruction:
           "Wyjaśnij, dlaczego Kreon uważa swój edykt za słuszny. (30-50 słów)",
@@ -18669,7 +21630,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       epoch: "POSITIVISM",
       work: "Lalka",
       question:
-        "Kto wygłosił przemówienie o małżeństwie jako związku rozumnym, a nie miłosnym?",
+        "Kto w „Lalce” wygłosił przemówienie o małżeństwie jako związku rozumnym, a nie miłosnym?",
       content: {
         options: ["Wokulski", "Ochocki", "Starski", "baron Dalski"],
       },
@@ -20148,7 +23109,8 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 4,
       epoch: "ROMANTICISM",
       work: "Pan Tadeusz",
-      question: "Wyjaśnij symbolikę tytułu ostatniej księgi - 'Kochajmy się'.",
+      question:
+        "Wyjaśnij symbolikę tytułu ostatniej księgi „Pana Tadeusza” - „Kochajmy się”.",
       content: {
         expectedKeywords: ["pojednanie", "zgoda", "miłość", "jedność", "naród"],
         maxWords: 70,
@@ -21018,7 +23980,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
   for (const exercise of exercisesWithTags) {
     try {
       await prisma.exercise.create({
-        data: exercise,
+        data: exercise as any,
       });
       console.log(`✅ Created: ${exercise.question.substring(0, 50)}...`);
     } catch (error) {
