@@ -313,7 +313,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
 
             {/* NOWA SEKCJA - Testy */}
             <div>
-              <h4 className="font-bold mb-4 text-lg">Popularne testy</h4>
+              <h4 className="font-bold mb-4 text-lg">Testy z lektur</h4>
               <ul className="space-y-3 text-gray-400">
                 {testHubs.slice(0, 4).map((hub) => (
                   <li key={hub.id}>
