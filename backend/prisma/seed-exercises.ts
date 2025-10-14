@@ -1,10 +1,5 @@
 // backend/prisma/seed-exercises.ts
-import {
-  PrismaClient,
-  ExerciseType,
-  Category,
-  LiteraryEpoch,
-} from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -14732,7 +14727,3722 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       },
     },
 
-    // =========== POCZĄTEK PYTAŃ ANTYGONA ==============//
+    // =========== KONIEC PYTAŃ STAROŻYTNOŚĆ/ANTYK ========= //
+
+    // =========== POCZĄTEK PYTAŃ ŚREDNIOWIECZE =========== //
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Jaka data jest umownym początkiem epoki średniowiecza w Europie?",
+      content: {
+        options: ["1453 r.", "476 r.", "1066 r.", "800 r."],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Rok 476 n.e. - upadek Cesarstwa Zachodniorzymskiego - jest umowną datą początku średniowiecza w Europie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Skąd pochodzi nazwa 'średniowiecze'?",
+      content: {
+        options: [
+          "od łacińskiego medium aevum - wieki średnie",
+          "od greckiego mesos chronos",
+          "od francuskiego moyen age",
+          "od niemieckiego Mittelalter",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Nazwa średniowiecze pochodzi od łacińskiego wyrażenia medium aevum, oznaczającego 'wieki średnie' - czas między antykiem a renesansem.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co oznacza termin 'teocentryzm'?",
+      content: {
+        options: [
+          "podporządkowanie życia królowi",
+          "podporządkowanie życia rozumowi",
+          "podporządkowanie życia naturze",
+          "podporządkowanie życia Bogu",
+        ],
+      },
+      correctAnswer: 3,
+      metadata: {
+        explanation:
+          "Teocentryzm (z gr. theos - Bóg) oznacza podporządkowanie wszystkich dziedzin życia Bogu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Która data kończy epokę średniowiecza w Europie?",
+      content: {
+        options: [
+          "1410 r. - bitwa pod Grunwaldem",
+          "1492 r. - odkrycie Ameryki",
+          "1517 r. - początek reformacji",
+          "1453 r. - upadek Konstantynopola",
+        ],
+      },
+      correctAnswer: 3,
+      metadata: {
+        explanation:
+          "Rok 1453 (upadek Konstantynopola) jest najpowszechniej przyjmowaną datą końca średniowiecza, choć podaje się też inne daty: 1492 (odkrycie Ameryki) lub 1517 (reformacja).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Kto nadał nazwę 'średniowiecze' tej epoce?",
+      content: {
+        options: [
+          "filozofowie średniowieczni",
+          "ludzie renesansu",
+          "historycy XIX wieku",
+          "uczeni starożytni",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Nazwę 'średniowiecze' nadali humaniści renesansowi, traktując tę epokę z lekceważeniem jako okres między ważnym dla nich antykiem a odrodzeniem.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Na ile okresów dzieli się epoka średniowiecza?",
+      content: {
+        options: ["na 2 okresy", "na 5 okresów", "na 3 okresy", "na 4 okresy"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Średniowiecze dzieli się na trzy okresy: wczesne (V-X w.), dojrzałe/pełne (XI-XIII w.) i późne (XIV-XV w.).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Kto jest twórcą augustynizmu?",
+      content: {
+        options: [
+          "św. Tomasz z Akwinu",
+          "św. Franciszek z Asyżu",
+          "św. Anzelm",
+          "św. Augustyn",
+        ],
+      },
+      correctAnswer: 3,
+      metadata: {
+        explanation:
+          "Augustynizm to kierunek filozoficzny stworzony przez świętego Augustyna, nawiązujący do filozofii Platona.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Kto jest twórcą tomizmu?",
+      content: {
+        options: [
+          "św. Tomasz z Akwinu",
+          "św. Augustyn",
+          "św. Franciszek",
+          "św. Anzelm",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Tomizm to kierunek filozoficzny stworzony przez świętego Tomasza z Akwinu, nawiązujący do filozofii Arystotelesa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co oznacza łacińskie wyrażenie 'memento mori'?",
+      content: {
+        options: [
+          "żyj chwilą",
+          "pamiętaj o śmierci",
+          "poznaj samego siebie",
+          "carpe diem",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Memento mori to łacińskie wyrażenie oznaczające 'pamiętaj o śmierci' - jedno z kluczowych haseł średniowiecza.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co oznacza francuskie określenie 'danse macabre'?",
+      content: {
+        options: [
+          "taniec życia",
+          "taniec dworski",
+          "taniec śmierci",
+          "taniec weselny",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Danse macabre (taniec śmierci) to średniowieczny motyw przedstawiający śmierć tańczącą ze wszystkimi stanami.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Jaki był dominujący język warstw wykształconych w średniowieczu?",
+      content: {
+        options: ["greka", "łacina", "język hebrajski", "starofrancuski"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Łacina była uniwersalnym językiem nauki, Kościoła i literatury w średniowiecznej Europie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co oznacza termin 'hagiografia'?",
+      content: {
+        options: [
+          "pisanie kronik",
+          "sztuka kaznodziejska",
+          "żywotopisarstwo świętych",
+          "pisanie apokryfów",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Hagiografia to gatunek literacki obejmujący żywoty świętych, legendy i biografie postaci świętych.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest misterium?",
+      content: {
+        options: [
+          "utwór satyryczny",
+          "kronika historyczna",
+          "dramat religijny o tematyce biblijnej",
+          "pieśńrycerska",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Misterium to średniowieczny dramat religijny, którego treść czerpana była z Biblii.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Jak nazywał się średniowieczny dramat religijny ukazujący cuda świętych?",
+      content: {
+        options: ["misterium", "moralitet", "mirakl", "farsa"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Mirakl (od łac. miraculum - cud) to dramat ukazujący sceny z życia świętych zawierające elementy cudowności.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest moralitet?",
+      content: {
+        options: [
+          "zbiór pouczeń moralnych",
+          "dramat o charakterze dydaktyczno-moralizatorskim",
+          "traktat filozoficzny",
+          "pieśń religijna",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Moralitet to średniowieczny dramat o charakterze dydaktycznym, pokazujący walkę cnót i przywary ludzkich.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co oznacza francuskie wyrażenie 'chanson de geste'?",
+      content: {
+        options: [
+          "pieśń miłosna",
+          "pieśń religijna",
+          "pieśń ludowa",
+          "pieśń o czynach",
+        ],
+      },
+      correctAnswer: 3,
+      metadata: {
+        explanation:
+          "Chanson de geste (pieśń o czynach) to gatunek epicki opiewający bohaterskie czyny rycerzy.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest plankt?",
+      content: {
+        options: [
+          "pieśń o czynach rycerskich",
+          "utwór wyrażający żal po zmarłym",
+          "dramat religijny",
+          "kronika dziejów",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Plankt (od łac. planktus - płacz) to gatunek wyrażający żal i cierpienie, często po śmierci Chrystusa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Jaki styl architektoniczny dominował we wczesnym średniowieczu?",
+      content: {
+        options: ["gotycki", "barokowy", "renesansowy", "romański"],
+      },
+      correctAnswer: 3,
+      metadata: {
+        explanation:
+          "Styl romański dominował w X-XIII wieku, charakteryzował się masywnością i prostotą form.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Który styl architektoniczny charakteryzuje się strzelistością i witrażami?",
+      content: {
+        options: ["romański", "barokowy", "gotycki", "renesansowy"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Styl gotycki (XII-XV w.) charakteryzuje się strzelistością, wysokimi oknami i bogato zdobionymi witrażami.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co charakteryzowało budowle romańskie?",
+      content: {
+        options: [
+          "wysokie witraże i strzelistość",
+          "grube mury i małe okna",
+          "bogata ornamentyka",
+          "kopuły i kolumnady",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Budowle romańskie miały grube mury, małe okna i charakteryzowały się masywnością oraz funkcją obronną.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Który wzorzec osobowy reprezentował całkowite wyrzeczenie się dóbr doczesnych?",
+      content: {
+        options: ["rycerz", "asceta", "władca", "trubadur"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Asceta to wzorzec osobowy charakteryzujący się całkowitym wyrzeczeniem dóbr doczesnych i życiem w ascezie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co było główną cechą wzorca rycerza chrześcijańskiego?",
+      content: {
+        options: [
+          "dążenie do bogactwa",
+          "kontemplacja i modlitwa",
+          "honor, odwaga i wiara",
+          "życie w ubóstwie",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Rycerz chrześcijański charakteryzował się honorem, odwagą, wiernością i głęboką wiarą -walczył w obronie chrześcijaństwa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest scholastyka?",
+      content: {
+        options: [
+          "system edukacji",
+          "styl w sztuce",
+          "metoda filozoficzna wyjaśniania prawd wiary rozumem",
+          "gatunek literacki",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Scholastyka to metoda filozoficzna polegająca na racjonalnym wyjaśnianiu prawd wiary.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Kto propagował franciszkanizm?",
+      content: {
+        options: [
+          "św. Franciszek z Asyżu",
+          "św. Augustyn",
+          "św. Tomasz z Akwinu",
+          "św. Anzelm",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Franciszkanizm to nurt zapoczątkowany przez świętego Franciszka z Asyżu, głoszący miłość do wszystkich stworzeń.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co oznacza termin 'uniwersalizm średniowieczny'?",
+      content: {
+        options: [
+          "różnorodność kultur w Europie",
+          "wspólnota religii, kultury i norm w całej Europie",
+          "wolność religijna",
+          "podział na narody",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Uniwersalizm średniowieczny oznaczał wspólnotę religii, języka, kultury i norm społecznych w całej Europie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest feudalizm?",
+      content: {
+        options: [
+          "system demokratyczny",
+          "system polityczno-gospodarczy oparty na hierarchii lennej",
+          "system republikański",
+          "monarchia absolutna",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Feudalizm to średniowieczny system społeczno-gospodarczy oparty na hierarchii, lenach i zależnościach wasalnych.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co oznacza motyw 'stabat mater dolorosa'?",
+      content: {
+        options: [
+          "Madonna z Dzieciątkiem",
+          "Matka Boska w chwale",
+          "stała Matka boleściwa - Maryja pod krzyżem",
+          "Zwiastowanie",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Stabat Mater Dolorosa (stała Matka boleściwa) to motyw przedstawiający Maryję cierpiącą pod krzyżem Chrystusa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest pieta?",
+      content: {
+        options: [
+          "przedstawienie narodzin Chrystusa",
+          "przedstawienie Ostatniej Wieczerzy",
+          "przedstawienie Maryi z martwym Chrystusem na kolanach",
+          "przedstawienie ukrzyżowania",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Pieta (wł. litość) to przedstawienie Matki Boskiej trzymającej na kolanach ciało Chrystusa zdjęte z krzyża.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest deesis?",
+      content: {
+        options: [
+          "przedstawienie Trójcy Świętej",
+          "przedstawienie Chrystusa jako sędziego z Maryją i Janem Chrzcicielem",
+          "przedstawienie apostołów",
+          "scena Zwiastowania",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Deesis (gr. prośba) to przedstawienie Chrystusa Sędziego z Maryją po prawej i Janem Chrzcicielem po lewej stronie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Który gatunek literacki zawierał opisy dziejów historycznych?",
+      content: {
+        options: ["misterium", "moralitet", "kronika", "plankt"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Kronika to gatunek historiograficzny zawierający chronologiczny opis wydarzeń historycznych.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Jaki charakter miała literatura średniowieczna?",
+      content: {
+        options: [
+          "rozrywkowy",
+          "dydaktyczno-moralizatorski",
+          "satyryczny",
+          "liryczny",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Literatura średniowieczna miała przede wszystkim charakter dydaktyczny i moralizatorski - służyła pouczaniu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest pareneza?",
+      content: {
+        options: [
+          "gatunek literacki",
+          "styl architektoniczny",
+          "tendencja do tworzenia wzorców do naśladowania",
+          "nurt filozoficzny",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Pareneza (gr. zachęcanie) to tendencja w literaturze do tworzenia wzorców postępowania i pouczania.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Dlaczego większość dzieł średniowiecznych była anonimowa?",
+      content: {
+        options: [
+          "ze strachu przed prześladowaniami",
+          "z powodu analfabetyzmu",
+          "tworzono Ad maiorem Dei gloriam - ku większej chwale Boga",
+          "nie było systemu praw autorskich",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Dzieła były anonimowe, bo tworzono je na chwałę Bożą, nie dla ziemskiej sławy autora.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co to są archaizmy?",
+      content: {
+        options: [
+          "nowe słowa",
+          "słowa zapożyczone",
+          "słowa, które wyszły z użycia",
+          "synonimy",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Archaizmy to wyrazy, które wyszły z użycia we współczesnym języku, zachowane w starych tekstach.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Do jakiej filozofii nawiązywał augustynizm?",
+      content: {
+        options: ["Arystotelesa", "Sokratesa", "Platona", "Heraklita"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Augustynizm nawiązywał do filozofii Platona, przyjmując dualistyczną wizję świata.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Do jakiej filozofii nawiązywał tomizm?",
+      content: {
+        options: ["Arystotelesa", "Platona", "Sokratesa", "Epikura"],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Tomizm przystosował do potrzeb teologii chrześcijańskiej filozofię Arystotelesa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Jaki był podstawowy element konstrukcyjny budowli romańskich?",
+      content: {
+        options: [
+          "łuk ostrołukowy",
+          "kolumna koryncka",
+          "łuk półkolisty",
+          "kopuła",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Podstawowym elementem konstrukcyjnym architektury romańskiej był łuk półkolisty.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Jaki typ łuku charakteryzuje budowle gotyckie?",
+      content: {
+        options: [
+          "łuk półkolisty",
+          "łuk podkowy",
+          "łuk ostrołukowy",
+          "łuk pełny",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Budowle gotyckie charakteryzuje łuk ostrołukowy, który umożliwiał budowanie wyższych konstrukcji.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Jak nazywali się wędrowni poeci-śpiewacy średniowiecza?",
+      content: {
+        options: [
+          "bardowie i trubadurzy",
+          "menestrelowie",
+          "minstrele",
+          "wszystkie odpowiedzi są poprawne",
+        ],
+      },
+      correctAnswer: 3,
+      metadata: {
+        explanation:
+          "Wędrownych poetów-śpiewaków nazywano różnie: trubadurami, bardami, menestrelami, minstrelami.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co głosił franciszkanizm?",
+      content: {
+        options: [
+          "umartwianie ciała",
+          "miłość do natury i wszystkich stworzeń",
+          "przewagę duszy nad ciałem",
+          "ascezę i pustelnictwo",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Franciszkanizm głosił miłość do przyrody, świata i wszystkich zwierząt oraz życie w ubóstwie bez umartwiania.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co według augustynizmu było najważniejsze w człowieku?",
+      content: {
+        options: ["rozum", "dusza", "ciało", "uczucia"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Augustynizm głosił przewagę duszy nad rozumem i ciałem - dusza była najważniejszym elementem ludzkiej natury.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Jak tomizm pojmował człowieka?",
+      content: {
+        options: [
+          "jako istotę tylko duchową",
+          "jako istotę tylko cielesną",
+          "jako połączenie duszy i ciała",
+          "jako istotę tragiczną",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Tomizm uważał, że człowiek stanowi harmonijne połączenie duszy i ciała - oba pochodzą od Boga.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest apokryf?",
+      content: {
+        options: [
+          "tekst o losach świętych niekanoniczny",
+          "kronika historyczna",
+          "pieśń religijna",
+          "dramat moralizatorski",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Apokryf to tekst o tematyce religijnej lub świętych, który nie został uznany przez Kościół za kanoniczny.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co oznacza łacińskie wyrażenie 'ars moriendi'?",
+      content: {
+        options: [
+          "sztuka życia",
+          "sztuka umierania",
+          "sztuka walki",
+          "sztuka miłości",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Ars moriendi to 'sztuka umierania' - zbiór zasad dotyczących właściwego, chrześcijańskiego umierania.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Jaki typ wiersza dominował w średniowieczu?",
+      content: {
+        options: [
+          "sylabiczny",
+          "sylabotonicznyintonacyjno-zdaniowy",
+          "intonacyjno-zdaniowy",
+          "toniczny",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "W średniowieczu dominował wiersz intonacyjno-zdaniowy (składniowo-rymowy), w którym jedno zdanie = jeden wers.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Kiedy w Polsce rozpoczyna się epoka średniowiecza?",
+      content: {
+        options: [
+          "w X wieku - 966 r.",
+          "w V wieku",
+          "w XI wieku",
+          "w IX wieku",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "W Polsce średniowiecze rozpoczyna się w drugiej połowie X wieku, umownie w 966 roku - chrzest Polski.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest psychomachia?",
+      content: {
+        options: [
+          "teoria psychologiczna",
+          "walka dobra ze złem o duszę przed śmiercią",
+          "gatunek literacki",
+          "nurt filozoficzny",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Psychomachia to motyw walki aniołów i demonów o duszę człowieka tuż przed śmiercią.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Jaki był charakter kronik średniowiecznych?",
+      content: {
+        options: [
+          "obiektywny i naukowy",
+          "fikcyjny i rozrywkowy",
+          "panegiryczny i dydaktyczny",
+          "satyryczny",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Kroniki miały charakter panegiryczny (pochwalny) i dydaktyczny, często powstawały na zamówienie władców.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest legenda w średniowieczu?",
+      content: {
+        options: [
+          "mit starożytny",
+          "opowiadanie o świętym z elementami cudownymi",
+          "kronika historyczna",
+          "pieśń ludowa",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Legenda to średniowieczny gatunek opowiadający o życiu świętych, zawierający elementy fantastyczne i cudowne.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest romans rycerski?",
+      content: {
+        options: [
+          "utwór o tematyce miłosnej z elementami przygodowymi",
+          "kronika wojenna",
+          "pieśń o czynach",
+          "dramat historyczny",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Romans rycerski to utwór o tematyce miłosnej, zawierający elementy przygodowe, magiczne i rycerskie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Jaką funkcję pełniły budowle romańskie oprócz religijnej?",
+      content: {
+        options: ["mieszkalną", "handlową", "obronną", "gospodarczą"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Budowle romańskie pełniły podwójną funkcję: religijną i obronną - miały grube mury i małe okna.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co symbolizowały katedry gotyckie swoją strzelistością?",
+      content: {
+        options: [
+          "potęgę władcy",
+          "dążenie człowieka ku niebu i Bogu",
+          "bogactwo miasta",
+          "siłę militarną",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Strzelistość katedr gotyckich symbolizowała dążenie człowieka ku górze, ku niebu, do Boga.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest farsa?",
+      content: {
+        options: [
+          "dramat religijny",
+          "komedia o charakterze groteskowym",
+          "kronika",
+          "pieśń satyryczna",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Farsa to komedia oparta na efektach komizmu sytuacyjnego, zawierająca elementy groteskowe i karykaturalne.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Z czego wykształciła się farsa?",
+      content: {
+        options: ["z misterium", "z moralitetu", "z intermedium", "z miraklu"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Farsa wykształciła się z intermedium - krótkiej scenki satyrycznej granej między częściami misterium.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Jaka była hierarchia społeczna w średniowieczu?",
+      content: {
+        options: [
+          "duchowieństwo - chłopi - szlachta",
+          "duchowieństwo - szlachta - mieszczanie - chłopi",
+          "szlachta - duchowieństwo - chłopi",
+          "wszyscy równi",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Hierarchia społeczna: na szczycie duchowieństwo, potem szlachta, niżej mieszczanie i rzemieślnicy, na dole chłopi.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co symbolizowało światło w katedrach gotyckich?",
+      content: {
+        options: [
+          "wiedzę ludzką",
+          "Boga, dobro i piękno",
+          "władzę króla",
+          "bogactwo Kościoła",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Światło w gotyku miało wymiar symboliczny - jasność kojarzono z Bogiem i pięknem, ciemność ze złem.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co to są roczniki?",
+      content: {
+        options: [
+          "kroniki historyczne",
+          "krótkie zapisy ważnych wydarzeń na marginesach ksiąg",
+          "kalendarze liturgiczne",
+          "pieśni rocznicowe",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Roczniki to krótkie informacje o ważnych wydarzeniach spisywane na marginesach ksiąg, które przekształciły się w kroniki.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Jaki był stosunek augustynizmu do ciała i duszy?",
+      content: {
+        options: [
+          "ciało i dusza są równie ważne",
+          "dusza jest ważniejsza, ciało należy umartwiać",
+          "ciało jest ważniejsze od duszy",
+          "nie rozróżniano ciała i duszy",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Augustynizm głosił wyższość duszy nad ciałem - dusza nieśmiertelna, ciało zniszczalne, więc należy je umartwiać.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Jaki był stosunek tomizmu do ciała i duszy?",
+      content: {
+        options: [
+          "ciało należy umartwiać",
+          "tylko dusza jest ważna",
+          "ciało i dusza stanowią istotę człowieka - oba są ważne",
+          "ciało jest ważniejsze",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Tomizm głosił, że zarówno ciało jak i dusza należą do istoty człowieka i są dziełem Boga - oba są ważne.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co według tomizmu było wrodzonymi darami boskimi?",
+      content: {
+        options: [
+          "siła i zdrowie",
+          "bogactwo i władza",
+          "cnota i rozum",
+          "wiara i nadzieja",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Według tomizmu cnota i rozum były wrodzonymi darami boskimi, które miały pomóc człowiekowi w życiu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Ile wieków trwało średniowiecze w Europie?",
+      content: {
+        options: ["5 wieków", "7 wieków", "10 wieków", "15 wieków"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Średniowiecze w Europie trwało około 10 wieków (V-XV wiek).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Jak nazywano okrągłe okna wypełnione witrażami w katedrach gotyckich?",
+      content: {
+        options: ["rozety", "mandorle", "wimpergi", "fiale"],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Rozety to charakterystyczne okrągłe okna wypełnione witrażami w katedrach gotyckich.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "MIDDLE_AGES",
+      question: "Co stanowiło podstawę edukacji średniowiecznej?",
+      content: {
+        options: [
+          "nauki przyrodnicze",
+          "siedem sztuk wyzwolonych",
+          "filozofia grecka",
+          "prawo rzymskie",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Podstawą edukacji było siedem sztuk wyzwolonych: triwium (gramatyka, dialektyka, retoryka) i quadrivium (arytmetyka, muzyka, geometria, astronomia).",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Dopasuj nurty filozoficzne do ich twórców.",
+      content: {
+        matchingType: "philosophy_authors",
+        leftColumn: [
+          { id: "A", text: "Augustynizm" },
+          { id: "B", text: "Tomizm" },
+          { id: "C", text: "Franciszkanizm" },
+        ],
+        rightColumn: [
+          { id: 1, text: "św. Tomasz z Akwinu" },
+          { id: 2, text: "św. Augustyn" },
+          { id: 3, text: "św. Franciszek z Asyżu" },
+        ],
+      },
+      correctAnswer: [
+        [0, 1],
+        [1, 0],
+        [2, 2],
+      ],
+      metadata: {
+        explanation:
+          "Augustynizm stworzył św. Augustyn, tomizm św. Tomasz z Akwinu, franciszkanizm św. Franciszek z Asyżu.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Dopasuj gatunki literackie do ich charakterystyki.",
+      content: {
+        matchingType: "genres_characteristics",
+        leftColumn: [
+          { id: "A", text: "Hagiografia" },
+          { id: "B", text: "Misterium" },
+          { id: "C", text: "Kronika" },
+          { id: "D", text: "Plankt" },
+        ],
+        rightColumn: [
+          { id: 1, text: "dramat religijny o tematyce biblijnej" },
+          { id: 2, text: "dziejopisarstwo historyczne" },
+          { id: 3, text: "żywoty świętych" },
+          { id: 4, text: "utwór wyrażający żal po zmarłym" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 0],
+        [2, 1],
+        [3, 3],
+      ],
+      metadata: {
+        explanation:
+          "Hagiografia to żywoty świętych, misterium to dramat biblijny, kronika to dziejopisarstwo, plankt wyraża żal.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Które cechy charakteryzują styl romański? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "grube mury i małe okna",
+          "łuk półkolisty",
+          "funkcja obronna",
+          "strzelistość i witraże",
+          "masywność budowli",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 4],
+      metadata: {
+        explanation:
+          "Styl romański cechują: grube mury, małe okna, łuk półkolisty, funkcja obronna i masywność. Strzelistość i witraże to cechy gotyku.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Które cechy charakteryzują styl gotycki? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "strzelistość",
+          "łuk ostrołukowy",
+          "małe okna",
+          "witraże",
+          "grube mury",
+        ],
+      },
+      correctAnswer: [0, 1, 3],
+      metadata: {
+        explanation:
+          "Styl gotycki cechują: strzelistość, łuk ostrołukowy i witraże. Małe okna i grube mury to cechy romanizmu.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Dopasuj wzorce osobowe do ich cech.",
+      content: {
+        matchingType: "models_traits",
+        leftColumn: [
+          { id: "A", text: "Asceta" },
+          { id: "B", text: "Rycerz" },
+          { id: "C", text: "Władca doskonały" },
+        ],
+        rightColumn: [
+          { id: 1, text: "wyrzeczenie się dóbr doczesnych" },
+          { id: 2, text: "honor, odwaga, wiara" },
+          { id: 3, text: "mądrość, sprawiedliwość, troska o poddanych" },
+        ],
+      },
+      correctAnswer: [
+        [0, 0],
+        [1, 1],
+        [2, 2],
+      ],
+      metadata: {
+        explanation:
+          "Asceta wyrzeka się dóbr, rycerz cechuje się honorem i odwagą, doskonały władca jest mądry i sprawiedliwy.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Uzupełnij informacje o średniowieczu.",
+      content: {
+        textWithGaps:
+          "Nazwa średniowiecze pochodzi od łacińskiego [1]. Epoka ta charakteryzowała się [2], czyli podporządkowaniem życia Bogu. Dominującym językiem był [3], a system społeczny to [4].",
+        gaps: [
+          {
+            id: 1,
+            options: [
+              "tempus medium",
+              "medium aevum",
+              "media tempera",
+              "aevum medium",
+            ],
+          },
+          {
+            id: 2,
+            options: [
+              "humanizmem",
+              "racjonalizmem",
+              "teocentryzmem",
+              "antropocentryzmem",
+            ],
+          },
+          {
+            id: 3,
+            options: ["greka", "łacina", "hebrajski", "aramejski"],
+          },
+          {
+            id: 4,
+            options: ["kapitalizm", "komunizm", "feudalizm", "republikanizm"],
+          },
+        ],
+      },
+      correctAnswer: [1, 2, 1, 2],
+      metadata: {
+        explanation:
+          "Średniowiecze pochodzi od medium aevum, charakteryzował je teocentryzm, język łaciński i feudalizm.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Które motywy występowały w sztuce średniowiecznej? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "danse macabre (taniec śmierci)",
+          "memento mori",
+          "stabat mater",
+          "carpe diem",
+          "pieta",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 4],
+      metadata: {
+        explanation:
+          "W sztuce średniowiecznej występowały: danse macabre, memento mori, stabat mater i pieta. Carpe diem to motyw antyczny.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Dopasuj łacińskie wyrażenia do ich znaczenia.",
+      content: {
+        matchingType: "latin_meanings",
+        leftColumn: [
+          { id: "A", text: "Memento mori" },
+          { id: "B", text: "Ars moriendi" },
+          { id: "C", text: "Ad maiorem Dei gloriam" },
+          { id: "D", text: "Stabat Mater Dolorosa" },
+        ],
+        rightColumn: [
+          { id: 1, text: "stała Matka boleściwa" },
+          { id: 2, text: "sztuka umierania" },
+          { id: 3, text: "pamiętaj o śmierci" },
+          { id: 4, text: "ku większej chwale Boga" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 1],
+        [2, 3],
+        [3, 0],
+      ],
+      metadata: {
+        explanation:
+          "Memento mori - pamiętaj o śmierci, ars moriendi - sztuka umierania, ad maiorem Dei gloriam - ku większej chwale Boga, stabat mater - stała Matka boleściwa.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Które elementy należały do uniwersalizmu średniowiecznego? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "jedna religia - katolicyzm",
+          "jeden język - łacina",
+          "jeden ustrój - feudalizm",
+          "jedna narodowość",
+          "jeden władca świecki i duchowy",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 4],
+      metadata: {
+        explanation:
+          "Uniwersalizm obejmował: jedną religię (katolicyzm), język (łacinę), ustrój (feudalizm) i wspólną władzę (papież i cesarz). Nie było jednej narodowości.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Uzupełnij informacje o filozofii średniowiecza.",
+      content: {
+        textWithGaps:
+          "[1] nawiązywał do filozofii Platona i głosił wyższość duszy nad ciałem. [2] nawiązywał do Arystotelesa i uznawał ciało i duszę za równie ważne. [3] propagował miłość do natury i wszystkich stworzeń.",
+        gaps: [
+          {
+            id: 1,
+            options: ["Tomizm", "Augustynizm", "Franciszkanizm", "Scholastyka"],
+          },
+          {
+            id: 2,
+            options: ["Augustynizm", "Franciszkanizm", "Tomizm", "Realizm"],
+          },
+          {
+            id: 3,
+            options: ["Augustynizm", "Tomizm", "Scholastyka", "Franciszkanizm"],
+          },
+        ],
+      },
+      correctAnswer: [1, 2, 3],
+      metadata: {
+        explanation:
+          "Augustynizm nawiązywał do Platona, tomizm do Arystotelesa, franciszkanizm propagował miłość do natury.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 3,
+      epoch: "MIDDLE_AGES",
+      question: "Dopasuj gatunki dramatyczne do ich charakterystyki.",
+      content: {
+        matchingType: "drama_genres",
+        leftColumn: [
+          { id: "A", text: "Misterium" },
+          { id: "B", text: "Moralitet" },
+          { id: "C", text: "Mirakl" },
+          { id: "D", text: "Farsa" },
+        ],
+        rightColumn: [
+          { id: 1, text: "dramat dydaktyczny o walce dobra ze złem" },
+          { id: 2, text: "komedia o charakterze groteskowym" },
+          { id: 3, text: "dramat biblijny" },
+          { id: 4, text: "dramat o cudach świętych" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 0],
+        [2, 3],
+        [3, 1],
+      ],
+      metadata: {
+        explanation:
+          "Misterium - dramat biblijny, moralitet - o walce dobra ze złem, mirakl - o cudach świętych, farsa - komedia groteskowa.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Wyjaśnij, na czym polegał teocentryzm w epoce średniowiecza.",
+      content: {
+        instruction:
+          "Opisz, jak teocentryzm wpływał na życie i kulturę średniowieczną. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie, że Bóg był w centrum zainteresowań (1 pkt)",
+          "wyjaśnienie podporządkowania wszystkich dziedzin życia Bogu (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Teocentryzm oznaczał, że Bóg był centrum wszystkich zainteresowań i działań człowieka. Wszystkie dziedziny życia - sztuka, literatura, nauka, polityka - były podporządkowane Bogu i jego chwale. Ludzie tworzyli i działali nie dla ziemskiej sławy, ale Ad maiorem Dei gloriam - ku większej chwale Boga. Życie doczesne traktowano jako przygotowanie do życia wiecznego.",
+        keyWords: [
+          "Bóg",
+          "centrum",
+          "podporządkowanie",
+          "wszystkie dziedziny",
+          "życie wieczne",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Opisz główne różnice między stylem romańskim a gotyckim w architekturze.",
+      content: {
+        instruction: "Porównaj cechy obu stylów. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie cech stylu romańskiego (1 pkt)",
+          "wskazanie cech stylu gotyckiego (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Styl romański charakteryzował się masywnością, grubymi murami, małymi oknami i łukiem półkolistym. Budowle pełniły funkcję obronną. Styl gotycki był przeciwieństwem - budowle strzeliste, smukłe, z wysokimi oknami wypełnionymi witrażami, łukiem ostrołukowym. Gotyk symbolizował dążenie ku niebu, ku Bogu. Romańskie kościoły były ciemne, gotyckie - pełne światła.",
+        keyWords: [
+          "romański",
+          "masywność",
+          "gotyk",
+          "strzelistość",
+          "witraże",
+          "łuk",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Wyjaśnij, co oznaczał uniwersalizm średniowieczny.",
+      content: {
+        instruction:
+          "Opisz, na czym polegała jedność średniowiecznej Europy. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie wspólnych elementów (1 pkt)",
+          "wyjaśnienie znaczenia uniwersalizmu (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Uniwersalizm średniowieczny oznaczał, że cała Europa stanowiła jednolitą wspólnotę. Obowiązywała jedna religia (katolicyzm), jeden język wykształconych warstw (łacina), jeden ustrój (feudalizm), wspólna władza (papież i cesarz). Jednakowe były wzorce osobowe, style w sztuce, symbole i motywy literackie. Europa była jednością kulturową, religijną i społeczną.",
+        keyWords: [
+          "wspólnota",
+          "jedna religia",
+          "łacina",
+          "feudalizm",
+          "jedność",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Scharakteryzuj wzorzec ascety w średniowieczu.",
+      content: {
+        instruction: "Opisz cechy i styl życia ascety. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie wyrzeczenia się dóbr doczesnych (1 pkt)",
+          "opisanie życia w skrajnym ubóstwie i modlitwie (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Asceta to wzorzec osobowy charakteryzujący się całkowitym wyrzeczeniem dóbr doczesnych. Życie ascety podporządkowane było Bogu, praktykowali oni skrajne ubóstwo, pokorę i umartwianie ciała. Oddawali się modlitwie i kontemplacji, często pozostawali anonimowi, nie ujawniając swojego pochodzenia. Celem ich życia było zbawienie duszy i życie wieczne.",
+        keyWords: [
+          "wyrzeczenie",
+          "ubóstwo",
+          "modlitwa",
+          "umartwianie",
+          "zbawienie",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Wyjaśnij, czym jest hagiografia i jakie cechy miały te utwory.",
+      content: {
+        instruction:
+          "Opisz gatunek hagiografii i jego charakterystykę. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "definicja hagiografii jako żywotów świętych (1 pkt)",
+          "wskazanie cech charakterystycznych (elementy cudowne, schemat) (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Hagiografia to żywotopisarstwo - gatunek literacki obejmujący żywoty świętych i legendy. Utwory te opisywały życie świętych według schematu: życie w dostatku, wyrzeczenie się dóbr, umartwianie, pokora, życie w anonimowości i śmierć, której towarzyszyły cuda. Zawierały liczne elementy cudowne i fantastyczne. Miały charakter dydaktyczny - propagowały wzorzec ascety.",
+        keyWords: [
+          "żywoty świętych",
+          "legendy",
+          "cuda",
+          "schemat",
+          "dydaktyzm",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Opisz główne założenia augustynizmu.",
+      content: {
+        instruction:
+          "Wyjaśnij, jak augustynizm pojmował człowieka i świat. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie wyższości duszy nad ciałem (1 pkt)",
+          "wyjaśnienie tragizmu kondycji ludzkiej (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Augustynizm głosił dualistyczną wizję świata podzielonego na dobro (duch) i zło (materia). Człowiek był istotą tragiczną, rozdarty między duszą upodabniającą go do aniołów a ciałem przybliżającym go do zwierząt. Dusza była nieśmiertelna i ważniejsza, ciało zniszczalne - należało je umartwiać. Człowiek wiecznie miotał się między dobrem a złem.",
+        keyWords: ["dusza", "ciało", "tragizm", "dualizm", "umartwianie"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Opisz główne założenia tomizmu.",
+      content: {
+        instruction:
+          "Wyjaśnij, jak tomizm pojmował człowieka i poznanie. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie równości ciała i duszy (1 pkt)",
+          "wyjaśnienie roli rozumu w poznaniu (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Tomizm głosił, że świat jest logiczny i racjonalny, przejawem mądrości Boga. Człowiek to najniższy z duchów, składa się z ciała i duszy - oba pochodzą od Boga i są równie ważne. Poznanie dokonuje się przez rozum i wiarę - nie wykluczają się, lecz uzupełniają. Rozum i cnota to wrodzone dary boże. Bóg ustalił porządek między stworzeniami.",
+        keyWords: [
+          "ciało i dusza",
+          "rozum",
+          "wiara",
+          "drabina bytów",
+          "harmonia",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Wyjaśnij, czym charakteryzował się franciszkanizm.",
+      content: {
+        instruction: "Opisz główne idee filozofii św. Franciszka. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "miłość do natury i wszystkich stworzeń (1 pkt)",
+          "ubóstwo bez umartwiania ciała (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Franciszkanizm propagował wszechogarniającą miłość do świata i wszystkich stworzeń Bożych - ludzi, zwierząt, roślin. Św. Franciszek nawet zwierzęta nazywał braćmi mniejszymi. Filozofia ta głosiła prostą i szczerą wiarę, miłosierdzie, pokórę i ubóstwo. W przeciwieństwie do augustynizmu nie praktykował umartwiania ciała - chodziło o minimalizm i ofiarność wobec innych.",
+        keyWords: [
+          "miłość do natury",
+          "wszystkie stworzenia",
+          "ubóstwo",
+          "miłosierdzie",
+          "brak umartwiania",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Opisz motyw 'danse macabre' i jego znaczenie.",
+      content: {
+        instruction:
+          "Wyjaśnij, co przedstawiał taniec śmierci i jaką niosł wymowę. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "opis przedstawienia śmierci tańczącej ze wszystkimi (1 pkt)",
+          "wymowa - równość wobec śmierci (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Danse macabre (taniec śmierci) to średniowieczny motyw przedstawiający śmierć jako rozkładający się trup kobiety lub szkielet z kosą. Śmierć zapraszała do korowodu wszystkich ludzi bez względu na stan społeczny, wykształcenie czy majątek. Motyw ten symbolizował, że wobec śmierci wszyscy są równi - jedyną sprawiedliwość w świecie feudalnym. Przypominał o przemijaniu - memento mori.",
+        keyWords: [
+          "śmierć",
+          "taniec",
+          "równość",
+          "wszystkie stany",
+          "przemijanie",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Wyjaśnij, dlaczego większość utworów średniowiecznych była anonimowa.",
+      content: {
+        instruction:
+          "Opisz przyczynę anonimowości dzieł średniowiecznych. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie teocentryzmu jako przyczyny (1 pkt)",
+          "wyjaśnienie tworzenia ku chwale Boga (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Utwory były anonimowe, ponieważ tworzono je na chwałę Bożą - Ad maiorem Dei gloriam, a nie dla ziemskiej sławy autora. Zgodnie z teocentryzmem Bóg był w centrum zainteresowań, dlatego twórcy nie podpisywali swoich dzieł, nie chcieli zdobywać sławy wśród ludzi. Liczyło się tylko zbawienie duszy i służba Bogu.",
+        keyWords: [
+          "teocentryzm",
+          "chwała Boża",
+          "brak sławy",
+          "zbawienie",
+          "służba Bogu",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Scharakteryzuj wzorzec rycerza chrześcijańskiego.",
+      content: {
+        instruction:
+          "Opisz cechy idealnego rycerza średniowiecznego. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie cnót rycerskich (honor, odwaga) (1 pkt)",
+          "podkreślenie wiary i służby Bogu (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Rycerz chrześcijański był wzorem cnót - głęboko wierzący, odważny, honorowy i wierny. Całe życie podporządkowywał Bogu i swojemu władcy, kierując się zasadą: Bóg, Honor, Ojczyzna. Walczył w obronie wiary chrześcijańskiej, bronił słabszych. Charakteryzowały go: męstwo, szlachetność, lojalność wobec króla i Boga, gotowość do poświęcenia za wiarę.",
+        keyWords: [
+          "odwaga",
+          "honor",
+          "wiara",
+          "lojalność",
+          "obrona chrześcijaństwa",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Opisz wzorzec doskonałego władcy w średniowieczu.",
+      content: {
+        instruction:
+          "Wyjaśnij, jakie cechy miał idealny władca średniowieczny. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie cech władcy (mądrość, sprawiedliwość) (1 pkt)",
+          "podkreślenie roli Boga i troski o poddanych (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Doskonały władca był następcą Boga na ziemi. Wszystkie jego działania miały na celu dobro ojczyzny i poddanych. Charakteryzowały go: mądrość, roztropność, sprawiedliwość, honor i wierność. Cenił lojalność poddanych. Miał kontakt z Bogiem poprzez sny i widzenia, dzięki czemu podejmował trafne decyzje. Był waleczny, pobożny i opiekuńczy wobec swoich ludzi.",
+        keyWords: [
+          "następca Boga",
+          "sprawiedliwość",
+          "mądrość",
+          "dobro poddanych",
+          "kontakt z Bogiem",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Wyjaśnij, co to jest misterium i jaką pełniło funkcję.",
+      content: {
+        instruction:
+          "Opisz gatunek misterium i jego znaczenie w kulturze średniowiecznej. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "definicja misterium jako dramatu religijnego (1 pkt)",
+          "wskazanie funkcji dydaktycznej i religijnej (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Misterium to średniowieczny dramat religijny, którego treść czerpana była ze Starego i Nowego Testamentu. Wystawiano je podczas uroczystości religijnych, głównie Wielkiego Tygodnia. Miały charakter dydaktyczny - uczyły prawd wiary i zasad moralnych. Dla analfabetów były sposobem poznania Biblii. Łączyły funkcję religijną z rozrywkową, angażując całą społeczność.",
+        keyWords: [
+          "dramat religijny",
+          "Biblia",
+          "dydaktyzm",
+          "uroczystości",
+          "nauka wiary",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Opisz, czym był moralitet i jaka była jego budowa.",
+      content: {
+        instruction:
+          "Wyjaśnij charakterystykę moralitetu jako gatunku. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "definicja moralitetu jako dramatu dydaktycznego (1 pkt)",
+          "wskazanie alegorycznej walki dobra ze złem (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Moralitet to średniowieczny dramat o charakterze dydaktyczno-moralizatorskim. Jego bohaterem był przeciętny człowiek (Każdy/Jedermann). Przedstawiał walkę dobra i zła o ludzką duszę - dobro reprezentował anioł, zło diabeł. Postacie były alegoryczne, symbolizowały cnoty i przywary. Celem było pouczenie widzów o konsekwencjach grzechu i znaczeniu cnót dla zbawienia duszy.",
+        keyWords: [
+          "dramat dydaktyczny",
+          "Każdy",
+          "alegoria",
+          "dobro i zło",
+          "cnoty i przywary",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Wyjaśnij, czym różnił się mirakl od misterium.",
+      content: {
+        instruction: "Porównaj oba gatunki dramatyczne. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie tematyki misterium (Biblia) (1 pkt)",
+          "wskazanie tematyki miraklu (cuda świętych) (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Misterium to dramat oparty na motywach biblijnych ze Starego i Nowego Testamentu. Mirakl natomiast przedstawiał życie Matki Boskiej, świętych i męczenników. Charakterystyczną cechą miraklu było ukazywanie licznych cudów i interwencji boskich. Oba gatunki miały charakter religijny i dydaktyczny, ale czerpały z różnych źródeł i prezentowały różne postacie.",
+        keyWords: ["misterium", "Biblia", "mirakl", "święci", "cuda"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Opisz charakter średniowiecznych kronik.",
+      content: {
+        instruction:
+          "Wyjaśnij, jakie cechy miały kroniki średniowieczne. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie dydaktyzmu i panegiryzmu (1 pkt)",
+          "wskazanie braku krytycyzmu i elementów fikcyjnych (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Kroniki średniowieczne miały charakter panegiryczny - służyły wychwalaniu władców, często powstawały na ich zamówienie. Były dydaktyczne i moralizatorskie. Cechował je brak krytycyzmu - zawierały legendy i podania traktowane jako prawda historyczna, elementy fikcyjne jak listy czy pieśni. Pisane były po łacinie, kunsztownym stylem bogatym w środki artystyczne.",
+        keyWords: [
+          "panegiryzm",
+          "dydaktyzm",
+          "brak krytycyzmu",
+          "legendy",
+          "łacina",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Wyjaśnij, co oznacza pojęcie 'chanson de geste'.",
+      content: {
+        instruction: "Opisz ten gatunek literacki i jego cechy. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "definicja jako pieśń o czynach (1 pkt)",
+          "wskazanie bohaterskich czynów rycerzy (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Chanson de geste to francuskie określenie oznaczające 'pieśń o czynach'. Był to gatunek epicki - dłuższe poematy wierszowane opiewające bohaterskie czyny legendarnych lub historycznych rycerzy. Charakteryzował się patetycznym stylem, idealizacją bohaterów, rozbudowanymi opisami bitew. Propagował ideały rycerskie: honor, odwagę, wierność władcy i wiarę.",
+        keyWords: [
+          "pieśń o czynach",
+          "epos",
+          "rycerze",
+          "bohaterskie czyny",
+          "ideały",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Opisz motyw 'psychomachii' w kulturze średniowiecznej.",
+      content: {
+        instruction:
+          "Wyjaśnij, czym była psychomachia i kiedy się odbywała. (30-50 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "definicja jako walki o duszę (1 pkt)",
+          "wskazanie momentu przed śmiercią (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Psychomachia to motyw walki dobra ze złem o duszę człowieka. Odbywała się tuż przed śmiercią - demony i anioły walczyły o to, gdzie dusza trafi po śmierci. Człowiek był kuszony przez demony i wspierany przez aniołów. Ostateczna decyzja zależała od jego wyborów. Motyw ten podkreślał znaczenie cnót i grzechów dla zbawienia.",
+        keyWords: [
+          "walka o duszę",
+          "przed śmiercią",
+          "anioły i demony",
+          "dobro i zło",
+          "zbawienie",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Wyjaśnij znaczenie łaciny w kulturze średniowiecznej.",
+      content: {
+        instruction:
+          "Opisz rolę języka łacińskiego w średniowieczu. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie łaciny jako języka nauki i Kościoła (1 pkt)",
+          "podkreślenie uniwersalnego charakteru łaciny (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Łacina była uniwersalnym językiem średniowiecznej Europy. Stanowiła język nauki, literatury, Kościoła i wykształconych warstw społecznych. Wszystkie ważne dokumenty, kroniki, teksty teologiczne i filozoficzne pisano po łacinie. Dzięki temu uczeni z całej Europy mogli się komunikować i wymieniać wiedzą. Łacina była podstawą edukacji i symbolem uniwersalizmu średniowiecznego.",
+        keyWords: [
+          "uniwersalny język",
+          "nauka",
+          "Kościół",
+          "komunikacja",
+          "edukacja",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Opisz system feudalny panujący w średniowieczu.",
+      content: {
+        instruction:
+          "Wyjaśnij, na czym polegał feudalizm i jaka była hierarchia społeczna. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wyjaśnienie systemu lennego (1 pkt)",
+          "opisanie hierarchii społecznej (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Feudalizm to średniowieczny system społeczno-gospodarczy oparty na hierarchii lennej i zależnościach wasalnych. Ziemia należała do panów feudalnych, chłopi musieli odpracowywać pańszczyznę. Hierarchia: na szczycie duchowieństwo i szlachta, niżej mieszczanie i rzemieślnicy, na dole chłopi. System oparty był na zależnościach osobistych, przysięgach wierności i zobowiązaniach wzajemnych między panem a wasalem.",
+        keyWords: ["hierarchia", "lenna", "pańszczyzna", "wasal", "zależności"],
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Który filozof średniowieczny stworzył ontologiczny dowód na istnienie Boga?",
+      content: {
+        options: [
+          "św. Tomasz z Akwinu",
+          "św. Augustyn",
+          "św. Anzelm z Canterbury",
+          "Piotr Abelard",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Św. Anzelm z Canterbury stworzył ontologiczny dowód na istnienie Boga, argumentując, że Bóg jako byt najdoskonalszy musi istnieć, bo istnienie jest doskonałością.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Co oznacza łacińskie wyrażenie 'vanitas vanitatum et omnia vanitas'?",
+      content: {
+        options: [
+          "pamiętaj o śmierci",
+          "wszystko przemija",
+          "marność nad marnościami i wszystko marność",
+          "w zdrowym ciele zdrowy duch",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Vanitas vanitatum et omnia vanitas to cytat z Księgi Koheleta oznaczający 'marność nad marnościami i wszystko marność' - kluczowe hasło średniowiecza o przemijaniu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Jak nazywa się filozoficzny spór w średniowieczu dotyczący natury pojęć ogólnych?",
+      content: {
+        options: [
+          "spór o uniwersalia",
+          "spór o inwestyturę",
+          "querelle des anciens et des modernes",
+          "disputatio",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Spór o uniwersalia to wielki średniowieczny spór filozoficzny między realizmem a nominalizmem dotyczący tego, czy pojęcia ogólne istnieją realnie, czy tylko jako nazwy.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest tympanon w architekturze romańskiej?",
+      content: {
+        options: [
+          "wysoki filar",
+          "sklepienie krzyżowe",
+          "półkoliste pole nad portalem z rzeźbami",
+          "okrągłe okno",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Tympanon to półkoliste lub trójkątne pole nad portalem wejściowym, bogato zdobione rzeźbami religijnymi, charakterystyczne dla architektury romańskiej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Co oznaczała koncepcja 'drabiny bytów' w filozofii tomistycznej?",
+      content: {
+        options: [
+          "wszyscy ludzie są równi",
+          "każde stworzenie ma swoje miejsce w hierarchii od materii po Boga",
+          "człowiek może awansować społecznie",
+          "aniołowie są najważniejszymi bytami",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Drabina bytów (scala naturae) to koncepcja tomistyczna hierarchii stworzeń od materii nieożywionej przez rośliny, zwierzęta, ludzi, aniołów aż po Boga jako szczyt.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to są łuki przyporowe w architekturze gotyckiej?",
+      content: {
+        options: [
+          "łuki wewnątrz budowli",
+          "zewnętrzne konstrukcje wzmacniające mury",
+          "elementy dekoracyjne",
+          "rodzaj sklepienia",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Łuki przyporowe to charakterystyczne dla gotyku zewnętrzne konstrukcje wsporcze, które przejmowały ciężar wysokich ścian i pozwalały na cieńsze mury i większe okna.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Jaki rodzaj sklepienia charakteryzował architekturę gotycką?",
+      content: {
+        options: [
+          "sklepienie kolebkowe",
+          "sklepienie krzyżowe",
+          "sklepienie krzyżowo-żebrowe",
+          "kopuła",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Gotyk charakteryzuje się sklepieniem krzyżowo-żebrowym, które było lżejsze niż romańskie i pozwalało na budowanie wyższych konstrukcji.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co symbolizowała czerwień w średniowiecznej symbolice barw?",
+      content: {
+        options: [
+          "czystość i niewinność",
+          "mądrość i wiedzę",
+          "męczeństwo, krew Chrystusa i miłość",
+          "nadzieję i życie wieczne",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "W symbolice średniowiecznej czerwień oznaczała męczeństwo, krew Chrystusa, miłość bożą oraz ofiarę i poświęcenie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co symbolizowała biel w średniowiecznej symbolice kolorów?",
+      content: {
+        options: [
+          "śmierć i żałobę",
+          "bogactwo i władzę",
+          "czystość, niewinność i świętość",
+          "mądrość i prawdę",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Biel w średniowieczu symbolizowała czystość, niewinność, świętość i triumf. Była kolorem Chrystusa Zmartwychwstałego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co oznacza pojęcie 'iluminacja' w filozofii augustyńskiej?",
+      content: {
+        options: [
+          "zdobienie ksiąg miniaturami",
+          "boże oświecenie umożliwiające poznanie prawdy",
+          "światło w katedrach",
+          "ceremonię religijną",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Iluminacja w augustynizmie to boże oświecenie - poznanie prawdy nie dokonuje się przez rozum, ale przez Boga, który oświeca umysł człowieka.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest apsyda w architekturze romańskiej?",
+      content: {
+        options: [
+          "wieża kościelna",
+          "portal wejściowy",
+          "podwyższona, półkolista absyda za ołtarzem",
+          "sklepienie",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Apsyda to charakterystyczne dla romańskiej architektury podwyższone, półkoliste zakończenie nawy głównej za ołtarzem.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Który doktryna filozoficzna głosiła, że prawda nie sprzeciwia się wierze?",
+      content: {
+        options: ["augustynizm", "franciszkanizm", "nominalizm", "tomizm"],
+      },
+      correctAnswer: 3,
+      metadata: {
+        explanation:
+          "Tomizm głosił, że wiara i rozum się uzupełniają - prawda poznana rozumem nie może być sprzeczna z prawdą objawioną przez wiarę.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest miniaturaświetokrzyska?",
+      content: {
+        options: [
+          "mała rzeźba",
+          "iluminacja - ozdoba rękopiśmienna ze złotem i kolorami",
+          "typ architektury",
+          "gatunek literacki",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Miniatura to kunsztowna iluminacja - ozdoba manuskryptów złotem, srebrem i jaskrawymi kolorami, często przedstawiająca sceny religijne.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co oznacza termin 'amor courtois' w kulturze średniowiecznej?",
+      content: {
+        options: [
+          "miłość małżeńska",
+          "miłość dworska - wyidealizowana, niespełniona",
+          "miłość rodzicielska",
+          "miłość do Boga",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Amor courtois (miłość dworska) to średniowieczny model miłości rycerza do nieosiągalnej damy, pełnej szacunku, adoracji i cierpienia.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co symbolizował złoty kolor w sztuce średniowiecznej?",
+      content: {
+        options: [
+          "bogactwo materialne",
+          "doskonałość boską, światło i chwałę niebieską",
+          "władze królewską",
+          "mądrość ludzką",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Złoto symbolizowało doskonałość istoty boskiej, światło boskie, chwałę niebieską i wieczność - było najcenniejszym kolorem w sztuce średniowiecza.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest fiale w architekturze gotyckiej?",
+      content: {
+        options: [
+          "okrągłe okno",
+          "ostrosłupowa wieżyczka zdobnicza",
+          "portal wejściowy",
+          "łuk przporowy",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Fiale to charakterystyczne dla gotyku smukłe, ostrosłupowe wieżyczki pełniące funkcję dekoracyjną, podkreślające strzelistość budowli.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest wimperga w architekturze gotyckiej?",
+      content: {
+        options: [
+          "ostrosłupowy szczyt nad portalem lub oknem",
+          "rodzaj sklepienia",
+          "wieża kościelna",
+          "witraż",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Wimperga to ostrosłupowy, bogato rzeźbiony szczyt umieszczany nad portalami i oknami w architekturze gotyckiej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Jaki był główny przedmiot sporu między nominalizmem a realizmem?",
+      content: {
+        options: [
+          "natura Boga",
+          "istnienie duszy",
+          "czy pojęcia ogólne (universalia) istnieją realnie",
+          "relacja wiary i rozumu",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Spór dotyczył natury pojęć ogólnych: realiści twierdzili, że universalia istnieją realnie, nominaliści - że są tylko nazwami.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co symbolizowała lilia w ikonografii średniowiecznej?",
+      content: {
+        options: [
+          "mądrość",
+          "czystość i dziewictwo Maryi",
+          "męczeństwo",
+          "zmartwychwstanie",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Lilia była atrybutem Matki Boskiej i symbolizowała czystość, dziewictwo, niewinność - często pojawia się w scenie Zwiastowania.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co oznacza pojęcie 'teodycea' w filozofii średniowiecznej?",
+      content: {
+        options: [
+          "dowód na istnienie Boga",
+          "usprawiedliwienie Boga wobec istnienia zła",
+          "nauka o Trójcy Świętej",
+          "teoria poznania",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Teodycea to próba usprawiedliwienia Boga wobec istnienia zła w świecie - problem, z którym borykali się filozofowie średniowieczni.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co symbolizowała róża w symbolice średniowiecznej?",
+      content: {
+        options: [
+          "tylko miłość ziemską",
+          "grzech i pokusę",
+          "miłość boską, tajemnicę i męczeństwo",
+          "bogactwo",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Róża symbolizowała miłość boską (czerwona róża), czystość Maryi (biała róża), tajemnicę wiary i męczeństwo (ciernie).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest mandorla w ikonografii średniowiecznej?",
+      content: {
+        options: [
+          "korona świętych",
+          "migdałowata aureola wokół całej postaci",
+          "krzyż",
+          "księga",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Mandorla (z wł. migdał) to migdałowata aureola otaczająca całą postać Chrystusa lub świętych, symbolizująca chwałę i świętość.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest kazuistyka w średniowiecznej teologii?",
+      content: {
+        options: [
+          "nauka o świętach",
+          "rozstrzyganie przypadków moralnych przez analizę szczegółową",
+          "liturgia",
+          "teoria poznania",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Kazuistyka to metoda rozstrzygania konkretnych przypadków moralnych przez szczegółową analizę okoliczności - ważna w średniowiecznej teologii.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co oznacza termin 'hylomorfizm' w filozofii tomistycznej?",
+      content: {
+        options: [
+          "teoria o duszy",
+          "teoria o złożeniu wszystkich bytów z materii i formy",
+          "dowód na istnienie Boga",
+          "teoria poznania",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Hylomorfizm (z gr. hyle - materia, morphe - forma) to tomistyczna teoria głosząca, że każdy byt składa się z materii i formy.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co symbolizował pelikan w ikonografii chrześcijańskiej?",
+      content: {
+        options: [
+          "zmartwychwstanie",
+          "Chrystusa karmiącego wiernych własną krwią - ofiara eucharystyczna",
+          "Ducha Świętego",
+          "grzech",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Pelikan symbolizował Chrystusa - według legendy pelikan karmi pisklęta własną krwią, co odnosi się do ofiary Chrystusa i Eucharystii.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest quodlibet w średniowiecznej scholastyce?",
+      content: {
+        options: [
+          "rodzaj kazania",
+          "dysputacja na dowolny temat zadany przez audytorium",
+          "gatunek literacki",
+          "ceremonia religijna",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Quodlibet (łac. 'co się podoba') to specjalna dysputacja uniwersytecka, podczas której mistrz odpowiadał na pytania zadane przez audytorium.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co symbolizował feniks w średniowiecznej symbolice?",
+      content: {
+        options: [
+          "wieczność Boga",
+          "zmartwychwstanie Chrystusa",
+          "grzech",
+          "mądrość",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Feniks - mityczny ptak odradzający się z popiołów - symbolizował zmartwychwstanie Chrystusa i życie wieczne po śmierci.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co oznacza pojęcie 'exemplum' w literaturze średniowiecznej?",
+      content: {
+        options: [
+          "gatunek dramatu",
+          "krótkie opowiadanie pouczające w kazaniu",
+          "typ kroniki",
+          "forma modlitwy",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Exemplum to krótkie opowiadanie o charakterze moralizatorskim wplatane w kazania dla zilustrowania nauki i utrwalenia przesłania.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest bazylikowy układ kościoła?",
+      content: {
+        options: [
+          "kościół z jedną nawą",
+          "kościół z nawą główną wyższą od naw bocznych",
+          "kościół okrągły",
+          "kościół na planie krzyża greckiego",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Układ bazylikowy to rozwiązanie, w którym nawa główna jest wyższa i szersza od naw bocznych - charakterystyczne dla architektury romańskiej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co głosił nominalizm w sporze o uniwersalia?",
+      content: {
+        options: [
+          "pojęcia ogólne istnieją realnie",
+          "pojęcia ogólne to tylko nazwy nadane przez umysł",
+          "pojęcia ogólne są w Bogu",
+          "pojęcia ogólne nie istnieją",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Nominalizm (od łac. nomen - nazwa) głosił, że universalia to tylko nazwy, flatus vocis - twory umysłu, nie mają realnego istnienia.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co symbolizował agnus Dei (baranek Boży) w ikonografii?",
+      content: {
+        options: [
+          "niewinność ludzką",
+          "Chrystusa jako ofiarę za grzechy świata",
+          "pokój",
+          "potęgę Kościoła",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Agnus Dei (Baranek Boży) symbolizował Chrystusa jako ofiarę paschalną złożoną za grzechy świata - nawiązanie do ofiar Starego Testamentu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest krucjata dziecięca?",
+      content: {
+        options: [
+          "mit literacki",
+          "tragiczne wydarzenie z 1212 roku - dzieci wyruszające do Ziemi Świętej",
+          "rodzaj kazania",
+          "gatunek dramatu",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Krucjata dziecięca (1212) to tragiczne wydarzenie, gdy tysiące dzieci wyruszyło do Ziemi Świętej - większość zginęła lub została sprzedana w niewolę.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co symbolizował winorośl w symbolice chrześcijańskiej?",
+      content: {
+        options: [
+          "bogactwo",
+          "Chrystusa i wiernych jako latorośle - jedność Kościoła",
+          "grzech",
+          "mądrość",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Winorośl symbolizowała Chrystusa jako prawdziwą winorośl, a wiernych jako latorośle - jedność mistycznego ciała Kościoła (J 15,1-5).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest krypta w architekturze średniowiecznej?",
+      content: {
+        options: [
+          "wieża kościelna",
+          "podziemna kaplica z grobami świętych",
+          "zakrystia",
+          "chór",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Krypta to podziemna część kościoła, gdzie przechowywano relikwie świętych i grzebano dostojników kościelnych - miejsce pielgrzymek.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest klasztor typu benedyktyńskiego?",
+      content: {
+        options: [
+          "klasztor miejski",
+          "samotnia pustelnicza",
+          "klasztor-opactwo z życiem wspólnotowym według reguły",
+          "klasztor żebraczego zakonu",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Klasztor benedyktyński to opactwo z życiem wspólnotowym według reguły 'ora et labora' - modlitwa i praca, samowystarczalny organizm.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest scriptorium?",
+      content: {
+        options: [
+          "biblioteka klasztorna",
+          "pracownia pisarska w klasztorze, gdzie przepisywano księgi",
+          "refektarz",
+          "kaplica",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Scriptorium to klasztorna pracownia pisarska, gdzie mnisi kopiowali i iluminowali manuskrypty - centra zachowania kultury antycznej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co symbolizował gołąb w ikonografii chrześcijańskiej?",
+      content: {
+        options: ["pokój ziemski", "Ducha Świętego", "niewinność", "nadzieję"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Gołąb symbolizował Ducha Świętego - nawiązanie do Chrztu Chrystusa w Jordanie i Zesłania Ducha Świętego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest reguła zakonna?",
+      content: {
+        options: [
+          "zbiór praw państwowych",
+          "zbiór przepisów regulujących życie zakonne",
+          "kodeks rycerski",
+          "księga liturgiczna",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Reguła zakonna to zbiór przepisów regulujących życie duchowe i codzienne zakonu - np. reguła św. Benedykta, św. Franciszka.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co symbolizował oliwnik w symbolice biblijnej?",
+      content: {
+        options: ["wojnę", "pokój i pojednanie z Bogiem", "bogactwo", "śmierć"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Oliwnik (drzewo oliwne) symbolizował pokój, pojednanie z Bogiem i błogosławieństwo - gałązka oliwna przyniesiona przez gołębia do Noego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest antyfona w liturgii średniowiecznej?",
+      content: {
+        options: [
+          "rodzaj kazania",
+          "krótka pieśń liturgiczna śpiewana naprzemiennie",
+          "modlitwa",
+          "gest liturgiczny",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antyfona to krótka pieśń liturgiczna śpiewana przed i po psalmie, wykonywana naprzemiennie przez dwa chóry lub solistę i chór.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Co symbolizowały cztery cnoty kardynalne w filozofii średniowiecznej?",
+      content: {
+        options: [
+          "cztery kierunki świata",
+          "roztropność, sprawiedliwość, męstwo, umiarkowanie",
+          "cztery żywioły",
+          "cztery ewangeliści",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Cztery cnoty kardynalne to: roztropność (prudentia), sprawiedliwość (iustitia), męstwo (fortitudo) i umiarkowanie (temperantia) - podstawy życia moralnego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest palimpsest?",
+      content: {
+        options: [
+          "rodzaj pergaminu",
+          "rękopis, z którego zeskrobano tekst i zapisano nowy",
+          "typ iluminacji",
+          "gatunek literacki",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Palimpsest to pergamin, z którego zeskrobano starszy tekst i zapisano nowy - praktyka z powodu kosztowności pergaminu, prowadząca do utraty dzieł antycznych.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co symbolizował wąż w ikonografii średniowiecznej?",
+      content: {
+        options: [
+          "mądrość",
+          "Szatana, grzech pierworodny i pokusę",
+          "medycynę",
+          "życie wieczne",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Wąż symbolizował przede wszystkim Szatana, grzech pierworodny i pokusę - nawiązanie do upadku w raju.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest brewiarz?",
+      content: {
+        options: [
+          "księga do nauki",
+          "księga zawierająca oficjum - modlitwy brewiarzowe",
+          "kronika",
+          "zbiór kazań",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Brewiarz to księga liturgiczna zawierająca oficjum - cykl modlitw odmawianym przez duchownych w ciągu dnia (jutrznia, nieszpory itp.).",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest transept w architekturze kościelnej?",
+      content: {
+        options: [
+          "wieża",
+          "nawa poprzeczna tworząca ramiona krzyża",
+          "apsyda",
+          "krypta",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Transept to nawa poprzeczna w kościele na planie krzyża łacińskiego, przecinająca nawę główną i tworzącą ramiona krzyża.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co to jest kodeks średniowieczny?",
+      content: {
+        options: [
+          "zbiór praw",
+          "książka rękopiśmienna w formie zeszytu",
+          "kronika",
+          "rodzaj kazania",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Kodeks to średniowieczna książka rękopiśmienna w formie zszytychi zeszytu kart pergaminowych lub papierowych - zastąpił zwój.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Co symbolizowały siedem grzechów głównych?",
+      content: {
+        options: [
+          "siedem dni tygodnia",
+          "pycha, chciwość, zazdrość, gniew, nieczystość, łakomstwo, lenistwo",
+          "siedem sakramentów",
+          "siedem cnót",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Siedem grzechów głównych to: pycha (superbia), chciwość (avaritia), zazdrość (invidia), gniew (ira), nieczystość (luxuria), łakomstwo (gula), lenistwo (acedia).",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "MIDDLE_AGES",
+      question: "Dopasuj średniowieczne symbole do ich znaczeń.",
+      content: {
+        matchingType: "symbols_meanings",
+        leftColumn: [
+          { id: "A", text: "Pelikan" },
+          { id: "B", text: "Feniks" },
+          { id: "C", text: "Agnus Dei" },
+          { id: "D", text: "Winorośl" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Chrystus jako ofiara za grzechy" },
+          { id: 2, text: "zmartwychwstanie" },
+          { id: 3, text: "ofiara eucharystyczna" },
+          { id: 4, text: "jedność Kościoła" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 1],
+        [2, 0],
+        [3, 3],
+      ],
+      metadata: {
+        explanation:
+          "Pelikan - ofiara eucharystyczna, feniks - zmartwychwstanie, agnus Dei - ofiara za grzechy, winorośl - jedność Kościoła.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "MIDDLE_AGES",
+      question: "Dopasuj filozofów do ich głównych koncepcji.",
+      content: {
+        matchingType: "philosophers_concepts",
+        leftColumn: [
+          { id: "A", text: "Św. Augustyn" },
+          { id: "B", text: "Św. Tomasz" },
+          { id: "C", text: "Św. Anzelm" },
+          { id: "D", text: "Wilhelm Ockham" },
+        ],
+        rightColumn: [
+          { id: 1, text: "ontologiczny dowód na istnienie Boga" },
+          { id: 2, text: "iluminacja i przewaga duszy nad ciałem" },
+          { id: 3, text: "nominalizm" },
+          { id: 4, text: "hylomorfizm i drabina bytów" },
+        ],
+      },
+      correctAnswer: [
+        [0, 1],
+        [1, 3],
+        [2, 0],
+        [3, 2],
+      ],
+      metadata: {
+        explanation:
+          "Augustyn - iluminacja, Tomasz - hylomorfizm, Anzelm - dowód ontologiczny, Ockham - nominalizm.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Które elementy należały do siedmiu sztuk wyzwolonych - triwium? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "gramatyka",
+          "dialektyka (logika)",
+          "retoryka",
+          "arytmetyka",
+          "geometria",
+        ],
+      },
+      correctAnswer: [0, 1, 2],
+      metadata: {
+        explanation:
+          "Triwium (niższy poziom) obejmowało: gramatykę, dialektykę i retorykę. Arytmetyka i geometria należały do quadrivium.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Które elementy należały do siedmiu sztuk wyzwolonych - quadrivium? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "arytmetyka",
+          "muzyka",
+          "geometria",
+          "astronomia",
+          "retoryka",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 3],
+      metadata: {
+        explanation:
+          "Quadrivium (wyższy poziom) obejmowało: arytmetykę, muzykę, geometrię i astronomię. Retoryka należała do triwium.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "MIDDLE_AGES",
+      question: "Dopasuj kolory do ich symboliki w średniowieczu.",
+      content: {
+        matchingType: "colors_symbolism",
+        leftColumn: [
+          { id: "A", text: "Złoto" },
+          { id: "B", text: "Biel" },
+          { id: "C", text: "Czerwień" },
+          { id: "D", text: "Błękit" },
+        ],
+        rightColumn: [
+          { id: 1, text: "czystość i niewinność" },
+          { id: 2, text: "niebiański, duchowość, Maryja" },
+          { id: 3, text: "doskonałość boska" },
+          { id: 4, text: "męczeństwo i miłość" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 0],
+        [2, 3],
+        [3, 1],
+      ],
+      metadata: {
+        explanation:
+          "Złoto - doskonałość boska, biel - czystość, czerwień - męczeństwo, błękit - duchowość i Maryja.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Które cechy charakteryzują scholastykę? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "racjonalne wyjaśnianie prawd wiary",
+          "odrzucenie rozumu",
+          "precyzyjne wywody logiczne",
+          "dystans do Arystotelesa",
+          "metoda pytań i odpowiedzi",
+        ],
+      },
+      correctAnswer: [0, 2, 4],
+      metadata: {
+        explanation:
+          "Scholastyka charakteryzowała się: racjonalnym wyjaśnianiem prawd wiary, precyzyjnymi wywodami logicznymi i metodą pytań-odpowiedzi. Korzystała z Arystotelesa.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Uzupełnij informacje o architekturze średniowiecznej.",
+      content: {
+        textWithGaps:
+          "W stylu romańskim dominował łuk [1], budowle miały [2] mury. W gotyku stosowano łuk [3] i charakterystyczne [4] okna.",
+        gaps: [
+          {
+            id: 1,
+            options: ["ostrołukowy", "pełny", "półkolisty", "podkowy"],
+          },
+          {
+            id: 2,
+            options: ["cienkie", "szklane", "grube", "drewniane"],
+          },
+          {
+            id: 3,
+            options: ["półkolisty", "ostrołukowy", "pełny", "płaski"],
+          },
+          {
+            id: 4,
+            options: ["małe", "witrażowe", "okrągłe", "kwadratowe"],
+          },
+        ],
+      },
+      correctAnswer: [2, 2, 1, 1],
+      metadata: {
+        explanation:
+          "Romanizm: łuk półkolisty i grube mury. Gotyk: łuk ostrołukowy i witrażowe okna.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "MIDDLE_AGES",
+      question: "Dopasuj zakony do ich charakterystyki.",
+      content: {
+        matchingType: "orders_characteristics",
+        leftColumn: [
+          { id: "A", text: "Benedyktyni" },
+          { id: "B", text: "Franciszkanie" },
+          { id: "C", text: "Dominikanie" },
+          { id: "D", text: "Cystersi" },
+        ],
+        rightColumn: [
+          { id: 1, text: "ora et labora - modlitwa i praca" },
+          { id: 2, text: "zakon kaznodziejski walczący z herezją" },
+          { id: 3, text: "zakon żebraczy, ubóstwo" },
+          { id: 4, text: "reforma benedyktyńska, praca fizyczna" },
+        ],
+      },
+      correctAnswer: [
+        [0, 0],
+        [1, 2],
+        [2, 1],
+        [3, 3],
+      ],
+      metadata: {
+        explanation:
+          "Benedyktyni - ora et labora, franciszkanie - ubóstwo, dominikanie - kaznodzieje, cystersi - reforma benedyktyńska.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Wyjaśnij różnicę między realizmem a nominalizmem w średniowiecznym sporze o uniwersalia.",
+      content: {
+        instruction: "Opisz stanowiska obu stron sporu. (50-70 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wyjaśnienie stanowiska realizmu (1 pkt)",
+          "wyjaśnienie stanowiska nominalizmu (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Spór o uniwersalia dotyczył natury pojęć ogólnych. Realiści (np. św. Anzelm) twierdzili, że universalia - pojęcia ogólne jak 'człowiek', 'dobro' - istnieją realnie, niezależnie od jednostkowych przedmiotów, w umyśle Boga lub w rzeczach. Nominaliści (np. Wilhelm Ockham) głosili, że uniwersalia to tylko nazwy (nomina), flatus vocis - dźwięki nadane przez umysł ludzki, nie mają realnego istnienia. Istnieją tylko konkretne, jednostkowe rzeczy.",
+        keyWords: [
+          "realizm",
+          "nominalizm",
+          "pojęcia ogólne",
+          "istnienie realne",
+          "nazwy",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Opisz znaczenie symboliki światła w architekturze i teologii gotyckiej.",
+      content: {
+        instruction:
+          "Wyjaśnij, jaką rolę pełniło światło w kulturze gotyku. (50-70 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie symboliki światła jako Boga (1 pkt)",
+          "wyjaśnienie roli witraży i architektury (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "W gotyku światło miało fundamentalne znaczenie teologiczne i estetyczne. Symbolizowało Boga, prawdę i boską chwałę. Według opata Sugera światło było najdoskonalszym obrazem Boga - to, co jasne, piękne kojarzono z boskością. Stąd gotycka architektura dążyła do maksymalnego wpuszczenia światła przez wysokie okna witrażowe. Kolorowe światło przenikające przez witraże miało oczyszczać i uświęcać, wprowadzać wiernych w atmosferę sacrum.",
+        keyWords: ["światło", "Bóg", "witraże", "sacrum", "piękno"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Wyjaśnij koncepcję 'drabiny bytów' w filozofii tomistycznej i jej znaczenie.",
+      content: {
+        instruction: "Opisz hierarchię bytów według św. Tomasza. (50-70 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "opisanie hierarchii od materii do Boga (1 pkt)",
+          "wyjaśnienie miejsca człowieka i sensu tej koncepcji (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Drabina bytów (scala naturae) to tomistyczna koncepcja hierarchicznego uporządkowania wszechświata. Od dołu: materia nieożywiona, rośliny (życie wegetatywne), zwierzęta (życie zmysłowe), człowiek (rozum i duch - najniższy z duchów), aniołowie (duchy czyste), Bóg na szczycie jako byt najdoskonalszy. Człowiek zajmuje środkowe miejsce - łączy świat materialny i duchowy. Każdy byt ma swoje przeznaczenie - człowiek powinien dążyć do doskonalenia się i wznoszeniapo drabinie ku Bogu.",
+        keyWords: [
+          "hierarchia",
+          "materia",
+          "duch",
+          "Bóg",
+          "człowiek",
+          "doskonalenie",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Opisz rolę klasztorów w zachowaniu kultury antycznej i średniowiecznej.",
+      content: {
+        instruction:
+          "Wyjaśnij, jak klasztory chroniły dziedzictwo kulturowe. (50-70 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie scriptoriów i przepisywania ksiąg (1 pkt)",
+          "wyjaśnienie roli edukacyjnej i kulturalnej (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Klasztory były głównymi ośrodkami kultury w średniowieczu. W scriptoriach mnisi przepisywali starożytne dzieła oraz teksty religijne, zachowując je dla potomności - często były jedynymi posiadaczami antycznych manuskryptów. Klasztory prowadziły szkoły, biblioteki, były centrami nauki. Benedyktyni realizowali zasadę 'ora et labora' - łączyli pracę intelektualną z duchową. Dzięki klasztorom przetrwała literatura antyczna, rozwijała się filozofia, teologia. To główne centra cywilizacji w mrocznych wiekach.",
+        keyWords: [
+          "scriptorium",
+          "przepisywanie",
+          "biblioteki",
+          "edukacja",
+          "kultura antyczna",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Wyjaśnij różnicę między życiem zakonów kontemplacyjnych a żebracych.",
+      content: {
+        instruction: "Porównaj oba typy życia zakonnego. (50-70 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "charakterystyka zakonów kontemplacyjnych (1 pkt)",
+          "charakterystyka zakonów żebracych (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Zakony kontemplacyjne (np. benedyktyni, cystersi) prowadziły życie w odosobnieniu klasztornym, koncentrowały się na modlitwie, kontemplacji i pracy fizycznej. Realizowały zasadę stabilitas loci - stałego miejsca. Posiadały majątki i były samowystarczalne. Zakony żebracze (franciszkanie, dominikanie) powstałe w XIII w. odrzucały majątek, żyły z jałmużny, aktywnie działały wśród ludzi - głosiły kazania, nauczały, pomagali ubogim. Nie były związane z klasztorem, podróżowały głosząc Ewangelię.",
+        keyWords: [
+          "kontemplacja",
+          "odosobnienie",
+          "żebractwo",
+          "aktywność",
+          "ubóstwo",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question: "Opisz funkcję exemplum w średniowiecznym kaznodziejstwie.",
+      content: {
+        instruction:
+          "Wyjaśnij, czym było exemplum i jaki cel pełniło. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "definicja exemplum jako opowiadania (1 pkt)",
+          "wskazanie funkcji dydaktycznej i perswazyjnej (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Exemplum to krótkie opowiadanie moralizatorskie wplatane w kazania dla zilustrowania nauki religijnej. Miało przykładowy charakter - pokazywało konsekwencje grzechu lub nagrodę za cnotę. Przez konkretne, często sensacyjne historie było łatwiejsze do zapamiętania niż abstrakcyjne pouczenia. Exempla czyniły kazania bardziej przystępnymi dla prostego ludu, wzmacniały perswazję kaznodziei. Czerpano je z żywotów świętych, legend lub życia codziennego.",
+        keyWords: [
+          "opowiadanie",
+          "kazanie",
+          "morał",
+          "ilustracja",
+          "perswazja",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Wyjaśnij, na czym polegała średniowieczna metoda scholastyczna i jakie były jej główne cechy.",
+      content: {
+        instruction:
+          "Opisz metodę scholastyczną w filozofii i teologii. (60-80 słów)",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "wyjaśnienie metody pytań i odpowiedzi (1 pkt)",
+          "wskazanie racjonalnego wyjaśniania wiary (1 pkt)",
+          "opisanie struktury dysputy scholastycznej (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Scholastyka to średniowieczna metoda filozoficzno-teologiczna polegająca na racjonalnym, logicznym wyjaśnianiu prawd wiary. Wykorzystywała aparat pojęciowy Arystotelesa. Charakteryzowała się precyzyjnymi wywodami, metodą quaestio - stawianiem pytań i poszukiwaniem odpowiedzi przez analizę argumentów za i przeciw. Struktura: 1) postawienie problemu, 2) argumenty przeciwne, 3) sed contra - argument własny, 4) rozwiązanie, 5) odpowiedzi na zarzuty. Hasło: 'credo ut intelligam' - wierzę, aby rozumieć. Scholastyka dążyła do harmonii wiary i rozumu.",
+        keyWords: [
+          "racjonalizm",
+          "pytania",
+          "argumenty",
+          "logika",
+          "wiara i rozum",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Opisz symbolikę czterech ewangelistów w ikonografii średniowiecznej.",
+      content: {
+        instruction:
+          "Wymień symbole ewangelistów i wyjaśnij ich pochodzenie. (50-70 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wymienienie symboli czterech ewangelistów (1 pkt)",
+          "wskazanie pochodzenia z wizji Ezechiela (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Czterech ewangelistów symbolizowały tzw. tetramorf - cztery istoty z wizji proroka Ezechiela i Apokalipsy. Mateusz - anioł (człowiek), bo jego Ewangelia zaczyna się od rodowodu Chrystusa jako człowieka. Marek - lew (symbol królewskości). Łukasz - wół (ofiara), bo zaczyna od ofiary Zachariasza. Jan - orzeł (symbol tego, co boskie i wysokie), bo jego Ewangelia najbardziej teologiczna. Symbole te powszechnie występowały w sztuce średniowiecznej.",
+        keyWords: ["Mateusz", "Marek", "Łukasz", "Jan", "tetramorf", "symbole"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Wyjaśnij problem teodycei w filozofii średniowiecznej - jak filozofowie rozwiązywali problem istnienia zła.",
+      content: {
+        instruction:
+          "Opisz, jak średniowieczni myśliciele tłumaczyli istnienie zła przy wszechmocnym i dobrym Bogu. (60-80 słów)",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "wyjaśnienie problemu teodycei (1 pkt)",
+          "przedstawienie rozwiązania augustyńskiego (1 pkt)",
+          "wskazanie roli wolnej woli (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Teodycea to próba usprawiedliwienia Boga wobec istnienia zła. Problem: jeśli Bóg jest wszechmocny i dobry, dlaczego istnieje zło? Św. Augustyn twierdził, że zło nie istnieje substancjalnie - jest tylko brakiem dobra (privatio boni), niebytem. Wszystko co Bóg stworzył jest dobre. Zło powstało przez wolną wolę aniołów (upadek Lucyfera) i ludzi (grzech pierworodny). Bóg nie stworzył zła, ale pozwolił na nie, dając stworzeniom wolność. Zło ma też funkcję pedagogiczną - przez kontrast uczy dobra.",
+        keyWords: [
+          "teodycea",
+          "zło",
+          "privatio boni",
+          "wolna wola",
+          "Augustyn",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Opisz koncepcję miłości dworskiej (amor courtois) i jej znaczenie w kulturze średniowiecza.",
+      content: {
+        instruction:
+          "Wyjaśnij, czym charakteryzowała się miłość dworska. (50-70 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "charakterystyka miłości dworskiej (niespełniona, wyidealizowana) (1 pkt)",
+          "wskazanie roli w kulturze rycerskiej (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Amor courtois (miłość dworska) to średniowieczny model miłości wykształcony w kulturze trubadurów prowansalskich. Rycerz adorował nieosiągalną damę - zazwyczaj zamężną, wyższej pozycji społecznej. Miłość była platoniczna, nieszczęśliwa, pełna cierpienia i tęsknoty. Dama była niedostępna, ale inspirowała rycerza do wielkich czynów. Model ten gloryfikował kobietę, czynił z miłości drogę doskonalenia. Łączył ars amandi z ars bellandi - miłość i waleczność.",
+        keyWords: [
+          "nieosiągalna",
+          "adoracja",
+          "cierpienie",
+          "doskonalenie",
+          "rycerz i dama",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "MIDDLE_AGES",
+      question:
+        "Wyjaśnij, jak średniowieczna koncepcja czasu różniła się od współczesnej i jakie to miało konsekwencje kulturowe.",
+      content: {
+        instruction:
+          "Opisz średniowieczne postrzeganie czasu i jego wpływ na kulturę. (70-90 słów)",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "wskazanie różnicy: czas liturgiczny vs linearny (1 pkt)",
+          "wyjaśnienie rytmu życia według kalendarza kościelnego (1 pkt)",
+          "konsekwencje kulturowe (literatura, sztuka) (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "W średniowieczu dominowało sakralne, cykliczne pojmowanie czasu - nie linearny postęp, ale powtarzający się rytm roku liturgicznego. Czas mierzono godzinami kanonicznymi (jutrznia, pryma, nieszpory), dzwonami kościelnymi, nie zegarami mechanicznymi. Życie podporządkowane było kalendarzowi kościelnemu - adwent, Boże Narodzenie, Wielki Post, Wielkanoc. To czas jakościowy, nie ilościowy - święta ważniejsze niż dni powszednie. Konsekwencje: literatura i sztuka koncentrowały się na ponadczasowych prawdach wiary, nie na przemianie historycznej. Historia rozumiana jako realizacja boskiego planu zbawienia.",
+        keyWords: [
+          "czas liturgiczny",
+          "cykliczny",
+          "rok kościelny",
+          "godziny kanoniczne",
+          "sakralny",
+        ],
+      },
+    },
+
+    // =========== KONIEC PYTAŃ ŚREDNIOWIECZE =========== //
+
+    // =========== POCZĄTEK PYTAŃ ANTYGONA ============== //
 
     {
       type: "CLOSED_SINGLE",
@@ -22256,6 +25966,2219 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
 
     // ======================== KONIEC PYTAŃ LALKA ===================== //
 
+    // ======================== POCZĄTEK PYTAŃ MAKBET ================= //
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Które zdanie najlepiej opisuje funkcję motywu snu w tragedii?",
+      content: {
+        options: [
+          "Sen jest tylko tłem dla wydarzeń",
+          "Sen to metafora śmierci i zapomnienia",
+          "Sen symbolizuje niewinność i spokój sumienia, którego Makbet się pozbawia",
+          "Sen reprezentuje marzenia o władzy",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Sen w Makbecie symbolizuje niewinność, spokój sumienia i naturalny porządek, które bohater niszczy przez zbrodnię.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Dlaczego Shakespeare sprawia, że tylko Makbet widzi ducha Banka?",
+      content: {
+        options: [
+          "To projekcja jego poczucia winy i znak rozpadu psychicznego",
+          "Banko rzeczywiście nawiedza tylko Makbeta",
+          "Inni udają, że nie widzą ducha",
+          "To efekt trucizny w winie",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Selektywna widoczność ducha sugeruje, że to projekcja psychologiczna - manifestacja winy i rozpadu umysłu Makbeta.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Jak interpretować dwuznaczność przepowiedni wiedźm w kontekście problemu wolnej woli?",
+      content: {
+        options: [
+          "Przepowiednie są jasne - Makbet nie ma wyboru",
+          "Wiedźmy kłamią, wszystko zależy od Makbeta",
+          "To self-fulfilling prophecy - przepowiednie spełniają się właśnie przez działania Makbeta",
+          "Przepowiednie są przypadkowe i nie mają znaczenia",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Shakespeare celowo pozostawia kwestię nierozstrzygniętą - przepowiednie mogą być samospełniającą się przepowiednią.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "W którym momencie następuje perypetia (punkt zwrotny) w tragedii?",
+      content: {
+        options: [
+          "Zabójstwo Duncana",
+          "Pierwsze spotkanie z wiedźmami",
+          "Zabójstwo Banka",
+          "Pojawienie się ducha Banka na uczcie",
+        ],
+      },
+      correctAnswer: 3,
+      metadata: {
+        explanation:
+          "Scena z duchem to punkt zwrotny - Makbet traci kontrolę publicznie, ujawnia swój rozpad psychiczny.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Co symbolizuje niemożność wypowiedzenia 'Amen' przez Makbeta po morderstwie?",
+      content: {
+        options: [
+          "Utratę łaski Bożej i odcięcie od sacrum",
+          "Zmęczenie po walce",
+          "Strach przed odkryciem",
+          "Brak wiary religijnej",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Niemożność modlitwy symbolizuje duchowe potępienie - Makbet odciął się od Boga przez swoją zbrodnię.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Czym różni się podejście Makbeta i Banka do przepowiedni?",
+      content: {
+        options: [
+          "Obaj natychmiast wierzą",
+          "Obaj są sceptyczni",
+          "Makbet jest sceptyczny, Banko wierzy",
+          "Makbet ulega pokusie, Banko zachowuje ostrożność i moralność",
+        ],
+      },
+      correctAnswer: 3,
+      metadata: {
+        explanation:
+          "Banko zachowuje dystans i integralność moralną, podczas gdy Makbet pozwala ambicji zdominować sumienie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Jak można interpretować halucynacje Makbeta z perspektywy psychologicznej?",
+      content: {
+        options: [
+          "To objawy schizofrenii",
+          "Projekcje stłumionych treści psychicznych i manifestacja PTSD",
+          "Efekt zatrucia",
+          "Zwykłe zmęczenie",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Halucynacje to projekcje wypartej winy i traumy - Shakespeare wyprzedza odkrycia psychologii głębi.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Jak Lady Makbet podważa elżbietańskie normy płciowe?",
+      content: {
+        options: [
+          "Jest posłuszną żoną",
+          "Nie interesuje się polityką",
+          "Odrzuca 'kobiecą' słabość i przejmuje męską rolę w małżeństwie",
+          "Jest typową damą dworu",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Lady Makbet aktywnie odrzuca kobiecość, dominuje nad mężem i przejmuje inicjatywę - łamie wszystkie konwencje epoki.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Dlaczego temat królobójstwa był szczególnie aktualny w 1606 roku?",
+      content: {
+        options: [
+          "Trwała wojna domowa",
+          "Niedawny Spisek Prochowy (1605) - próba zabicia króla Jakuba I",
+          "Śmierć Elżbiety I",
+          "Powstanie w Szkocji",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Spisek Prochowy z 1605 roku uczynił temat królobójstwa niezwykle aktualnym i niebezpiecznym.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Jak Shakespeare przedstawia problem teodycei (sprawiedliwości Bożej) w finale?",
+      content: {
+        options: [
+          "Bóg bezpośrednio karze Makbeta",
+          "Zło samo się niszczy, porządek moralny zostaje przywrócony przez ludzkie działania",
+          "Nie ma żadnej sprawiedliwości",
+          "Wiedźmy wymierzają karę",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Shakespeare pokazuje, że zło nosi w sobie zarodek samozniszczenia - porządek przywracają ludzie, ale według wyższego planu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Dlaczego Makbet jest najkrótszą tragedią Shakespeare'a?",
+      content: {
+        options: [
+          "Shakespeare się spieszył",
+          "Intensyfikacja dramatyczna - brak wątków pobocznych pogłębia koncentrację na psychologii zbrodni",
+          "Część tekstu zaginęła",
+          "Był to skrót na potrzeby dworu",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Kondensacja akcji i eliminacja pobocznych wątków intensyfikuje napięcie i skupienie na psychologicznym dramacie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Jaki efekt osiąga Shakespeare przez kontrast między językiem Makbeta na początku i końcu dramatu?",
+      content: {
+        options: [
+          "Pokazuje degradację umysłu - od poezji do nihilistycznej prozy",
+          "Nie ma różnicy w języku",
+          "Język staje się bardziej wyszukany",
+          "Makbet przestaje mówić",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Ewolucja od poetyckich metafor do nihilistycznych stwierdzeń pokazuje duchowy i psychiczny rozpad bohatera.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Które stwierdzenie najlepiej opisuje moralną wymowę tragedii?",
+      content: {
+        options: [
+          "Władza absolutna deprawuje absolutnie, ale człowiek zachowuje wolność wyboru",
+          "Los jest z góry przesądzony",
+          "Zło zawsze zwycięża",
+          "Moralność jest względna",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Shakespeare pokazuje destrukcyjną siłę władzy, ale podkreśla odpowiedzialność człowieka za swoje wybory.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Co symbolizuje scena mycia rąk przez Lady Makbet w kontekście całego dramatu?",
+      content: {
+        options: [
+          "Higienę w średniowieczu",
+          "Obsesję czystości",
+          "Ironiczne odwrócenie jej słów o 'odrobinie wody' - wina jest niezmywalna",
+          "Rytuał pogrzebowy",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "To tragiczna ironia - kobieta mówiąca, że 'trochę wody' zmyje zbrodnię, nie może zmyć wyimaginowanej krwi.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Jak nihilizm Makbeta ('życie to opowieść idioty') odnosi się do elżbietańskiego światopoglądu?",
+      content: {
+        options: [
+          "Potwierdza chrześcijańską wizję świata",
+          "Jest typowy dla epoki",
+          "Radykalnie podważa sens istnienia w uporządkowanym kosmosie Great Chain of Being",
+          "Nie ma związku z epoką",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Nihilizm Makbeta to radykalne zaprzeczenie elżbietańskiej wizji uporządkowanego, sensownego kosmosu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Które źródło NIE było inspiracją dla Shakespeare'a przy pisaniu Makbeta?",
+      content: {
+        options: [
+          "Kroniki Holinsheda",
+          "Historia Szkocji Hectora Boece'a",
+          "Daemonologie króla Jakuba I",
+          "Boska Komedia Dantego",
+        ],
+      },
+      correctAnswer: 3,
+      metadata: {
+        explanation:
+          "Shakespeare czerpał z Holinsheda, Boece'a i traktatu Jakuba I o czarach, ale nie z Dantego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Dlaczego rola Lady Makbet była szczególnie wymagająca w teatrze elżbietańskim?",
+      content: {
+        options: [
+          "Była za długa",
+          "Wymagała śpiewu",
+          "Grali ją chłopcy, którzy musieli przekonująco wcielić się w dominującą kobietę",
+          "Wymagała akrobacji",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "W teatrze elżbietańskim role kobiece grali chłopcy - rola dominującej, dojrzałej Lady Makbet była wyzwaniem.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Które interpretacje motywu krwi są uzasadnione w tekście? (wybierz wszystkie)",
+      content: {
+        options: [
+          "Krew jako dziedzictwo i prawo do tronu",
+          "Krew jako wina nie do odkupienia",
+          "Krew jako ofiara religijna",
+          "Krew jako więź rodzinna",
+          "Krew jako znak męstwa wojennego",
+        ],
+      },
+      correctAnswer: [0, 1, 3, 4],
+      metadata: {
+        explanation:
+          "Krew funkcjonuje wieloznacznie: dynastia, wina, rodzina i wojenna chwała, ale nie jako ofiara religijna.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Dopasuj koncepcje filozoficzne do ich realizacji w dramacie",
+      content: {
+        matchingType: "philosophy_drama",
+        leftColumn: [
+          { id: "A", text: "Machiavellizm" },
+          { id: "B", text: "Determinizm" },
+          { id: "C", text: "Nihilizm" },
+          { id: "D", text: "Teodycea" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Monolog 'jutro, i jutro, i jutro'" },
+          { id: 2, text: "Cel uświęca środki - morderstwo dla władzy" },
+          { id: 3, text: "Przepowiednie jako przeznaczenie" },
+          { id: 4, text: "Przywrócenie porządku moralnego w finale" },
+        ],
+      },
+      correctAnswer: [
+        [0, 1],
+        [1, 2],
+        [2, 0],
+        [3, 3],
+      ],
+      metadata: {
+        explanation:
+          "Makbet realizuje machiavelizm, boryka się z determinizmem, popada w nihilizm, a finał przywraca teodiceę.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Jak interpretować prośbę Lady Makbet o 'unsex me here'?",
+      content: {
+        options: [
+          "Chce stać się mężczyzną",
+          "Performatywne odrzucenie gender jako konstruktu społecznego ograniczającego działanie",
+          "To tylko metafora",
+          "Chce umrzeć",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Lady Makbet rozumie płeć jako ograniczenie społeczne, które można performatywnie odrzucić dla osiągnięcia celów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Z perspektywy psychoanalitycznej, czym są wiedźmy?",
+      content: {
+        options: [
+          "Realnymi postaciami",
+          "Projekcją Super-ego Makbeta",
+          "Symbolem ojca",
+          "Manifestacją Id - nieświadomych pragnień Makbeta",
+        ],
+      },
+      correctAnswer: 3,
+      metadata: {
+        explanation:
+          "Wiedźmy można interpretować jako projekcję Id - wypowiadają stłumione, nieświadome pragnienia Makbeta.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Jak Makbet odnosi się do jakubińskiej teorii Boskiego Prawa Królów?",
+      content: {
+        options: [
+          "Popiera ją całkowicie",
+          "Ignoruje kwestie polityczne",
+          "Podważa ją, pokazując uzurpatora na tronie",
+          "Ostatecznie potwierdza świętość prawowitej sukcesji",
+        ],
+      },
+      correctAnswer: 3,
+      metadata: {
+        explanation:
+          "Dramat ostatecznie potwierdza Boskie Prawo - uzurpator upada, prawowity dziedzic (Malcolm) wraca.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Jak metafora 'życia jako kiepskiego aktora' komentuje naturę teatru?",
+      content: {
+        options: [
+          "Shakespeare krytykuje aktorów",
+          "To autorefleksja o iluzorycznej naturze teatru i rzeczywistości",
+          "Nie ma związku z teatrem",
+          "To komplement dla aktorów",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "To metateatralny komentarz - teatr jako metafora życia podważa granicę między iluzją sceniczną a 'rzeczywistością'.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Jaka jest funkcja obrazowania choroby w dramacie?",
+      content: {
+        options: [
+          "Szkocja pod rządami Makbeta jest 'chora' - tyrania jako rak społeczny",
+          "Opisuje prawdziwą epidemię",
+          "Nie ma takiego obrazowania",
+          "Odnosi się tylko do Lady Makbet",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Choroba to rozbudowana metafora - tyrania Makbeta infekuje całą Szkocję jak zaraza.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Która przepowiednia NIE pojawia się w dramacie?",
+      content: {
+        options: [
+          "Makbet będzie królem",
+          "Synowie Banka będą królami",
+          "Makbet umrze młodo",
+          "Las Birnam przyjdzie do Dunsinane",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Nie ma przepowiedni o wieku śmierci Makbeta - tylko o warunkach, w których może zginąć.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "W którym momencie następuje anagnorisis (rozpoznanie) Makbeta?",
+      content: {
+        options: [
+          "Gdy zabija Duncana",
+          "Gdy spotyka wiedźmy",
+          "Gdy dowiaduje się, że Makduf 'nie został zrodzony z kobiety'",
+          "Gdy widzi ducha Banka",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Anagnorisis następuje, gdy Makbet rozumie prawdziwą naturę przepowiedni - został oszukany.",
+      },
+    },
+    {
+      type: "ESSAY",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 5,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Porównaj sposób przedstawienia zła w 'Makbecie' z inną tragedią Shakespeare'a.",
+      content: {
+        instruction:
+          "Przeanalizuj różnice w koncepcji zła między Makbetem a wybraną tragedią (Hamlet, Otello, Król Lear). Uwzględnij: źródło zła, rozwój, konsekwencje. (150-200 słów)",
+      },
+      rubric: {
+        maxScore: 5,
+        criteria: [
+          "Identyfikacja źródła zła w obu dramatach (1 pkt)",
+          "Analiza rozwoju zła (1 pkt)",
+          "Porównanie konsekwencji (1 pkt)",
+          "Różnice w odpowiedzialności bohaterów (1 pkt)",
+          "Synteza i wnioski (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "W Makbecie zło rodzi się wewnątrz - z ambicji bohatera, choć katalizowane przez wiedźmy. W Otellu zło jest zewnętrzne - Jago manipuluje. Makbet świadomie wybiera zbrodnię, Otello jest oszukany. Rozwój: Makbet stopniowo się dehumanizuje, Otello zachowuje szlachetność do końca. Konsekwencje: Makbet niszczy całą Szkocję, Otello - tylko siebie i Desdemonę.",
+        keyWords: [
+          "źródło zła",
+          "świadomość",
+          "wybór",
+          "manipulacja",
+          "konsekwencje",
+          "odpowiedzialność",
+        ],
+      },
+    },
+    {
+      type: "ESSAY",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 5,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Czy Makbet jest ofiarą przeznaczenia czy własnych wyborów? Uzasadnij stanowisko.",
+      content: {
+        instruction:
+          "Przeanalizuj problem determinizmu vs wolnej woli w tragedii. Odwołaj się do przepowiedni, decyzji bohatera i konstrukcji fabuły. (150-200 słów)",
+      },
+      rubric: {
+        maxScore: 5,
+        criteria: [
+          "Zdefiniowanie problemu (1 pkt)",
+          "Argumenty za determinizmem (1 pkt)",
+          "Argumenty za wolną wolą (1 pkt)",
+          "Analiza ambiwalencji Shakespeare'a (1 pkt)",
+          "Własne stanowisko z uzasadnieniem (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Shakespeare celowo pozostawia kwestię nierozstrzygniętą. Za determinizmem: przepowiednie się spełniają dokładnie, Makbet wydaje się prowadzony. Za wolną wolą: przepowiednie nie mówią o morderstwie, Makbet sam decyduje o środkach. To self-fulfilling prophecy - przepowiednie spełniają się właśnie przez wybory Makbeta. Shakespeare sugeruje, że los i wybór są nierozdzielnie splecione.",
+        keyWords: [
+          "determinizm",
+          "wolna wola",
+          "przepowiednie",
+          "wybór",
+          "self-fulfilling prophecy",
+          "ambiwalencja",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Wyjaśnij symbolikę dziecka w przepowiedniach i obrazach dramatu.",
+      content: {
+        instruction:
+          "Przeanalizuj różne znaczenia motywu dziecka w Makbecie (60-80 słów).",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "Dziecko jako symbol niewinności (1 pkt)",
+          "Brak dzieci Makbeta - jałowość zła (1 pkt)",
+          "Morderstwo dzieci jako przekroczenie ostatniej granicy (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Dziecko symbolizuje niewinność, przyszłość i ciągłość. Makbetowie są bezdzietni - ich władza jest 'jałowa', bez przyszłości. Zjawa dziecka w koronie to potomkowie Banka. Morderstwo dzieci Makdufa to ostateczne przekroczenie - atak na niewinność. 'Nie zrodzony z kobiety' podważa naturalne narodziny.",
+        keyWords: [
+          "niewinność",
+          "bezdzietność",
+          "jałowość",
+          "przyszłość",
+          "morderstwo dzieci",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Jak Shakespeare problematyzuje męskość w tragedii?",
+      content: {
+        instruction:
+          "Omów kryzys męskości u Makbeta i innych postaci (80-100 słów).",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "Męskość jako przemoc (1 pkt)",
+          "Manipulacja przez kwestionowanie męskości (1 pkt)",
+          "Paradoks - 'prawdziwa' męskość (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Makbet utożsamia męskość z przemocą i bezwzględnością. Lady Makbet manipuluje nim, kwestionując jego męskość. Paradoksalnie, im bardziej stara się udowodnić męskość przez przemoc, tym bardziej ją traci - staje się tchórzem. Prawdziwa męskość to panowanie nad namiętnościami (Banko, Makduf płaczący po rodzinie). Shakespeare krytykuje toksyczną męskość.",
+        keyWords: [
+          "przemoc",
+          "manipulacja",
+          "paradoks",
+          "toksyczna męskość",
+          "prawdziwa męskość",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Przeanalizuj metateatralne elementy w monologu 'życie to opowieść idioty'.",
+      content: {
+        instruction:
+          "Wyjaśnij autorefleksyjność teatralną w nihilistycznym monologu (60-80 słów).",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "Życie jako spektakl teatralny (1 pkt)",
+          "Podważenie granicy iluzja/rzeczywistość (1 pkt)",
+          "Komentarz do natury teatru (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Makbet porównuje życie do kiepskiego aktora i bezsensownej opowieści - to metateatralny komentarz. Aktor grający Makbeta mówi o aktorstwie, podważając granicę między fikcją a rzeczywistością. Jeśli życie to teatr, to teatr jest życiem. Shakespeare sugeruje, że zarówno życie jak i teatr są iluzją.",
+        keyWords: [
+          "metateatr",
+          "aktor",
+          "iluzja",
+          "rzeczywistość",
+          "autorefleksja",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Jak dramat komentuje jakubińską koncepcję monarchii?",
+      content: {
+        instruction:
+          "Omów polityczny wymiar tragedii w kontekście epoki Jakuba I (60-80 słów).",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "Królobójstwo jako największa zbrodnia (1 pkt)",
+          "Pochwała linii Banka (przodek Jakuba) (1 pkt)",
+          "Przywrócenie prawowitego porządku (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Dramat potwierdza Boskie Prawo Królów - królobójstwo to zbrodnia przeciw Bogu i naturze. Szkocja cierpi pod uzurpatorem. Gloryfikacja Banka (mitycznego przodka Jakuba I) to pochlebstwo. Finał przywraca prawowitą sukcesję. Shakespeare ostrzega przed buntem, jednocześnie pokazując tyranię.",
+        keyWords: [
+          "Boskie Prawo",
+          "królobójstwo",
+          "Banko",
+          "Jakub I",
+          "prawowita sukcesja",
+        ],
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Gdzie występuje dramatyczna ironia w scenie mordowania Duncana?",
+      content: {
+        options: [
+          "Duncan chwali gościnność Makbetów tuż przed śmiercią",
+          "Makbet jest zaskoczony",
+          "Lady Makbet śpi",
+          "Straże są pijane",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Duncan chwali zamek i gospodarzy jako przytulnych - dramatyczna ironia, bo widzowie wiedzą o planowanym morderstwie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "LANGUAGE_USE",
+      difficulty: 4,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Dlaczego wiedźmy mówią tetrametrem trocheicznym zamiast jambem?",
+      content: {
+        options: [
+          "To błąd Shakespeare'a",
+          "Rytm zaklęć odróżnia je od świata ludzkiego, tworzy hipnotyczny efekt",
+          "Nie ma różnicy w metryce",
+          "To wymóg teatralny",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Trocheiczny tetrametr (akcent na pierwszej sylabie) brzmi jak zaklęcie, odróżnia nadprzyrodzone od ludzkiego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Jak interpretować fakt, że Banko też widzi wiedźmy, ale tylko Makbet widzi sztyet i ducha?",
+      content: {
+        options: [
+          "Przypadek dramaturgiczny",
+          "Wiedźmy są zewnętrzne/obiektywne, halucynacje są wewnętrzne/subiektywne",
+          "Banko kłamie",
+          "Wszystko jest halucynacją",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Shakespeare rozróżnia: wiedźmy jako katalizator zewnętrzny vs halucynacje jako projekcje winy.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Która postać została dodana przez Shakespeare'a, nie występuje w kronikach?",
+      content: {
+        options: [
+          "Banko",
+          "Duncan",
+          "Lady Makbet jako współsprawczyni",
+          "Malcolm",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "W kronikach żona Makbeta nie odgrywa aktywnej roli - Shakespeare uczynił ją współsprawczynią.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Co zapowiada uwaga kapitana o Makdonwaldzie 'od pępka do szczęki'?",
+      content: {
+        options: [
+          "Nic szczególnego",
+          "Sposób śmierci Duncana",
+          "Los samego Makbeta - ścięcie głowy",
+          "Śmierć Lady Makbet",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Makbet zabija zdrajcę Makdonwalda przez ścięcie - sam zginie identycznie jako zdrajca.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Jak zaburzenia w naturze po morderstwie odzwierciedlają elżbietański worldview?",
+      content: {
+        options: [
+          "To tylko efekty specjalne",
+          "Makrokosmos reaguje na naruszenie Great Chain of Being",
+          "To realistyczny opis pogody",
+          "Nie ma zaburzeń w naturze",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "W elżbietańskiej kosmologii naruszenie hierarchii (królobójstwo) zaburza cały porządek natury.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Dlaczego Makbet zabija strażników Duncana?",
+      content: {
+        options: [
+          "Z zemsty",
+          "Panicznie improwizuje, by ukryć winę i pokazać 'gniew'",
+          "To był plan Lady Makbet",
+          "Przypadkiem",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "To improwizacja - zabija potencjalnych świadków, udając sprawiedliwy gniew. Lady Makbet jest zaskoczona.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Jak interpretować podwójne znaczenie 'nie zrodzony z kobiety'?",
+      content: {
+        options: [
+          "To tylko zagadka",
+          "Gra słów: 'zrodzony' (naturalnie) vs 'wydarty' (cesarskie cięcie)",
+          "Makduf jest bogiem",
+          "To błąd w tłumaczeniu",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Dwuznaczność językowa: cesarskie cięcie to nie 'zrodzenie' w naturalnym sensie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Co krytykuje Malcolma test lojalności Makdufa (Akt IV)?",
+      content: {
+        options: [
+          "Pokazuje mądrość przyszłego króla",
+          "Ujawnia, że nawet 'dobrzy' używają manipulacji i kłamstwa",
+          "To niepotrzebna scena",
+          "Nic nie krytykuje",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Malcolm kłamie o swojej deprawacji - Shakespeare pokazuje, że polityka zawsze wymaga moralnych kompromisów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Jak zmienia się percepcja czasu u Makbeta?",
+      content: {
+        options: [
+          "Nie zmienia się",
+          "Od obsesji przyszłością do uwięzienia w teraźniejszości pełnej przeszłości",
+          "Zapomina o czasie",
+          "Czas przyspiesza",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Początkowo obsesja przyszłością (przepowiednie), potem uwięzienie między winą przeszłości a lękiem o przyszłość.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Co oznacza odniesienie do 'Golgoty' w opisie bitwy?",
+      content: {
+        options: [
+          "Zwykłe pole bitwy",
+          "Porównanie do męki Chrystusa - zapowiedź ofiary i odkupienia",
+          "Nazwę miejscowości",
+          "Nic szczególnego",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Golgota to miejsce ukrzyżowania - zapowiada motyw ofiary, ale ironicznie Makbet stanie się Judaszem, nie Chrystusem.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Dlaczego motyw snu jest kluczowy dla zrozumienia tragedii?",
+      content: {
+        options: [
+          "Sen to metafora śmierci, niewinności i naturalnego porządku - Makbet niszczy wszystkie trzy",
+          "To tylko dekoracja",
+          "Sen nie jest ważny",
+          "Wszyscy są zmęczeni",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Sen łączy śmierć ('wieczny sen'), niewinność (spokój sumienia) i naturę (rytm dnia/nocy) - Makbet 'morduje sen'.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Kto jest autorem tragedii 'Makbet'?",
+      content: {
+        options: [
+          "Christopher Marlowe",
+          "William Shakespeare",
+          "Ben Jonson",
+          "Thomas Kyd",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Autorem 'Makbeta' jest William Shakespeare. Tragedia powstała około 1606 roku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Gdzie toczy się akcja tragedii?",
+      content: {
+        options: ["w Anglii", "w Irlandii", "w Szkocji", "w Walii"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation: "Akcja 'Makbeta' toczy się w Szkocji w XI wieku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Kim jest Duncan w tragedii?",
+      content: {
+        options: [
+          "bratem Makbeta",
+          "synem Makbeta",
+          "królem Szkocji",
+          "wrogiem Szkocji",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Duncan jest prawowitym królem Szkocji, którego zabija Makbet.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Ile wiedźm spotyka Makbet na pustkowiu?",
+      content: {
+        options: ["jedną", "dwie", "trzy", "cztery"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Makbet spotyka trzy wiedźmy, zwane także 'dziwacznymi siostrami'.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Co przepowiadają wiedźmy Makbetowi przy pierwszym spotkaniu?",
+      content: {
+        options: [
+          "że zginie w bitwie",
+          "że straci wszystko",
+          "że zostanie królem",
+          "że będzie miał syna",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Wiedźmy przepowiadają, że Makbet zostanie tanem Cawdor, a następnie królem.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Kim jest Banko?",
+      content: {
+        options: [
+          "wrogiem Makbeta",
+          "przyjacielem Makbeta",
+          "królem Anglii",
+          "synem Duncana",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation: "Banko jest przyjacielem i towarzyszem broni Makbeta.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Kto namawia Makbeta do zabójstwa Duncana?",
+      content: {
+        options: ["Banko", "wiedźmy", "Lady Makbet", "Malcolm"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Lady Makbet przekonuje wahającego się męża do popełnienia królobójstwa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Co widzi Makbet tuż przed zabójstwem Duncana?",
+      content: {
+        options: [
+          "ducha ojca",
+          "halucynacyjny sztylet",
+          "trzech rycerzy",
+          "płonący krzew",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Makbet ma halucynację sztyletu prowadzącego go do komnaty Duncana.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Jak nazywają się synowie Duncana?",
+      content: {
+        options: [
+          "Malcolm i Donalbain",
+          "Fleance i Siward",
+          "Ross i Lennox",
+          "Angus i Menteith",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Synowie Duncana to Malcolm i Donalbain, którzy uciekają po śmierci ojca.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Dlaczego Makbet decyduje się zabić Banka?",
+      content: {
+        options: [
+          "Banko go zdradził",
+          "Banko odkrył prawdę o morderstwie",
+          "wiedźmy przepowiedziały, że synowie Banka będą królami",
+          "Banko zaatakował Makbeta",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Makbet obawia się przepowiedni, że potomkowie Banka będą królami.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Kto pojawia się jako duch podczas uczty?",
+      content: {
+        options: ["Duncan", "Banko", "Lady Makbet", "Makduf"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Duch Banka pojawia się podczas uczty, ale widzi go tylko Makbet.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Co się dzieje z rodziną Makdufa?",
+      content: {
+        options: [
+          "uciekają do Anglii",
+          "zostają zamordowani",
+          "ukrywają się w lesie",
+          "przechodzą na stronę Makbeta",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation: "Makbet rozkazuje zamordować żonę i dzieci Makdufa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Co oznacza przepowiednia o lesie Birnam?",
+      content: {
+        options: [
+          "las zostanie wycięty",
+          "las spłonie",
+          "Makbet będzie bezpieczny, dopóki las nie przyjdzie do Dunsinane",
+          "w lesie ukrywa się wróg",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Wiedźmy mówią, że Makbet będzie bezpieczny, dopóki las Birnam nie przyjdzie do Dunsinane.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "W jaki sposób Lady Makbet umiera?",
+      content: {
+        options: [
+          "zostaje zabita",
+          "umiera z choroby",
+          "popełnia samobójstwo",
+          "ginie w bitwie",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Lady Makbet popełnia samobójstwo, nie mogąc znieść wyrzutów sumienia.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Dlaczego Makduf może zabić Makbeta?",
+      content: {
+        options: [
+          "ma magiczny miecz",
+          "jest silniejszy",
+          "nie został urodzony z kobiety w naturalny sposób",
+          "wiedźmy mu pomagają",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Makduf został wydarty z łona matki przez cesarskie cięcie, więc nie został 'zrodzony' z kobiety.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Kto zostaje królem Szkocji po śmierci Makbeta?",
+      content: {
+        options: ["Donalbain", "Makduf", "Malcolm", "Fleance"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation: "Malcolm, syn Duncana, zostaje prawowitym królem Szkocji.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Co symbolizuje krew w dramacie?",
+      content: {
+        options: [
+          "tylko przemoc",
+          "winę i wyrzuty sumienia",
+          "odwagę",
+          "szlachectwo",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Krew symbolizuje przede wszystkim winę i niezmywalne piętno zbrodni.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Kto mówi: 'Makbet sen zabił'?",
+      content: {
+        options: ["Lady Makbet", "Makbet", "Duncan", "wiedźmy"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Makbet wypowiada te słowa po zabójstwie Duncana, czując, że utracił spokój sumienia.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Co Lady Makbet próbuje zmyć ze swoich rąk podczas sceny lunatyzmu?",
+      content: {
+        options: ["truciznę", "niewidzialną krew", "perfumy", "błoto"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "W scenie lunatyzmu Lady Makbet obsesyjnie myje ręce, próbując zmyć wyimaginowaną krew.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Jaki jest główny temat tragedii 'Makbet'?",
+      content: {
+        options: [
+          "miłość romantyczna",
+          "destrukcyjna siła ambicji",
+          "wojna między krajami",
+          "konflikt religijny",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Głównym tematem jest niszczycielska siła niepohamowanej ambicji.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Które postacie giną w tragedii? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "Duncan",
+          "Banko",
+          "Lady Makbet",
+          "Malcolm",
+          "Makbet",
+          "Ross",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 4],
+      metadata: {
+        explanation:
+          "W tragedii giną: Duncan, Banko, Lady Makbet i Makbet. Malcolm i Ross przeżywają.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Które elementy nadprzyrodzone pojawiają się w dramacie? (wybierz wszystkie)",
+      content: {
+        options: [
+          "wiedźmy",
+          "halucynacje",
+          "duchy",
+          "przepowiednie",
+          "anioły",
+          "demony",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 3],
+      metadata: {
+        explanation:
+          "W dramacie występują: wiedźmy, halucynacje (sztylet), duchy (Banko) i przepowiednie.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Dopasuj postacie do ich losów",
+      content: {
+        matchingType: "character_fate",
+        leftColumn: [
+          { id: "A", text: "Duncan" },
+          { id: "B", text: "Banko" },
+          { id: "C", text: "Lady Makbet" },
+          { id: "D", text: "Makbet" },
+        ],
+        rightColumn: [
+          { id: 1, text: "zabity przez wynajętych morderców" },
+          { id: 2, text: "zabity przez Makdufa" },
+          { id: 3, text: "zabity we śnie" },
+          { id: 4, text: "popełnia samobójstwo" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 0],
+        [2, 3],
+        [3, 1],
+      ],
+      metadata: {
+        explanation:
+          "Duncan zabity we śnie, Banko przez morderców, Lady Makbet popełnia samobójstwo, Makbet ginie z ręki Makdufa.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Które tematy występują w 'Makbecie'? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "ambicja i władza",
+          "wyrzuty sumienia",
+          "męskość i honor",
+          "przeznaczenie",
+          "komedia i humor",
+          "nadprzyrodzone",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 3, 5],
+      metadata: {
+        explanation:
+          "Główne tematy to: ambicja, wyrzuty sumienia, męskość, przeznaczenie i elementy nadprzyrodzone.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Dopasuj cytaty do postaci",
+      content: {
+        matchingType: "quote_character",
+        leftColumn: [
+          { id: "A", text: "Brzydkie jest piękne, piękne brzydkie" },
+          { id: "B", text: "Czy cały ocean wielkiego Neptuna zmyje tę krew?" },
+          { id: "C", text: "Precz, przeklęta plamo!" },
+          { id: "D", text: "Życie jest tylko cieniem" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Lady Makbet" },
+          { id: 2, text: "Makbet" },
+          { id: 3, text: "wiedźmy" },
+          { id: 4, text: "Banko" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 1],
+        [2, 0],
+        [3, 1],
+      ],
+      metadata: {
+        explanation:
+          "Wiedźmy mówią o względności, Makbet o krwi i cieniu życia, Lady Makbet o plamie.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Uzupełnij lukę w fabule",
+      content: {
+        textWithGaps:
+          "Po spotkaniu z [1], Makbet dowiaduje się, że zostanie [2]. Namówiony przez [3], zabija [4] i obejmuje tron.",
+        gaps: [
+          {
+            id: 1,
+            options: ["duchami", "wiedźmami", "rycerzami", "wróżbitami"],
+          },
+          {
+            id: 2,
+            options: ["wygnany", "zabity", "królem", "tanem Ross"],
+          },
+          {
+            id: 3,
+            options: ["Banka", "Duncana", "Lady Makbet", "Makdufa"],
+          },
+          {
+            id: 4,
+            options: ["Banka", "Duncana", "Malcolma", "Makdufa"],
+          },
+        ],
+      },
+      correctAnswer: [1, 2, 2, 1],
+      metadata: {
+        explanation:
+          "Po spotkaniu z wiedźmami Makbet dowiaduje się o królestwie, Lady Makbet namawia go do zabicia Duncana.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Które symbole pojawiają się w dramacie? (wybierz wszystkie)",
+      content: {
+        options: ["krew", "korona", "sztylet", "sen", "róża", "burza"],
+      },
+      correctAnswer: [0, 1, 2, 3, 5],
+      metadata: {
+        explanation:
+          "Główne symbole to: krew (wina), korona (władza), sztylet (morderstwo), sen (spokój) i burza (chaos).",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Dopasuj role do postaci",
+      content: {
+        matchingType: "character_role",
+        leftColumn: [
+          { id: "A", text: "Malcolm" },
+          { id: "B", text: "Makduf" },
+          { id: "C", text: "Fleance" },
+          { id: "D", text: "Siward" },
+        ],
+        rightColumn: [
+          { id: 1, text: "syn Banka" },
+          { id: 2, text: "dowódca wojsk angielskich" },
+          { id: 3, text: "syn Duncana" },
+          { id: 4, text: "tan Fife" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 3],
+        [2, 0],
+        [3, 1],
+      ],
+      metadata: {
+        explanation:
+          "Malcolm - syn Duncana, Makduf - tan Fife, Fleance - syn Banka, Siward - dowódca Anglików.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Jaki zabieg dramaturgiczny stosuje Shakespeare pokazując las Birnam 'idący' do Dunsinane?",
+      content: {
+        options: [
+          "metaforę",
+          "ironię dramatyczną",
+          "alegorię",
+          "personifikację",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "To ironia dramatyczna - żołnierze niosą gałęzie, tworząc iluzję poruszającego się lasu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Dla którego króla angielskiego Shakespeare napisał 'Makbeta'?",
+      content: {
+        options: ["Henryka VIII", "Elżbiety I", "Jakuba I", "Karola I"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Makbet został napisany dla Jakuba I, króla pochodzenia szkockiego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Ile aktów ma tragedia 'Makbet'?",
+      content: {
+        options: ["trzy", "cztery", "pięć", "siedem"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Makbet, jak większość tragedii Shakespeare'a, ma pięć aktów.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Kim jest Hekate w dramacie?",
+      content: {
+        options: ["żoną Makbeta", "królową wiedźm", "córką Duncana", "służącą"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation: "Hekate jest boginią czarów i przywódczynią wiedźm.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Co oznacza 'jutro, i jutro, i jutro' w monologu Makbeta?",
+      content: {
+        options: [
+          "nadzieję na lepszą przyszłość",
+          "bezsens i pustkę życia",
+          "plany na przyszłość",
+          "obietnicę zemsty",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Monolog wyraża nihilizm Makbeta - życie jest puste i pozbawione sensu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Czego Lady Makbet prosi duchy w swojej inwokacji?",
+      content: {
+        options: [
+          "o śmierć",
+          "o bogactwo",
+          "o 'odniewieścenie' - pozbawienie kobiecych uczuć",
+          "o piękno",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Lady Makbet prosi duchy o pozbawienie jej kobiecych uczuć litości i współczucia.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Dokąd uciekają synowie Duncana po śmierci ojca?",
+      content: {
+        options: [
+          "Malcolm do Francji, Donalbain do Hiszpanii",
+          "obaj do Irlandii",
+          "Malcolm do Anglii, Donalbain do Irlandii",
+          "obaj do Norwegii",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation: "Malcolm ucieka do Anglii, a Donalbain do Irlandii.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Jaki tytuł otrzymuje Makbet po pierwszej bitwie?",
+      content: {
+        options: ["tan Ross", "tan Cawdor", "książę Szkocji", "lord Glamis"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Makbet otrzymuje tytuł tana Cawdor po zwycięskiej bitwie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Co symbolizuje bezsenność Makbeta?",
+      content: {
+        options: [
+          "chorobę fizyczną",
+          "utratę spokoju sumienia",
+          "lenistwo",
+          "słabość",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Bezsenność symbolizuje utratę spokoju sumienia po zbrodni.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Kto odkrywa ciało zabitego Duncana?",
+      content: {
+        options: ["Lady Makbet", "Banko", "Makduf", "Malcolm"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Makduf odkrywa ciało króla Duncana rankiem po morderstwie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Jak Lady Makbet atakuje męskość swojego męża?",
+      content: {
+        options: [
+          "chwali jego odwagę",
+          "zarzuca mu tchórzostwo i brak męskości",
+          "ignoruje go",
+          "porównuje do Duncana",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Lady Makbet manipuluje mężem, kwestionując jego męskość i odwagę.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Wyjaśnij, jaką rolę odgrywają wiedźmy w tragedii.",
+      content: {
+        instruction:
+          "Opisz funkcję wiedźm w rozwoju akcji i ich wpływ na Makbeta (40-60 słów).",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie roli katalizatora akcji (1 pkt)",
+          "dwuznaczność przepowiedni i manipulacja (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Wiedźmy pełnią rolę katalizatora - ich przepowiednie rozbudzają ambicję Makbeta. Nie zmuszają go do zbrodni, ale manipulują dwuznacznymi przepowiedniami. Reprezentują siły chaosu i zła, ale też mogą być projekcją pragnień bohatera.",
+        keyWords: [
+          "katalizator",
+          "przepowiednie",
+          "ambicja",
+          "manipulacja",
+          "dwuznaczność",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Opisz przemianę Lady Makbet w trakcie dramatu.",
+      content: {
+        instruction:
+          "Wyjaśnij, jak zmienia się Lady Makbet od początku do końca sztuki (40-60 słów).",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "początkowa siła i determinacja (1 pkt)",
+          "załamanie psychiczne i samobójstwo (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Lady Makbet początkowo jest silna, bezwzględna i dominuje nad mężem. Planuje morderstwo i dodaje mu odwagi. Później popada w obłęd, cierpi na lunatyzm, obsesyjnie myje ręce z niewidzialnej krwi. Kończy życie samobójstwem, zniszczona wyrzutami sumienia.",
+        keyWords: [
+          "siła",
+          "determinacja",
+          "obłęd",
+          "lunatyzm",
+          "wyrzuty sumienia",
+          "samobójstwo",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Wyjaśnij symbolikę krwi w 'Makbecie'.",
+      content: {
+        instruction:
+          "Opisz, co symbolizuje krew i jak zmienia się jej znaczenie (30-50 słów).",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "krew jako symbol winy (1 pkt)",
+          "niemożność zmycia/odkupienia (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Krew symbolizuje winę i niezmywalne piętno zbrodni. Początkowo to znak odwagi wojennej, potem staje się obsesją - Makbet widzi krwawe sztylety, Lady Makbet nie może zmyć plam. Reprezentuje wyrzuty sumienia, których nie da się usunąć.",
+        keyWords: [
+          "wina",
+          "piętno",
+          "obsesja",
+          "wyrzuty sumienia",
+          "niezmywalność",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Dlaczego Makbet zabija Banka?",
+      content: {
+        instruction:
+          "Wyjaśnij motywacje Makbeta do zabójstwa przyjaciela (30-50 słów).",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "przepowiednia o potomkach Banka (1 pkt)",
+          "strach i paranoja Makbeta (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Makbet zabija Banka z dwóch powodów: wiedźmy przepowiedziały, że synowie Banka będą królami, co zagraża jego dynastii. Dodatkowo Banko był świadkiem przepowiedni i mógł domyślić się prawdy o morderstwie Duncana.",
+        keyWords: [
+          "przepowiednia",
+          "potomkowie",
+          "królowie",
+          "zagrożenie",
+          "świadek",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Opisz scenę z duchem Banka podczas uczty.",
+      content: {
+        instruction:
+          "Wyjaśnij znaczenie pojawienia się ducha i reakcję Makbeta (40-60 słów).",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "duch jako projekcja winy (1 pkt)",
+          "publiczne ujawnienie szaleństwa (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Duch Banka pojawia się podczas uczty, zajmując miejsce Makbeta. Tylko Makbet go widzi, co sugeruje halucynację wywołaną poczuciem winy. Jego paniczna reakcja kompromituje go przed gośćmi, Lady Makbet desperacko próbuje zatuszować sytuację.",
+        keyWords: ["duch", "halucynacja", "wina", "panika", "kompromitacja"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Jak rozumiesz słowa wiedźm 'Brzydkie jest piękne, piękne brzydkie'?",
+      content: {
+        instruction:
+          "Wyjaśnij paradoks i jego znaczenie dla całego dramatu (30-50 słów).",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "względność dobra i zła (1 pkt)",
+          "przewrotność świata w dramacie (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Paradoks wyraża względność wartości i odwrócenie porządku moralnego. W świecie Makbeta zło wydaje się dobre (władza przez zbrodnię), a dobro złe. Zapowiada moralny chaos, gdzie nie można odróżnić prawdy od fałszu.",
+        keyWords: [
+          "paradoks",
+          "względność",
+          "odwrócenie",
+          "chaos moralny",
+          "pozory",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Zinterpretuj metaforę życia jako 'cienia' z monologu Makbeta.",
+      content: {
+        instruction:
+          "Wyjaśnij nihilistyczną wizję życia w słynnym monologu (40-60 słów).",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "życie jako iluzja/pustka (1 pkt)",
+          "bezsens istnienia (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Życie jako 'cień' to metafora pustki i iluzoryczności istnienia. Makbet widzi życie jako pozbawione substancji, jak teatralną rolę bez znaczenia. To wyraz nihilizmu - po utracie wszystkiego odkrywa, że życie jest 'opowieścią idioty', bez sensu.",
+        keyWords: ["cień", "iluzja", "pustka", "nihilizm", "bezsens", "teatr"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Wyjaśnij ironię w spełnieniu przepowiedni o lesie Birnam.",
+      content: {
+        instruction:
+          "Opisz, jak spełnia się przepowiednia i dlaczego to ironia dramatyczna (30-50 słów).",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "żołnierze z gałęziami jako 'las' (1 pkt)",
+          "dosłowna interpretacja Makbeta (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Makbet interpretuje przepowiednię dosłownie - las nie może chodzić. Ironia polega na tym, że żołnierze niosą gałęzie jako kamuflaż, tworząc iluzję poruszającego się lasu. Przepowiednia spełnia się w nieoczekiwany sposób.",
+        keyWords: ["ironia", "dosłowność", "gałęzie", "kamuflaż", "iluzja"],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question: "Kim jest Makduf i dlaczego jest ważny dla fabuły?",
+      content: {
+        instruction:
+          "Opisz postać Makdufa i jego rolę w upadku Makbeta (40-60 słów).",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "tan Fife, odkrywa morderstwo (1 pkt)",
+          "zabija Makbeta - cesarskie cięcie (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Makduf to tan Fife, który odkrywa zamordowanego Duncana. Gdy Makbet zabija jego rodzinę, Makduf przyłącza się do Malcolma. Jest narzędziem zemsty - może zabić Makbeta, bo urodził się przez cesarskie cięcie, nie był 'zrodzony' z kobiety.",
+        keyWords: [
+          "tan Fife",
+          "odkrycie",
+          "rodzina",
+          "zemsta",
+          "cesarskie cięcie",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "RENAISSANCE",
+      work: "Makbet",
+      question:
+        "Wyjaśnij pojęcie 'tragicznej wady' (hamartia) na przykładzie Makbeta.",
+      content: {
+        instruction:
+          "Zdefiniuj hamartię i wskaż, jaka jest tragiczna wada Makbeta (40-60 słów).",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "definicja hamartii (1 pkt)",
+          "ambicja jako wada Makbeta (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Hamartia to tragiczna wada bohatera prowadząca do jego upadku. U Makbeta jest to niepohamowana ambicja - pragnienie władzy silniejsze niż sumienie. Ta wada sprawia, że bohater sam przyczynia się do własnej katastrofy.",
+        keyWords: ["hamartia", "tragiczna wada", "ambicja", "upadek", "władza"],
+      },
+    },
+
     // ======================== POCZĄTEK PYTAŃ PAN TADEUSZ ================= //
 
     {
@@ -23976,7 +29899,6 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
     ].filter((tag): tag is string => tag !== null),
   }));
 
-  // Wstaw do bazy
   for (const exercise of exercisesWithTags) {
     try {
       await prisma.exercise.create({
