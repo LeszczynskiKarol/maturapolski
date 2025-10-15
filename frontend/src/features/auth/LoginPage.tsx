@@ -37,15 +37,19 @@ export const LoginPage: React.FC = () => {
     }
   }, [user, navigate]);
 
-  // Renderuj przycisk Google - wywołaj tylko raz
+  // Renderuj przycisk Google z opóźnieniem dla pewności, że DOM jest gotowy
   useEffect(() => {
-    renderGoogleButton("google-signin-button", {
-      theme: "outline",
-      size: "large",
-      text: "signin_with",
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Pusta tablica - render tylko raz przy montowaniu
+    // Daj czas na zamontowanie komponentu
+    const timer = setTimeout(() => {
+      renderGoogleButton("google-signin-button", {
+        theme: "outline",
+        size: "large",
+        text: "signin_with",
+      });
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [renderGoogleButton]);
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
@@ -124,7 +128,7 @@ export const LoginPage: React.FC = () => {
             <div className="mb-6">
               <div
                 id="google-signin-button"
-                className="flex justify-center w-full"
+                className="flex justify-center w-full min-h-[44px]"
               ></div>
             </div>
 
@@ -187,10 +191,6 @@ export const LoginPage: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-between text-sm">
-                <label className="flex items-center">
-                  <input type="checkbox" className="mr-2" />
-                  <span>Zapamiętaj mnie</span>
-                </label>
                 <Link
                   to="/forgot-password"
                   className="text-blue-600 hover:underline"

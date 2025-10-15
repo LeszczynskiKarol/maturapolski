@@ -9322,7 +9322,8 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       },
       correctAnswer: 1,
       metadata: {
-        explanation: "Np. 'dziś dzisiaj', 'wejść do środka'",
+        explanation:
+          "Tzw. „masło maślane”, np. „cofać się do tyłu”, „kontynuować dalej”",
       },
     },
     {
@@ -11350,7 +11351,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 2,
       points: 2,
       question:
-        "Wyjaśnij pochodzenie i znaczenie frazeologizmu 'pyrrusowe zwycięstwo'. Podaj przykład współczesnego użycia.",
+        "Wyjaśnij pochodzenie i znaczenie frazeologizmu „pyrrusowe zwycięstwo”. Podaj przykład współczesnego użycia.",
       content: {
         hint: "Związek z historią starożytną",
         requirements: [
@@ -19883,7 +19884,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Antygona pogrzebała brata kierując się prawami boskimi i niepisanymi prawami rodzinnymi, które dla niej były wyższe od edyktu Kreona.",
+          "Antygona pogrzebała brata, kierując się prawami boskimi i niepisanymi prawami rodzinnymi, które dla niej były wyższe od edyktu Kreona.",
       },
     },
     {
@@ -20171,7 +20172,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       epoch: "ANTIQUITY",
       work: "Antygona",
       question:
-        "Która postać mówi: 'Współkochać przyszłam, nie współnienawidzieć'?",
+        "Która postać z „Antygony” mówi: „Współkochać przyszłam, nie współnienawidzieć”?",
       content: {
         options: ["Ismena", "Antygona", "Eurydyka", "Chór"],
       },
@@ -28633,7 +28634,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 2,
       epoch: "RENAISSANCE",
       work: "Makbet",
-      question: "Które postacie giną w tragedii? (wybierz wszystkie poprawne)",
+      question: "Które postacie giną w „Makbecie” (wybierz wszystkie poprawne)",
       content: {
         options: [
           "Duncan",
@@ -29120,7 +29121,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 2,
       epoch: "RENAISSANCE",
       work: "Makbet",
-      question: "Wyjaśnij symbolikę krwi w 'Makbecie'.",
+      question: "Wyjaśnij symbolikę krwi w „Makbecie”.",
       content: {
         instruction:
           "Opisz, co symbolizuje krew i jak zmienia się jej znaczenie (30-50 słów).",
@@ -29289,7 +29290,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 2,
       epoch: "RENAISSANCE",
       work: "Makbet",
-      question: "Kim jest Makduf i dlaczego jest ważny dla fabuły?",
+      question: "Kim jest Makduf i dlaczego jest ważny dla fabuły „Makbeta”?",
       content: {
         instruction:
           "Opisz postać Makdufa i jego rolę w upadku Makbeta (40-60 słów).",
@@ -29432,7 +29433,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 1,
       epoch: "ROMANTICISM",
       work: "Pan Tadeusz",
-      question: "Jak ma na imię główny bohater epopei?",
+      question: "Jak ma na imię główny bohater epopei „Pan Tadeusz”?",
       content: {
         options: ["Stanisław", "Jacek", "Tadeusz", "Gerwazy"],
       },
@@ -30212,7 +30213,8 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 3,
       epoch: "ROMANTICISM",
       work: "Pan Tadeusz",
-      question: "Opisz krótko postać Gerwazego - kim był i jaką rolę odgrywał.",
+      question:
+        "Opisz krótko postać Gerwazego - kim był i jaką rolę odgrywał w „Panu Tadeuszu”.",
       content: {
         expectedKeywords: [
           "Klucznik",
@@ -30771,7 +30773,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 2,
       epoch: "ROMANTICISM",
       work: "Pan Tadeusz",
-      question: "Dlaczego Mickiewicz napisał 'Pana Tadeusza' na emigracji?",
+      question: "Dlaczego Mickiewicz napisał „Pana Tadeusza” na emigracji?",
       content: {
         options: [
           "Dla zarobku",

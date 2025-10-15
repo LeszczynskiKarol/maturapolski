@@ -2,26 +2,26 @@
 
 import { useQuery } from "@tanstack/react-query";
 import {
-  Brain,
   Book,
+  Brain,
   ChevronLeft,
   Clock,
   CreditCard,
   Home,
   LogOut,
-  TrendingUp,
   Menu,
   Repeat,
+  TrendingUp,
   User,
   X,
 } from "lucide-react";
-import { CookieSettingsLink } from "./CookieSettingsLink";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { api } from "../services/api";
 import { useAuthStore } from "../store/authStore";
 import { AiPointsWidget } from "./AiPointsWidget";
+import { CookieSettingsLink } from "./CookieSettingsLink";
 import { ThemeToggle } from "./ThemeSwitcher";
 
 export const Layout: React.FC = () => {

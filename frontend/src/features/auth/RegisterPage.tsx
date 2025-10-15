@@ -46,15 +46,18 @@ export const RegisterPage: React.FC = () => {
     }
   }, [user, navigate]);
 
-  // Renderuj przycisk Google - wywołaj tylko raz
+  // Renderuj przycisk Google z opóźnieniem dla pewności, że DOM jest gotowy
   useEffect(() => {
-    renderGoogleButton("google-signup-button", {
-      theme: "outline",
-      size: "large",
-      text: "signup_with",
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Pusta tablica - render tylko raz przy montowaniu
+    const timer = setTimeout(() => {
+      renderGoogleButton("google-signup-button", {
+        theme: "outline",
+        size: "large",
+        text: "signup_with",
+      });
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [renderGoogleButton]);
 
   const getPasswordStrength = (pwd: string) => {
     if (!pwd) return { score: 0, text: "", color: "" };
@@ -129,7 +132,7 @@ export const RegisterPage: React.FC = () => {
           <div className="mb-6">
             <div
               id="google-signup-button"
-              className="flex justify-center w-full"
+              className="flex justify-center w-full min-h-[44px]"
             ></div>
           </div>
 
