@@ -35,7 +35,7 @@ import { ConfirmExitDialog } from "../../components/ConfirmExitDialog";
 import { useSessionExit } from "../../hooks/useSessionExit";
 import { api } from "../../services/api";
 
-const SESSION_LIMIT = 10;
+const SESSION_LIMIT = 20;
 
 // Definicje typów dla filtrów
 interface SessionFilters {

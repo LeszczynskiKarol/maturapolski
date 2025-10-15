@@ -9948,20 +9948,6 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       tags: ["interpunkcja", "przecinek"],
     },
 
-    // Ortografia
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "LANGUAGE_USE",
-      difficulty: 2,
-      points: 2,
-      question: "W których wyrazach piszemy 'rz' po spółgłosce?",
-      content: {
-        options: ["p_edmiot", "k_esło", "t_eba", "b_uch", "d_ewo", "g_ywa"],
-      },
-      correctAnswer: [0, 2, 3],
-      tags: ["ortografia", "rz"],
-    },
-
     // Stylistyka
     {
       type: "SHORT_ANSWER",
@@ -28696,7 +28682,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 2,
       epoch: "RENAISSANCE",
       work: "Makbet",
-      question: "Dopasuj postacie do ich losów",
+      question: "Dopasuj bohaterów „Makbeta” do ich losów",
       content: {
         matchingType: "character_fate",
         leftColumn: [
