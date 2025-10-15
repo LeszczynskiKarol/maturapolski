@@ -298,7 +298,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
             <div>
               <h4 className="font-bold mb-4 text-lg">Baza wiedzy</h4>
               <ul className="space-y-3 text-gray-400">
-                {featuredHubs.slice(0, 4).map((hub) => (
+                {featuredHubs.slice(0, 40000000000).map((hub) => (
                   <li key={hub.id}>
                     <a
                       href={`/baza-wiedzy/${hub.slug}`}
