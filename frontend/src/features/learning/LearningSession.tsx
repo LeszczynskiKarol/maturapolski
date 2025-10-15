@@ -86,6 +86,7 @@ const getCategoryLabel = (categoryValue: string): string => {
 
 export const LearningSession: React.FC = () => {
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
+  const [noExercisesError, setNoExercisesError] = useState<string | null>(null);
   const [isAutoStarting, setIsAutoStarting] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [, setPendingNavigation] = useState<string | null>(null);
@@ -946,7 +947,15 @@ export const LearningSession: React.FC = () => {
       setIsLoadingNext(true);
       try {
         const { data } = await fetchNextExercise();
-        setCurrentExercise(data);
+
+        // ✅ SPRAWDŹ ERROR
+        if (data?.error === "NO_EXERCISES") {
+          setNoExercisesError(data.message || "Brak dostępnych ćwiczeń");
+          setCurrentExercise(null);
+          toast.error("Brak ćwiczeń spełniających wybrane kryteria");
+        } else {
+          setCurrentExercise(data);
+        }
       } catch (error) {
         console.error("Error fetching first exercise:", error);
         toast.error("Nie udało się pobrać pierwszego zadania");
@@ -1032,25 +1041,31 @@ export const LearningSession: React.FC = () => {
 
   // Next exercise with filters
   const goToNextExercise = async () => {
-    // ✅ SPRAWDŹ czy już jest 20 UKOŃCZONYCH
     if (sessionStats.completed >= SESSION_LIMIT) {
       console.log("=== SESSION LIMIT REACHED - NO MORE QUESTIONS ===");
-      // Po prostu nie rób nic - przycisk już pokazuje "Zakończ sesję"
       return;
     }
 
     setAnswer(null);
     setShowFeedback(false);
     setIsLoadingNext(true);
+    setNoExercisesError(null); // ✅ Wyczyść poprzedni error
 
     try {
       const { data } = await fetchNextExercise();
-      if (data) {
+
+      // ✅ SPRAWDŹ CZY JEST ERROR
+      if (data?.error === "NO_EXERCISES") {
+        setNoExercisesError(
+          data.message || "Brak dostępnych ćwiczeń spełniających kryteria"
+        );
+        setCurrentExercise(null);
+      } else if (data) {
         setCurrentExercise(data);
+        setNoExercisesError(null);
       } else {
         console.log("No more exercises available");
         toast.error("Brak więcej dostępnych ćwiczeń");
-        // Zakończ sesję automatycznie jeśli brak pytań
         setSessionComplete(true);
         setSessionActive(false);
       }
@@ -1267,6 +1282,61 @@ export const LearningSession: React.FC = () => {
             <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
           </div>
         </div>
+      )}
+
+      {!isLoadingNext && noExercisesError && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-8 mb-6"
+        >
+          <div className="text-center py-12">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-yellow-100 dark:bg-yellow-900/30 mb-6">
+              <AlertCircle className="w-10 h-10 text-yellow-600 dark:text-yellow-400" />
+            </div>
+
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              Brak dostępnych ćwiczeń
+            </h3>
+
+            <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+              {noExercisesError}
+            </p>
+
+            <div className="space-y-3">
+              <button
+                onClick={() => {
+                  setShowFilters(true);
+                  setNoExercisesError(null);
+                }}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg 
+                   hover:bg-blue-700 transition-colors font-medium"
+              >
+                <Filter className="w-5 h-5" />
+                Zmień filtry
+              </button>
+
+              <button
+                onClick={async () => {
+                  setNoExercisesError(null);
+                  setSessionFilters({});
+                  localStorage.removeItem("sessionFilters");
+                  await applyFiltersAndRefresh({});
+                }}
+                className="block w-full px-6 py-3 border-2 border-gray-300 dark:border-gray-600 
+                   text-gray-700 dark:text-gray-300 rounded-lg 
+                   hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium"
+              >
+                Wyczyść wszystkie filtry
+              </button>
+            </div>
+
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-6">
+              💡 Spróbuj wybrać szerszy zakres poziomów trudności lub zmień
+              kategorię
+            </p>
+          </div>
+        </motion.div>
       )}
 
       {/* Exercise Content */}
