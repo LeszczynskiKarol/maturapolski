@@ -666,13 +666,26 @@ export async function learningRoutes(fastify: FastifyInstance) {
 
         // Dla WORK REVIEW i EPOCH REVIEW - NIE dodawaj kategorii (pobieraj ze wszystkich)
         if (filters.category && !isWorkReview && !isEpochReview) {
-          baseWhere.category = filters.category;
+          const categories = filters.category
+            .split(",")
+            .map((c: string) => c.trim());
+
+          if (categories.length === 1) {
+            baseWhere.category = categories[0];
+          } else {
+            baseWhere.category = { in: categories };
+          }
         }
 
         // Dla EPOCH REVIEW - filtruj po epoce
         if (filters.epoch && isEpochReview) {
-          baseWhere.epoch = filters.epoch;
-          console.log(`Filtering by epoch: ${filters.epoch}`);
+          const epochs = filters.epoch.split(",").map((e: string) => e.trim());
+
+          if (epochs.length === 1) {
+            baseWhere.epoch = epochs[0];
+          } else {
+            baseWhere.epoch = { in: epochs };
+          }
         }
 
         // Dla WORK REVIEW - filtruj po lekturze
@@ -708,8 +721,17 @@ export async function learningRoutes(fastify: FastifyInstance) {
         else {
           console.log(`Using intelligent difficulty selection`);
 
-          // Chcemy trudniejsze zadania, ale tylko do odblokowanego poziomu
-          if (currentStreak >= 5 && currentAccuracy > 0.8) {
+          // 🔥 NOWE: Gdy user RĘCZNIE wybrał kategorię, użyj szerokiego zakresu!
+          if (filters.category && !isWorkReview && !isEpochReview) {
+            console.log(
+              `User manually selected category, using wider difficulty range`
+            );
+            targetDifficulty = [1, 2, 3].filter(
+              (d) => d <= maxAllowedDifficulty
+            );
+          }
+          // Chcemy trudniejsze zadania
+          else if (currentStreak >= 5 && currentAccuracy > 0.8) {
             targetDifficulty = [
               Math.min(3, maxAllowedDifficulty),
               Math.min(4, maxAllowedDifficulty),
@@ -745,8 +767,42 @@ export async function learningRoutes(fastify: FastifyInstance) {
         baseWhere.difficulty = { in: targetDifficulty };
       }
 
-      console.log("Final WHERE clause:", JSON.stringify(baseWhere, null, 2));
+      // ✅✅✅ DEBUGGING - DODAJ TO ✅✅✅
+      console.log(`=== EXCLUSION DEBUG ===`);
+      console.log(`sessionCompletedIds.length: ${sessionCompletedIds.length}`);
+      console.log(`toExclude.length: ${toExclude.length}`);
+      if (toExclude.length > 0) {
+        console.log(`First 10 excluded:`, toExclude.slice(0, 10));
+      }
 
+      // Sprawdź ile pytań WRITING jest w bazie OGÓŁEM
+      const totalWriting = await prisma.exercise.count({
+        where: {
+          category: "WRITING",
+        },
+      });
+      console.log(`Total WRITING exercises in DB: ${totalWriting}`);
+
+      // Sprawdź ile WRITING jest na difficulty 1-2
+      if (filters.category === "WRITING") {
+        const writingLow = await prisma.exercise.count({
+          where: {
+            category: "WRITING",
+            difficulty: { in: [1, 2] },
+          },
+        });
+        console.log(`WRITING difficulty 1-2: ${writingLow}`);
+
+        const writingAll = await prisma.exercise.count({
+          where: {
+            category: "WRITING",
+          },
+        });
+        console.log(`WRITING all difficulties: ${writingAll}`);
+      }
+
+      console.log("Final WHERE clause:", JSON.stringify(baseWhere, null, 2));
+      // ✅✅✅ KONIEC DEBUGOWANIA ✅✅✅
       // Pobierz kandydatów
       const allCandidates = await prisma.exercise.findMany({
         where: baseWhere,

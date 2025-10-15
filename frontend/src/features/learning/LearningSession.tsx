@@ -1254,7 +1254,7 @@ export const LearningSession: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-5xl mx-auto p-6">
       {/* Loading state */}
       {isLoadingNext && (
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-8 mb-6">
@@ -2504,10 +2504,18 @@ export const LearningSession: React.FC = () => {
               {/* Dla innych sesji - pokaż wszystkie filtry */}
               {!sessionFilters.work && !sessionFilters.epoch && (
                 <>
+                  {/* ✅ KATEGORIE - POPRAWIONE */}
                   {sessionFilters.category && (
                     <li className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
-                      {getCategoryLabel(sessionFilters.category)}
+                      {(() => {
+                        const categories = sessionFilters.category.split(",");
+                        const uniqueCategories = [...new Set(categories)]; // Usuń duplikaty
+                        const polishNames = uniqueCategories.map((cat) =>
+                          getCategoryLabel(cat.trim())
+                        );
+                        return polishNames.join(", ");
+                      })()}
                     </li>
                   )}
                   {sessionFilters.epoch && (
@@ -2521,6 +2529,7 @@ export const LearningSession: React.FC = () => {
             </ul>
           </div>
         )}
+
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           {/* Stats Grid - 2 kolumny na mobile, wszystkie w linii na desktop */}
           <div className="grid grid-cols-2 xs:grid-cols-3 lg:flex lg:items-center gap-3 lg:gap-6 w-full sm:w-auto">
@@ -2859,7 +2868,6 @@ const InSessionFilters: React.FC<{
   };
 
   useEffect(() => {
-    onFiltersChange(localFilters);
     fetchAvailableCount(localFilters);
   }, [localFilters]);
 
@@ -2875,6 +2883,7 @@ const InSessionFilters: React.FC<{
       category: newCategories.length > 0 ? newCategories.join(",") : undefined,
     };
     setLocalFilters(newFilters);
+    onFiltersChange(newFilters);
   };
 
   const handleEpochToggle = (epochValue: string) => {
@@ -2892,6 +2901,7 @@ const InSessionFilters: React.FC<{
         newEpochs.length > 0 ? "HISTORICAL_LITERARY" : localFilters.category,
     };
     setLocalFilters(newFilters);
+    onFiltersChange(newFilters);
   };
 
   const handleTypeToggle = (typeValue: string) => {
@@ -2906,6 +2916,7 @@ const InSessionFilters: React.FC<{
       type: newTypes.length > 0 ? newTypes.join(",") : undefined,
     };
     setLocalFilters(newFilters);
+    onFiltersChange(newFilters);
   };
 
   const handleDifficultyToggle = (level: number) => {
@@ -2924,11 +2935,13 @@ const InSessionFilters: React.FC<{
       difficulty: newDifficulties.length > 0 ? newDifficulties : undefined,
     };
     setLocalFilters(newFilters);
+    onFiltersChange(newFilters);
   };
 
   const clearFilters = () => {
     setLocalFilters({});
     setSelectedDifficulties([]);
+    onFiltersChange({});
   };
 
   return (
@@ -3074,13 +3087,37 @@ const InSessionFilters: React.FC<{
         </p>
         <div className="flex flex-wrap gap-1">
           {EXERCISE_TYPES.filter((type) => {
-            // ✅ Ukryj jednokrotny i wielokrotny wybór gdy wybrano "Pisanie"
-            if (selectedCategories.includes("WRITING")) {
-              return (
-                type.value !== "CLOSED_SINGLE" &&
-                type.value !== "CLOSED_MULTIPLE"
+            // ✅ LOGIKA FILTROWANIA TYPÓW
+
+            // Jeśli wybrano kategorie
+            if (selectedCategories.length > 0) {
+              const hasWriting = selectedCategories.includes("WRITING");
+              const hasOtherCategories = selectedCategories.some(
+                (cat) => cat !== "WRITING"
               );
+
+              // Przypadek 1: TYLKO Pisanie (bez innych kategorii)
+              if (hasWriting && !hasOtherCategories) {
+                // Pokaż TYLKO zadania otwarte
+                return !["CLOSED_SINGLE", "CLOSED_MULTIPLE"].includes(
+                  type.value
+                );
+              }
+
+              // Przypadek 2: Pisanie + inne kategorie
+              if (hasWriting && hasOtherCategories) {
+                // Pokaż wszystko
+                return true;
+              }
+
+              // Przypadek 3: Inne kategorie BEZ Pisania
+              if (!hasWriting && hasOtherCategories) {
+                // Ukryj zadania otwarte (notatka i wypracowanie)
+                return !["SYNTHESIS_NOTE", "ESSAY"].includes(type.value);
+              }
             }
+
+            // Domyślnie - pokaż wszystko
             return true;
           }).map((type) => (
             <button
@@ -3099,13 +3136,26 @@ const InSessionFilters: React.FC<{
           ))}
         </div>
 
-        {/* ✅ Informacja gdy wybrano "Pisanie" */}
-        {selectedCategories.includes("WRITING") && (
+        {/* ✅ Informacja o filtrowaniu */}
+        {selectedCategories.length > 0 && (
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-            💡 Dla kategorii "Pisanie" dostępne są tylko zadania otwarte
+            {selectedCategories.includes("WRITING") &&
+              selectedCategories.length === 1 && (
+                <>
+                  💡 Dla kategorii "Pisanie" dostępne są tylko zadania otwarte
+                </>
+              )}
+            {!selectedCategories.includes("WRITING") &&
+              selectedCategories.length > 0 && (
+                <>
+                  💡 Zadania typu Notatka i Wypracowanie dostępne tylko w
+                  kategorii "Pisanie"
+                </>
+              )}
           </p>
         )}
       </div>
+
       {/* ✅ POZIOM TRUDNOŚCI - pełny dark mode */}
       <div>
         <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">

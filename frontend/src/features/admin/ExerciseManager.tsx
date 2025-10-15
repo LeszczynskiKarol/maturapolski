@@ -112,7 +112,7 @@ const ExerciseManager: React.FC = () => {
     setIsLoading(true);
     try {
       // Pobierz WSZYSTKIE zadania zwiększając limit
-      const response = await api.get("/api/admin/exercises?limit=1000");
+      const response = await api.get("/api/admin/exercises?limit=10000000000");
       console.log("API Response:", response.data);
 
       if (response.data.exercises) {

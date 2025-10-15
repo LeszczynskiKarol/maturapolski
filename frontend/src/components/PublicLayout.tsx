@@ -315,7 +315,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
             <div>
               <h4 className="font-bold mb-4 text-lg">Testy z lektur</h4>
               <ul className="space-y-3 text-gray-400">
-                {testHubs.slice(0, 4).map((hub) => (
+                {testHubs.slice(0, 4000000000000000000000000000).map((hub) => (
                   <li key={hub.id}>
                     <a
                       href={`/test/${hub.slug}`}
