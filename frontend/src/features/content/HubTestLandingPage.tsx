@@ -167,7 +167,7 @@ export function HubTestLandingPage() {
                     MaturaPolski.pl
                   </span>
                   <span className="text-xs font-semibold text-gray-600 tracking-wide">
-                    Zdaj na 100%
+                    Testy maturalne z polskiego
                   </span>
                 </div>
               </Link>

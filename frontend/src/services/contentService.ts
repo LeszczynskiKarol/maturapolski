@@ -1,5 +1,5 @@
 // frontend/src/services/contentService.ts
-import api from "./api";
+import { api } from "./api";
 
 export const contentService = {
   // Public

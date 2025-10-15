@@ -9,12 +9,14 @@
     "build:all": "cd backend && npm run build && cd ../frontend && npm run build"
   },
   "devDependencies": {
+    "@types/jwt-decode": "^3.1.0",
     "concurrently": "^8.2.2"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.907.0",
     "@fastify/multipart": "^8.3.0",
     "@fingerprintjs/fingerprintjs": "^4.6.2",
+    "jwt-decode": "^4.0.0",
     "react-helmet-async": "^2.0.5"
   }
 }

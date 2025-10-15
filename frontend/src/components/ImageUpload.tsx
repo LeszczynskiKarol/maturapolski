@@ -1,7 +1,7 @@
 // frontend/src/components/ImageUpload.tsx
 import { useState, useRef } from "react";
 import { X, Loader2, Image as ImageIcon } from "lucide-react";
-import api from "../services/api";
+import { api } from "../services/api";
 
 interface ImageUploadProps {
   onImageUploaded: (url: string) => void;

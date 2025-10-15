@@ -2027,13 +2027,13 @@ async function seedExercises() {
       content: {
         options: [
           "Wczoraj byłem w kinie.",
-          "Dziś idę do szkoły.",
           "Przeczytałem książkę.",
-          "Jutro pójdę na spacer.",
+          "Dziś idę do szkoły.",
           "Bawiłem się z kolegą.",
+          "Jutro pójdę na spacer.",
         ],
       },
-      correctAnswer: [0, 2, 4],
+      correctAnswer: [0, 1, 3],
     },
     {
       type: "CLOSED_MULTIPLE",
@@ -2883,17 +2883,6 @@ async function seedExercises() {
       question: "Które litery są samogłoskami?",
       content: {
         options: ["a", "b", "e", "k", "i"],
-      },
-      correctAnswer: [0, 2, 4],
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "LANGUAGE_USE",
-      difficulty: 1,
-      points: 2,
-      question: "Wybierz wyrazy oznaczające kolory.",
-      content: {
-        options: ["czerwony", "szybki", "zielony", "głośny", "niebieski"],
       },
       correctAnswer: [0, 2, 4],
     },
@@ -4108,17 +4097,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       content: { options: ["Gustaw", "Konrad", "Henryk", "Kordian"] },
       correctAnswer: 2,
     },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 1,
-      points: 1,
-      epoch: "CONTEMPORARY",
-      work: "Ferdydurke",
-      question: "Kto napisał 'Ferdydurke'?",
-      content: { options: ["Witkacy", "Gombrowicz", "Schulz", "Mrożek"] },
-      correctAnswer: 1,
-    },
+
     {
       type: "CLOSED_SINGLE",
       category: "HISTORICAL_LITERARY",
@@ -4832,23 +4811,6 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
           "cechy Kordiana (3 punkty)",
           "główna różnica między nimi",
           "150-200 słów",
-        ],
-      },
-    },
-    {
-      type: "SYNTHESIS_NOTE",
-      category: "LANGUAGE_USE",
-      difficulty: 2,
-      points: 5,
-      question: "Wyjaśnij zasady ortograficzne.",
-      content: {
-        topic: "Kiedy piszemy „rz” a kiedy „ż”?",
-        requirements: [
-          "zasada podstawowa",
-          "5 przykładów z „rz”",
-          "5 przykładów z „ż”",
-          "wyjątki od reguły",
-          "100-150 słów",
         ],
       },
     },
@@ -5858,7 +5820,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       correctAnswer: [0, 2], // A i C
       metadata: {
         explanation:
-          "Przymiotniki: piękny, czerwony. 'Pięknie' to przysłówek, 'czerwień' to rzeczownik.",
+          "Przymiotniki: piękny, czerwony. „Pięknie” to przysłówek, „czerwień” to rzeczownik.",
       },
     },
     {
@@ -5908,7 +5870,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       correctAnswer: [0, 2], // A i C
       metadata: {
         explanation:
-          "Wykrzykniki wyrażają emocje: ach, ojej. 'Bardzo' i 'szybko' to przysłówki.",
+          "Wykrzykniki wyrażają emocje: ach, ojej. „Bardzo” i „szybko” to przysłówki.",
       },
     },
     {
@@ -6350,7 +6312,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       category: "LANGUAGE_USE",
       difficulty: 1,
       points: 1,
-      question: "Podaj przeciwieństwo wyrazu 'duży'.",
+      question: "Podaj przeciwieństwo wyrazu „duży”.",
       content: {
         expectedAnswer: "mały",
         acceptableAnswers: ["mały", "malutki", "niewielki"],
@@ -6379,17 +6341,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
         acceptableAnswers: ["pytajnik", "znak zapytania", "?"],
       },
     },
-    {
-      type: "SHORT_ANSWER",
-      category: "LANGUAGE_USE",
-      difficulty: 1,
-      points: 1,
-      question: "Podaj liczbę mnogą wyrazu 'kot'.",
-      content: {
-        expectedAnswer: "koty",
-        acceptableAnswers: ["koty"],
-      },
-    },
+
     {
       type: "SHORT_ANSWER",
       category: "HISTORICAL_LITERARY",
@@ -6409,7 +6361,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       category: "LANGUAGE_USE",
       difficulty: 2,
       points: 2,
-      question: "Wyjaśnij znaczenie frazeologizmu 'mieć węża w kieszeni'.",
+      question: "Wyjaśnij znaczenie frazeologizmu „mieć węża w kieszeni”.",
       content: {
         requirements: ["znaczenie", "skąpstwo"],
         expectedElements: ["skąpy", "nie wydawać pieniędzy", "oszczędny"],
@@ -6420,7 +6372,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       category: "LANGUAGE_USE",
       difficulty: 2,
       points: 2,
-      question: "Przekształć zdanie na stronę bierną: 'Jan czyta książkę.'",
+      question: "Przekształć zdanie na stronę bierną: „Jan czyta książkę.”",
       content: {
         originalSentence: "Jan czyta książkę.",
         expectedAnswer: "Książka jest czytana przez Jana.",
@@ -6465,7 +6417,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       category: "LANGUAGE_USE",
       difficulty: 2,
       points: 2,
-      question: "Rozwiń skrót 'np.' i użyj go w zdaniu.",
+      question: "Rozwiń skrót „np.” i użyj go w zdaniu.",
       content: {
         requirements: ["rozwinięcie skrótu", "zdanie"],
         expectedElements: ["na przykład"],
@@ -6918,23 +6870,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
         requirements: ["definicja", "funkcja", "przykład"],
       },
     },
-    {
-      type: "SHORT_ANSWER",
-      category: "LANGUAGE_USE",
-      difficulty: 2,
-      points: 2,
-      question:
-        "Wyjaśnij różnicę znaczeniową między wyrazami 'bezdomny' a 'bezdomowy'.",
-      content: {
-        requirements: ["różnica znaczeniowa", "przykłady użycia"],
-      },
-      rubric: {
-        criteria: [
-          { name: "bezdomny - człowiek", points: 1 },
-          { name: "bezdomowy - zwierzę", points: 1 },
-        ],
-      },
-    },
+
     {
       type: "SHORT_ANSWER",
       category: "LANGUAGE_USE",
@@ -7594,24 +7530,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       },
       correctAnswer: 1,
     },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "CONTEMPORARY",
-      work: "Ferdydurke",
-      question: "Kto napisał 'Ferdydurke'?",
-      content: {
-        options: [
-          "Witold Gombrowicz",
-          "Sławomir Mrożek",
-          "Tadeusz Różewicz",
-          "Czesław Miłosz",
-        ],
-      },
-      correctAnswer: 0,
-    },
+
     {
       type: "CLOSED_SINGLE",
       category: "LANGUAGE_USE",
@@ -8026,7 +7945,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 1,
       epoch: "INTERWAR",
       work: "Ferdydurke",
-      question: "Kto napisał 'Ferdydurke'?",
+      question: "Kto napisał „Ferdydurke”?",
       content: {
         options: [
           "Stanisław Ignacy Witkiewicz",
@@ -10745,7 +10664,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 1,
       points: 1,
       work: "Treny",
-      question: "Kto jest autorem cyklu 'Trenów'?",
+      question: "Kto jest autorem cyklu „Trenów”?",
       content: {
         options: [
           "Jan Kochanowski",
@@ -11035,7 +10954,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 3,
       points: 2,
       work: "Wesele",
-      question: "Wyjaśnij symbolikę chochoła w finale 'Wesela' Wyspiańskiego.",
+      question: "Wyjaśnij symbolikę chochoła w finale „Wesela” Wyspiańskiego.",
       content: {
         hint: "Marazm, bezwładność społeczeństwa",
       },
@@ -11070,7 +10989,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 3,
       points: 2,
       work: "Ferdydurke",
-      question: "Jak w 'Ferdydurke' Gombrowicz przedstawia problem formy?",
+      question: "Jak w „Ferdydurke” Gombrowicz przedstawia problem formy?",
       content: {
         requirements: ["Definicja formy", "Przykłady z tekstu"],
       },
@@ -11329,7 +11248,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       difficulty: 3,
       points: 4,
       question:
-        "Zinterpretuj tytuł 'Wesela' Wyspiańskiego w kontekście problematyki utworu (150-200 słów).",
+        "Zinterpretuj tytuł „Wesela” Wyspiańskiego w kontekście problematyki utworu (150-200 słów).",
       content: {
         hint: "Rozważ znaczenie dosłowne i symboliczne",
       },
@@ -21662,7 +21581,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
         "Wyjaśnij, na czym polega konflikt tragiczny w sytuacji Antygony.",
       content: {
         instruction:
-          "Opisz dylemat Antygony i dlaczego każdy jej wybór był tragiczny. (50-80 słów)",
+          "Opisz dylemat Antygony i zastanów się, dlaczego każdy jej wybór był tragiczny. (50-80 słów)",
       },
       rubric: {
         maxScore: 3,
@@ -23592,7 +23511,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 3,
       epoch: "POSITIVISM",
       work: "Lalka",
-      question: "Dopasuj postać z Lalki do jej roli społecznej.",
+      question: "Dopasuj postać z „Lalki” do jej roli społecznej.",
       content: {
         matchingType: "character_role",
         leftColumn: [
@@ -25294,7 +25213,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 2,
       epoch: "POSITIVISM",
       work: "Lalka",
-      question: "Dopasuj postaci do ich głównych cech charakteru.",
+      question: "Dopasuj postaci z „Lalki” do ich głównych cech charakteru.",
       content: {
         matchingType: "character_traits",
         leftColumn: [
@@ -25538,7 +25457,8 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       work: "Lalka",
       points: 2,
       epoch: "POSITIVISM",
-      question: "Kim była Helena Stawska i czym różniła się od Izabeli?",
+      question:
+        "Kim była Helena Stawska i czym różniła się od Izabeli Łęckiej?",
       content: {
         work: "Lalka",
         instruction:
@@ -28705,7 +28625,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 1,
       epoch: "RENAISSANCE",
       work: "Makbet",
-      question: "Jaki jest główny temat tragedii 'Makbet'?",
+      question: "Jaki jest główny temat tragedii „Makbet”?",
       content: {
         options: [
           "miłość romantyczna",
@@ -28752,7 +28672,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       epoch: "RENAISSANCE",
       work: "Makbet",
       question:
-        "Które elementy nadprzyrodzone pojawiają się w dramacie? (wybierz wszystkie)",
+        "Które elementy nadprzyrodzone pojawiają się w „Makbecie”? (wybierz wszystkie)",
       content: {
         options: [
           "wiedźmy",
@@ -28811,7 +28731,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       epoch: "RENAISSANCE",
       work: "Makbet",
       question:
-        "Które tematy występują w 'Makbecie'? (wybierz wszystkie poprawne)",
+        "Które tematy występują w „Makbecie”? (wybierz wszystkie poprawne)",
       content: {
         options: [
           "ambicja i władza",
@@ -28957,7 +28877,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       epoch: "RENAISSANCE",
       work: "Makbet",
       question:
-        "Jaki zabieg dramaturgiczny stosuje Shakespeare pokazując las Birnam 'idący' do Dunsinane?",
+        "Jaki zabieg dramaturgiczny stosuje Shakespeare, pokazując las Birnam „idący” do Dunsinane?",
       content: {
         options: [
           "metaforę",
@@ -29013,7 +28933,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 1,
       epoch: "RENAISSANCE",
       work: "Makbet",
-      question: "Kim jest Hekate w dramacie?",
+      question: "Kim jest Hekate w dramacie „Makbet”?",
       content: {
         options: ["żoną Makbeta", "królową wiedźm", "córką Duncana", "służącą"],
       },
@@ -29029,7 +28949,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 1,
       epoch: "RENAISSANCE",
       work: "Makbet",
-      question: "Co oznacza 'jutro, i jutro, i jutro' w monologu Makbeta?",
+      question: "Co oznacza „jutro, i jutro, i jutro” w monologu Makbeta?",
       content: {
         options: [
           "nadzieję na lepszą przyszłość",
@@ -29056,7 +28976,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
         options: [
           "o śmierć",
           "o bogactwo",
-          "o 'odniewieścenie' - pozbawienie kobiecych uczuć",
+          "o „odniewieścenie” - pozbawienie kobiecych uczuć",
           "o piękno",
         ],
       },
@@ -29143,28 +29063,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
           "Makduf odkrywa ciało króla Duncana rankiem po morderstwie.",
       },
     },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "RENAISSANCE",
-      work: "Makbet",
-      question: "Jak Lady Makbet atakuje męskość swojego męża?",
-      content: {
-        options: [
-          "chwali jego odwagę",
-          "zarzuca mu tchórzostwo i brak męskości",
-          "ignoruje go",
-          "porównuje do Duncana",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Lady Makbet manipuluje mężem, kwestionując jego męskość i odwagę.",
-      },
-    },
+
     {
       type: "SHORT_ANSWER",
       category: "HISTORICAL_LITERARY",
@@ -29741,11 +29640,11 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 1,
       epoch: "ROMANTICISM",
       work: "Pan Tadeusz",
-      question: "W jakiej porze roku rozpoczyna się akcja 'Pana Tadeusza'?",
+      question: "W jakiej porze roku rozpoczyna się akcja „Pana Tadeusza”?",
       content: {
-        options: ["Wiosną", "Latem", "Jesienią", "Zimą"],
+        options: ["Wiosną", "Jesienią", "Zimą", "Latem"],
       },
-      correctAnswer: 1,
+      correctAnswer: 4,
       metadata: {
         explanation:
           "Akcja rozpoczyna się latem - w inwokacji czytamy o 'pagórkach zielonych' i 'łąkach zielonych, szeroko nad błękitnym Niemnem rozciągnionych'.",
@@ -29850,7 +29749,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       epoch: "ROMANTICISM",
       work: "Pan Tadeusz",
       question:
-        "Które zwierzęta odgrywają ważną rolę w fabule? (wybierz wszystkie poprawne)",
+        "Które zwierzęta odgrywają ważną rolę w fabule „Pana Tadeusza”? (wybierz wszystkie poprawne)",
       content: {
         options: [
           "Charty Kusy i Sokół",
@@ -29901,7 +29800,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       epoch: "ROMANTICISM",
       work: "Pan Tadeusz",
       question:
-        "Dopasuj postać do jej charakterystycznego przedmiotu lub atrybutu.",
+        "Dopasuj postać z „Pana Tadeusza” do jej charakterystycznego przedmiotu lub atrybutu.",
       content: {
         matchingType: "character_attribute",
         leftColumn: [
@@ -29935,7 +29834,8 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 3,
       epoch: "ROMANTICISM",
       work: "Pan Tadeusz",
-      question: "Dopasuj zdarzenie do księgi, w której miało miejsce.",
+      question:
+        "Dopasuj zdarzenie do księgi „Pana Tadeusza”, w której miało miejsce.",
       content: {
         matchingType: "event_book",
         leftColumn: [
@@ -29968,7 +29868,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 2,
       epoch: "ROMANTICISM",
       work: "Pan Tadeusz",
-      question: "Kto wypowiada słowa: 'Kochajmy się!'?",
+      question: "Kto wypowiada słowa: „Kochajmy się!” w „Panu Tadeuszu”?",
       content: {
         options: [
           "Tadeusz do Zosi",
@@ -29980,7 +29880,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       correctAnswer: 1,
       metadata: {
         explanation:
-          "'Kochajmy się' to tytuł XII (ostatniej) księgi Pana Tadeusza, będący zarazem przesłaniem całego utworu.",
+          "„Kochajmy się” to tytuł XII (ostatniej) księgi „Pana Tadeusza”, będący zarazem przesłaniem całego utworu.",
       },
     },
     {
@@ -30214,7 +30114,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       epoch: "ROMANTICISM",
       work: "Pan Tadeusz",
       question:
-        "Wymień trzy główne rody szlacheckie występujące w 'Panu Tadeuszu'.",
+        "Wymień trzy główne rody szlacheckie występujące w „Panu Tadeuszu”.",
       content: {
         expectedKeywords: ["Soplicowie", "Horeszkowie", "Dobrzyńscy"],
         maxWords: 10,
@@ -30232,7 +30132,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       epoch: "ROMANTICISM",
       work: "Pan Tadeusz",
       question:
-        "Krótko wyjaśnij, dlaczego 'Pan Tadeusz' nazywany jest 'epopeją narodową'.",
+        "Krótko wyjaśnij, dlaczego „Pan Tadeusz” nazywany jest „epopeją narodową”.",
       content: {
         expectedKeywords: [
           "historia",
@@ -30278,7 +30178,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 2,
       epoch: "ROMANTICISM",
       work: "Pan Tadeusz",
-      question: "Podaj tytuły trzech dowolnych ksiąg 'Pana Tadeusza'.",
+      question: "Podaj tytuły trzech dowolnych ksiąg „Pana Tadeusza”.",
       content: {
         expectedKeywords: [
           "Gospodarstwo",
@@ -30743,7 +30643,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       epoch: "ROMANTICISM",
       work: "Pan Tadeusz",
       question:
-        "Które elementy kultury sarmackiej przedstawione są w utworze? (wybierz wszystkie)",
+        "Które elementy kultury sarmackiej przedstawione są w „Panu Tadeuszu”? (wybierz wszystkie)",
       content: {
         options: [
           "Kontusz i żupan",
@@ -31106,7 +31006,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 3,
       epoch: "ROMANTICISM",
       work: "Pan Tadeusz",
-      question: "Jakie cechy epopei zachowuje 'Pan Tadeusz'? Wymień 3-4.",
+      question: "Jakie cechy epopei zachowuje „Pan Tadeusz”? Wymień 3-4.",
       content: {
         expectedKeywords: [
           "inwokacja",

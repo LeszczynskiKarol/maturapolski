@@ -1,141 +1,112 @@
 // frontend/src/services/api.ts
+
 import axios from "axios";
 import { useAuthStore } from "../store/authStore";
 
-console.log("=== ENV VARIABLES ===");
-console.log("import.meta.env.VITE_API_URL:", import.meta.env.VITE_API_URL);
-console.log("import.meta.env.MODE:", import.meta.env.MODE);
-console.log("import.meta.env.DEV:", import.meta.env.DEV);
-console.log("All env:", import.meta.env);
-console.log("=====================");
-
-const API_URL =
-  import.meta.env.VITE_API_URL || "https://server-reactapp.ngrok.app/";
-console.log("FINAL API_URL:", API_URL);
-
 export const api = axios.create({
-  baseURL: API_URL,
+  baseURL: import.meta.env.VITE_API_URL || "https://server-reactapp.ngrok.app",
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 30000, // 30 second timeout for AI assessment
 });
 
-// Request interceptor - dodaje token do każdego request
+let isRefreshing = false;
+let failedQueue: any[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
+// ✅ Request interceptor - dodaj token do każdego żądania
 api.interceptors.request.use(
   (config) => {
     const token = useAuthStore.getState().token;
-
-    // Debug logging
-    console.log("API Request:", {
-      url: config.url,
-      token: token ? `Bearer ${token.substring(0, 10)}...` : "No token",
-      authState: useAuthStore.getState().isAuthenticated,
-    });
-
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
     return config;
   },
   (error) => {
-    console.error("Request interceptor error:", error);
     return Promise.reject(error);
   }
 );
 
-// Response interceptor - obsługuje błędy autoryzacji
+// ✅ Response interceptor - automatyczne odświeżanie tokenu
 api.interceptors.response.use(
-  (response) => {
-    // Debug logging dla sukcesu
-    console.log("API Response success:", {
-      url: response.config.url,
-      status: response.status,
-    });
-    return response;
-  },
+  (response) => response,
   async (error) => {
-    console.error("API Response error:", {
-      url: error.config?.url,
-      status: error.response?.status,
-      message: error.response?.data?.error || error.message,
-    });
-
     const originalRequest = error.config;
 
-    // Jeśli otrzymamy 401 i nie jest to retry
+    // Jeśli błąd 401 i to nie jest retry
     if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // Jeśli już odświeżamy token, dodaj żądanie do kolejki
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return api(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
 
-      // Sprawdź czy to nie jest publiczny endpoint
-      const publicEndpoints = [
-        "/api/auth/login",
-        "/api/auth/register",
-        "/api/materials",
-        "/api/materials/works",
-        "/api/materials/epochs",
-        "/api/materials/terms",
-        "/api/materials/quotes",
-      ];
+      const refreshToken = useAuthStore.getState().refreshToken;
 
-      const isPublicEndpoint = publicEndpoints.some((endpoint) =>
-        originalRequest.url?.includes(endpoint)
-      );
-
-      // Jeśli to publiczny endpoint, po prostu zwróć błąd
-      if (isPublicEndpoint) {
+      if (!refreshToken) {
+        // Brak refresh tokenu - wyloguj
+        useAuthStore.getState().logout();
+        window.location.href = "/login";
         return Promise.reject(error);
       }
 
-      // Spróbuj odświeżyć token
-      const refreshToken = useAuthStore.getState().refreshToken;
+      try {
+        // Odśwież token
+        const response = await axios.post(
+          `${
+            import.meta.env.VITE_API_URL || "http://localhost:3001"
+          }/api/auth/refresh`,
+          { refreshToken }
+        );
 
-      if (refreshToken && !originalRequest.url?.includes("/api/auth/refresh")) {
-        try {
-          console.log("Attempting to refresh token...");
-          const response = await axios.post(`${API_URL}/api/auth/refresh`, {
-            refreshToken,
-          });
+        const { token: newToken, refreshToken: newRefreshToken } =
+          response.data;
 
-          const { token, refreshToken: newRefreshToken } = response.data;
+        // Zapisz nowe tokeny
+        useAuthStore.getState().setTokens({
+          token: newToken,
+          refreshToken: newRefreshToken,
+        });
 
-          // Zaktualizuj tokeny w store
-          useAuthStore.getState().setTokens({
-            token,
-            refreshToken: newRefreshToken,
-          });
+        // Przetwórz kolejkę oczekujących żądań
+        processQueue(null, newToken);
 
-          console.log("Token refreshed successfully");
-
-          // Powtórz oryginalne żądanie z nowym tokenem
-          originalRequest.headers.Authorization = `Bearer ${token}`;
-          return api(originalRequest);
-        } catch (refreshError) {
-          console.error("Token refresh failed:", refreshError);
-          // Refresh się nie udał - wyloguj użytkownika
-          const currentPath = window.location.pathname;
-          if (currentPath !== "/login" && currentPath !== "/register") {
-            console.log("Logging out due to failed refresh");
-            useAuthStore.getState().logout();
-            window.location.href = "/login";
-          }
-          return Promise.reject(refreshError);
-        }
-      } else {
-        // Nie mamy refresh tokena - wyloguj jeśli to nie strona logowania
-        const currentPath = window.location.pathname;
-        if (currentPath !== "/login" && currentPath !== "/register") {
-          console.log("401 Unauthorized - no refresh token, logging out");
-          useAuthStore.getState().logout();
-          window.location.href = "/login";
-        }
+        // Ponów oryginalne żądanie z nowym tokenem
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        return api(originalRequest);
+      } catch (refreshError) {
+        // Refresh token jest nieprawidłowy - wyloguj
+        processQueue(refreshError, null);
+        useAuthStore.getState().logout();
+        window.location.href = "/login";
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 
-    // Dla innych błędów po prostu zwróć błąd
     return Promise.reject(error);
   }
 );
-
-export default api;

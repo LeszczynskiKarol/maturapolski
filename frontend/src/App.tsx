@@ -7,6 +7,7 @@ import { WorkReviewPage } from "./features/student/WorkReviewPage";
 import { HubDetailPage } from "./features/content/HubDetailPage";
 import { PageViewer } from "./features/content/PageViewer";
 import ContentManager from "./features/admin/ContentManager";
+import { useTokenRefresh } from "./hooks/useTokenRefresh";
 import { CookieBanner } from "./components/CookieBanner";
 import { PrivacyPolicyPage } from "./features/legal/PrivacyPolicyPage";
 import { TermsOfServicePage } from "./features/legal/TermsOfServicePage";
@@ -102,6 +103,7 @@ const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 export const App: React.FC = () => {
   const user = useAuthStore((state) => state.user);
+  useTokenRefresh();
 
   return (
     <ThemeInitializer>

@@ -354,7 +354,7 @@ export class AuthService {
         role: user.role,
       },
       this.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "24h" }
     );
   }
 
@@ -365,7 +365,7 @@ export class AuthService {
         type: "refresh",
       },
       this.JWT_REFRESH_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "30d" }
     );
   }
 

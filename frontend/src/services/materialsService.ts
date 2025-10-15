@@ -1,5 +1,5 @@
 // frontend/src/services/materialsService.ts
-import api from "./api";
+import { api } from "./api";
 
 export const materialsService = {
   // Public methods

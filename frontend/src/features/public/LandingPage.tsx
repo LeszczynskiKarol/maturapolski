@@ -87,7 +87,7 @@ export const LandingPage: React.FC = () => {
                   MaturaPolski.pl
                 </span>
                 <span className="text-xs font-semibold text-gray-600 tracking-wide">
-                  Zdaj na 100%
+                  Testy maturalne z polskiego
                 </span>
               </div>
             </Link>
@@ -326,7 +326,7 @@ export const LandingPage: React.FC = () => {
             />
             <StepCard
               number="4"
-              title="Zdaj na 100%"
+              title="Testy maturalne z polskiego"
               description="Śledź postępy i osiagaj cele edukacyjne"
               icon={<Trophy className="w-8 h-8" />}
             />

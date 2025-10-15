@@ -333,3 +333,324 @@ Format (zastąp wartościami):
 export function getAIClient() {
   return anthropic;
 }
+
+// backend/src/ai/aiService.ts
+
+export async function generateSessionSummary(
+  sessionData: {
+    completed: number;
+    correct: number;
+    streak: number;
+    maxStreak: number;
+    points: number;
+    timeSpent: number;
+    exercises: Array<{ difficulty: number; category: string; score: number }>;
+  },
+  userHistory: {
+    totalSessions: number;
+    averageScore: number;
+    totalPoints: number;
+    level: number;
+    recentSessions: Array<{
+      completed: number;
+      correct: number;
+      points: number;
+    }>;
+    categoryStrengths: Record<string, number>;
+    improvementAreas: string[];
+  },
+  userName: string = "Uczniu"
+): Promise<any> {
+  if (!anthropic) {
+    throw new Error("AI service not initialized");
+  }
+
+  const accuracy =
+    sessionData.completed > 0
+      ? Math.round((sessionData.correct / sessionData.completed) * 100)
+      : 0;
+
+  const avgSessionAccuracy =
+    userHistory.totalSessions > 0 ? Math.round(userHistory.averageScore) : 0;
+
+  const prompt = `
+Jesteś AI coachem edukacyjnym. Przeanalizuj zakończoną sesję nauki ucznia i stwórz SZCZERE, REALISTYCZNE podsumowanie.
+
+IMIĘ UCZNIA: ${userName}
+
+=== OBECNA SESJA ===
+- Ukończone zadania: ${sessionData.completed}
+- Poprawne odpowiedzi: ${sessionData.correct}
+- Dokładność: ${accuracy}%
+- Najdłuższa seria: ${sessionData.maxStreak}
+- Zdobyte punkty: ${sessionData.points}
+- Czas nauki: ${Math.round(sessionData.timeSpent / 60)} minut
+
+Trudność zadań w sesji:
+${sessionData.exercises
+  .map(
+    (e) =>
+      `- Poziom ${e.difficulty}, ${e.category}: ${
+        e.score > 0 ? "poprawne" : "błędne"
+      }`
+  )
+  .join("\n")}
+
+=== HISTORIA UCZNIA ===
+- Całkowita liczba sesji: ${userHistory.totalSessions}
+- Średnia dokładność (wszystkie sesje): ${avgSessionAccuracy}%
+- Całkowite punkty: ${userHistory.totalPoints}
+- Poziom: ${userHistory.level}
+
+Ostatnie 5 sesji:
+${userHistory.recentSessions
+  .map(
+    (s, i) =>
+      `Sesja ${i + 1}: ${s.correct}/${s.completed} poprawnych, ${s.points} pkt`
+  )
+  .join("\n")}
+
+Mocne strony ucznia:
+${Object.entries(userHistory.categoryStrengths)
+  .map(([cat, score]) => `- ${cat}: ${Math.round(score as number)}%`)
+  .join("\n")}
+
+Obszary do poprawy:
+${userHistory.improvementAreas.join(", ") || "Brak zidentyfikowanych obszarów"}
+
+=== KRYTYCZNE ZASADY TONU I SZCZEROŚCI ===
+
+1. **KATEGORYZACJA WYNIKU** (na podstawie dokładności):
+   - DOSKONAŁY (≥80%): Entuzjastyczny, świętujący
+   - BARDZO DOBRY (70-79%): Pozytywny, zachęcający
+   - DOBRY (60-69%): Ciepły, wspierający z drobnymi sugestiami
+   - ŚREDNI (50-59%): Neutralny, konstruktywny, wskazujący co poprawić
+   - SŁABY (30-49%): Szczery, empatyczny, ale jasno wskazujący problemy
+   - BARDZO SŁABY (<30%): Poważny, wspierający, ale BARDZO szczery - to wymaga uwagi!
+
+2. **TON NA PODSTAWIE AKTUALNEGO WYNIKU:**
+
+   Jeśli accuracy >= 70%:
+   - Używaj entuzjastycznych sformułowań
+   - Podkreślaj osiągnięcia
+   - Celebruj sukces
+   
+   Jeśli accuracy 50-69%:
+   - Bądź pozytywny, ale realistyczny
+   - Wskaż co poszło dobrze I co wymaga pracy
+   - Zachęcaj, ale konkretnie
+   
+   Jeśli accuracy < 50%:
+   - Bądź SZCZERY - to nie jest dobry wynik
+   - Wskaż konkretne problemy
+   - Zaoferuj praktyczne rozwiązania
+   - Zachęcaj, ale w sposób realistyczny: "Wiem, że możesz lepiej"
+   - NIE mów "świetnie", "znakomicie" itp. gdy wynik jest słaby!
+
+3. **PORÓWNANIE Z POPRZEDNIMI SESJAMI:**
+   - Jeśli accuracy > avgSessionAccuracy o >10%: "Znacząca poprawa!"
+   - Jeśli accuracy jest podobne (±10%): "Stabilny poziom"
+   - Jeśli accuracy < avgSessionAccuracy o >10%: "Dzisiaj było trudniej - przeanalizujmy dlaczego"
+   - Jeśli accuracy spadło o >20%: "To wyraźny spadek - coś wymaga uwagi"
+
+4. **AUTENTYCZNOŚĆ > FAŁSZYWA POZYTYWNOŚĆ:**
+   - NIE mów "świetnie" gdy jest źle
+   - NIE twierdź że jest postęp, gdy go nie ma
+   - NIE używaj wykrzykników (!) przy słabych wynikach
+   - Bądź wspierający, ale SZCZERY
+
+5. **PRZYKŁADY WŁAŚCIWEGO TONU:**
+
+   Dla accuracy 10%:
+   ✅ "Dzisiejsza sesja była wyzwaniem - tylko ${sessionData.correct} z ${
+    sessionData.completed
+  } poprawnych odpowiedzi. To wynik, który wymaga uwagi i analizy."
+   ❌ "Świetnie dzisiaj pracowałeś!"
+   
+   Dla accuracy 85%:
+   ✅ "Fantastyczna sesja! ${sessionData.correct} z ${
+    sessionData.completed
+  } to znakomity wynik!"
+   ❌ "Niezły wynik, ale możesz lepiej"
+
+=== ZADANIE ===
+Stwórz SZCZERE, REALISTYCZNE podsumowanie w formacie JSON:
+
+{
+  "headline": "Krótki nagłówek ODPOWIEDNI DO WYNIKU (maks 60 znaków) - użyj imienia",
+  "overallFeedback": "2-3 zdania REALISTYCZNEGO feedbacku - bądź szczery o jakości sesji",
+  "highlights": [
+    "2-4 konkretne rzeczy, które NAPRAWDĘ poszły dobrze (nawet przy słabym wyniku można znaleźć coś pozytywnego)"
+  ],
+  "improvements": [
+    "Jeśli jest postęp: wskaż go konkretnie. Jeśli NIE MA postępu: nie udawaj że jest!"
+  ],
+  "areasToFocus": [
+    "2-4 KONKRETNE, PRAKTYCZNE obszary do poprawy - szczególnie ważne przy słabych wynikach"
+  ],
+  "motivationalMessage": "Osobista wiadomość DOSTOSOWANA DO WYNIKU (2-3 zdania) - użyj imienia",
+  "comparisonToPrevious": "SZCZERA analiza w porównaniu do poprzednich sesji",
+  "nextSteps": [
+    "3-4 KONKRETNE, WYKONALNE kroki - nie ogólniki!"
+  ],
+  "celebrationEmoji": "Emoji ODPOWIEDNIE DO WYNIKU (🎉 dla >80%, 💪 dla 50-80%, 🤔 dla <50%)"
+}
+
+=== ZASADY TECHNICZNE ===
+1. UŻYWAJ IMIENIA UCZNIA (${userName}) TYLKO:
+   - Raz w headline
+   - Raz w motivationalMessage
+   - NIGDZIE INDZIEJ!
+
+2. FORMA CZASOWNIKÓW - używaj WYŁĄCZNIE form bezosobowych:
+   ✅ "Udało Ci się", "Świetnie Ci poszło", "Możesz lepiej"
+   ❌ "Zrobiłeś", "Zrobiłaś", "Wykonałeś", "Wykonałaś"
+
+3. Zwróć TYLKO czysty JSON bez dodatkowych znaków
+
+=== PRZYKŁADY PRAWIDŁOWYCH PODSUMOWAŃ ===
+
+Dla accuracy 85%:
+{
+  "headline": "Świetna robota, ${userName}! Znakomita sesja!",
+  "overallFeedback": "To była naprawdę dobra sesja! ${sessionData.correct} z ${
+    sessionData.completed
+  } poprawnych odpowiedzi to znakomity wynik. Widać, że materiał został dobrze przyswojony.",
+  "celebrationEmoji": "🎉"
+}
+
+Dla accuracy 55%:
+{
+  "headline": "${userName}, sesja z mieszanymi wynikami",
+  "overallFeedback": "Sesja przyniosła rezultaty na średnim poziomie - ${
+    sessionData.correct
+  } z ${
+    sessionData.completed
+  } poprawnych. Jest przestrzeń do poprawy, ale już teraz widać obszary, w których radzisz sobie dobrze.",
+  "celebrationEmoji": "💪"
+}
+
+Dla accuracy 15%:
+{
+  "headline": "${userName}, ta sesja była wyzwaniem",
+  "overallFeedback": "Dzisiejsza sesja okazała się trudna - tylko ${
+    sessionData.correct
+  } z ${
+    sessionData.completed
+  } poprawnych odpowiedzi. To wynik, który jasno wskazuje, że materiał wymaga gruntownej powtórki i innego podejścia do nauki.",
+  "areasToFocus": [
+    "Przeanalizuj szczegółowo błędne odpowiedzi - zrozum DLACZEGO były błędne",
+    "Wróć do podstaw w kategorii ${
+      sessionData.exercises[0].category
+    } - materiał wymaga solidnej powtórki",
+    "Rozważ zmianę strategii nauki - obecna może nie być optymalna"
+  ],
+  "motivationalMessage": "Rozumiem, że ta sesja mogła być frustrująca. Ważne, żebyś nie zniechęcał się - każdy ma gorsze dni. Kluczowe jest teraz solidne przeanalizowanie błędów i zaplanowanie systematycznej powtórki materiału, ${userName}.",
+  "celebrationEmoji": "🤔"
+}
+`;
+
+  try {
+    const response = await anthropic.messages.create({
+      model: "claude-3-haiku-20240307",
+      max_tokens: 2048,
+      temperature: 0.7,
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    const messageContent = response.content[0];
+    if (messageContent.type === "text") {
+      let textContent = messageContent.text.trim();
+
+      const jsonMatch = textContent.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error("No JSON found in AI response");
+      }
+
+      const result = JSON.parse(jsonMatch[0]);
+
+      // Dodaj metryki sesji do wyniku
+      return {
+        ...result,
+        sessionMetrics: {
+          completed: sessionData.completed,
+          correct: sessionData.correct,
+          accuracy,
+          points: sessionData.points,
+          timeSpent: Math.round(sessionData.timeSpent / 60),
+          streak: sessionData.maxStreak,
+        },
+        comparison: {
+          accuracyChange: accuracy - avgSessionAccuracy,
+          isImprovement: accuracy >= avgSessionAccuracy,
+        },
+      };
+    }
+
+    throw new Error("Invalid AI response format");
+  } catch (error) {
+    console.error("AI session summary error:", error);
+
+    // Fallback TAKŻE musi być realistyczny!
+    const isGoodSession = accuracy >= 60;
+
+    return {
+      headline: isGoodSession
+        ? `${userName}, sesja zakończona!`
+        : `${userName}, ta sesja była wyzwaniem`,
+      overallFeedback: isGoodSession
+        ? `Ukończyłeś ${sessionData.completed} zadań z ${accuracy}% dokładnością. To była produktywna sesja!`
+        : `Ukończyłeś ${sessionData.completed} zadań, ale tylko ${sessionData.correct} poprawnie (${accuracy}%). Materiał wymaga dokładniejszej analizy i powtórki.`,
+      highlights: isGoodSession
+        ? [
+            `Zdobyte punkty: ${sessionData.points}`,
+            `Najdłuższa seria: ${sessionData.maxStreak}`,
+            `Czas nauki: ${Math.round(sessionData.timeSpent / 60)} minut`,
+          ]
+        : [
+            `Poświęciłeś ${Math.round(
+              sessionData.timeSpent / 60
+            )} minut na naukę - to dobry czas`,
+            sessionData.maxStreak > 0
+              ? `Była krótka passa ${sessionData.maxStreak} poprawnych`
+              : "Próbowałeś różnych zadań",
+          ],
+      improvements: isGoodSession
+        ? ["Kontynuuj regularną naukę w tym tempie"]
+        : ["Dzisiejsza sesja pokazała obszary wymagające więcej uwagi"],
+      areasToFocus: isGoodSession
+        ? ["Spróbuj trudniejszych zadań w następnej sesji"]
+        : [
+            "Przeanalizuj dokładnie błędne odpowiedzi",
+            "Wróć do materiału teoretycznego",
+            "Zacznij od łatwiejszych zadań aby odbudować pewność siebie",
+          ],
+      motivationalMessage: isGoodSession
+        ? `Każda sesja przybliża Cię do celu. Świetna robota, ${userName}!`
+        : `Każdy ma trudniejsze dni, ${userName}. Ważne jest, żeby nie poddawać się i systematycznie pracować nad słabszymi obszarami. Następna sesja będzie lepsza!`,
+      comparisonToPrevious: isGoodSession
+        ? "Kontynuujesz swoją naukę - to najważniejsze!"
+        : "Ta sesja była trudniejsza niż poprzednie - warto przeanalizować dlaczego",
+      nextSteps: isGoodSession
+        ? ["Zaplanuj następną sesję", "Powtórz materiał z tej sesji"]
+        : [
+            "Przeanalizuj wszystkie błędne odpowiedzi",
+            "Powtórz podstawy w obszarach gdzie było najtrudniej",
+            "Zaplanuj sesję z łatwiejszymi zadaniami dla odbudowy pewności siebie",
+          ],
+      celebrationEmoji: isGoodSession ? "🎉" : "🤔",
+      sessionMetrics: {
+        completed: sessionData.completed,
+        correct: sessionData.correct,
+        accuracy,
+        points: sessionData.points,
+        timeSpent: Math.round(sessionData.timeSpent / 60),
+        streak: sessionData.maxStreak,
+      },
+      comparison: {
+        accuracyChange: 0,
+        isImprovement: isGoodSession,
+      },
+    };
+  }
+}

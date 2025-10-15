@@ -4,6 +4,7 @@ import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 import { LevelProgressService } from "../services/levelProgressService";
 import { SpacedRepetitionService } from "../services/spacedRepetitionService";
+import { generateSessionSummary } from "../ai/aiService";
 
 const levelProgress = new LevelProgressService();
 const spacedRepetition = new SpacedRepetitionService();
@@ -1978,6 +1979,147 @@ export async function learningRoutes(fastify: FastifyInstance) {
     } catch (error) {
       console.error("Error getting works stats:", error);
       return reply.code(500).send({ error: "Failed to get works stats" });
+    }
+  });
+
+  fastify.post("/session/ai-summary", async (request, reply) => {
+    try {
+      const userId = (request.user as any).userId;
+      const { sessionId, userName } = request.body as {
+        sessionId: string;
+        userName?: string;
+      };
+
+      console.log("=== GENERATING AI SESSION SUMMARY ===");
+      console.log("Session ID:", sessionId);
+      console.log("User Name:", userName);
+
+      // Pobierz dane sesji
+      const session = await prisma.learningSession.findUnique({
+        where: { id: sessionId },
+      });
+
+      if (!session || session.userId !== userId) {
+        return reply.code(404).send({ error: "Session not found" });
+      }
+
+      // Pobierz szczegóły ćwiczeń z sesji
+      const completedExercises = (session.completedExercises as any[]) || [];
+      const exerciseIds = completedExercises.map((ex) => ex.id);
+
+      const exercises = await prisma.exercise.findMany({
+        where: { id: { in: exerciseIds } },
+        select: {
+          id: true,
+          difficulty: true,
+          category: true,
+          points: true,
+        },
+      });
+
+      const exercisesWithScores = exercises.map((ex) => {
+        const completed = completedExercises.find((c) => c.id === ex.id);
+        return {
+          difficulty: ex.difficulty,
+          category: ex.category,
+          score: completed?.score || 0,
+        };
+      });
+
+      // Pobierz historię użytkownika
+      const [userProfile, recentSessions, submissions] = await Promise.all([
+        prisma.userProfile.findUnique({ where: { userId } }),
+
+        prisma.learningSession.findMany({
+          where: {
+            userId,
+            status: "COMPLETED",
+            id: { not: sessionId }, // Exclude current session
+          },
+          orderBy: { finishedAt: "desc" },
+          take: 5,
+          select: {
+            completed: true,
+            correct: true,
+            points: true,
+          },
+        }),
+
+        prisma.submission.findMany({
+          where: { userId },
+          include: {
+            exercise: {
+              select: { category: true, points: true },
+            },
+          },
+          take: 100,
+        }),
+      ]);
+
+      // Oblicz mocne strony wg kategorii
+      const categoryScores: Record<string, number[]> = {};
+      submissions.forEach((s) => {
+        const cat = s.exercise.category;
+        if (!categoryScores[cat]) categoryScores[cat] = [];
+        const percentage = ((s.score || 0) / s.exercise.points) * 100;
+        categoryScores[cat].push(percentage);
+      });
+
+      const categoryStrengths: Record<string, number> = {};
+      Object.entries(categoryScores).forEach(([cat, scores]) => {
+        categoryStrengths[cat] =
+          scores.reduce((a, b) => a + b, 0) / scores.length;
+      });
+
+      // Znajdź obszary do poprawy (kategorie < 60%)
+      const improvementAreas = Object.entries(categoryStrengths)
+        .filter(([_, score]) => score < 60)
+        .map(([cat]) => cat);
+
+      // Przygotuj dane dla AI
+      const sessionData = {
+        completed: session.completed,
+        correct: session.correct,
+        streak: session.streak,
+        maxStreak: session.maxStreak,
+        points: session.points,
+        timeSpent: session.timeSpent,
+        exercises: exercisesWithScores,
+      };
+
+      const userHistory = {
+        totalSessions: recentSessions.length + 1,
+        averageScore: userProfile?.averageScore || 0,
+        totalPoints: userProfile?.totalPoints || 0,
+        level: userProfile?.level || 1,
+        recentSessions: recentSessions.map((s) => ({
+          completed: s.completed,
+          correct: s.correct,
+          points: s.points,
+        })),
+        categoryStrengths,
+        improvementAreas,
+      };
+
+      console.log("Generating AI summary with data:", {
+        sessionData,
+        historySize: userHistory.totalSessions,
+        userName,
+      });
+
+      // Generuj podsumowanie AI
+      const summary = await generateSessionSummary(
+        sessionData,
+        userHistory,
+        userName || "Uczniu" // ✅ Przekaż userName
+      );
+
+      console.log("AI summary generated successfully");
+
+      return reply.send(summary);
+    } catch (error) {
+      console.error("Error generating AI summary:", error);
+      return reply.code(500).send({ error: "Failed to generate summary" });
     }
   });
 }

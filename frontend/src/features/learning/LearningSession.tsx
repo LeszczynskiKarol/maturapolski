@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import confetti from "canvas-confetti";
+import { SessionSummary } from "./SessionSummary";
 import { QuestionWithContextLinks } from "../../components/QuestionWithContextLinks";
 import { AnimatePresence, motion } from "framer-motion";
 import { ExerciseBrowser } from "./ExerciseBrowser";
@@ -34,7 +35,7 @@ import { ConfirmExitDialog } from "../../components/ConfirmExitDialog";
 import { useSessionExit } from "../../hooks/useSessionExit";
 import { api } from "../../services/api";
 
-const SESSION_LIMIT = 20;
+const SESSION_LIMIT = 10;
 
 // Definicje typów dla filtrów
 interface SessionFilters {
@@ -84,6 +85,7 @@ const getCategoryLabel = (categoryValue: string): string => {
 };
 
 export const LearningSession: React.FC = () => {
+  const [isLoadingSummary, setIsLoadingSummary] = useState(false);
   const [isAutoStarting, setIsAutoStarting] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [, setPendingNavigation] = useState<string | null>(null);
@@ -91,6 +93,8 @@ export const LearningSession: React.FC = () => {
   const [isAdminUser, setIsAdminUser] = useState(false);
   const [isChangingExercise, setIsChangingExercise] = useState(false);
   const lastExerciseId = useRef<string | null>(null);
+  const [showSessionSummary, setShowSessionSummary] = useState(false);
+  const [aiSummary, setAiSummary] = useState<any>(null);
   const [showExerciseBrowser, setShowExerciseBrowser] = useState(false);
   const navigate = useNavigate();
   const hasAutoStarted = useRef(false);
@@ -125,6 +129,11 @@ export const LearningSession: React.FC = () => {
     queryKey: ["subscription-status"],
     queryFn: () => api.get("/api/subscription/status").then((r) => r.data),
   });
+  const { data: userData } = useQuery({
+    queryKey: ["user-profile"],
+    queryFn: () => api.get("/api/auth/me").then((r) => r.data),
+  });
+
   // Pobierz listę lektur (tylko te z ≥20 pytaniami)
   const { data: worksStats } = useQuery({
     queryKey: ["works-stats"],
@@ -479,6 +488,78 @@ export const LearningSession: React.FC = () => {
     await skipExercise();
   };
 
+  const handleSessionComplete = async () => {
+    console.log("=== SESSION COMPLETE - GENERATING SUMMARY ===");
+
+    if (sessionId && sessionStats.completed > 0) {
+      setIsLoadingSummary(true); // ✅ START LOADING
+
+      try {
+        // 1. Zapisz sesję
+        await saveSessionMutation.mutateAsync({
+          sessionId,
+          stats: sessionStats,
+          completedExercises: completedExercises,
+        });
+        console.log("✅ Session saved successfully");
+
+        // 2. Pobierz AI summary
+        const summaryResponse = await api.post(
+          "/api/learning/session/ai-summary",
+          {
+            sessionId,
+            userName:
+              userData?.username || userData?.email?.split("@")[0] || "Uczniu", // ✅ Przekaż userName
+          }
+        );
+
+        setAiSummary(summaryResponse.data);
+        setShowSessionSummary(true);
+      } catch (error) {
+        console.error("❌ Failed to generate summary:", error);
+        toast.error("Nie udało się wygenerować podsumowania");
+        completeFallbackSession();
+      } finally {
+        setIsLoadingSummary(false); // ✅ STOP LOADING
+      }
+    }
+  };
+
+  const completeFallbackSession = () => {
+    // Resetuj wszystko
+    setSessionId(null);
+    setSessionActive(false);
+    setSessionComplete(true);
+    setCurrentExercise(null);
+    setAnswer(null);
+    setShowFeedback(false);
+    setSessionFilters({});
+    localStorage.removeItem("sessionFilters");
+    localStorage.removeItem("isStudyPlanSession");
+    localStorage.removeItem("isEpochReview");
+    setCompletedExercises([]);
+    setSessionStats({
+      completed: 0,
+      correct: 0,
+      streak: 0,
+      maxStreak: 0,
+      points: 0,
+      timeSpent: 0,
+    });
+
+    refetchStats();
+    queryClient.invalidateQueries({
+      predicate: (query) => query.queryKey[0] === "all-sessions",
+    });
+
+    navigate("/dashboard");
+  };
+
+  const handleSummaryClose = () => {
+    setShowSessionSummary(false);
+    completeFallbackSession();
+  };
+
   const renderActionButtons = () => {
     if (!currentExercise) {
       return null;
@@ -493,66 +574,14 @@ export const LearningSession: React.FC = () => {
 
     // PO SUBMICIE - sprawdź czy to DOKŁADNIE 20 pytanie (nie 19!)
     if (hasSubmitted) {
-      // ✅ POPRAWKA: Sprawdzamy completed + 1 (bo to pytanie które WŁAŚNIE zakończyliśmy)
       const isLastQuestion = sessionStats.completed >= SESSION_LIMIT;
 
       return (
         <button
           onClick={async () => {
             if (isLastQuestion) {
-              // ✅ DOKŁADNIE TA SAMA LOGIKA CO W MODALU ZAMYKANIA
-              console.log("=== LAST QUESTION - ZAKOŃCZ SESJĘ ===");
-
-              if (sessionId && sessionStats.completed > 0) {
-                try {
-                  await saveSessionMutation.mutateAsync({
-                    sessionId,
-                    stats: sessionStats,
-                    completedExercises: completedExercises,
-                  });
-                  console.log("✅ Session saved successfully");
-                } catch (error) {
-                  console.error("❌ Failed to save session:", error);
-                }
-              }
-
-              // Resetuj wszystko
-              setSessionId(null);
-              setSessionActive(false);
-              setSessionComplete(true);
-              setCurrentExercise(null);
-              setAnswer(null);
-              setShowFeedback(false);
-              setSessionFilters({});
-              localStorage.removeItem("sessionFilters");
-              localStorage.removeItem("isStudyPlanSession");
-              localStorage.removeItem("isEpochReview");
-              setCompletedExercises([]);
-              setSessionStats({
-                completed: 0,
-                correct: 0,
-                streak: 0,
-                maxStreak: 0,
-                points: 0,
-                timeSpent: 0,
-              });
-
-              refetchStats();
-
-              // Invaliduj wszystkie query
-              await queryClient.invalidateQueries({
-                predicate: (query) => query.queryKey[0] === "all-sessions",
-              });
-
-              // Dodatkowe opóźnienie dla pewności
-              setTimeout(async () => {
-                await queryClient.invalidateQueries({
-                  predicate: (query) => query.queryKey[0] === "all-sessions",
-                });
-              }, 500);
-
-              // Nawiguj do dashboard
-              navigate("/dashboard");
+              // ✅ NOWE: Wywołaj funkcję z AI summary
+              await handleSessionComplete();
             } else {
               handleNext();
             }
@@ -726,7 +755,6 @@ export const LearningSession: React.FC = () => {
             spread: 100,
             origin: { y: 0.5 },
           });
-          // ✅ TEN TOAST JEST OK - odblokowanie poziomu
           toast.success(
             `Odblokowano poziom ${result.levelProgress.currentMaxDifficulty}!`,
             { duration: 5000 }
@@ -745,12 +773,6 @@ export const LearningSession: React.FC = () => {
         const newStreak = sessionStats.streak + 1;
 
         if (newStreak % 5 === 0) {
-          confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 },
-          });
-
           toast.success(
             `🔥 BRAWO! To już ${newStreak}. Twoja poprawna odpowiedź z rzędu. Kontynuuj passę!`,
             { duration: 4000 }
@@ -1544,30 +1566,39 @@ export const LearningSession: React.FC = () => {
                         ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
                         : isMatched && pairColor
                         ? `${pairColor.border} ${pairColor.bg}`
-                        : "border-gray-300 dark:border-gray-600 hover:border-gray-400"
+                        : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
                     }`}
                                 >
                                   <span
                                     className={`font-bold mr-2 
                     ${
                       isSelected
-                        ? "text-blue-600"
+                        ? "text-blue-600 dark:text-blue-400"
                         : isMatched && pairColor
                         ? pairColor.text
-                        : "text-gray-600"
+                        : "text-gray-600 dark:text-gray-300"
                     }`}
                                   >
                                     {item.id}.
                                   </span>
                                   <span
-                                    className={isMatched ? "font-medium" : ""}
+                                    className={`${
+                                      isMatched ? "font-medium" : ""
+                                    } ${
+                                      isSelected
+                                        ? "text-gray-900 dark:text-gray-100"
+                                        : isMatched
+                                        ? "text-gray-900 dark:text-gray-100"
+                                        : "text-gray-900 dark:text-gray-100"
+                                    }`}
                                   >
                                     {item.text}
                                   </span>
                                   {isMatched && (
                                     <span
                                       className={`ml-2 ${
-                                        pairColor?.text || "text-green-600"
+                                        pairColor?.text ||
+                                        "text-green-600 dark:text-green-400"
                                       }`}
                                     >
                                       →{" "}
@@ -1623,30 +1654,39 @@ export const LearningSession: React.FC = () => {
                         ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
                         : isMatched && pairColor
                         ? `${pairColor.border} ${pairColor.bg}`
-                        : "border-gray-300 dark:border-gray-600 hover:border-gray-400"
+                        : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
                     }`}
                                 >
                                   <span
                                     className={`font-bold mr-2 
                     ${
                       isSelected
-                        ? "text-blue-600"
+                        ? "text-blue-600 dark:text-blue-400"
                         : isMatched && pairColor
                         ? pairColor.text
-                        : "text-gray-600"
+                        : "text-gray-600 dark:text-gray-300"
                     }`}
                                   >
                                     {item.id}.
                                   </span>
                                   <span
-                                    className={isMatched ? "font-medium" : ""}
+                                    className={`${
+                                      isMatched ? "font-medium" : ""
+                                    } ${
+                                      isSelected
+                                        ? "text-gray-900 dark:text-gray-100"
+                                        : isMatched
+                                        ? "text-gray-900 dark:text-gray-100"
+                                        : "text-gray-900 dark:text-gray-100"
+                                    }`}
                                   >
                                     {item.text}
                                   </span>
                                   {isMatched && (
                                     <span
                                       className={`ml-2 ${
-                                        pairColor?.text || "text-green-600"
+                                        pairColor?.text ||
+                                        "text-green-600 dark:text-green-400"
                                       }`}
                                     >
                                       ←{" "}
@@ -1689,8 +1729,8 @@ export const LearningSession: React.FC = () => {
                       )}
 
                       <div className="text-center text-sm text-gray-500 dark:text-gray-400">
-                        💡 Kliknij element z lewej, potem z prawej aby połączyć.
-                        Każda para ma swój kolor.
+                        💡 Kliknij element z lewej, potem z prawej, aby
+                        połączyć. Każda para ma swój kolor.
                       </div>
                     </div>
                   )}
@@ -2398,62 +2438,9 @@ export const LearningSession: React.FC = () => {
                         sessionStats.completed >= SESSION_LIMIT;
 
                       if (isLastQuestion) {
-                        // ✅ DOKŁADNIE TA SAMA LOGIKA CO W renderActionButtons
-                        console.log("=== FEEDBACK BUTTON - ZAKOŃCZ SESJĘ ===");
-
-                        if (sessionId && sessionStats.completed > 0) {
-                          try {
-                            await saveSessionMutation.mutateAsync({
-                              sessionId,
-                              stats: sessionStats,
-                              completedExercises: completedExercises,
-                            });
-                            console.log("✅ Session saved successfully");
-                          } catch (error) {
-                            console.error("❌ Failed to save session:", error);
-                          }
-                        }
-
-                        // Resetuj wszystko
-                        setSessionId(null);
-                        setSessionActive(false);
-                        setSessionComplete(true);
-                        setCurrentExercise(null);
-                        setAnswer(null);
-                        setShowFeedback(false);
-                        setSessionFilters({});
-                        localStorage.removeItem("sessionFilters");
-                        localStorage.removeItem("isStudyPlanSession");
-                        localStorage.removeItem("isEpochReview");
-                        setCompletedExercises([]);
-                        setSessionStats({
-                          completed: 0,
-                          correct: 0,
-                          streak: 0,
-                          maxStreak: 0,
-                          points: 0,
-                          timeSpent: 0,
-                        });
-
-                        refetchStats();
-
-                        // Invaliduj wszystkie query
-                        await queryClient.invalidateQueries({
-                          predicate: (query) =>
-                            query.queryKey[0] === "all-sessions",
-                        });
-
-                        setTimeout(async () => {
-                          await queryClient.invalidateQueries({
-                            predicate: (query) =>
-                              query.queryKey[0] === "all-sessions",
-                          });
-                        }, 500);
-
-                        // Nawiguj do dashboard
-                        navigate("/dashboard");
+                        // ✅ NOWE: Wywołaj funkcję z AI summary
+                        await handleSessionComplete();
                       } else {
-                        // Nie ostatnie pytanie - idź dalej
                         await goToNextExercise();
                       }
                     }}
@@ -2744,62 +2731,25 @@ export const LearningSession: React.FC = () => {
         onConfirm={async () => {
           console.log("=== CONFIRM EXIT DIALOG - ZAKOŃCZ I WYJDŹ ===");
 
-          // ✅ 1. Najpierw zapisz sesję do bazy
-          if (sessionId && sessionStats.completed > 0) {
-            try {
-              await saveSessionMutation.mutateAsync({
-                sessionId,
-                stats: sessionStats,
-                completedExercises: completedExercises,
-              });
-              console.log("✅ Session saved successfully");
-            } catch (error) {
-              console.error("❌ Failed to save session:", error);
-            }
-          }
-
-          // ✅ 2. Resetuj state
-          setSessionId(null);
-          setSessionActive(false);
-          setSessionComplete(false);
-          setShowExitDialog(false);
-          setCurrentExercise(null);
-          setAnswer(null);
-          setShowFeedback(false);
-          setSessionFilters({});
-          setCompletedExercises([]);
-          setSessionStats({
-            completed: 0,
-            correct: 0,
-            streak: 0,
-            maxStreak: 0,
-            points: 0,
-            timeSpent: 0,
-          });
-
-          refetchStats();
-
-          // Invaliduj wszystkie warianty query
-          await queryClient.invalidateQueries({
-            predicate: (query) => query.queryKey[0] === "all-sessions",
-          });
-
-          // ✅ DODAJ: Force refetch po opóźnieniu
-          setTimeout(async () => {
-            await queryClient.invalidateQueries({
-              predicate: (query) => query.queryKey[0] === "all-sessions",
-            });
-            await queryClient.refetchQueries({
-              queryKey: ["all-sessions"],
-              type: "active",
-            });
-          }, 1000); // ✅ 1 sekunda aby backend zdążył zapisać
-
-          // 4. Nawiguj
-          if (sessionExit.nextLocation) {
-            await sessionExit.confirmAndExit(sessionExit.nextLocation);
+          // Jeśli sesja jest kompletna (20/20), pokaż summary
+          if (sessionStats.completed >= SESSION_LIMIT) {
+            setShowExitDialog(false);
+            await handleSessionComplete();
           } else {
-            navigate("/dashboard");
+            // W połowie sesji - zapisz i wyjdź bez summary
+            if (sessionId && sessionStats.completed > 0) {
+              try {
+                await saveSessionMutation.mutateAsync({
+                  sessionId,
+                  stats: sessionStats,
+                  completedExercises: completedExercises,
+                });
+              } catch (error) {
+                console.error("❌ Failed to save session:", error);
+              }
+            }
+
+            completeFallbackSession();
           }
         }}
         onCancel={() => {
@@ -2822,6 +2772,25 @@ export const LearningSession: React.FC = () => {
           onSelectExercise={loadSelectedExercise}
           onClose={() => setShowExerciseBrowser(false)}
         />
+      )}
+      {isLoadingSummary && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full mx-4">
+            <div className="text-center">
+              <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                Analizuję Twoją sesję...
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Przygotowuję personalizowane podsumowanie
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showSessionSummary && aiSummary && (
+        <SessionSummary summary={aiSummary} onClose={handleSummaryClose} />
       )}
     </div>
   );

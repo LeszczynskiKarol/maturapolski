@@ -85,27 +85,39 @@ export const Layout: React.FC = () => {
         }`}
       >
         {/* Logo Section */}
-        <div className="flex-shrink-0 p-6 border-b dark:border-gray-700">
-          <div className="flex items-center justify-between">
-            <h1
-              className={`text-2xl font-bold text-blue-600 dark:text-blue-400 transition-opacity ${
-                isSidebarCollapsed ? "opacity-0" : "opacity-100"
-              }`}
-            >
-              MaturaPolski.pl
-            </h1>
-            <button
-              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-              className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <ChevronLeft
-                className={`w-5 h-5 text-gray-600 dark:text-gray-400 transition-transform ${
-                  isSidebarCollapsed ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-          </div>
+        <div className="flex-shrink-0 border-b dark:border-gray-700">
+          {isSidebarCollapsed ? (
+            // Przy zamkniętym - tylko przycisk rozwiń
+            <div className="p-3">
+              <button
+                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                className="w-full p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center"
+                title="Rozwiń menu"
+              >
+                <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400 rotate-180" />
+              </button>
+            </div>
+          ) : (
+            // Przy otwartym - logo + przycisk zwiń
+            <div className="p-6">
+              <div className="flex items-center justify-between">
+                <Link to="/dashboard">
+                  <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400 hover:opacity-90 transition-opacity">
+                    MaturaPolski.pl
+                  </h1>
+                </Link>
+                <button
+                  onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                  className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  title="Zwiń menu"
+                >
+                  <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
+
         <div className="flex-1 overflow-y-auto min-h-0">
           {/* Navigation */}
           <nav className="px-3 py-4">
