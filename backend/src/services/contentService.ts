@@ -118,9 +118,6 @@ export class ContentService {
         year: hub.year,
         genre: hub.genre,
         isRequired: hub.isRequired,
-        // USUŃ te dwie linie - niech frontend używa fallbacka:
-        // metaTitle: hub.metaTitle,
-        // metaDescription: hub.metaDescription,
         pages: hub.pages,
       },
       stats: {
@@ -330,18 +327,24 @@ export class ContentService {
   async createHub(data: any) {
     const slug = this.generateSlug(data.title);
 
+    // Sanitizuj dane - zamień puste stringi na null
+    const sanitizedData = this.sanitizeHubData(data);
+
     return prisma.contentHub.create({
       data: {
-        ...data,
+        ...sanitizedData,
         slug,
       },
     });
   }
 
   async updateHub(id: string, data: any) {
+    // Sanitizuj dane - zamień puste stringi na null
+    const sanitizedData = this.sanitizeHubData(data);
+
     return prisma.contentHub.update({
       where: { id },
-      data,
+      data: sanitizedData,
     });
   }
 
@@ -353,7 +356,7 @@ export class ContentService {
   }
 
   async createPage(hubId: string, data: any) {
-    const slug = this.generateSlug(data.title);
+    const slug = data.slug || this.generateSlug(data.title);
 
     // Sprawdź czy hub istnieje
     const hub = await prisma.contentHub.findUnique({
@@ -362,9 +365,12 @@ export class ContentService {
 
     if (!hub) throw new Error("Hub not found");
 
+    // Sanitizuj dane strony - zamień puste stringi na null
+    const sanitizedData = this.sanitizePageData(data);
+
     return prisma.contentPage.create({
       data: {
-        ...data,
+        ...sanitizedData,
         hubId,
         slug,
       },
@@ -372,9 +378,12 @@ export class ContentService {
   }
 
   async updatePage(id: string, data: any) {
+    // Sanitizuj dane strony - zamień puste stringi na null
+    const sanitizedData = this.sanitizePageData(data);
+
     return prisma.contentPage.update({
       where: { id },
-      data,
+      data: sanitizedData,
     });
   }
 
@@ -438,6 +447,49 @@ export class ContentService {
       })
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "");
+  }
+
+  // Nowa funkcja sanityzująca - zamienia puste stringi na null
+  private sanitizeHubData(data: any) {
+    const sanitized = { ...data };
+
+    // Lista pól, które powinny być null jeśli są puste
+    const optionalFields = [
+      "author",
+      "epoch",
+      "genre",
+      "period",
+      "description",
+      "imageUrl",
+      "imageAlignment",
+      "imageWidth",
+      "metaTitle",
+      "metaDescription",
+    ];
+
+    optionalFields.forEach((field) => {
+      if (sanitized[field] === "") {
+        sanitized[field] = null;
+      }
+    });
+
+    return sanitized;
+  }
+
+  // Sanityzacja danych strony
+  private sanitizePageData(data: any) {
+    const sanitized = { ...data };
+
+    // Lista pól, które powinny być null jeśli są puste
+    const optionalFields = ["metaTitle", "metaDescription", "readingTime"];
+
+    optionalFields.forEach((field) => {
+      if (sanitized[field] === "") {
+        sanitized[field] = null;
+      }
+    });
+
+    return sanitized;
   }
 
   // ==========================================

@@ -30,7 +30,7 @@ export function TestBanner({
   if (variant === "compact") {
     return (
       <div className="my-8 bg-gradient-to-r from-blue-50 to-purple-50 border-l-4 border-blue-600 rounded-lg p-6">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
               <Trophy className="w-6 h-6 text-white" />
@@ -47,9 +47,9 @@ export function TestBanner({
           </div>
           <Link
             to={`/register`}
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2 whitespace-nowrap"
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all flex items-center justify-center gap-2 text-center"
           >
-            Załóż konto i rozwiąż test
+            <span>Załóż konto i rozwiąż test</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
