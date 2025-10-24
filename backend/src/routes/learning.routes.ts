@@ -664,6 +664,17 @@ export async function learningRoutes(fastify: FastifyInstance) {
       } else {
         // FREE LEARNING - inteligentna adaptacja Z OGRANICZENIEM
 
+        if (filters.type) {
+          const types = filters.type.split(",").map((t: string) => t.trim());
+
+          if (types.length === 1) {
+            baseWhere.type = types[0];
+          } else {
+            baseWhere.type = { in: types };
+          }
+          console.log(`Filtering by type(s): ${types.join(", ")}`);
+        }
+
         // Dla WORK REVIEW i EPOCH REVIEW - NIE dodawaj kategorii (pobieraj ze wszystkich)
         if (filters.category && !isWorkReview && !isEpochReview) {
           const categories = filters.category
@@ -674,6 +685,17 @@ export async function learningRoutes(fastify: FastifyInstance) {
             baseWhere.category = categories[0];
           } else {
             baseWhere.category = { in: categories };
+          }
+
+          // ✅ KRYTYCZNE: Jeśli użytkownik NIE wybrał kategorii WRITING,
+          // wyklucz pytania otwarte (SHORT_ANSWER, SYNTHESIS_NOTE, ESSAY)
+          if (!categories.includes("WRITING")) {
+            baseWhere.type = {
+              notIn: ["SHORT_ANSWER", "SYNTHESIS_NOTE", "ESSAY"],
+            };
+            console.log(
+              `Excluding open-ended questions (no WRITING category selected)`
+            );
           }
         }
 
@@ -721,8 +743,21 @@ export async function learningRoutes(fastify: FastifyInstance) {
         else {
           console.log(`Using intelligent difficulty selection`);
 
+          // 🔥 NOWE: Specjalna obsługa dla ręcznie wybranych trudnych typów
+          if (
+            filters.type &&
+            ["ESSAY", "SYNTHESIS_NOTE"].includes(filters.type)
+          ) {
+            console.log(
+              `User selected ESSAY/SYNTHESIS_NOTE, using full difficulty range`
+            );
+            targetDifficulty = Array.from(
+              { length: maxAllowedDifficulty },
+              (_, i) => i + 1
+            );
+          }
           // 🔥 NOWE: Gdy user RĘCZNIE wybrał kategorię, użyj szerokiego zakresu!
-          if (filters.category && !isWorkReview && !isEpochReview) {
+          else if (filters.category && !isWorkReview && !isEpochReview) {
             console.log(
               `User manually selected category, using wider difficulty range`
             );
@@ -730,6 +765,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
               (d) => d <= maxAllowedDifficulty
             );
           }
+
           // Chcemy trudniejsze zadania
           else if (currentStreak >= 5 && currentAccuracy > 0.8) {
             targetDifficulty = [

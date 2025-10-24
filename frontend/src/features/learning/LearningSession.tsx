@@ -2892,7 +2892,12 @@ const InSessionFilters: React.FC<{
   const [selectedTypes, setSelectedTypes] = useState<string[]>(
     currentFilters.type ? [currentFilters.type] : []
   );
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+  const [
+    selectedCategories,
+    {
+      /*setSelectedCategories*/
+    },
+  ] = useState<string[]>(
     currentFilters.category ? [currentFilters.category] : []
   );
   const [availableCount, setAvailableCount] = useState<number | null>(null);
@@ -2941,7 +2946,8 @@ const InSessionFilters: React.FC<{
     fetchAvailableCount(localFilters);
   }, [localFilters]);
 
-  const handleCategoryToggle = (categoryValue: string) => {
+  {
+    /*}const handleCategoryToggle = (categoryValue: string) => {
     const newCategories = selectedCategories.includes(categoryValue)
       ? selectedCategories.filter((c) => c !== categoryValue)
       : [...selectedCategories, categoryValue];
@@ -2954,7 +2960,8 @@ const InSessionFilters: React.FC<{
     };
     setLocalFilters(newFilters);
     onFiltersChange(newFilters);
-  };
+  };*/
+  }
 
   const handleEpochToggle = (epochValue: string) => {
     const newEpochs = selectedEpochs.includes(epochValue)
@@ -3051,7 +3058,7 @@ const InSessionFilters: React.FC<{
         )}
       </div>
 
-      {/* ✅ KATEGORIE - pełny dark mode */}
+      {/* ✅ KATEGORIE - pełny dark mode 
       <div className="grid grid-cols-3 gap-2 mb-3">
         {CATEGORIES.map((cat) => (
           <button
@@ -3067,7 +3074,7 @@ const InSessionFilters: React.FC<{
             {cat.label}
           </button>
         ))}
-      </div>
+      </div>*/}
 
       {/* ✅ LEKTURA - tylko w FREE SESSION */}
       {worksStats && Object.keys(worksStats).length > 0 && (

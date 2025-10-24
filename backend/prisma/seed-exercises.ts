@@ -5180,7 +5180,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
     },
     {
       type: "SYNTHESIS_NOTE",
-      category: "LANGUAGE_USE",
+      category: "WRITING",
       difficulty: 3,
       points: 5,
       question: "Sporządź syntezę: Metafora i metonimia w języku (60-80 słów).",
@@ -7218,13 +7218,13 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
         author: "Adam Mickiewicz",
         question: "Jaki typ bohatera reprezentuje narrator?",
         options: [
-          "romantyczny buntownik",
           "pozytywistyczny pracownik",
           "oświeceniowy rozumny człowiek",
+          "romantyczny buntownik",
           "barokowy grzesznik",
         ],
       },
-      correctAnswer: 0,
+      correctAnswer: 2,
     },
     {
       type: "CLOSED_SINGLE",
@@ -10028,7 +10028,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
     },
     {
       type: "SHORT_ANSWER",
-      category: "LANGUAGE_USE",
+      category: "WRITING",
       difficulty: 3,
       points: 2,
       question:
@@ -21294,7 +21294,8 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       points: 3,
       epoch: "ANTIQUITY",
       work: "Antygona",
-      question: "Dopasuj koncepcje do postaci, które je reprezentują.",
+      question:
+        "Dopasuj koncepcje do postaci, które je reprezentują w „Antygonie”.",
       content: {
         matchingType: "concepts_characters",
         leftColumn: [
@@ -25759,7 +25760,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
       work: "Lalka",
       epoch: "POSITIVISM",
       question:
-        "Wyjaśnij, czym jest język ezopowy i jak Prus go stosuje w Lalce.",
+        "Wyjaśnij, czym jest język ezopowy i jak Prus go stosuje w „Lalce.",
       content: {
         work: "Lalka",
         instruction:
