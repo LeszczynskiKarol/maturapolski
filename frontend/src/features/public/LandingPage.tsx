@@ -1154,7 +1154,7 @@ export const LandingPage: React.FC = () => {
             <div>
               <h4 className="font-bold mb-4 text-lg">Baza wiedzy</h4>
               <ul className="space-y-3 text-gray-400">
-                {featuredHubs.slice(0, 400000000000000000000).map((hub) => (
+                {featuredHubs.slice(0, 400000000).map((hub) => (
                   <li key={hub.id}>
                     <a
                       href={`/baza-wiedzy/${hub.slug}`}
