@@ -27150,6 +27150,1149 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
 
     // ======================== KONIEC PYTAŃ LALKA ===================== //
 
+    // ======================== POCZĄTEK PYTAŃ PRZEDWIOŚNIE ===================== //
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Kto jest autorem powieści 'Przedwiośnie'?",
+      content: {
+        options: [
+          "Władysław Reymont",
+          "Stefan Żeromski",
+          "Bolesław Prus",
+          "Stanisław Wyspiański",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Autorem 'Przedwiośnia' jest Stefan Żeromski - jeden z najważniejszych pisarzy Młodej Polski, który ukończył powieść we wrześniu 1924 roku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Jak ma na imię główny bohater powieści?",
+      content: {
+        options: ["Seweryn", "Hipolit", "Cezary", "Antoni"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Główny bohater to Cezary Baryka, syn Seweryna i Jadwigi, którego losy śledzimy od dzieciństwa w Baku po tragiczny finał w Warszawie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "W jakim mieście Cezary Baryka spędził dzieciństwo?",
+      content: {
+        options: ["w Warszawie", "w Moskwie", "w Petersburgu", "w Baku"],
+      },
+      correctAnswer: 3,
+      metadata: {
+        explanation:
+          "Cezary spędził dzieciństwo w Baku (Azerbejdżan), gdzie jego ojciec Seweryn pracował jako wysoki urzędnik przy przemysłach naftowych.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Kim z zawodu był Seweryn Baryka?",
+      content: {
+        options: [
+          "lekarzem",
+          "prawnikiem",
+          "inżynierem i urzędnikiem",
+          "nauczycielem",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Seweryn Baryka był inżynierem i wysokim urzędnikiem pracującym przy przemysłach naftowych w Baku, gdzie dorobił się znacznego majątku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Co symbolizują 'szklane domy' w powieści?",
+      content: {
+        options: [
+          "rzeczywiste budowle",
+          "utopijne wizje idealnego społeczeństwa",
+          "fabryki szkła",
+          "cieplarnie",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Szklane domy to metafora utopijnych wizji idealnego społeczeństwa - zarówno tych ojca Cezarego o dostatku, jak i bolszewickich o równości.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Jak umiera matka Cezarego?",
+      content: {
+        options: [
+          "zostaje zabita przez bolszewików",
+          "umiera w drodze do Polski",
+          "ginie w wybuchu",
+          "popełnia samobójstwo",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Jadwiga Barykowa umiera z wycieńczenia i choroby podczas ucieczki z Baku do Polski, nie dochodząc do upragnionej ojczyzny.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "W jakiej wojnie uczestniczy Cezary po przybyciu do Polski?",
+      content: {
+        options: [
+          "w I wojnie światowej",
+          "w wojnie polsko-bolszewickiej 1920",
+          "w powstaniu warszawskim",
+          "w wojnie z Niemcami",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Cezary jako ochotnik uczestniczy w wojnie polsko-bolszewickiej 1920 roku, bierze udział m.in. w wyprawie kijowskiej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Jak nazywa się majątek Wielosławskich?",
+      content: {
+        options: ["Leńce", "Chłodek", "Nawłoć", "Odolany"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Nawłoć to majątek rodziny Wielosławskich w powiecie opoczyńskim, gdzie Cezary spędza jesień i zimę 1920 roku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Kim jest Hipolit Wielosławski?",
+      content: {
+        options: [
+          "wujem Cezarego",
+          "towarzyszem broni i przyjacielem",
+          "nauczycielem",
+          "bratem Laury",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Hipolit Wielosławski to towarzysz broni Cezarego z wojny polsko-bolszewickiej, który zaprasza go do rodzinnego majątku Nawłoć.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Jak ma na imię ukochana Cezarego z Nawłoci?",
+      content: {
+        options: ["Karolina", "Wanda", "Laura", "Jadwiga"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Laura Kościeniecka to piękna wdowa z sąsiedniego majątku Leniec, w której Cezary się zakochuje.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Za kogo wychodzi Laura Kościeniecka?",
+      content: {
+        options: [
+          "za Cezarego",
+          "za Hipolita",
+          "za Władysława Barwickiego",
+          "pozostaje wdową",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Laura wychodzi za mąż za Władysława Barwickiego z powodów finansowych - musi spłacić długi ciążące na majątku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Kim jest Karolina Szarłatowiczówna?",
+      content: {
+        options: [
+          "siostrą Hipolita",
+          "daleka krewna Wielosławskich, sierota",
+          "żoną księdza",
+          "służącą",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Karolina to daleka krewna Wielosławskich, sierota, która pracuje jako gospodyni w Nawłoci i zakochuje się w Cezarym.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Jak umiera Karolina?",
+      content: {
+        options: [
+          "w wypadku",
+          "na gruźlicę",
+          "zostaje otruta strychniną",
+          "popełnia samobójstwo",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Karolina umiera otruta strychniną - prawdopodobnie przez zazdrosną Wandę Okszyńską, która również kochała Cezarego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Gdzie Cezary mieszka po powrocie do Warszawy?",
+      content: {
+        options: [
+          "w hotelu",
+          "u Gajowca",
+          "u Buławnika przy ulicy Miłej",
+          "w akademiku",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Cezary mieszka u kolegi Buławnika przy ulicy Miłej w dzielnicy żydowskiej, w nędznych warunkach.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Kim jest Szymon Gajowiec?",
+      content: {
+        options: [
+          "komunistą",
+          "wysokim urzędnikiem państwowym",
+          "profesorem uniwersytetu",
+          "księdzem",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Szymon Gajowiec to wysoki urzędnik państwowy ('wiceminister'), który zatrudnia Cezarego jako sekretarza przy pisaniu książki o Polsce.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Kim jest Antoni Lulek?",
+      content: {
+        options: [
+          "oficerem wojska",
+          "studentem prawa i ideowcem komunistycznym",
+          "dziennikarzem",
+          "lekarzem",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Antoni Lulek to student prawa, chorowity idealista komunistyczny, który stopniowo wpływa na Cezarego i wciąga go w działalność rewolucyjną.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Gdzie odbywa się tajne zebranie komunistyczne?",
+      content: {
+        options: [
+          "w piwnicy",
+          "w lesie",
+          "w biurze firmy 'Polex'",
+          "na uniwersytecie",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Tajne zebranie komunistyczne odbywa się w biurze firmy 'Polex - Polski eksport manufaktury i ziemiopłodów', która służy jako przykrywka.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Dlaczego Cezary wybiega z zebrania komunistycznego?",
+      content: {
+        options: [
+          "bo się boi policji",
+          "bo musi iść na wykłady",
+          "nie może znieść oskarżeń o tortury w polskich więzieniach",
+          "kłóci się z Lulkiem",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Cezary nie wytrzymuje napięcia, gdy słyszy szczegółowe oskarżenia o torturach stosowanych w polskich więzieniach - jest wstrząśnięty i zdezorientowany.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Gdzie Laura spotyka się z Cezarym w Warszawie?",
+      content: {
+        options: [
+          "w kawiarni",
+          "w teatrze",
+          "w Ogrodzie Saskim przy fontannie",
+          "w hotelu",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Laura umawia się z Cezarym w Ogrodzie Saskim obok fontanny, gdzie dochodzi do ich ostatniego dramatycznego spotkania.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Jak kończy się powieść?",
+      content: {
+        options: [
+          "Cezary wraca do Nawłoci",
+          "Cezary prowadzi komunistyczną manifestację pod Belweder",
+          "Cezary wyjeżdża za granicę",
+          "Cezary popełnia samobójstwo",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Powieść kończy się sceną, w której Cezary w żołnierskim mundurze prowadzi komunistyczną manifestację robotniczą pod Belweder.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Co oznacza tytuł 'Przedwiośnie'?",
+      content: {
+        options: [
+          "porę roku",
+          "nazwę majątku",
+          "czas niepewnych nadziei przed prawdziwym odrodzeniem",
+          "pseudonim bohatera",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Przedwiośnie to metafora czasu budzących się nadziei, ale niepewnego, pełnego zwodniczych ocieplień - jak pierwsze lata niepodległej Polski.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Jaki jest stosunek Jadwigi Barykowej do Rosji?",
+      content: {
+        options: [
+          "całkowicie się zasymilowała",
+          "nigdy się nie zaaklimatyzowała, tęskni za Siedlcami",
+          "kocha Rosję bardziej niż Polskę",
+          "jest obojętna",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Jadwiga nigdy się nie zaaklimatyzowała w Rosji, nie nauczyła się dobrze rosyjskiego i całe życie tęskniła za rodzinnymi Siedlcami.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question:
+        "Który z bohaterów reprezentuje typ polskiego karierowicza w carskiej Rosji?",
+      content: {
+        options: [
+          "Cezary Baryka",
+          "Seweryn Baryka",
+          "Antoni Lulek",
+          "Szymon Gajowiec",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Seweryn Baryka to typowy polski karierowicz w carskiej Rosji - bez wykształcenia, ale inteligentny, robi karierę urzędniczą, dochodzi do bogactwa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Co się stało z ojcem Cezarego?",
+      content: {
+        options: [
+          "wrócił do Polski",
+          "został zastrzelony podczas próby ucieczki z więzienia",
+          "zmarł na chorobę",
+          "wyjechał za granicę",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Seweryn Baryka został aresztowany przez bolszewików, uwięziony na statku-więzieniu i zastrzelony podczas próby ucieczki wpław.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Jaki konflikt wewnętrzny przeżywa Cezary w Warszawie?",
+      content: {
+        options: [
+          "między miłością a obowiązkiem",
+          "między wiarą a ateizmem",
+          "między patriotyzmem a rewolucyjnymi ideami komunistycznymi",
+          "między nauką a pracą",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Cezary jest rozdarty między patriotyzmem (walczył za Polskę) a pokusą rewolucyjnych idei komunistycznych głoszonych przez Lulka.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Dlaczego Laura nie może być z Cezarym po ślubie z Barwickim?",
+      content: {
+        options: [
+          "nie kocha go",
+          "Barwicki jej zabrania",
+          "związało ją słowo honoru",
+          "wyjeżdża za granicę",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Laura mówi Cezaremu podczas spotkania w Warszawie, że związało ją dane Barwickiemu słowo honoru, które jest dla niej ważniejsze niż miłość.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question:
+        "Co symbolizuje przemiana Cezarego od żołnierza do rewolucjonisty?",
+      content: {
+        options: [
+          "zwykłą zmianę poglądów",
+          "tragiczne rozdźwięki polskiego 'przedwiośnia' i rozczarowanie rzeczywistością",
+          "wpływ propagandy",
+          "chorobę psychiczną",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Droga Cezarego symbolizuje tragiczne rozdźwięki pierwszych lat niepodległości - od entuzjazmu do rozczarowania rzeczywistością społeczną.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question:
+        "Jaką dzielnicę Warszawy obserwuje Cezary mieszkając u Buławnika?",
+      content: {
+        options: [
+          "arystokratyczną",
+          "żydowską",
+          "robotniczą Wolę",
+          "Stare Miasto",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Mieszkając przy ulicy Miłej, Cezary codziennie obserwuje dzielnicę żydowską - jej biedę, handel, specyficzne życie getta.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question:
+        "Jaki jest stosunek narratora do różnych klas społecznych w powieści?",
+      content: {
+        options: [
+          "idealizuje ziemiaństwo",
+          "gloryfikuje proletariat",
+          "krytycznie przedstawia wszystkie klasy",
+          "jest całkowicie neutralny",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Żeromski krytycznie przedstawia wszystkie klasy społeczne - zarówno ziemiaństwo, jak i biedotę miejską czy działaczy komunistycznych.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Co Cezary robi batem w Leńcu?",
+      content: {
+        options: [
+          "bije konia",
+          "walczy z Barwickim",
+          "uderza Laurę po twarzy",
+          "niszczy meble",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "W szale zazdrości i gniewu Cezary uderza Laurę szpicrutą przez twarz, gdy ta staje w obronie Barwickiego.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Dopasuj postacie do ich ról w powieści.",
+      content: {
+        matchingType: "character_role",
+        leftColumn: [
+          { id: "A", text: "Seweryn Baryka" },
+          { id: "B", text: "Laura Kościeniecka" },
+          { id: "C", text: "Antoni Lulek" },
+          { id: "D", text: "Szymon Gajowiec" },
+        ],
+        rightColumn: [
+          { id: 1, text: "student prawa, komunista" },
+          { id: 2, text: "ojciec Cezarego, urzędnik w Baku" },
+          { id: 3, text: "wysoki urzędnik państwowy" },
+          { id: 4, text: "piękna wdowa z Leńca" },
+        ],
+      },
+      correctAnswer: [
+        [0, 1],
+        [1, 3],
+        [2, 0],
+        [3, 2],
+      ],
+      metadata: {
+        explanation:
+          "Seweryn to ojciec-urzędnik, Laura to wdowa z Leńca, Lulek to student-komunista, Gajowiec to urzędnik państwowy.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question:
+        "Które miejsca odwiedza Cezary podczas swojej wędrówki? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "Baku",
+          "Nawłoć",
+          "Petersburg",
+          "Warszawę",
+          "Leniec",
+          "Kraków",
+        ],
+      },
+      correctAnswer: [0, 1, 3, 4],
+      metadata: {
+        explanation:
+          "Cezary mieszka w Baku (dzieciństwo), Nawłoci (po wojnie), Warszawie (studia) i odwiedza Leniec (majątek Laury). Nie ma wzmianki o Petersburgu czy Krakowie.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question:
+        "Które cechy charakteryzują Cezarego Barykę? (wybierz wszystkie poprawne)",
+      content: {
+        options: [
+          "idealizm i podatność na wpływy",
+          "konsekwencja w działaniu",
+          "impulsywność i gwałtowność",
+          "wewnętrzne rozdarcie",
+          "cynizm i obojętność",
+          "wrażliwość na krzywdę",
+        ],
+      },
+      correctAnswer: [0, 2, 3, 5],
+      metadata: {
+        explanation:
+          "Cezary jest idealistą podatnym na wpływy, impulsywny, wewnętrznie rozdarty i wrażliwy. Nie jest konsekwentny ani cyniczny.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Uzupełnij informacje o fabule powieści.",
+      content: {
+        textWithGaps:
+          "Cezary Baryka wychowuje się w [1], gdzie jego ojciec pracuje jako [2]. Po rewolucji bolszewickiej ucieka z matką do [3], gdzie bierze udział w wojnie [4].",
+        gaps: [
+          {
+            id: 1,
+            options: ["Warszawie", "Moskwie", "Baku", "Kijowie"],
+          },
+          {
+            id: 2,
+            options: ["lekarz", "inżynier i urzędnik", "nauczyciel", "kupiec"],
+          },
+          {
+            id: 3,
+            options: ["Rosji", "Niemiec", "Polski", "Francji"],
+          },
+          {
+            id: 4,
+            options: [
+              "światowej",
+              "polsko-bolszewickiej",
+              "napoleońskiej",
+              "krymskiej",
+            ],
+          },
+        ],
+      },
+      correctAnswer: [2, 1, 2, 1],
+      metadata: {
+        explanation:
+          "Cezary wychowuje się w Baku, gdzie ojciec jest inżynierem i urzędnikiem, ucieka do Polski i walczy w wojnie polsko-bolszewickiej.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Dopasuj motywy do części powieści, w których dominują.",
+      content: {
+        matchingType: "motifs_parts",
+        leftColumn: [
+          { id: "A", text: "Utrata iluzji i śmierć rodziców" },
+          { id: "B", text: "Miłość i zdrada" },
+          { id: "C", text: "Bieda i rewolucja" },
+        ],
+        rightColumn: [
+          { id: 1, text: "Część I - Szklane domy" },
+          { id: 2, text: "Część II - Nawłoć" },
+          { id: 3, text: "Część III - Wiatr od wschodu" },
+        ],
+      },
+      correctAnswer: [
+        [0, 0],
+        [1, 1],
+        [2, 2],
+      ],
+      metadata: {
+        explanation:
+          "Część I - utrata iluzji w Baku, część II - romans w Nawłoci, część III - bieda i pokusa rewolucji w Warszawie.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Które kobiety są związane z Cezarym? (wybierz wszystkie)",
+      content: {
+        options: [
+          "Laura Kościeniecka",
+          "Karolina Szarłatowiczówna",
+          "Eurydyka Wielosławska",
+          "Wanda Okszyńska",
+          "Ismena Barykowa",
+          "towarzyszka Karyla",
+        ],
+      },
+      correctAnswer: [0, 1, 3],
+      metadata: {
+        explanation:
+          "Z Cezarym związane są: Laura (jego miłość), Karolina (kocha go i umiera), Wanda (podkochuje się, prawdopodobnie otruła Karolinę).",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question:
+        "Wyjaśnij symbolikę tytułu 'Przedwiośnie' w kontekście powieści.",
+      content: {
+        instruction:
+          "Opisz znaczenie metafory przedwiośnia dla Polski lat 20. XX wieku. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie na czas niepewnych nadziei (1 pkt)",
+          "odniesienie do pierwszych lat niepodległości Polski (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Przedwiośnie to metafora pierwszych lat niepodległej Polski - czasu budzących się nadziei, ale niepewnego, pełnego zwodniczych ocieplień i powrotów zimy. To okres, gdy wszystko jest możliwe, ale nic nie jest pewne. Symbolizuje stan zawieszenia między marzeniem o lepszej przyszłości a brutalną rzeczywistością.",
+        keyWords: [
+          "nadzieje",
+          "niepewność",
+          "niepodległość",
+          "pierwsze lata",
+          "zawieszenie",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Opisz, co symbolizują 'szklane domy' w powieści.",
+      content: {
+        instruction:
+          "Wyjaśnij metaforę szklanych domów i jej różne znaczenia. (40-60 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "wskazanie na utopijne wizje (1 pkt)",
+          "kruchość/iluzoryczność tych wizji (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Szklane domy symbolizują utopijne wizje idealnego społeczeństwa - zarówno te Seweryna o dobrobycie w carskiej Rosji, jak i bolszewickie o równości społecznej. Są piękne, ale kruche i iluzoryczne - łatwo się rozpadają przy zderzeniu z rzeczywistością. Reprezentują wszystkie złudzenia bohaterów.",
+        keyWords: [
+          "utopia",
+          "wizje",
+          "kruche",
+          "iluzja",
+          "idealne społeczeństwo",
+        ],
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question:
+        "Scharakteryzuj ewolucję Cezarego Baryki od idealisty do rewolucjonisty.",
+      content: {
+        instruction: "Opisz przemiany bohatera i ich przyczyny. (60-80 słów)",
+      },
+      rubric: {
+        maxScore: 3,
+        criteria: [
+          "entuzjazm wojenny i patriotyzm (1 pkt)",
+          "rozczarowanie rzeczywistością w Nawłoci i Warszawie (1 pkt)",
+          "przystąpienie do komunistów jako akt autodestrukcji (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Cezary zaczyna jako młody idealista walczący za Polskę w wojnie 1920 roku, pełen patriotycznego entuzjazmu. W Nawłoci odkrywa zepsucie ziemiaństwa i niemożność miłości. W Warszawie widzi biedę, niesprawiedliwość społeczną, tortury w więzieniach. Rozczarowany, ulega wpływowi komunisty Lulka. Finalna scena - prowadzi manifestację przeciw Polsce, za którą walczył - to akt ostatecznej autodestrukcji i symbolicnego odrzucenia wszystkich wartości.",
+        keyWords: [
+          "idealista",
+          "patriota",
+          "rozczarowanie",
+          "bieda",
+          "komunizm",
+          "autodestrukcja",
+        ],
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Jaka jest wymowa ideowa zakończenia powieści?",
+      content: {
+        options: [
+          "optymistyczna - zwycięstwo rewolucji",
+          "pesymistyczna - klęska ideałów i autodestrukcja bohatera",
+          "neutralna - brak oceny",
+          "patriotyczna - triumf Polski",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Zakończenie jest pesymistyczne - Cezary prowadząc manifestację przeciw Polsce symbolizuje klęskę wszystkich ideałów i tragiczną autodestrukcję pokolenia.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "W jakim roku została ukończona powieść 'Przedwiośnie'?",
+      content: {
+        options: ["1920", "1922", "1924", "1926"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Stefan Żeromski ukończył 'Przedwiośnie' 21 września 1924 roku w Konstancinie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Kto jest narratorem powieści?",
+      content: {
+        options: [
+          "Cezary Baryka (pierwszoosobowy)",
+          "narrator wszechwiedzący trzecioosobowy",
+          "multiple narrators",
+          "narrator personalny",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Powieść ma narratora wszechwiedzącego trzecioosobowego, który zna myśli i uczucia wszystkich postaci, komentuje wydarzenia.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question:
+        "Które problemy społeczne porusza Żeromski? (wybierz wszystkie)",
+      content: {
+        options: [
+          "nierówności społeczne i bieda",
+          "problem mniejszości żydowskiej",
+          "zacofanie wsi",
+          "korupcja ziemiaństwa",
+          "kwestia niepodległości",
+          "konflikty religijne",
+        ],
+      },
+      correctAnswer: [0, 1, 2, 3, 4],
+      metadata: {
+        explanation:
+          "Żeromski porusza: biedę i nierówności, problem żydowski (getto), zacofanie wsi, zepsucie ziemiaństwa, problemy młodego państwa. Nie ma głównego wątku religijnego.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Jakie znaczenie ma postać księdza Anastazego?",
+      content: {
+        options: [
+          "główny antagonista",
+          "reprezentant tradycyjnych wartości i wiary",
+          "rewolucjonista",
+          "nie ma większego znaczenia",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Ksiądz Anastazy Dyaczyński reprezentuje tradycyjne wartości katolickie, próbuje kierować Cezarego ku wierze, proponuje spowiedź.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Dopasuj miejsca do wydarzeń, które się tam rozgrywają.",
+      content: {
+        matchingType: "places_events",
+        leftColumn: [
+          { id: "A", text: "Baku" },
+          { id: "B", text: "Nawłoć" },
+          { id: "C", text: "Warszawa" },
+          { id: "D", text: "Chłodek" },
+        ],
+        rightColumn: [
+          { id: 1, text: "obserwacja biedy wiejskiej" },
+          { id: 2, text: "aresztowanie ojca i ucieczka" },
+          { id: 3, text: "romans z Laurą i śmierć Karoliny" },
+          { id: 4, text: "zebranie komunistyczne" },
+        ],
+      },
+      correctAnswer: [
+        [0, 1],
+        [1, 2],
+        [2, 3],
+        [3, 0],
+      ],
+      metadata: {
+        explanation:
+          "Baku - rewolucja i ucieczka, Nawłoć - romans i tragedia, Warszawa - działalność komunistyczna, Chłodek - obserwacja biedy.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Jak Żeromski przedstawia polską inteligencję?",
+      content: {
+        options: [
+          "wyłącznie pozytywnie",
+          "jako zbawców narodu",
+          "krytycznie - jako niezdolną do działania",
+          "nie przedstawia jej wcale",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Żeromski krytycznie przedstawia inteligencję - Gajowiec to teoretyk bez wpływu na rzeczywistość, inni to marzyciele niezdolni do realnego działania.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Opisz relację Cezarego z Laurą Kościeniecką.",
+      content: {
+        instruction:
+          "Scharakteryzuj ich związek i jego tragiczny finał. (50-70 słów)",
+      },
+      rubric: {
+        maxScore: 2,
+        criteria: [
+          "namiętny romans w Nawłoci (1 pkt)",
+          "niemożność bycia razem - ślub z Barwickim i honor (1 pkt)",
+        ],
+      },
+      metadata: {
+        expectedAnswer:
+          "Cezary i Laura przeżywają namiętny romans w Nawłoci - potajemne schadzki, namiętność w karecie. Jednak Laura musi wyjść za Barwickiego z powodów finansowych. Gdy Cezary w szale zazdrości uderza ją batem i robi awanturę, przyspiesza jej ślub. W Warszawie Laura wyznaje, że kocha Cezarego, ale związało ją słowo honoru dane mężowi - nie mogą być razem.",
+        keyWords: [
+          "romans",
+          "namiętność",
+          "Barwicki",
+          "bat",
+          "honor",
+          "niemożność",
+        ],
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "INTERWAR",
+      work: "Przedwiośnie",
+      question: "Co oznaczają 'czerwone sztandary' wspominane przez Cezarego?",
+      content: {
+        options: [
+          "polskie flagi",
+          "symbole rewolucji bolszewickiej",
+          "dekoracje na balu",
+          "sztandary wojskowe",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Czerwone sztandary to symbol rewolucji bolszewickiej, która przyniosła śmierć rodzicom Cezarego i zniszczyła świat jego dzieciństwa.",
+      },
+    },
+
+    // ======================== KONIEC PYTAŃ PRZEDWIOŚNIE ===================== //
+
     // ======================== POCZĄTEK PYTAŃ MAKBET ================= //
 
     {
