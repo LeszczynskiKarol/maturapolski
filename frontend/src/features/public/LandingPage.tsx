@@ -12,7 +12,7 @@ import {
   Target,
   Brain,
   Users,
-  Star,
+  //  Star,
   CheckCircle,
   TrendingUp,
   Award,
@@ -218,7 +218,7 @@ export const LandingPage: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Hero Stats */}
+          {/* Hero Stats 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -229,7 +229,7 @@ export const LandingPage: React.FC = () => {
             <StatCard number="98%" label="Zdawalność" />
             <StatCard number="15,000+" label="Zadań w bazie" />
             <StatCard number="4.9/5" label="Ocena uczniów" icon={<Star />} />
-          </motion.div>
+          </motion.div>*/}
         </div>
       </section>
 
@@ -339,7 +339,7 @@ export const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Wszystko, czego potrzebujesz do matury z Polaka
+              Wszystko, czego potrzebujesz do matury z polskiego
             </h2>
             <p className="text-xl text-gray-600">
               w jednej, przejrzystej aplikacji
@@ -401,7 +401,7 @@ export const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Potężne narzędzia w Twoich rękach
+              Testy, pytania i zadania maturalne z polskiego
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Profesjonalne funkcje stworzone z myślą o maksymalnej efektywności
@@ -474,7 +474,7 @@ export const LandingPage: React.FC = () => {
 
             {/* Feature 3: Exercise Database */}
             <FeatureSection
-              title="15,000+ zadań uporządkowanych"
+              title="Setki uporządkowanych zadań"
               subtitle="Od podstaw po poziom rozszerzony"
               description="Nasza baza zawiera wszystkie typy zadań występujących na maturze: interpretacje, analizy, testy, pytania otwarte, pytania zamknięte i wypracowania."
               features={[
@@ -624,7 +624,7 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Social Proof - Testimonials */}
+      {/* Social Proof - Testimonials 
       <section id="opinie" className="py-20 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -1230,7 +1230,8 @@ const User: React.FC<{ className?: string }> = ({ className }) => (
   </svg>
 );
 
-const StatCard: React.FC<{
+{
+  /*const StatCard: React.FC<{
   number: string;
   label: string;
   icon?: React.ReactNode;
@@ -1247,7 +1248,8 @@ const StatCard: React.FC<{
     </div>
     <div className="text-gray-600">{label}</div>
   </motion.div>
-);
+);*/
+}
 
 const ProblemItem: React.FC<{ text: string }> = ({ text }) => (
   <div className="flex items-start gap-3">
@@ -1374,7 +1376,8 @@ const GamificationCard: React.FC<{
   </motion.div>
 );
 
-const TestimonialCard: React.FC<{
+{
+  /*const TestimonialCard: React.FC<{
   name: string;
   role: string;
   avatar: string;
@@ -1407,7 +1410,8 @@ const TestimonialCard: React.FC<{
     </div>
     <p className="text-gray-700 italic">"{text}"</p>
   </motion.div>
-);
+);*/
+}
 
 const ComparisonRow: React.FC<{
   feature: string;
