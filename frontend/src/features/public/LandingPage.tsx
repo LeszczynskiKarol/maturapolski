@@ -99,7 +99,7 @@ export const LandingPage: React.FC = () => {
                     href="/#jak-dziala"
                     className="text-gray-700 hover:text-blue-600 transition-colors"
                   >
-                    Jak działa
+                    Jak to działa
                   </a>
 
                   <a
@@ -116,12 +116,6 @@ export const LandingPage: React.FC = () => {
                     Cennik
                   </a>
 
-                  <a
-                    href="/#opinie"
-                    className="text-gray-700 hover:text-blue-600 transition-colors"
-                  >
-                    Opinie
-                  </a>
                   <Link
                     to="/login"
                     className="px-4 py-2 text-gray-700 hover:text-blue-600 transition-colors"
@@ -1131,14 +1125,7 @@ export const LandingPage: React.FC = () => {
                     Cennik
                   </a>
                 </li>
-                <li>
-                  <a
-                    href="#opinie"
-                    className="hover:text-white transition-colors"
-                  >
-                    Opinie
-                  </a>
-                </li>
+
                 <li>
                   <Link
                     to="/register"

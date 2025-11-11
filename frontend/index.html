@@ -1,20 +1,136 @@
-<!-- frontend/index.html -->
 <!DOCTYPE html>
 <html lang="pl">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <!-- Favicon - różne rozmiary -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MaturaPolski.pl</title>
 
-    <!-- DODAJ TO - Google Identity Services -->
+    <!-- Primary Meta Tags -->
+    <title>
+      Testy Maturalne z Języka Polskiego Online - Kursy i Sprawdziany Wiedzy na
+      Maturę
+    </title>
+    <meta
+      name="title"
+      content="Testy Maturalne z Języka Polskiego Online - Kursy i Sprawdziany Wiedzy na Maturę"
+    />
+    <meta
+      name="description"
+      content="✓ Testy maturalne z języka polskiego online ✓ Kursy maturalne z polskiego ✓ Sprawdziany wiedzy ✓ Interaktywna nauka lektur ✓ Przygotuj się do matury 2025/2026!"
+    />
+    <meta
+      name="keywords"
+      content="testy maturalne z polskiego, testy na maturę z języka polskiego, kursy maturalne online z polskiego, sprawdziany maturalne z polskiego, testy z lektur, matura z polskiego online, przygotowanie do matury polski, testy z polskiego matura, egzamin maturalny polski"
+    />
+    <meta name="author" content="MaturaPolski.pl" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="Polish" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.maturapolski.pl/" />
+    <meta
+      property="og:title"
+      content="Testy Maturalne z Polskiego Online | MaturaPolski.pl"
+    />
+    <meta
+      property="og:description"
+      content="Najlepsze testy maturalne z języka polskiego online. Kursy, sprawdziany i interaktywna nauka lektur. Przygotuj się do matury 2025/2026!"
+    />
+    <meta property="og:image" content="https://maturapolski.pl/og-image.png" />
+    <meta property="og:site_name" content="MaturaPolski.pl" />
+    <meta property="og:locale" content="pl_PL" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://maturapolski.pl/" />
+    <meta
+      property="twitter:title"
+      content="Testy Maturalne z Polskiego Online | MaturaPolski.pl"
+    />
+    <meta
+      property="twitter:description"
+      content="Najlepsze testy maturalne z języka polskiego online. Kursy, sprawdziany i interaktywna nauka lektur."
+    />
+    <meta
+      property="twitter:image"
+      content="https://maturapolski.pl/og-image.png"
+    />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://maturapolski.pl/" />
+
+    <!-- Structured Data - Schema.org -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "EducationalOrganization",
+        "name": "MaturaPolski.pl",
+        "description": "Platforma do nauki języka polskiego i przygotowania do egzaminu maturalnego",
+        "url": "https://maturapolski.pl",
+        "logo": "https://maturapolski.pl/logo.png",
+        "sameAs": [
+          "https://facebook.com/maturapolski",
+          "https://instagram.com/maturapolski"
+        ],
+        "areaServed": "PL",
+        "availableLanguage": "pl"
+      }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "MaturaPolski.pl",
+        "url": "https://maturapolski.pl",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://maturapolski.pl/szukaj?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Course",
+        "name": "Testy Maturalne z Języka Polskiego",
+        "description": "Kompleksowe kursy maturalne online z polskiego - testy, sprawdziany i interaktywna nauka lektur",
+        "provider": {
+          "@type": "EducationalOrganization",
+          "name": "MaturaPolski.pl",
+          "url": "https://maturapolski.pl"
+        },
+        "educationalLevel": "Liceum",
+        "inLanguage": "pl",
+        "availableLanguage": "pl",
+        "hasCourseInstance": {
+          "@type": "CourseInstance",
+          "courseMode": "online",
+          "courseWorkload": "PT50H"
+        }
+      }
+    </script>
+
+    <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-
-    <!-- Meta tag dla Google Client ID -->
     <meta
       name="google-signin-client_id"
       content="YOUR_CLIENT_ID.apps.googleusercontent.com"
     />
+
+    <!-- Preconnect dla szybszego ładowania -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://accounts.google.com" />
   </head>
   <body>
     <div id="root"></div>

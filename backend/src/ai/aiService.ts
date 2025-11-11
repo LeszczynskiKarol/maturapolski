@@ -63,7 +63,7 @@ Zastąp wartości właściwymi, ale zachowaj strukturę w JEDNEJ linii.
 
   try {
     const response = await anthropic.messages.create({
-      model: "claude-3-haiku-20240307",
+      model: "claude-sonnet-4-5-20250929",
       max_tokens: 4096,
       temperature: 0.2,
       messages: [
@@ -184,7 +184,7 @@ Zwróć dokładnie taki JSON (zastąp wartości właściwymi):
 
   try {
     const response = await anthropic.messages.create({
-      model: "claude-3-haiku-20240307",
+      model: "claude-sonnet-4-5-20250929",
       max_tokens: 4096,
       temperature: 0.1,
       messages: [
@@ -262,7 +262,7 @@ Format (zastąp wartościami):
 
   try {
     const response = await anthropic.messages.create({
-      model: "claude-3-haiku-20240307",
+      model: "claude-sonnet-4-5-20250929",
       max_tokens: 4096,
       temperature: 0.3,
       messages: [
@@ -552,7 +552,7 @@ Dla accuracy 15%:
 
   try {
     const response = await anthropic.messages.create({
-      model: "claude-3-haiku-20240307",
+      model: "claude-sonnet-4-5-20250929",
       max_tokens: 2048,
       temperature: 0.7,
       messages: [{ role: "user", content: prompt }],

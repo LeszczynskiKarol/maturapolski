@@ -1,13 +1,18 @@
 // frontend/src/components/PublicLayout.tsx
 
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { contentService } from "../services/contentService";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { BookOpen, ChevronDown, ArrowLeft, X } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 
 interface PublicLayoutProps {
   children: React.ReactNode;
+  title?: string;
+  description?: string;
+  keywords?: string;
+  canonicalUrl?: string;
 }
 
 interface TestHub {
@@ -19,12 +24,32 @@ interface TestHub {
   isRequired?: boolean;
 }
 
-export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
+export const PublicLayout: React.FC<PublicLayoutProps> = ({
+  children,
+  title,
+  description,
+  keywords,
+  canonicalUrl,
+}) => {
   const user = useAuthStore((state) => state.user);
   const isLoggedIn = !!user;
+  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [featuredHubs, setFeaturedHubs] = useState<any[]>([]);
   const [testHubs, setTestHubs] = useState<TestHub[]>([]);
+
+  // Domyślne wartości SEO
+  const defaultTitle =
+    "Testy Maturalne z Polskiego Online | MaturaPolski.pl - Kursy i Sprawdziany";
+  const defaultDescription =
+    "✓ Testy maturalne z języka polskiego online ✓ Kursy maturalne z polskiego ✓ Sprawdziany wiedzy ✓ Interaktywna nauka lektur ✓ Przygotuj się do matury 2025/2026!";
+  const defaultKeywords =
+    "testy maturalne z polskiego, testy na maturę z języka polskiego, kursy maturalne online z polskiego, sprawdziany maturalne z polskiego, testy z lektur, matura z polskiego online";
+
+  const pageTitle = title || defaultTitle;
+  const pageDescription = description || defaultDescription;
+  const pageKeywords = keywords || defaultKeywords;
+  const pageUrl = canonicalUrl || `https://maturapolski.pl${location.pathname}`;
 
   useEffect(() => {
     loadFeaturedHubs();
@@ -40,7 +65,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
       const tests = await contentService.getHubsWithTests(5);
       setTestHubs(tests);
 
-      // Pobierz featured huby dla bazy wiedzy (jak masz obecnie)
+      // Pobierz featured huby dla bazy wiedzy
       const hubs = await contentService.getHubs({ limit: 5 });
       setFeaturedHubs(hubs.hubs || []);
     } catch (error) {
@@ -62,6 +87,24 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
+      {/* SEO Meta Tags */}
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta name="keywords" content={pageKeywords} />
+        <link rel="canonical" href={pageUrl} />
+
+        {/* Open Graph */}
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:type" content="website" />
+
+        {/* Twitter */}
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDescription} />
+      </Helmet>
+
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-lg z-50 border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
@@ -102,12 +145,6 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                     Cennik
                   </a>
 
-                  <a
-                    href="/#opinie"
-                    className="text-gray-700 hover:text-blue-600 transition-colors"
-                  >
-                    Opinie
-                  </a>
                   <Link
                     to="/login"
                     className="px-4 py-2 text-gray-700 hover:text-blue-600 transition-colors"
@@ -155,7 +192,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                     className="text-gray-700 hover:text-blue-600 transition-colors py-2"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Jak działa
+                    Jak to działa
                   </a>
 
                   <a
@@ -172,14 +209,6 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Cennik
-                  </a>
-
-                  <a
-                    href="/#opinie"
-                    className="text-gray-700 hover:text-blue-600 transition-colors py-2"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Opinie
                   </a>
 
                   <Link
@@ -233,6 +262,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                 <a
                   href="#"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
+                  aria-label="Facebook"
                 >
                   <span className="sr-only">Facebook</span>
                   FB
@@ -241,6 +271,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                 <a
                   href="#"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
+                  aria-label="Instagram"
                 >
                   <span className="sr-only">Instagram</span>
                   IG
@@ -249,6 +280,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                 <a
                   href="#"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
+                  aria-label="TikTok"
                 >
                   <span className="sr-only">TikTok</span>
                   TT
@@ -275,14 +307,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                     Cennik
                   </a>
                 </li>
-                <li>
-                  <a
-                    href="/#opinie"
-                    className="hover:text-white transition-colors"
-                  >
-                    Opinie
-                  </a>
-                </li>
+
                 <li>
                   <Link
                     to="/register"
@@ -294,11 +319,11 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
               </ul>
             </div>
 
-            {/* ZAKTUALIZOWANA SEKCJA - Baza wiedzy */}
+            {/* Baza wiedzy */}
             <div>
               <h4 className="font-bold mb-4 text-lg">Baza wiedzy</h4>
               <ul className="space-y-3 text-gray-400">
-                {featuredHubs.slice(0, 40000000000).map((hub) => (
+                {featuredHubs.slice(0, 5).map((hub) => (
                   <li key={hub.id}>
                     <a
                       href={`/baza-wiedzy/${hub.slug}`}
@@ -311,11 +336,11 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
               </ul>
             </div>
 
-            {/* NOWA SEKCJA - Testy */}
+            {/* Testy z lektur */}
             <div>
               <h4 className="font-bold mb-4 text-lg">Testy z lektur</h4>
               <ul className="space-y-3 text-gray-400">
-                {testHubs.slice(0, 4000000000000000000000000000).map((hub) => (
+                {testHubs.slice(0, 5).map((hub) => (
                   <li key={hub.id}>
                     <a
                       href={`/test/${hub.slug}`}
