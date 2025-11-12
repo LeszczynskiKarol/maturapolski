@@ -6958,29 +6958,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
     },
 
     // STRESZCZENIE Z ELEMENTAMI ANALIZY (25 pytań)
-    {
-      type: "SYNTHESIS_NOTE",
-      category: "LANGUAGE_USE",
-      difficulty: 3,
-      points: 5,
-      question: "Streść artykuł i dodaj własny komentarz.",
-      content: {
-        article: {
-          title: "Język w dobie internetu",
-          main_points: [
-            "skrótowość komunikacji",
-            "emotikony jako nowy język",
-            "zanik interpunkcji",
-          ],
-        },
-        requirements: [
-          "streszczenie głównych tez",
-          "własna ocena",
-          "przykłady",
-          "100-120 słów",
-        ],
-      },
-    },
+
     {
       type: "SYNTHESIS_NOTE",
       category: "LANGUAGE_USE",
@@ -20255,7 +20233,7 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
           { id: "D", text: "Hajmon" },
         ],
         rightColumn: [
-          { id: 1, text: "ślepý wieszcz ostrzegający przed gniewem bogów" },
+          { id: 1, text: "ślepy wieszcz ostrzegający przed gniewem bogów" },
           { id: 2, text: "władca Teb wydający edykt" },
           { id: 3, text: "córka Edypa grzebiąca brata" },
           { id: 4, text: "syn Kreona, narzeczony Antygony" },

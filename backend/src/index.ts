@@ -13,6 +13,14 @@ console.log(
   "AWS_SECRET_ACCESS_KEY:",
   process.env.AWS_SECRET_ACCESS_KEY ? "✅ SET" : "❌ MISSING"
 );
+console.log(
+  "GOOGLE_SEARCH_API_KEY:",
+  process.env.GOOGLE_SEARCH_API_KEY ? "✅ SET" : "❌ MISSING"
+);
+console.log(
+  "GOOGLE_SEARCH_ENGINE_ID:",
+  process.env.GOOGLE_SEARCH_ENGINE_ID ? "✅ SET" : "❌ MISSING"
+);
 console.log("=================");
 import cron from "node-cron";
 import multipart from "@fastify/multipart";
@@ -46,9 +54,9 @@ cron.schedule("0 0 * * *", async () => {
 });
 
 const fastify = Fastify({
-  logger: {
-    level: "info",
-  },
+  //  logger: {
+  //  level: "info",
+  //},
 });
 
 // Initialize services

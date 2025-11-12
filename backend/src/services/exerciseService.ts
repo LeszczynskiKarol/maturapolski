@@ -1,12 +1,476 @@
 // backend/src/services/exerciseService.ts
 
-import { assessEssayWithAI, assessShortAnswerWithAI } from "../ai/aiService";
+import {
+  assessWithWebResearch,
+  assessShortAnswerWithAI,
+  assessEssayWithAI,
+} from "../ai/aiService";
 import { prisma } from "../lib/prisma";
 import { subscriptionService } from "./subscriptionService";
 
 export class ExerciseService {
   constructor() {}
 
+  async submitAnswer(
+    userId: string,
+    exerciseId: string,
+    answer: any,
+    timeSpent?: number
+  ) {
+    const exercise = await prisma.exercise.findUnique({
+      where: { id: exerciseId },
+    });
+
+    if (!exercise) {
+      throw new Error("Exercise not found");
+    }
+
+    // ========================================
+    // SPRAWDZENIE PUNKTÓW AI
+    // ========================================
+    const requiresAI = ["SHORT_ANSWER", "SYNTHESIS_NOTE", "ESSAY"].includes(
+      exercise.type
+    );
+    let pointsCost = 0;
+
+    if (requiresAI) {
+      pointsCost = exercise.type === "ESSAY" ? 3 : 1;
+      const hasPoints = await subscriptionService.hasAiPoints(
+        userId,
+        pointsCost
+      );
+
+      if (!hasPoints) {
+        const subscription = await subscriptionService.getOrCreateSubscription(
+          userId
+        );
+        throw new Error(
+          `INSUFFICIENT_AI_POINTS|Brak punktów AI! Masz ${
+            subscription.aiPointsLimit - subscription.aiPointsUsed
+          }/${subscription.aiPointsLimit} punktów.`
+        );
+      }
+    }
+
+    const submission = await prisma.submission.create({
+      data: {
+        userId,
+        exerciseId,
+        answer,
+        timeSpent: timeSpent || 0,
+        assessedBy: "SYSTEM",
+      },
+    });
+
+    // ========================================
+    // 🔥 NOWY FLOW - WEB RESEARCH ASSESSMENT
+    // ========================================
+    if (
+      exercise.type === "SHORT_ANSWER" ||
+      exercise.type === "SYNTHESIS_NOTE" ||
+      exercise.type === "ESSAY"
+    ) {
+      try {
+        // ✅ TYLKO dla SYNTHESIS_NOTE i ESSAY używaj web research
+        if (exercise.type === "SYNTHESIS_NOTE" || exercise.type === "ESSAY") {
+          console.log(
+            `\n=== 🔍 WEB RESEARCH ASSESSMENT - ${exercise.type} ===`
+          );
+          console.log("Exercise ID:", exerciseId);
+
+          const content = exercise.content as any;
+          const metadata = exercise.metadata as any;
+
+          const workTitle =
+            exercise.work ||
+            content?.work ||
+            metadata?.work ||
+            content?.requiredReadings?.[0] ||
+            undefined;
+
+          const additionalContext: any = {};
+
+          if (exercise.type === "ESSAY") {
+            const wordLimit = metadata?.wordLimit || content?.wordLimit;
+            additionalContext.minWords = wordLimit?.min || 400;
+          } else {
+            const requirements = [
+              ...(content?.requirements || []),
+              ...(metadata?.requirements || []),
+            ];
+            if (requirements.length > 0) {
+              additionalContext.requirements = requirements;
+            }
+          }
+
+          // 🚀 WEB RESEARCH ASSESSMENT
+          const aiAssessment = await assessWithWebResearch(
+            answer,
+            exercise.question,
+            exercise.type as "SYNTHESIS_NOTE" | "ESSAY",
+            exercise.points,
+            workTitle,
+            additionalContext
+          );
+
+          console.log("✅ Web research assessment completed");
+          console.log("Sources used:", aiAssessment.sources?.length || 0);
+
+          const estimatedTokens = {
+            input: Math.ceil(
+              (exercise.question.length + answer.length + 30000) / 4
+            ),
+            output: Math.ceil(JSON.stringify(aiAssessment).length / 4),
+          };
+
+          const finalScore =
+            exercise.type === "ESSAY"
+              ? Math.min(aiAssessment.totalScore || 0, exercise.points)
+              : Math.min(
+                  Math.max(0, Math.round((aiAssessment.score || 0) * 10) / 10),
+                  exercise.points
+                );
+
+          await prisma.submission.update({
+            where: { id: submission.id },
+            data: {
+              score: finalScore,
+              assessedBy: "AI",
+              feedback: aiAssessment,
+            },
+          });
+
+          if (exercise.type === "ESSAY") {
+            await prisma.assessment.create({
+              data: {
+                submissionId: submission.id,
+                userId,
+                formalScore: aiAssessment.formalScore,
+                literaryScore: aiAssessment.literaryScore,
+                compositionScore: aiAssessment.compositionScore,
+                languageScore: aiAssessment.languageScore,
+                totalScore: finalScore,
+                detailedFeedback: {
+                  ...aiAssessment.detailedFeedback,
+                  sources: aiAssessment.sources,
+                },
+                improvements: aiAssessment.improvements || [],
+              },
+            });
+          } else {
+            await prisma.assessment.create({
+              data: {
+                submissionId: submission.id,
+                userId,
+                totalScore: finalScore,
+                detailedFeedback: {
+                  aiResponse: aiAssessment,
+                  feedback: aiAssessment.feedback,
+                  correctAnswer: aiAssessment.correctAnswer,
+                  missingElements: aiAssessment.missingElements,
+                  correctElements: aiAssessment.correctElements,
+                  sources: aiAssessment.sources,
+                },
+                improvements: aiAssessment.suggestions || [],
+              },
+            });
+          }
+
+          await subscriptionService.useAiPoints(
+            userId,
+            exerciseId,
+            exercise.type,
+            pointsCost,
+            estimatedTokens
+          );
+
+          if (exercise.type === "ESSAY") {
+            return {
+              ...submission,
+              score: finalScore,
+              assessment: aiAssessment,
+              message: `Twoje wypracowanie zostało ocenione na ${finalScore} z ${exercise.points} punktów (${aiAssessment.percentageScore}%)`,
+              feedback: {
+                ...aiAssessment.detailedFeedback,
+                score: finalScore,
+                maxScore: exercise.points,
+                totalScore: finalScore,
+                percentageScore: aiAssessment.percentageScore,
+                formalScore: aiAssessment.formalScore,
+                literaryScore: aiAssessment.literaryScore,
+                compositionScore: aiAssessment.compositionScore,
+                languageScore: aiAssessment.languageScore,
+                sources: aiAssessment.sources,
+              },
+            };
+          } else {
+            const isCorrect =
+              aiAssessment.isCorrect ||
+              (aiAssessment.score || 0) >= exercise.points * 0.6;
+            const isPartiallyCorrect =
+              !isCorrect &&
+              (aiAssessment.score || 0) > 0 &&
+              (aiAssessment.score || 0) < exercise.points * 0.6;
+
+            return {
+              ...submission,
+              score: finalScore,
+              assessment: aiAssessment,
+              message: isCorrect
+                ? `Świetnie! Zdobyłeś ${finalScore} z ${exercise.points} punktów!`
+                : isPartiallyCorrect
+                ? `Częściowo poprawna odpowiedź. Zdobyłeś ${finalScore} z ${exercise.points} punktów.`
+                : "Odpowiedź wymaga poprawy",
+              feedback: {
+                isCorrect,
+                isPartiallyCorrect,
+                score: finalScore,
+                maxScore: exercise.points,
+                feedback: aiAssessment.feedback,
+                correctAnswer: aiAssessment.correctAnswer,
+                missingElements: aiAssessment.missingElements,
+                correctElements: aiAssessment.correctElements,
+                suggestions: aiAssessment.suggestions,
+                sources: aiAssessment.sources,
+              },
+            };
+          }
+        }
+        // ✅ DLA SHORT_ANSWER - STANDARD ASSESSMENT (BEZ WEB RESEARCH)
+        else if (exercise.type === "SHORT_ANSWER") {
+          console.log(`\n=== 🤖 STANDARD SHORT ANSWER ASSESSMENT (NO WEB) ===`);
+          console.log("Exercise ID:", exerciseId);
+
+          const content = exercise.content as any;
+          const aiAssessment = await assessShortAnswerWithAI(
+            answer,
+            exercise.question,
+            content?.requirements,
+            exercise.points
+          );
+
+          const finalScore = Math.min(aiAssessment.score || 0, exercise.points);
+
+          await prisma.submission.update({
+            where: { id: submission.id },
+            data: {
+              score: finalScore,
+              assessedBy: "AI",
+              feedback: aiAssessment,
+            },
+          });
+
+          await prisma.assessment.create({
+            data: {
+              submissionId: submission.id,
+              userId,
+              totalScore: finalScore,
+              detailedFeedback: {
+                aiResponse: aiAssessment,
+                feedback: aiAssessment.feedback,
+                correctAnswer: aiAssessment.correctAnswer,
+                missingElements: aiAssessment.missingElements,
+                correctElements: aiAssessment.correctElements,
+              },
+              improvements: aiAssessment.suggestions || [],
+            },
+          });
+
+          const estimatedTokens = {
+            input: Math.ceil((exercise.question.length + answer.length) / 4),
+            output: Math.ceil(JSON.stringify(aiAssessment).length / 4),
+          };
+
+          await subscriptionService.useAiPoints(
+            userId,
+            exerciseId,
+            exercise.type,
+            pointsCost,
+            estimatedTokens
+          );
+
+          const isCorrect = finalScore >= exercise.points * 0.6;
+          const isPartiallyCorrect =
+            !isCorrect && finalScore > 0 && finalScore < exercise.points * 0.6;
+
+          return {
+            ...submission,
+            score: finalScore,
+            assessment: aiAssessment,
+            message: isCorrect
+              ? `Świetnie! Zdobyłeś ${finalScore} z ${exercise.points} punktów!`
+              : isPartiallyCorrect
+              ? `Częściowo poprawna odpowiedź. Zdobyłeś ${finalScore} z ${exercise.points} punktów.`
+              : "Odpowiedź wymaga poprawy",
+            feedback: {
+              isCorrect,
+              isPartiallyCorrect,
+              score: finalScore,
+              maxScore: exercise.points,
+              feedback: aiAssessment.feedback,
+              correctAnswer: aiAssessment.correctAnswer,
+              missingElements: aiAssessment.missingElements,
+              correctElements: aiAssessment.correctElements,
+              suggestions: aiAssessment.suggestions,
+            },
+          };
+        }
+      } catch (error) {
+        console.error(`❌ Web research assessment failed:`, error);
+
+        // Fallback do starej metody
+        console.warn("⚠️ Using fallback assessment without web research");
+
+        if (exercise.type === "ESSAY") {
+          const metadata = exercise.metadata as any;
+          const assessment = await assessEssayWithAI(
+            answer,
+            exercise.question,
+            {
+              minWords: metadata?.wordLimit?.min || 400,
+              requiredText: metadata?.requiredReadings?.[0] || "Lektura",
+              contexts: [],
+            }
+          );
+
+          const totalScore = Math.min(
+            assessment.totalScore || 0,
+            exercise.points
+          );
+
+          await prisma.submission.update({
+            where: { id: submission.id },
+            data: {
+              score: totalScore,
+              assessedBy: "AI",
+              feedback: assessment,
+            },
+          });
+
+          return {
+            ...submission,
+            score: totalScore,
+            assessment,
+            message: `Twoje wypracowanie zostało ocenione na ${totalScore} z ${exercise.points} punktów`,
+            feedback: {
+              ...assessment.detailedFeedback,
+              score: totalScore,
+              maxScore: exercise.points,
+            },
+          };
+        } else {
+          const content = exercise.content as any;
+          const assessment = await assessShortAnswerWithAI(
+            answer,
+            exercise.question,
+            content?.requirements,
+            exercise.points
+          );
+
+          const finalScore = Math.min(assessment.score || 0, exercise.points);
+
+          await prisma.submission.update({
+            where: { id: submission.id },
+            data: {
+              score: finalScore,
+              assessedBy: "AI",
+              feedback: assessment,
+            },
+          });
+
+          return {
+            ...submission,
+            score: finalScore,
+            assessment,
+            message: "Odpowiedź została oceniona",
+            feedback: {
+              ...assessment,
+              score: finalScore,
+              maxScore: exercise.points,
+            },
+          };
+        }
+      }
+    }
+
+    // CLOSED questions - bez zmian
+    if (
+      exercise.type === "CLOSED_SINGLE" ||
+      exercise.type === "CLOSED_MULTIPLE"
+    ) {
+      let isCorrect = false;
+
+      if (exercise.type === "CLOSED_SINGLE") {
+        isCorrect = answer === exercise.correctAnswer;
+      }
+
+      if (exercise.type === "CLOSED_MULTIPLE") {
+        const userAnswer = Array.isArray(answer)
+          ? [...answer].sort((a: number, b: number) => a - b)
+          : [];
+        const correctAnswer = Array.isArray(exercise.correctAnswer)
+          ? ([...exercise.correctAnswer] as number[]).sort((a, b) => a - b)
+          : [];
+        isCorrect =
+          JSON.stringify(userAnswer) === JSON.stringify(correctAnswer);
+      }
+
+      const score = isCorrect ? exercise.points : 0;
+      const metadata = exercise.metadata as any;
+      const explanation = metadata?.explanation;
+
+      let correctAnswerText = "";
+      const content = exercise.content as any;
+      const options = content?.options || [];
+
+      if (exercise.type === "CLOSED_SINGLE") {
+        const correctIndex = exercise.correctAnswer as number;
+        correctAnswerText = options[correctIndex] || "";
+      } else {
+        const correctIndices = exercise.correctAnswer as number[];
+        correctAnswerText = correctIndices
+          .map((idx) => options[idx])
+          .filter(Boolean)
+          .join(", ");
+      }
+
+      await prisma.submission.update({
+        where: { id: submission.id },
+        data: {
+          score,
+          feedback: {
+            correct: isCorrect,
+            correctAnswer: exercise.correctAnswer,
+            correctAnswerText,
+            explanation: explanation || null,
+          },
+        },
+      });
+
+      return {
+        ...submission,
+        score,
+        feedback: {
+          correct: isCorrect,
+          correctAnswer: exercise.correctAnswer,
+          correctAnswerText,
+          explanation: explanation || null,
+        },
+        message: isCorrect
+          ? `Świetnie! Zdobyłeś ${score} punktów!`
+          : "Niepoprawna odpowiedź",
+      };
+    }
+
+    // Default
+    return {
+      ...submission,
+      score: null,
+      message: "Odpowiedź została zapisana",
+    };
+  }
+
+  // Pozostałe metody bez zmian...
   async getAdaptiveExercise(userId: string) {
     const userProfile = await prisma.userProfile.findUnique({
       where: { userId },
@@ -51,13 +515,6 @@ export class ExerciseService {
   }
 
   async getExercisesWithStatus(userId: string, query: any = {}) {
-    console.log(
-      "Getting exercises with status for user:",
-      userId,
-      "query:",
-      query
-    );
-
     const where: any = {};
 
     if (query.type) where.type = query.type;
@@ -84,450 +541,11 @@ export class ExerciseService {
         orderBy: { createdAt: "desc" },
       });
 
-      console.log(`Found ${exercises.length} exercises for user ${userId}`);
-
       return exercises;
     } catch (error) {
       console.error("Error in getExercisesWithStatus:", error);
       throw error;
     }
-  }
-
-  async submitAnswer(
-    userId: string,
-    exerciseId: string,
-    answer: any,
-    timeSpent?: number
-  ) {
-    const exercise = await prisma.exercise.findUnique({
-      where: { id: exerciseId },
-    });
-
-    if (!exercise) {
-      throw new Error("Exercise not found");
-    }
-
-    // ========================================
-    // SPRAWDZENIE PUNKTÓW AI
-    // ========================================
-    const requiresAI = ["SHORT_ANSWER", "SYNTHESIS_NOTE", "ESSAY"].includes(
-      exercise.type
-    );
-    let pointsCost = 0;
-
-    if (requiresAI) {
-      // Oblicz koszt w punktach
-      pointsCost = exercise.type === "ESSAY" ? 3 : 1;
-
-      // Sprawdź dostępność punktów
-      const hasPoints = await subscriptionService.hasAiPoints(
-        userId,
-        pointsCost
-      );
-
-      if (!hasPoints) {
-        const subscription = await subscriptionService.getOrCreateSubscription(
-          userId
-        );
-        throw new Error(
-          `INSUFFICIENT_AI_POINTS|Brak punktów AI! Masz ${
-            subscription.aiPointsLimit - subscription.aiPointsUsed
-          }/${
-            subscription.aiPointsLimit
-          } punktów. To zadanie wymaga ${pointsCost} ${
-            pointsCost === 1 ? "punktu" : "punktów"
-          }. Ulepsz plan aby kontynuować.`
-        );
-      }
-    }
-
-    const submission = await prisma.submission.create({
-      data: {
-        userId,
-        exerciseId,
-        answer,
-        timeSpent: timeSpent || 0,
-        assessedBy: "SYSTEM",
-      },
-    });
-
-    // Handle CLOSED questions - immediate scoring
-
-    if (
-      exercise.type === "CLOSED_SINGLE" ||
-      exercise.type === "CLOSED_MULTIPLE"
-    ) {
-      let isCorrect = false;
-
-      // CLOSED_SINGLE - porównaj bezpośrednio
-      if (exercise.type === "CLOSED_SINGLE") {
-        isCorrect = answer === exercise.correctAnswer;
-      }
-
-      // CLOSED_MULTIPLE - posortuj obie tablice przed porównaniem
-      if (exercise.type === "CLOSED_MULTIPLE") {
-        // Type guards i konwersja
-        const userAnswer = Array.isArray(answer)
-          ? [...answer].sort((a: number, b: number) => a - b)
-          : [];
-
-        const correctAnswer = Array.isArray(exercise.correctAnswer)
-          ? ([...exercise.correctAnswer] as number[]).sort((a, b) => a - b)
-          : [];
-
-        isCorrect =
-          JSON.stringify(userAnswer) === JSON.stringify(correctAnswer);
-
-        console.log("=== CLOSED_MULTIPLE VALIDATION ===");
-        console.log("User answer (sorted):", userAnswer);
-        console.log("Correct answer (sorted):", correctAnswer);
-        console.log("Is correct:", isCorrect);
-      }
-
-      const score = isCorrect ? exercise.points : 0;
-
-      // Pobierz wyjaśnienie z metadata
-      const metadata = exercise.metadata as any;
-      const explanation = metadata?.explanation;
-
-      // Znajdź tekst poprawnej odpowiedzi
-      let correctAnswerText = "";
-      const content = exercise.content as any;
-      const options = content?.options || [];
-
-      if (exercise.type === "CLOSED_SINGLE") {
-        const correctIndex = exercise.correctAnswer as number;
-        correctAnswerText = options[correctIndex] || "";
-      } else {
-        const correctIndices = exercise.correctAnswer as number[];
-        correctAnswerText = correctIndices
-          .map((idx) => options[idx])
-          .filter(Boolean)
-          .join(", ");
-      }
-
-      await prisma.submission.update({
-        where: { id: submission.id },
-        data: {
-          score,
-          feedback: {
-            correct: isCorrect,
-            correctAnswer: exercise.correctAnswer,
-            correctAnswerText,
-            explanation: explanation || null,
-          },
-        },
-      });
-
-      return {
-        ...submission,
-        score,
-        feedback: {
-          correct: isCorrect,
-          correctAnswer: exercise.correctAnswer,
-          correctAnswerText,
-          explanation: explanation || null,
-        },
-        message: isCorrect
-          ? `Świetnie! Zdobyłeś ${score} punktów!`
-          : "Niepoprawna odpowiedź",
-      };
-    }
-
-    // Handle SHORT_ANSWER - AI assessment
-    if (exercise.type === "SHORT_ANSWER") {
-      try {
-        console.log("Starting AI assessment for SHORT_ANSWER:", submission.id);
-
-        // Extract expected concepts from exercise content/rubric
-        const content = exercise.content as any;
-        const rubric = exercise.rubric as any;
-        const metadata = exercise.metadata as any;
-
-        const expectedConcepts = [
-          ...(content?.requirements || []),
-          ...(rubric?.criteria?.map((c: any) => c.name) || []),
-          ...(metadata?.expectedConcepts || []),
-        ];
-
-        // Get AI assessment
-        const aiAssessment = await assessShortAnswerWithAI(
-          answer,
-          exercise.question,
-          expectedConcepts.length > 0 ? expectedConcepts : undefined,
-          exercise.points
-        );
-
-        // Oszacuj tokeny (przybliżenie)
-        const estimatedTokens = {
-          input: Math.ceil((exercise.question.length + answer.length) / 4),
-          output: Math.ceil(JSON.stringify(aiAssessment).length / 4),
-        };
-
-        console.log("AI Assessment result:", aiAssessment);
-        console.log("Estimated tokens:", estimatedTokens);
-
-        // Update submission with AI score
-        const finalScore = Math.min(
-          Math.max(0, Math.round(aiAssessment.score * 10) / 10),
-          exercise.points
-        );
-
-        await prisma.submission.update({
-          where: { id: submission.id },
-          data: {
-            score: finalScore,
-            assessedBy: "AI",
-            feedback: aiAssessment,
-          },
-        });
-
-        // Create assessment record
-        await prisma.assessment.create({
-          data: {
-            submissionId: submission.id,
-            userId,
-            totalScore: finalScore,
-            detailedFeedback: {
-              aiResponse: aiAssessment,
-              feedback: aiAssessment.feedback,
-              correctAnswer: aiAssessment.correctAnswer,
-              missingElements: aiAssessment.missingElements,
-              correctElements: aiAssessment.correctElements,
-            },
-            improvements: aiAssessment.suggestions || [],
-          },
-        });
-
-        // ========================================
-        // ZAPISZ UŻYCIE PUNKTÓW AI
-        // ========================================
-        await subscriptionService.useAiPoints(
-          userId,
-          exerciseId,
-          exercise.type,
-          pointsCost,
-          estimatedTokens
-        );
-
-        const responseData = {
-          ...submission,
-          score: finalScore,
-          assessment: aiAssessment,
-          message: aiAssessment.isCorrect
-            ? `Świetnie! Zdobyłeś ${finalScore} z ${exercise.points} punktów!`
-            : aiAssessment.isPartiallyCorrect
-            ? `Częściowo poprawna odpowiedź. Zdobyłeś ${finalScore} z ${exercise.points} punktów.`
-            : "Niepoprawna odpowiedź",
-          feedback: {
-            isCorrect: aiAssessment.isCorrect,
-            isPartiallyCorrect: aiAssessment.isPartiallyCorrect,
-            score: finalScore,
-            maxScore: exercise.points,
-            feedback: aiAssessment.feedback,
-            correctAnswer: aiAssessment.correctAnswer,
-            missingElements: aiAssessment.missingElements,
-            correctElements: aiAssessment.correctElements,
-            suggestions: aiAssessment.suggestions,
-          },
-        };
-
-        console.log(
-          "Sending response to frontend:",
-          JSON.stringify(responseData.feedback, null, 2)
-        );
-
-        return responseData;
-      } catch (error) {
-        console.error("AI assessment failed for SHORT_ANSWER:", error);
-
-        // Fallback - save without score
-        return {
-          ...submission,
-          score: null,
-          message:
-            "Nie udało się ocenić odpowiedzi automatycznie. Administrator został powiadomiony.",
-          error: "AI assessment failed",
-        };
-      }
-    }
-
-    // Handle ESSAY - AI assessment
-    if (exercise.type === "ESSAY") {
-      try {
-        console.log("Starting AI assessment for ESSAY:", submission.id);
-
-        const metadata = exercise.metadata as any;
-        const wordLimit = metadata?.wordLimit as
-          | { min?: number; max?: number }
-          | undefined;
-        const requiredReadings = metadata?.requiredReadings as
-          | string[]
-          | undefined;
-        const contexts = metadata?.contexts as string[] | undefined;
-
-        // Get AI assessment for essay
-        const assessment = await assessEssayWithAI(answer, exercise.question, {
-          minWords: wordLimit?.min || 400,
-          requiredText: requiredReadings?.[0] || "Lektura obowiązkowa",
-          contexts: contexts || [],
-        });
-
-        // Oszacuj tokeny
-        const estimatedTokens = {
-          input: Math.ceil(
-            (exercise.question.length + answer.length + 1000) / 4
-          ),
-          output: Math.ceil(JSON.stringify(assessment).length / 4),
-        };
-
-        // Calculate total score
-        const totalScore = Math.min(
-          assessment.totalScore || 0,
-          exercise.points
-        );
-
-        // Update submission
-        await prisma.submission.update({
-          where: { id: submission.id },
-          data: {
-            score: totalScore,
-            assessedBy: "AI",
-            feedback: assessment,
-          },
-        });
-
-        // Create assessment record
-        await prisma.assessment.create({
-          data: {
-            submissionId: submission.id,
-            userId,
-            formalScore: assessment.formalScore,
-            literaryScore: assessment.literaryScore,
-            compositionScore: assessment.compositionScore,
-            languageScore: assessment.languageScore,
-            totalScore,
-            detailedFeedback: assessment.detailedFeedback,
-            improvements: assessment.improvements || [],
-          },
-        });
-
-        // ========================================
-        // ZAPISZ UŻYCIE PUNKTÓW AI (3 punkty!)
-        // ========================================
-        await subscriptionService.useAiPoints(
-          userId,
-          exerciseId,
-          exercise.type,
-          pointsCost,
-          estimatedTokens
-        );
-
-        return {
-          ...submission,
-          score: totalScore,
-          assessment,
-          message: `Twoje wypracowanie zostało ocenione na ${totalScore} z ${exercise.points} punktów (${assessment.percentageScore}%)`,
-          feedback: {
-            ...assessment.detailedFeedback,
-            totalScore,
-            percentageScore: assessment.percentageScore,
-          },
-        };
-      } catch (error) {
-        console.error("AI assessment failed for ESSAY:", error);
-
-        return {
-          ...submission,
-          score: null,
-          message:
-            "Wystąpił błąd podczas oceny wypracowania. Spróbuj ponownie później.",
-          error: "AI assessment failed",
-        };
-      }
-    }
-
-    // Handle SYNTHESIS_NOTE - AI assessment (similar to SHORT_ANSWER but more complex)
-    if (exercise.type === "SYNTHESIS_NOTE") {
-      try {
-        console.log(
-          "Starting AI assessment for SYNTHESIS_NOTE:",
-          submission.id
-        );
-
-        const content = exercise.content as any;
-        const requirements = content?.requirements || [];
-
-        // Use SHORT_ANSWER assessment with higher expectations
-        const aiAssessment = await assessShortAnswerWithAI(
-          answer,
-          `${exercise.question}\n\nWymagania:\n${requirements.join("\n")}`,
-          requirements,
-          exercise.points
-        );
-
-        // Oszacuj tokeny
-        const estimatedTokens = {
-          input: Math.ceil(
-            (exercise.question.length + answer.length + 500) / 4
-          ),
-          output: Math.ceil(JSON.stringify(aiAssessment).length / 4),
-        };
-
-        const finalScore = Math.min(
-          Math.max(0, Math.round(aiAssessment.score * 10) / 10),
-          exercise.points
-        );
-
-        await prisma.submission.update({
-          where: { id: submission.id },
-          data: {
-            score: finalScore,
-            assessedBy: "AI",
-            feedback: aiAssessment,
-          },
-        });
-
-        // ========================================
-        // ZAPISZ UŻYCIE PUNKTÓW AI
-        // ========================================
-        await subscriptionService.useAiPoints(
-          userId,
-          exerciseId,
-          exercise.type,
-          pointsCost,
-          estimatedTokens
-        );
-
-        return {
-          ...submission,
-          score: finalScore,
-          assessment: aiAssessment,
-          message: `Zdobyłeś ${finalScore} z ${exercise.points} punktów`,
-          feedback: {
-            ...aiAssessment,
-            score: finalScore,
-            maxScore: exercise.points,
-          },
-        };
-      } catch (error) {
-        console.error("AI assessment failed for SYNTHESIS_NOTE:", error);
-
-        return {
-          ...submission,
-          score: null,
-          message: "Błąd oceny. Spróbuj ponownie później.",
-          error: "AI assessment failed",
-        };
-      }
-    }
-
-    // Default - no automatic scoring
-    return {
-      ...submission,
-      score: null,
-      message: "Odpowiedź została zapisana",
-    };
   }
 
   async getUserHistory(userId: string, limit: number, offset: number) {

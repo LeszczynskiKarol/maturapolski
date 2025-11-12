@@ -692,19 +692,55 @@ export const LearningSession: React.FC = () => {
       const result = response.data;
       setSubmissionResult(result);
 
-      console.log("=== SUBMIT SUCCESS ===");
-      console.log("Exercise ID:", currentExercise.id, "Score:", result.score);
+      // ========================================
+      // 🔍 ROZSZERZONE LOGOWANIE (dla debugowania)
+      // ========================================
+      console.log("\n" + "=".repeat(80));
+      console.log("✅ SUBMIT SUCCESS - FULL RESPONSE");
+      console.log("=".repeat(80));
+      console.log("Exercise ID:", currentExercise.id);
+      console.log("Exercise type:", currentExercise.type);
+      console.log("\nResponse structure:");
+      console.log(JSON.stringify(result, null, 2));
+      console.log("\nKey fields:");
+      console.log("  - result.score:", result.score);
+      console.log(
+        "  - result.feedback:",
+        result.feedback ? "Present" : "Missing"
+      );
+      console.log(
+        "  - result.assessment:",
+        result.assessment ? "Present" : "Missing"
+      );
+      console.log("  - result.message:", result.message);
 
+      if (result.feedback) {
+        console.log("\nFeedback structure:");
+        console.log(JSON.stringify(result.feedback, null, 2));
+      }
+
+      if (result.assessment) {
+        console.log("\nAssessment structure:");
+        console.log(JSON.stringify(result.assessment, null, 2));
+      }
+      console.log("=".repeat(80) + "\n");
+
+      // ========================================
+      // WALIDACJA SESJI
+      // ========================================
       if (!sessionId) {
-        console.error("BRAK sessionId!");
+        console.error("❌ BRAK sessionId!");
         toast.error("Błąd sesji. Spróbuj rozpocząć nową sesję.");
         setShowFeedback(true);
         setHasSubmitted(true);
         return;
       }
 
+      // ========================================
+      // ZAPIS DO SESJI
+      // ========================================
       try {
-        console.log("Zapisuję do sesji:", {
+        console.log("💾 Zapisuję do sesji:", {
           sessionId,
           exerciseId: currentExercise.id,
           score: result.score,
@@ -716,20 +752,28 @@ export const LearningSession: React.FC = () => {
           score: result.score,
         });
 
-        console.log("Zapisano pomyślnie do sesji");
+        console.log("✅ Zapisano pomyślnie do sesji");
         setHasSubmitted(true);
       } catch (error: any) {
-        console.error("Błąd zapisu do sesji:", error);
+        console.error("❌ Błąd zapisu do sesji:", error);
 
         if (error.response?.status === 404) {
           toast.error("Błąd zapisu wyniku. Spróbuj ponownie.");
         }
 
+        // WAŻNE: Nawet przy błędzie zapisu do sesji, pokazujemy feedback
         setShowFeedback(true);
         return;
       }
 
+      // ========================================
+      // AKTUALIZACJA STATYSTYK
+      // ========================================
       const isCorrect = result.score > 0;
+
+      console.log(
+        `📊 Updating stats - isCorrect: ${isCorrect}, score: ${result.score}`
+      );
 
       setCompletedExercises((prev) => [
         ...prev,
@@ -747,10 +791,16 @@ export const LearningSession: React.FC = () => {
         points: prev.points + (result.score || 0),
       }));
 
+      // ========================================
+      // LEVEL PROGRESS (dla pytań z poziomami trudności)
+      // ========================================
       if (result.levelProgress) {
+        console.log("🎯 Level progress update:", result.levelProgress);
+
         queryClient.setQueryData(["difficulty-progress"], result.levelProgress);
 
         if (result.unlockedNewLevel) {
+          console.log("🎉 NEW LEVEL UNLOCKED!");
           confetti({
             particleCount: 300,
             spread: 100,
@@ -763,17 +813,21 @@ export const LearningSession: React.FC = () => {
         }
       }
 
+      // Invalidate difficulty progress po poprawnej odpowiedzi
       if (isCorrect) {
         setTimeout(() => {
           queryClient.invalidateQueries({ queryKey: ["difficulty-progress"] });
         }, 500);
       }
 
-      // ✅ TYLKO TEN TOAST przy streak % 5
+      // ========================================
+      // STREAK NOTIFICATIONS (tylko co 5 poprawnych)
+      // ========================================
       if (isCorrect && sessionStats.streak > 0) {
         const newStreak = sessionStats.streak + 1;
 
         if (newStreak % 5 === 0) {
+          console.log(`🔥 STREAK MILESTONE: ${newStreak}`);
           toast.success(
             `🔥 BRAWO! To już ${newStreak}. Twoja poprawna odpowiedź z rzędu. Kontynuuj passę!`,
             { duration: 4000 }
@@ -781,7 +835,37 @@ export const LearningSession: React.FC = () => {
         }
       }
 
+      // ========================================
+      // POKAŻ FEEDBACK - KRYTYCZNE!
+      // ========================================
+      console.log("👁️  Setting showFeedback = true");
       setShowFeedback(true);
+    },
+    onError: (error: any) => {
+      console.error("\n" + "=".repeat(80));
+      console.error("❌ SUBMIT ERROR");
+      console.error("=".repeat(80));
+      console.error("Error:", error);
+      console.error("Error response:", error.response?.data);
+      console.error("=".repeat(80) + "\n");
+
+      setIsSubmitting(false);
+
+      if (error.response?.data?.message) {
+        const errorMessage = error.response.data.message;
+
+        // AI Points error
+        if (errorMessage.startsWith("INSUFFICIENT_AI_POINTS")) {
+          const parts = errorMessage.split("|");
+          const message = parts[1] || "Brak punktów AI";
+
+          toast.error(message, { duration: 6000 });
+        } else {
+          toast.error(errorMessage);
+        }
+      } else {
+        toast.error("Wystąpił błąd podczas przesyłania odpowiedzi");
+      }
     },
   });
 
@@ -1857,6 +1941,31 @@ export const LearningSession: React.FC = () => {
                       </div>
                     )}
 
+                    {/* ✅ NOWE - WYRAZY DO WYKORZYSTANIA */}
+                    {currentExercise.content?.words &&
+                      currentExercise.content.words.length > 0 && (
+                        <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                          <p className="text-sm font-medium text-green-700 dark:text-green-300 mb-2">
+                            📝 Użyj wszystkich tych wyrazów:
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {currentExercise.content.words.map(
+                              (word: string, idx: number) => (
+                                <span
+                                  key={idx}
+                                  className="px-3 py-1.5 bg-white dark:bg-gray-800 
+                       text-green-800 dark:text-green-200 
+                       border-2 border-green-300 dark:border-green-700
+                       rounded-lg font-semibold text-sm"
+                                >
+                                  {word}
+                                </span>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      )}
+
                     {/* FRAZEOLOGIZM / PHRASE */}
                     {currentExercise.content?.phrase && (
                       <div className="mb-4 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
@@ -2237,7 +2346,9 @@ export const LearningSession: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-4"
               >
-                {/* Dla zadań CLOSED */}
+                {/* ========================================
+        ✅ DLA ZADAŃ ZAMKNIĘTYCH - CLOSED_SINGLE, CLOSED_MULTIPLE
+        ======================================== */}
                 {(currentExercise.type === "CLOSED_SINGLE" ||
                   currentExercise.type === "CLOSED_MULTIPLE") && (
                   <div
@@ -2264,7 +2375,6 @@ export const LearningSession: React.FC = () => {
                         </>
                       )}
                     </div>
-
                     {/* Wyjaśnienie */}
                     {submitMutation.data.data.feedback && (
                       <>
@@ -2283,7 +2393,6 @@ export const LearningSession: React.FC = () => {
                               </p>
                             </div>
                           )}
-
                         {submitMutation.data.data.feedback.explanation && (
                           <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 text-sm">
                             <p className="font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -2299,62 +2408,160 @@ export const LearningSession: React.FC = () => {
                   </div>
                 )}
 
-                {/* DLA PYTAŃ OTWARTYCH - SHORT_ANSWER, SYNTHESIS_NOTE, ESSAY */}
+                {/* ========================================
+        ✅ DLA PYTAŃ OTWARTYCH - SHORT_ANSWER, SYNTHESIS_NOTE, ESSAY
+        ======================================== */}
                 {(currentExercise.type === "SHORT_ANSWER" ||
                   currentExercise.type === "SYNTHESIS_NOTE" ||
                   currentExercise.type === "ESSAY") &&
                   (() => {
-                    // Pobierz dane AI z odpowiedniej lokalizacji
-                    const aiData =
-                      submitMutation.data?.data?.feedback ||
-                      submitMutation.data?.data?.assessment ||
-                      submitMutation.data?.data;
+                    const responseData = submitMutation.data?.data;
 
-                    // Jeśli nie ma danych AI, nie renderuj nic
-                    if (!aiData) return null;
+                    // ✅ DEBUGOWANIE
+                    console.log("=== RENDERING FEEDBACK ===");
+                    console.log(
+                      "Response data:",
+                      JSON.stringify(responseData, null, 2)
+                    );
+                    console.log("Exercise type:", currentExercise.type);
+                    console.log("Exercise points:", currentExercise.points);
+
+                    // Pobierz dane AI z POPRAWNEJ lokalizacji
+                    const aiData =
+                      responseData?.feedback ||
+                      responseData?.assessment ||
+                      responseData;
+
+                    console.log(
+                      "AI Data selected:",
+                      JSON.stringify(aiData, null, 2)
+                    );
+                    console.log("AI Data.score:", aiData?.score);
+                    console.log("AI Data.maxScore:", aiData?.maxScore);
+                    console.log("AI Data.totalScore:", aiData?.totalScore);
+
+                    // Jeśli nie ma danych AI
+                    if (!aiData) {
+                      console.error("❌ NO AI DATA FOUND IN RESPONSE!");
+                      return (
+                        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                          <p className="text-red-800">
+                            Błąd: Brak danych oceny w odpowiedzi serwera
+                          </p>
+                        </div>
+                      );
+                    }
+
+                    // ✅ INTELIGENTNE POBIERANIE SCORE
+                    const displayScore =
+                      aiData.score ??
+                      aiData.totalScore ??
+                      responseData.score ??
+                      0;
+                    const displayMaxScore =
+                      aiData.maxScore ?? currentExercise.points ?? 2;
+
+                    console.log(
+                      "Display score:",
+                      displayScore,
+                      "/ max:",
+                      displayMaxScore
+                    );
+
+                    // Określ czy poprawne
+                    const isCorrect =
+                      displayScore > 0 && displayScore >= displayMaxScore * 0.6;
+                    const isPartiallyCorrect =
+                      displayScore > 0 && displayScore < displayMaxScore * 0.6;
 
                     return (
                       <div
                         className={`p-4 rounded-lg ${
-                          aiData.score > 0
-                            ? aiData.isPartiallyCorrect
-                              ? "bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800"
-                              : "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
+                          isCorrect
+                            ? "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
+                            : isPartiallyCorrect
+                            ? "bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800"
                             : "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
                         }`}
                       >
                         {/* Nagłówek z wynikiem */}
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-2">
-                            {aiData.score > 0 ? (
-                              aiData.isPartiallyCorrect ? (
-                                <>
-                                  <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
-                                  <span className="font-semibold text-yellow-700 dark:text-yellow-300">
-                                    Częściowo poprawna odpowiedź
-                                  </span>
-                                </>
-                              ) : (
-                                <>
-                                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
-                                  <span className="font-semibold text-green-700 dark:text-green-300">
-                                    Świetna odpowiedź!
-                                  </span>
-                                </>
-                              )
+                            {isCorrect ? (
+                              <>
+                                <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                                <span className="font-semibold text-green-700 dark:text-green-300">
+                                  {currentExercise.type === "ESSAY"
+                                    ? "Świetne wypracowanie!"
+                                    : "Świetna odpowiedź!"}
+                                </span>
+                              </>
+                            ) : isPartiallyCorrect ? (
+                              <>
+                                <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+                                <span className="font-semibold text-yellow-700 dark:text-yellow-300">
+                                  Częściowo poprawna odpowiedź
+                                </span>
+                              </>
                             ) : (
                               <>
                                 <XCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
                                 <span className="font-semibold text-red-700 dark:text-red-300">
-                                  Niepoprawna odpowiedź
+                                  Odpowiedź wymaga poprawy
                                 </span>
                               </>
                             )}
                           </div>
-                          <span className="text-lg font-bold">
-                            {aiData.score ?? 0}/{aiData.maxScore ?? 2} pkt
+                          <span className="text-lg font-bold text-black dark:text-gray-100">
+                            {displayScore}/{displayMaxScore} pkt
                           </span>
                         </div>
+
+                        {/* ✅ DLA ESSAY - SZCZEGÓŁOWE OCENY */}
+                        {currentExercise.type === "ESSAY" && (
+                          <div className="grid grid-cols-2 gap-3 mb-4 p-3 bg-white dark:bg-gray-800 rounded-lg">
+                            {aiData.formalScore !== undefined && (
+                              <div className="text-sm">
+                                <span className="text-gray-600 dark:text-gray-400">
+                                  Wymogi formalne:
+                                </span>
+                                <span className="ml-2 font-semibold">
+                                  {aiData.formalScore}/1
+                                </span>
+                              </div>
+                            )}
+                            {aiData.literaryScore !== undefined && (
+                              <div className="text-sm">
+                                <span className="text-gray-600 dark:text-gray-400">
+                                  Kompetencje literackie:
+                                </span>
+                                <span className="ml-2 font-semibold">
+                                  {aiData.literaryScore}/16
+                                </span>
+                              </div>
+                            )}
+                            {aiData.compositionScore !== undefined && (
+                              <div className="text-sm">
+                                <span className="text-gray-600 dark:text-gray-400">
+                                  Kompozycja:
+                                </span>
+                                <span className="ml-2 font-semibold">
+                                  {aiData.compositionScore}/7
+                                </span>
+                              </div>
+                            )}
+                            {aiData.languageScore !== undefined && (
+                              <div className="text-sm">
+                                <span className="text-gray-600 dark:text-gray-400">
+                                  Styl i język:
+                                </span>
+                                <span className="ml-2 font-semibold">
+                                  {aiData.languageScore}/11
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        )}
 
                         {/* Główny feedback */}
                         {aiData.feedback && (
@@ -2368,7 +2575,49 @@ export const LearningSession: React.FC = () => {
                           </div>
                         )}
 
-                        {/* Poprawne elementy (jeśli są) */}
+                        {/* ✅ MOCNE STRONY (dla ESSAY) */}
+                        {aiData.strengths && aiData.strengths.length > 0 && (
+                          <div className="mb-3 p-3 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                            <p className="font-medium text-green-700 dark:text-green-300 mb-1 text-sm">
+                              ✓ Mocne strony:
+                            </p>
+                            <ul className="space-y-1">
+                              {aiData.strengths.map(
+                                (strength: string, idx: number) => (
+                                  <li
+                                    key={idx}
+                                    className="text-sm text-green-600 dark:text-green-400 ml-4"
+                                  >
+                                    • {strength}
+                                  </li>
+                                )
+                              )}
+                            </ul>
+                          </div>
+                        )}
+
+                        {/* ✅ SŁABOŚCI (dla ESSAY) */}
+                        {aiData.weaknesses && aiData.weaknesses.length > 0 && (
+                          <div className="mb-3 p-3 bg-orange-50 dark:bg-orange-900/30 rounded-lg">
+                            <p className="font-medium text-orange-700 dark:text-orange-300 mb-1 text-sm">
+                              ⚠️ Do poprawy:
+                            </p>
+                            <ul className="space-y-1">
+                              {aiData.weaknesses.map(
+                                (weakness: string, idx: number) => (
+                                  <li
+                                    key={idx}
+                                    className="text-sm text-orange-600 dark:text-orange-400 ml-4"
+                                  >
+                                    • {weakness}
+                                  </li>
+                                )
+                              )}
+                            </ul>
+                          </div>
+                        )}
+
+                        {/* Poprawne elementy (dla SHORT_ANSWER) */}
                         {aiData.correctElements &&
                           aiData.correctElements.length > 0 && (
                             <div className="mb-3 p-3 bg-green-50 dark:bg-green-900/30 rounded-lg">
@@ -2390,7 +2639,7 @@ export const LearningSession: React.FC = () => {
                             </div>
                           )}
 
-                        {/* Brakujące elementy (jeśli są) */}
+                        {/* Brakujące elementy (dla SHORT_ANSWER) */}
                         {aiData.missingElements &&
                           aiData.missingElements.length > 0 && (
                             <div className="mb-3 p-3 bg-red-50 dark:bg-red-900/30 rounded-lg">
@@ -2412,103 +2661,59 @@ export const LearningSession: React.FC = () => {
                             </div>
                           )}
 
-                        {/* Przykładowa poprawna odpowiedź */}
-                        {aiData.correctAnswer && (
-                          <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
-                            <p className="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">
-                              📚 Przykładowa poprawna odpowiedź:
-                            </p>
-                            <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-                              <p className="text-sm text-blue-800 dark:text-blue-200">
-                                {aiData.correctAnswer}
+                        {/* Przykładowa poprawna odpowiedź - TYLKO GDY NIE MAX PUNKTÓW */}
+                        {aiData.correctAnswer &&
+                          displayScore < displayMaxScore && (
+                            <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+                              <p className="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">
+                                📚 Przykładowa poprawna odpowiedź:
                               </p>
+                              <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+                                <p className="text-sm text-blue-800 dark:text-blue-200">
+                                  {aiData.correctAnswer}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
 
-                        {/* Sugestie poprawy (jeśli są) */}
-                        {aiData.suggestions &&
-                          aiData.suggestions.length > 0 && (
+                        {/* Sugestie poprawy - TYLKO GDY NIE MAX PUNKTÓW */}
+                        {(aiData.suggestions || aiData.improvements) &&
+                          displayScore < displayMaxScore &&
+                          (aiData.suggestions?.length > 0 ||
+                            aiData.improvements?.length > 0) && (
                             <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
                               <p className="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">
                                 💡 Wskazówki na przyszłość:
                               </p>
                               <ul className="space-y-1">
-                                {aiData.suggestions.map(
-                                  (suggestion: string, idx: number) => (
-                                    <li
-                                      key={idx}
-                                      className="text-sm text-gray-600 dark:text-gray-400 ml-4"
-                                    >
-                                      • {suggestion}
-                                    </li>
-                                  )
-                                )}
+                                {(
+                                  aiData.suggestions ||
+                                  aiData.improvements ||
+                                  []
+                                ).map((suggestion: string, idx: number) => (
+                                  <li
+                                    key={idx}
+                                    className="text-sm text-gray-600 dark:text-gray-400 ml-4"
+                                  >
+                                    • {suggestion}
+                                  </li>
+                                ))}
                               </ul>
-                            </div>
-                          )}
-
-                        {/* Dla wypracowań - szczegółowe wyniki */}
-                        {currentExercise.type === "ESSAY" &&
-                          aiData.detailedFeedback && (
-                            <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
-                              <div className="grid grid-cols-2 gap-3 mb-3">
-                                {aiData.formalScore !== undefined && (
-                                  <div className="text-sm">
-                                    <span className="text-gray-600 dark:text-gray-400">
-                                      Wymogi formalne:
-                                    </span>
-                                    <span className="ml-2 font-semibold">
-                                      {aiData.formalScore}/1
-                                    </span>
-                                  </div>
-                                )}
-                                {aiData.literaryScore !== undefined && (
-                                  <div className="text-sm">
-                                    <span className="text-gray-600 dark:text-gray-400">
-                                      Kompetencje literackie:
-                                    </span>
-                                    <span className="ml-2 font-semibold">
-                                      {aiData.literaryScore}/16
-                                    </span>
-                                  </div>
-                                )}
-                                {aiData.compositionScore !== undefined && (
-                                  <div className="text-sm">
-                                    <span className="text-gray-600 dark:text-gray-400">
-                                      Kompozycja:
-                                    </span>
-                                    <span className="ml-2 font-semibold">
-                                      {aiData.compositionScore}/7
-                                    </span>
-                                  </div>
-                                )}
-                                {aiData.languageScore !== undefined && (
-                                  <div className="text-sm">
-                                    <span className="text-gray-600 dark:text-gray-400">
-                                      Styl i język:
-                                    </span>
-                                    <span className="ml-2 font-semibold">
-                                      {aiData.languageScore}/11
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
                             </div>
                           )}
                       </div>
                     );
                   })()}
 
-                {/* Przycisk następnego zadania */}
+                {/* ========================================
+        PRZYCISK NASTĘPNEGO ZADANIA
+        ======================================== */}
                 <div className="flex justify-end">
                   <button
                     onClick={async () => {
                       const isLastQuestion =
                         sessionStats.completed >= SESSION_LIMIT;
-
                       if (isLastQuestion) {
-                        // ✅ NOWE: Wywołaj funkcję z AI summary
                         await handleSessionComplete();
                       } else {
                         await goToNextExercise();

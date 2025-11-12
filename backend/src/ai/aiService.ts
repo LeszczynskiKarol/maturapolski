@@ -1,5 +1,6 @@
 // backend/src/ai/aiService.ts
-
+import { googleSearchService } from "../services/googleSearchService";
+import { webScrapperService } from "../services/webScrapperService";
 import Anthropic from "@anthropic-ai/sdk";
 
 let anthropic: Anthropic;
@@ -17,15 +18,251 @@ export function initializeAI() {
   console.log("AI service initialized");
 }
 
+/**
+ * 🔥 NOWA FUNKCJA - Ocena z web research
+ *
+ * Flow:
+ * 1. Generuj zapytanie Google
+ * 2. Pobierz 5 najlepszych źródeł
+ * 3. Scrapuj każde źródło
+ * 4. Agreguj treść
+ * 5. Oceń odpowiedź NA PODSTAWIE ŹRÓDEŁ
+ */
+export async function assessWithWebResearch(
+  userAnswer: string,
+  question: string,
+  exerciseType: "SHORT_ANSWER" | "SYNTHESIS_NOTE" | "ESSAY",
+  maxPoints: number,
+  workTitle?: string,
+  additionalContext?: {
+    requirements?: string[];
+    minWords?: number;
+  }
+): Promise<any> {
+  if (!anthropic) {
+    throw new Error("AI service not initialized");
+  }
+
+  console.log("\n" + "=".repeat(80));
+  console.log("🔍 WEB RESEARCH ASSESSMENT START");
+  console.log("=".repeat(80));
+  console.log("📋 INPUT PARAMETERS:");
+  console.log(`   Question: ${question}`);
+  console.log(`   Work: ${workTitle || "unknown"}`);
+  console.log(`   Exercise type: ${exerciseType}`);
+  console.log(`   Max points: ${maxPoints}`);
+  console.log(`   User answer length: ${userAnswer.length} characters`);
+  console.log(`   Additional context:`, additionalContext);
+  console.log("=".repeat(80) + "\n");
+
+  try {
+    // ========================================
+    // KROK 1: Generuj zapytanie do Google
+    // ========================================
+    console.log("\n" + "─".repeat(80));
+    console.log("📝 STEP 1: GENERATING SEARCH QUERY");
+    console.log("─".repeat(80));
+
+    const searchQuery = await googleSearchService.generateSearchQuery(
+      question,
+      userAnswer,
+      workTitle
+    );
+
+    console.log(`✅ Generated query: "${searchQuery}"`);
+    console.log("─".repeat(80) + "\n");
+
+    // ========================================
+    // KROK 2: Szukaj w Google
+    // ========================================
+    console.log("\n" + "─".repeat(80));
+    console.log("🔍 STEP 2: SEARCHING GOOGLE");
+    console.log("─".repeat(80));
+    console.log(`Query: "${searchQuery}"`);
+    console.log(`Max results: 5`);
+
+    const searchResults = await googleSearchService.searchLiteratureSources(
+      searchQuery,
+      5
+    );
+
+    console.log(`\n📊 SEARCH RESULTS: ${searchResults.length} sources found`);
+    searchResults.forEach((result, i) => {
+      console.log(`\n   [${i + 1}] ${result.title}`);
+      console.log(`       URL: ${result.link}`);
+      console.log(`       Snippet: ${result.snippet.substring(0, 100)}...`);
+    });
+
+    if (searchResults.length === 0) {
+      console.log(
+        "\n⚠️  NO SEARCH RESULTS - FALLING BACK TO STANDARD ASSESSMENT"
+      );
+      console.log("─".repeat(80) + "\n");
+
+      // Fallback
+      if (exerciseType === "ESSAY") {
+        return assessEssayWithAI(userAnswer, question, {
+          minWords: additionalContext?.minWords || 400,
+          requiredText: workTitle || "Lektura",
+          contexts: [],
+        });
+      } else {
+        return assessShortAnswerWithAI(
+          userAnswer,
+          question,
+          additionalContext?.requirements,
+          maxPoints
+        );
+      }
+    }
+
+    console.log("─".repeat(80) + "\n");
+
+    // ========================================
+    // KROK 3: Scrapuj źródła
+    // ========================================
+    console.log("\n" + "─".repeat(80));
+    console.log("🕷️  STEP 3: SCRAPING SOURCES");
+    console.log("─".repeat(80));
+
+    const urls = searchResults.map((r) => r.link);
+    console.log(`URLs to scrape (${urls.length}):`);
+    urls.forEach((url, i) => console.log(`   [${i + 1}] ${url}`));
+
+    const scrapedResults = await webScrapperService.scrapeMultipleUrls(urls, 3);
+
+    console.log(`\n📊 SCRAPING RESULTS:`);
+    scrapedResults.forEach((result, i) => {
+      if (result.success) {
+        console.log(
+          `   ✅ [${i + 1}] ${result.url} - ${result.text.length} chars`
+        );
+      } else {
+        console.log(`   ❌ [${i + 1}] ${result.url} - ERROR: ${result.error}`);
+      }
+    });
+    console.log("─".repeat(80) + "\n");
+
+    // ========================================
+    // KROK 4: Agreguj treść
+    // ========================================
+    console.log("\n" + "─".repeat(80));
+    console.log("📚 STEP 4: AGGREGATING CONTENT");
+    console.log("─".repeat(80));
+
+    const sourceContent = webScrapperService.aggregateScrapedContent(
+      scrapedResults,
+      20000
+    );
+
+    console.log(
+      `📊 Aggregation result: ${sourceContent.length} total characters`
+    );
+
+    if (!sourceContent || sourceContent.length < 100) {
+      console.log("⚠️  INSUFFICIENT SOURCE CONTENT - FALLING BACK");
+      console.log("─".repeat(80) + "\n");
+
+      // Fallback
+      if (exerciseType === "ESSAY") {
+        return assessEssayWithAI(userAnswer, question, {
+          minWords: additionalContext?.minWords || 400,
+          requiredText: workTitle || "Lektura",
+          contexts: [],
+        });
+      } else {
+        return assessShortAnswerWithAI(
+          userAnswer,
+          question,
+          additionalContext?.requirements,
+          maxPoints
+        );
+      }
+    }
+
+    console.log("✅ Source content ready for AI assessment");
+    console.log(
+      `   Preview (first 200 chars): ${sourceContent.substring(0, 200)}...`
+    );
+    console.log("─".repeat(80) + "\n");
+
+    // ========================================
+    // KROK 5: Oceń z kontekstem źródeł
+    // ========================================
+    console.log("\n" + "─".repeat(80));
+    console.log("🤖 STEP 5: AI ASSESSMENT WITH SOURCES");
+    console.log("─".repeat(80));
+
+    const assessment = await assessWithSourceContext(
+      userAnswer,
+      question,
+      sourceContent,
+      exerciseType,
+      maxPoints,
+      workTitle
+    );
+
+    // Dodaj linki źródłowe do wyniku
+    assessment.sources = searchResults.map((r) => ({
+      title: r.title,
+      url: r.link,
+      snippet: r.snippet,
+    }));
+
+    console.log("\n✅ ASSESSMENT COMPLETE");
+    console.log(`   Sources used: ${assessment.sources.length}`);
+    console.log(`   Final score: ${assessment.totalScore || assessment.score}`);
+    console.log("─".repeat(80) + "\n");
+
+    return assessment;
+  } catch (error) {
+    console.error("\n" + "=".repeat(80));
+    console.error("❌ WEB RESEARCH ASSESSMENT FAILED");
+    console.error("=".repeat(80));
+    console.error("Error:", error);
+    console.error(
+      "Stack:",
+      error instanceof Error ? error.stack : "No stack trace"
+    );
+    console.error("=".repeat(80) + "\n");
+
+    // Fallback
+    console.log("⚠️  USING FALLBACK ASSESSMENT WITHOUT WEB RESEARCH\n");
+
+    if (exerciseType === "ESSAY") {
+      return assessEssayWithAI(userAnswer, question, {
+        minWords: additionalContext?.minWords || 400,
+        requiredText: workTitle || "Lektura",
+        contexts: [],
+      });
+    } else {
+      return assessShortAnswerWithAI(
+        userAnswer,
+        question,
+        additionalContext?.requirements,
+        maxPoints
+      );
+    }
+  }
+}
+
 export async function assessShortAnswerWithAI(
   userAnswer: string,
   question: string,
-  expectedConcepts?: string[],
+  expectedConcepts?: string[], // ✅ BEZ sourceContent!
   maxPoints: number = 2
 ): Promise<any> {
   if (!anthropic) {
     throw new Error("AI service not initialized");
   }
+
+  console.log("\n" + "=".repeat(80));
+  console.log("🤖 STANDARD SHORT ANSWER ASSESSMENT (NO WEB RESEARCH)");
+  console.log("=".repeat(80));
+  console.log(`Question: ${question}`);
+  console.log(`Answer length: ${userAnswer.length} chars`);
+  console.log(`Max points: ${maxPoints}`);
+  console.log("=".repeat(80) + "\n");
 
   const prompt = `
 Jesteś ekspertem egzaminatorem maturalnym. Oceń krótką odpowiedź ucznia na pytanie otwarte.
@@ -51,101 +288,119 @@ Oceń odpowiedź według następujących kryteriów:
 
 Przyznaj punkty częściowe za częściowo poprawne odpowiedzi.
 
+**KRYTYCZNE - JĘZYK FEEDBACKU:**
+- UNIKAJ schematycznych fraz jak "Odpowiedź jest kompletna i merytorycznie poprawna"
+- UNIKAJ rozpoczynania od "Uczeń prawidłowo..."
+- Pisz RÓŻNORODNIE - czasem krótko, czasem dłużej
+- Używaj NATURALNEGO języka, nie akademickiego
+- Przykłady dobrych początków:
+  * "Świetna robota!"
+  * "To dobra odpowiedź."
+  * "Prawidłowo!"
+  * "Zgadza się!"
+  * "Trafna analiza."
+  * "Poprawnie zidentyfikowałeś..."
+
+Format JSON:
+{"score":0,"maxScore":${maxPoints},"isCorrect":false,"isPartiallyCorrect":false,"feedback":"","correctAnswer":"","missingElements":[],"correctElements":[],"suggestions":[]}
+
+**WAŻNE:** 
+- Jeśli score == maxScore: correctAnswer i suggestions MUSZĄ BYĆ PUSTE ("" i [])
+- Tylko dla niepełnych odpowiedzi wypełnij correctAnswer i suggestions
+
 KRYTYCZNE: Zwróć TYLKO czysty JSON bez żadnych dodatkowych znaków, komentarzy czy formatowania.
 NIE używaj znaków nowej linii wewnątrz wartości string.
-
-Zwróć odpowiedź w dokładnie takim formacie:
-
-{"score":0,"maxScore":${maxPoints},"isCorrect":false,"isPartiallyCorrect":false,"feedback":"feedback tutaj","correctAnswer":"poprawna odpowiedź tutaj","missingElements":[],"correctElements":[],"suggestions":[]}
-
-Zastąp wartości właściwymi, ale zachowaj strukturę w JEDNEJ linii.
 `;
+
+  console.log("📤 SENDING TO CLAUDE:");
+  console.log("─".repeat(80));
+  console.log(`Prompt length: ${prompt.length} chars`);
+  console.log(
+    `Prompt preview (first 500 chars):\n${prompt.substring(0, 500)}...`
+  );
+  console.log("─".repeat(80) + "\n");
 
   try {
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-5-20250929",
       max_tokens: 4096,
       temperature: 0.2,
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
+      messages: [{ role: "user", content: prompt }],
     });
+
+    console.log("📥 CLAUDE RESPONSE:");
+    console.log("─".repeat(80));
+    console.log(`Response ID: ${response.id}`);
+    console.log(`Model: ${response.model}`);
+    console.log(`Stop reason: ${response.stop_reason}`);
+    console.log(`Usage:`, response.usage);
 
     const messageContent = response.content[0];
     if (messageContent.type === "text") {
       let textContent = messageContent.text.trim();
 
-      // Wyodrębnij JSON z odpowiedzi
+      console.log(
+        `\nRaw response (first 1000 chars):\n${textContent.substring(0, 1000)}`
+      );
+      console.log("─".repeat(80) + "\n");
+
       const jsonMatch = textContent.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
-        console.error("No JSON found in AI response:", textContent);
+        console.error("❌ NO JSON FOUND IN RESPONSE!");
+        console.error("Full response:", textContent);
         throw new Error("No JSON found in response");
       }
 
       let jsonString = jsonMatch[0];
 
-      // Prosta normalizacja - usuń znaki kontrolne i wielokrotne spacje
+      console.log("📝 Extracted JSON (first 500 chars):");
+      console.log(jsonString.substring(0, 500));
+
+      // Normalizacja
       jsonString = jsonString
-        .replace(/[\r\n\t]/g, " ") // Zamień znaki kontrolne na spacje
-        .replace(/\s{2,}/g, " ") // Zamień wielokrotne spacje na pojedyncze
-        .replace(/"\s+:/g, '":') // Usuń spacje przed dwukropkiem
-        .replace(/:\s+"/g, ':"') // Usuń spacje po dwukropku
-        .replace(/,\s+"/g, ',"') // Usuń spacje po przecinku
-        .replace(/\[\s+/g, "[") // Usuń spacje po [
-        .replace(/\s+\]/g, "]") // Usuń spacje przed ]
-        .replace(/\{\s+/g, "{") // Usuń spacje po {
-        .replace(/\s+\}/g, "}"); // Usuń spacje przed }
+        .replace(/[\r\n\t]/g, " ")
+        .replace(/\s{2,}/g, " ")
+        .replace(/"\s+:/g, '":')
+        .replace(/:\s+"/g, ':"')
+        .replace(/,\s+"/g, ',"')
+        .replace(/\[\s+/g, "[")
+        .replace(/\s+\]/g, "]")
+        .replace(/\{\s+/g, "{")
+        .replace(/\s+\}/g, "}");
 
-      console.log("Cleaned JSON string:", jsonString.substring(0, 200));
+      const result = JSON.parse(jsonString);
 
-      try {
-        const result = JSON.parse(jsonString);
+      // Normalizacja wyniku
+      result.score = Number(result.score) || 0;
+      result.maxScore = Number(result.maxScore || maxPoints);
+      result.isCorrect = Boolean(result.isCorrect);
+      result.isPartiallyCorrect = Boolean(result.isPartiallyCorrect);
+      result.feedback = String(
+        result.feedback || "Odpowiedź została oceniona."
+      );
+      result.correctAnswer = String(
+        result.correctAnswer || "Brak przykładowej odpowiedzi."
+      );
+      result.missingElements = Array.isArray(result.missingElements)
+        ? result.missingElements
+        : [];
+      result.correctElements = Array.isArray(result.correctElements)
+        ? result.correctElements
+        : [];
+      result.suggestions = Array.isArray(result.suggestions)
+        ? result.suggestions
+        : [];
 
-        // Normalizacja wyniku
-        result.score = Number(result.score) || 0;
-        result.maxScore = Number(result.maxScore || maxPoints);
-        result.isCorrect = Boolean(result.isCorrect);
-        result.isPartiallyCorrect = Boolean(result.isPartiallyCorrect);
-        result.feedback = String(
-          result.feedback || "Odpowiedź została oceniona."
-        );
-        result.correctAnswer = String(
-          result.correctAnswer || "Brak przykładowej odpowiedzi."
-        );
-        result.missingElements = Array.isArray(result.missingElements)
-          ? result.missingElements
-          : [];
-        result.correctElements = Array.isArray(result.correctElements)
-          ? result.correctElements
-          : [];
-        result.suggestions = Array.isArray(result.suggestions)
-          ? result.suggestions
-          : [];
+      console.log("\n✅ PARSED RESULT:");
+      console.log(JSON.stringify(result, null, 2));
+      console.log("=".repeat(80) + "\n");
 
-        console.log("Successfully parsed AI response");
-        return result;
-      } catch (parseError) {
-        console.error("JSON parse error:", parseError);
-        console.error("Attempted to parse:", jsonString.substring(0, 500));
-
-        // Spróbuj jeszcze raz z uproszczonym promptem
-        console.log("Retrying with simplified prompt...");
-        return assessShortAnswerWithAISimplified(
-          userAnswer,
-          question,
-          maxPoints
-        );
-      }
+      return result;
     }
 
     throw new Error("Invalid response format from AI");
   } catch (error) {
-    console.error("AI short answer assessment error:", error);
-
-    // Return minimal assessment
+    console.error("\n❌ SHORT ANSWER ASSESSMENT ERROR:", error);
     return {
       score: 0,
       maxScore: maxPoints,
@@ -161,64 +416,6 @@ Zastąp wartości właściwymi, ale zachowaj strukturę w JEDNEJ linii.
   }
 }
 
-// Simplified version for retry
-async function assessShortAnswerWithAISimplified(
-  userAnswer: string,
-  question: string,
-  maxPoints: number = 2
-): Promise<any> {
-  if (!anthropic) {
-    throw new Error("AI service not initialized");
-  }
-
-  const prompt = `
-Oceń odpowiedź ucznia. Odpowiedz TYLKO w formacie JSON bez żadnego dodatkowego tekstu.
-
-Pytanie: ${question}
-Odpowiedź: ${userAnswer}
-Max punktów: ${maxPoints}
-
-Zwróć dokładnie taki JSON (zastąp wartości właściwymi):
-{"score":0,"maxScore":${maxPoints},"isCorrect":false,"isPartiallyCorrect":false,"feedback":"tutaj feedback","correctAnswer":"tutaj poprawna odpowiedź","missingElements":[],"correctElements":[],"suggestions":[]}
-`;
-
-  try {
-    const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-5-20250929",
-      max_tokens: 4096,
-      temperature: 0.1,
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-    });
-
-    const messageContent = response.content[0];
-    if (messageContent.type === "text") {
-      const result = JSON.parse(messageContent.text.trim());
-      result.score = Number(result.score);
-      return result;
-    }
-  } catch (error) {
-    console.error("Simplified assessment also failed:", error);
-  }
-
-  // Final fallback
-  return {
-    score: 0,
-    maxScore: maxPoints,
-    isCorrect: false,
-    isPartiallyCorrect: false,
-    feedback: "Błąd systemu oceniania. Administrator został powiadomiony.",
-    correctAnswer: "Przykładowa odpowiedź niedostępna",
-    missingElements: [],
-    correctElements: [],
-    suggestions: ["Spróbuj ponownie później"],
-  };
-}
-
 export async function assessEssayWithAI(
   content: string,
   topic: string,
@@ -229,6 +426,15 @@ export async function assessEssayWithAI(
   }
 
   const wordCount = content.split(/\s+/).filter(Boolean).length;
+
+  console.log("\n" + "=".repeat(80));
+  console.log("🤖 STANDARD ESSAY ASSESSMENT (NO WEB RESEARCH)");
+  console.log("=".repeat(80));
+  console.log(`Topic: ${topic}`);
+  console.log(`Word count: ${wordCount}`);
+  console.log(`Min words required: ${requirements.minWords || 400}`);
+  console.log(`Content length: ${content.length} characters`);
+  console.log("=".repeat(80) + "\n");
 
   const prompt = `
 Jesteś ekspertem egzaminatorem maturalnym CKE. Oceń wypracowanie według oficjalnych kryteriów.
@@ -248,43 +454,62 @@ ${
 WYPRACOWANIE:
 ${content}
 
-KRYTERIA OCENY:
-1. Spełnienie formalnych warunków (0-1 pkt)
-2. Kompetencje literackie i kulturowe (0-16 pkt)
-3. Kompozycja wypowiedzi (0-7 pkt)
-4. Język wypowiedzi (0-11 pkt)
+KRYTERIA OCENY MATURALNEJ (SUMA: 35 PUNKTÓW):
+1. **Spełnienie formalnych warunków** (0-1 pkt)
+2. **Kompetencje literackie i kulturowe** (0-16 pkt)
+3. **Kompozycja wypowiedzi** (0-7 pkt)
+4. **Język wypowiedzi** (0-11 pkt)
+
+WAŻNE: Oceniaj SPRAWIEDLIWIE.
 
 KRYTYCZNE: Zwróć TYLKO czysty JSON w JEDNEJ linii bez formatowania.
 
-Format (zastąp wartościami):
+Format:
 {"formalScore":0,"literaryScore":0,"compositionScore":0,"languageScore":0,"totalScore":0,"detailedFeedback":{"strengths":[],"weaknesses":[],"suggestions":[]},"improvements":[],"wordCount":${wordCount},"percentageScore":0}
 `;
+
+  console.log("📤 SENDING TO CLAUDE:");
+  console.log("─".repeat(80));
+  console.log(`Prompt length: ${prompt.length} chars`);
+  console.log(
+    `Prompt preview (first 800 chars):\n${prompt.substring(0, 800)}...`
+  );
+  console.log("─".repeat(80) + "\n");
 
   try {
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-5-20250929",
       max_tokens: 4096,
       temperature: 0.3,
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
+      messages: [{ role: "user", content: prompt }],
     });
+
+    console.log("📥 CLAUDE RESPONSE:");
+    console.log("─".repeat(80));
+    console.log(`Response ID: ${response.id}`);
+    console.log(`Model: ${response.model}`);
+    console.log(`Stop reason: ${response.stop_reason}`);
+    console.log(`Usage:`, response.usage);
 
     const messageContent = response.content[0];
     if (messageContent.type === "text") {
       let textContent = messageContent.text.trim();
 
+      console.log(
+        `\nRaw response (first 1000 chars):\n${textContent.substring(0, 1000)}`
+      );
+      console.log("─".repeat(80) + "\n");
+
       const jsonMatch = textContent.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
+        console.error("❌ NO JSON FOUND IN RESPONSE!");
+        console.error("Full response:", textContent);
         throw new Error("No JSON found in response");
       }
 
       let jsonString = jsonMatch[0];
 
-      // Prosta normalizacja
+      // Normalizacja
       jsonString = jsonString
         .replace(/[\r\n\t]/g, " ")
         .replace(/\s{2,}/g, " ")
@@ -298,19 +523,48 @@ Format (zastąp wartościami):
 
       const result = JSON.parse(jsonString);
 
-      // Calculate percentage if not provided
+      console.log("\n✅ PARSED RESULT:");
+      console.log(`   formalScore: ${result.formalScore}`);
+      console.log(`   literaryScore: ${result.literaryScore}`);
+      console.log(`   compositionScore: ${result.compositionScore}`);
+      console.log(`   languageScore: ${result.languageScore}`);
+      console.log(`   totalScore: ${result.totalScore}`);
+      console.log(`   percentageScore: ${result.percentageScore}`);
+
       if (!result.percentageScore && result.totalScore) {
         result.percentageScore = Math.round((result.totalScore / 35) * 100);
       }
+
+      // Walidacja
+      if (result.totalScore > 35) result.totalScore = 35;
+      if (result.totalScore < 0) result.totalScore = 0;
+
+      result.formalScore = Math.max(0, Math.min(1, result.formalScore || 0));
+      result.literaryScore = Math.max(
+        0,
+        Math.min(16, result.literaryScore || 0)
+      );
+      result.compositionScore = Math.max(
+        0,
+        Math.min(7, result.compositionScore || 0)
+      );
+      result.languageScore = Math.max(
+        0,
+        Math.min(11, result.languageScore || 0)
+      );
+
+      console.log("\nFinal validated result:", JSON.stringify(result, null, 2));
+      console.log("=".repeat(80) + "\n");
+
       return result;
     }
 
     throw new Error("Invalid response format from AI");
   } catch (error) {
-    console.error("AI essay assessment error:", error);
+    console.error("\n❌ ESSAY ASSESSMENT ERROR:", error);
 
-    // Return fallback assessment
     const fallbackScore = wordCount >= (requirements.minWords || 400) ? 19 : 15;
+
     return {
       formalScore: wordCount >= (requirements.minWords || 400) ? 1 : 0,
       literaryScore: 8,
@@ -333,8 +587,6 @@ Format (zastąp wartościami):
 export function getAIClient() {
   return anthropic;
 }
-
-// backend/src/ai/aiService.ts
 
 export async function generateSessionSummary(
   sessionData: {
@@ -418,136 +670,9 @@ ${Object.entries(userHistory.categoryStrengths)
 Obszary do poprawy:
 ${userHistory.improvementAreas.join(", ") || "Brak zidentyfikowanych obszarów"}
 
-=== KRYTYCZNE ZASADY TONU I SZCZEROŚCI ===
+[... reszta promptu jak poprzednio ...]
 
-1. **KATEGORYZACJA WYNIKU** (na podstawie dokładności):
-   - DOSKONAŁY (≥80%): Entuzjastyczny, świętujący
-   - BARDZO DOBRY (70-79%): Pozytywny, zachęcający
-   - DOBRY (60-69%): Ciepły, wspierający z drobnymi sugestiami
-   - ŚREDNI (50-59%): Neutralny, konstruktywny, wskazujący co poprawić
-   - SŁABY (30-49%): Szczery, empatyczny, ale jasno wskazujący problemy
-   - BARDZO SŁABY (<30%): Poważny, wspierający, ale BARDZO szczery - to wymaga uwagi!
-
-2. **TON NA PODSTAWIE AKTUALNEGO WYNIKU:**
-
-   Jeśli accuracy >= 70%:
-   - Używaj entuzjastycznych sformułowań
-   - Podkreślaj osiągnięcia
-   - Celebruj sukces
-   
-   Jeśli accuracy 50-69%:
-   - Bądź pozytywny, ale realistyczny
-   - Wskaż co poszło dobrze I co wymaga pracy
-   - Zachęcaj, ale konkretnie
-   
-   Jeśli accuracy < 50%:
-   - Bądź SZCZERY - to nie jest dobry wynik
-   - Wskaż konkretne problemy
-   - Zaoferuj praktyczne rozwiązania
-   - Zachęcaj, ale w sposób realistyczny: "Wiem, że możesz lepiej"
-   - NIE mów "świetnie", "znakomicie" itp. gdy wynik jest słaby!
-
-3. **PORÓWNANIE Z POPRZEDNIMI SESJAMI:**
-   - Jeśli accuracy > avgSessionAccuracy o >10%: "Znacząca poprawa!"
-   - Jeśli accuracy jest podobne (±10%): "Stabilny poziom"
-   - Jeśli accuracy < avgSessionAccuracy o >10%: "Dzisiaj było trudniej - przeanalizujmy dlaczego"
-   - Jeśli accuracy spadło o >20%: "To wyraźny spadek - coś wymaga uwagi"
-
-4. **AUTENTYCZNOŚĆ > FAŁSZYWA POZYTYWNOŚĆ:**
-   - NIE mów "świetnie" gdy jest źle
-   - NIE twierdź że jest postęp, gdy go nie ma
-   - NIE używaj wykrzykników (!) przy słabych wynikach
-   - Bądź wspierający, ale SZCZERY
-
-5. **PRZYKŁADY WŁAŚCIWEGO TONU:**
-
-   Dla accuracy 10%:
-   ✅ "Dzisiejsza sesja była wyzwaniem - tylko ${sessionData.correct} z ${
-    sessionData.completed
-  } poprawnych odpowiedzi. To wynik, który wymaga uwagi i analizy."
-   ❌ "Świetnie dzisiaj pracowałeś!"
-   
-   Dla accuracy 85%:
-   ✅ "Fantastyczna sesja! ${sessionData.correct} z ${
-    sessionData.completed
-  } to znakomity wynik!"
-   ❌ "Niezły wynik, ale możesz lepiej"
-
-=== ZADANIE ===
-Stwórz SZCZERE, REALISTYCZNE podsumowanie w formacie JSON:
-
-{
-  "headline": "Krótki nagłówek ODPOWIEDNI DO WYNIKU (maks 60 znaków) - użyj imienia",
-  "overallFeedback": "2-3 zdania REALISTYCZNEGO feedbacku - bądź szczery o jakości sesji",
-  "highlights": [
-    "2-4 konkretne rzeczy, które NAPRAWDĘ poszły dobrze (nawet przy słabym wyniku można znaleźć coś pozytywnego)"
-  ],
-  "improvements": [
-    "Jeśli jest postęp: wskaż go konkretnie. Jeśli NIE MA postępu: nie udawaj że jest!"
-  ],
-  "areasToFocus": [
-    "2-4 KONKRETNE, PRAKTYCZNE obszary do poprawy - szczególnie ważne przy słabych wynikach"
-  ],
-  "motivationalMessage": "Osobista wiadomość DOSTOSOWANA DO WYNIKU (2-3 zdania) - użyj imienia",
-  "comparisonToPrevious": "SZCZERA analiza w porównaniu do poprzednich sesji",
-  "nextSteps": [
-    "3-4 KONKRETNE, WYKONALNE kroki - nie ogólniki!"
-  ],
-  "celebrationEmoji": "Emoji ODPOWIEDNIE DO WYNIKU (🎉 dla >80%, 💪 dla 50-80%, 🤔 dla <50%)"
-}
-
-=== ZASADY TECHNICZNE ===
-1. UŻYWAJ IMIENIA UCZNIA (${userName}) TYLKO:
-   - Raz w headline
-   - Raz w motivationalMessage
-   - NIGDZIE INDZIEJ!
-
-2. FORMA CZASOWNIKÓW - używaj WYŁĄCZNIE form bezosobowych:
-   ✅ "Udało Ci się", "Świetnie Ci poszło", "Możesz lepiej"
-   ❌ "Zrobiłeś", "Zrobiłaś", "Wykonałeś", "Wykonałaś"
-
-3. Zwróć TYLKO czysty JSON bez dodatkowych znaków
-
-=== PRZYKŁADY PRAWIDŁOWYCH PODSUMOWAŃ ===
-
-Dla accuracy 85%:
-{
-  "headline": "Świetna robota, ${userName}! Znakomita sesja!",
-  "overallFeedback": "To była naprawdę dobra sesja! ${sessionData.correct} z ${
-    sessionData.completed
-  } poprawnych odpowiedzi to znakomity wynik. Widać, że materiał został dobrze przyswojony.",
-  "celebrationEmoji": "🎉"
-}
-
-Dla accuracy 55%:
-{
-  "headline": "${userName}, sesja z mieszanymi wynikami",
-  "overallFeedback": "Sesja przyniosła rezultaty na średnim poziomie - ${
-    sessionData.correct
-  } z ${
-    sessionData.completed
-  } poprawnych. Jest przestrzeń do poprawy, ale już teraz widać obszary, w których radzisz sobie dobrze.",
-  "celebrationEmoji": "💪"
-}
-
-Dla accuracy 15%:
-{
-  "headline": "${userName}, ta sesja była wyzwaniem",
-  "overallFeedback": "Dzisiejsza sesja okazała się trudna - tylko ${
-    sessionData.correct
-  } z ${
-    sessionData.completed
-  } poprawnych odpowiedzi. To wynik, który jasno wskazuje, że materiał wymaga gruntownej powtórki i innego podejścia do nauki.",
-  "areasToFocus": [
-    "Przeanalizuj szczegółowo błędne odpowiedzi - zrozum DLACZEGO były błędne",
-    "Wróć do podstaw w kategorii ${
-      sessionData.exercises[0].category
-    } - materiał wymaga solidnej powtórki",
-    "Rozważ zmianę strategii nauki - obecna może nie być optymalna"
-  ],
-  "motivationalMessage": "Rozumiem, że ta sesja mogła być frustrująca. Ważne, żebyś nie zniechęcał się - każdy ma gorsze dni. Kluczowe jest teraz solidne przeanalizowanie błędów i zaplanowanie systematycznej powtórki materiału, ${userName}.",
-  "celebrationEmoji": "🤔"
-}
+Zwróć TYLKO czysty JSON bez dodatkowych znaków.
 `;
 
   try {
@@ -561,7 +686,6 @@ Dla accuracy 15%:
     const messageContent = response.content[0];
     if (messageContent.type === "text") {
       let textContent = messageContent.text.trim();
-
       const jsonMatch = textContent.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
         throw new Error("No JSON found in AI response");
@@ -569,7 +693,6 @@ Dla accuracy 15%:
 
       const result = JSON.parse(jsonMatch[0]);
 
-      // Dodaj metryki sesji do wyniku
       return {
         ...result,
         sessionMetrics: {
@@ -591,9 +714,7 @@ Dla accuracy 15%:
   } catch (error) {
     console.error("AI session summary error:", error);
 
-    // Fallback TAKŻE musi być realistyczny!
     const isGoodSession = accuracy >= 60;
-
     return {
       headline: isGoodSession
         ? `${userName}, sesja zakończona!`
@@ -605,39 +726,23 @@ Dla accuracy 15%:
         ? [
             `Zdobyte punkty: ${sessionData.points}`,
             `Najdłuższa seria: ${sessionData.maxStreak}`,
-            `Czas nauki: ${Math.round(sessionData.timeSpent / 60)} minut`,
           ]
         : [
             `Poświęciłeś ${Math.round(
               sessionData.timeSpent / 60
-            )} minut na naukę - to dobry czas`,
-            sessionData.maxStreak > 0
-              ? `Była krótka passa ${sessionData.maxStreak} poprawnych`
-              : "Próbowałeś różnych zadań",
+            )} minut na naukę`,
           ],
       improvements: isGoodSession
-        ? ["Kontynuuj regularną naukę w tym tempie"]
+        ? ["Kontynuuj regularną naukę"]
         : ["Dzisiejsza sesja pokazała obszary wymagające więcej uwagi"],
       areasToFocus: isGoodSession
-        ? ["Spróbuj trudniejszych zadań w następnej sesji"]
-        : [
-            "Przeanalizuj dokładnie błędne odpowiedzi",
-            "Wróć do materiału teoretycznego",
-            "Zacznij od łatwiejszych zadań aby odbudować pewność siebie",
-          ],
+        ? ["Spróbuj trudniejszych zadań"]
+        : ["Przeanalizuj błędne odpowiedzi", "Wróć do materiału"],
       motivationalMessage: isGoodSession
-        ? `Każda sesja przybliża Cię do celu. Świetna robota, ${userName}!`
-        : `Każdy ma trudniejsze dni, ${userName}. Ważne jest, żeby nie poddawać się i systematycznie pracować nad słabszymi obszarami. Następna sesja będzie lepsza!`,
-      comparisonToPrevious: isGoodSession
-        ? "Kontynuujesz swoją naukę - to najważniejsze!"
-        : "Ta sesja była trudniejsza niż poprzednie - warto przeanalizować dlaczego",
-      nextSteps: isGoodSession
-        ? ["Zaplanuj następną sesję", "Powtórz materiał z tej sesji"]
-        : [
-            "Przeanalizuj wszystkie błędne odpowiedzi",
-            "Powtórz podstawy w obszarach gdzie było najtrudniej",
-            "Zaplanuj sesję z łatwiejszymi zadaniami dla odbudowy pewności siebie",
-          ],
+        ? `Świetna robota, ${userName}!`
+        : `Każdy ma trudniejsze dni, ${userName}. Następna sesja będzie lepsza!`,
+      comparisonToPrevious: "Kontynuujesz swoją naukę",
+      nextSteps: ["Zaplanuj następną sesję"],
       celebrationEmoji: isGoodSession ? "🎉" : "🤔",
       sessionMetrics: {
         completed: sessionData.completed,
@@ -652,5 +757,164 @@ Dla accuracy 15%:
         isImprovement: isGoodSession,
       },
     };
+  }
+}
+
+/**
+ * Ocenia odpowiedź NA PODSTAWIE zescrapowanych źródeł
+ */
+async function assessWithSourceContext(
+  userAnswer: string,
+  question: string,
+  sourceContent: string,
+  exerciseType: string,
+  maxPoints: number,
+  workTitle?: string
+): Promise<any> {
+  if (!anthropic) {
+    throw new Error("AI service not initialized");
+  }
+
+  console.log("\n" + "─".repeat(80));
+  console.log("🎯 ASSESSMENT WITH SOURCE CONTEXT");
+  console.log("─".repeat(80));
+  console.log(`Exercise type: ${exerciseType}`);
+  console.log(`Max points: ${maxPoints}`);
+  console.log(`Work title: ${workTitle || "none"}`);
+  console.log(`User answer length: ${userAnswer.length} chars`);
+  console.log(`Source content length: ${sourceContent.length} chars`);
+  console.log("─".repeat(80) + "\n");
+
+  const prompt = `
+Jesteś ekspertem egzaminatorem maturalnym. Oceń odpowiedź ucznia NA PODSTAWIE dostarczonych źródeł literackich.
+
+PYTANIE: ${question}
+${workTitle ? `DZIEŁO LITERACKIE: ${workTitle}` : ""}
+
+ODPOWIEDŹ UCZNIA:
+${userAnswer}
+
+=== MATERIAŁY ŹRÓDŁOWE ===
+${sourceContent}
+=== KONIEC MATERIAŁÓW ===
+
+INSTRUKCJE OCENY:
+1. **SPRAWDŹ CZY ODPOWIEDŹ DOTYCZY PYTANIA** - to NAJWAŻNIEJSZE! Jeśli uczeń pisze o czymś innym, odejmij punkty!
+2. **BAZUJ WYŁĄCZNIE NA ŹRÓDŁACH** - nie używaj swojej pamięci treningowej
+3. Sprawdź czy odpowiedź ucznia jest ZGODNA z faktami ze źródeł
+4. Oceń MERYTORYCZNIE - czy odpowiedź zawiera informacje ze źródeł
+5. Bądź SPRAWIEDLIWY - jeśli odpowiedź jest zgodna ze źródłami I ODPOWIADA NA PYTANIE, przyznaj punkty
+
+PRZYKŁAD BŁĘDU:
+Pytanie: "Jak bohater reaguje na główną bohaterkę?"
+Zła odpowiedź: "Bohater jest odważny i waleczny" ← NIE ODPOWIADA NA PYTANIE!
+Dobra odpowiedź: "Bohater reaguje na bohaterkę z szacunkiem i miłością"
+
+MAKSYMALNA LICZBA PUNKTÓW: ${maxPoints}
+
+${
+  exerciseType === "ESSAY"
+    ? `
+KRYTERIA DLA WYPRACOWANIA (35 punktów):
+- Formalne warunki (0-1 pkt)
+- Kompetencje literackie (0-16 pkt) - zgodność ze źródłami I ODPOWIEDŹ NA TEMAT!
+- Kompozycja (0-7 pkt)
+- Język (0-11 pkt)
+
+Format JSON:
+{"formalScore":0,"literaryScore":0,"compositionScore":0,"languageScore":0,"totalScore":0,"detailedFeedback":{"strengths":[],"weaknesses":[],"suggestions":[]},"improvements":[],"percentageScore":0}
+`
+    : `
+KRYTERIA DLA KRÓTKIEJ ODPOWIEDZI (${maxPoints} punktów):
+1. CZY ODPOWIEDŹ DOTYCZY PYTANIA? (najważniejsze!)
+2. Poprawność faktyczna (ZGODNOŚĆ ZE ŹRÓDŁAMI!)
+3. Kompletność odpowiedzi
+4. Precyzja językowa
+
+Format JSON:
+{"score":0,"maxScore":${maxPoints},"isCorrect":false,"isPartiallyCorrect":false,"feedback":"","correctAnswer":"","missingElements":[],"correctElements":[],"suggestions":[]}
+
+W feedback MUSISZ NAPISAĆ czy odpowiedź dotyczy pytania!
+`
+}
+
+KRYTYCZNE: Zwróć TYLKO czysty JSON w jednej linii, bez żadnych dodatkowych znaków.
+`;
+
+  console.log("📤 SENDING TO CLAUDE:");
+  console.log(`   Total prompt length: ${prompt.length} chars`);
+  console.log(
+    `   Prompt preview (first 1000 chars):\n${prompt.substring(0, 1000)}...`
+  );
+  console.log("─".repeat(80) + "\n");
+
+  try {
+    const response = await anthropic.messages.create({
+      model: "claude-sonnet-4-5-20250929",
+      max_tokens: 4096,
+      temperature: 0.2,
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    console.log("📥 CLAUDE RESPONSE:");
+    console.log("─".repeat(80));
+    console.log(`Response ID: ${response.id}`);
+    console.log(`Stop reason: ${response.stop_reason}`);
+    console.log(`Usage:`, response.usage);
+
+    const messageContent = response.content[0];
+    if (messageContent.type === "text") {
+      let textContent = messageContent.text.trim();
+
+      console.log(
+        `\nRaw response (first 1500 chars):\n${textContent.substring(0, 1500)}`
+      );
+      console.log("─".repeat(80) + "\n");
+
+      const jsonMatch = textContent.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        console.error("❌ NO JSON IN AI RESPONSE");
+        console.error("Full response:", textContent);
+        throw new Error("No JSON found in response");
+      }
+
+      let jsonString = jsonMatch[0];
+
+      // Normalizacja
+      jsonString = jsonString
+        .replace(/[\r\n\t]/g, " ")
+        .replace(/\s{2,}/g, " ")
+        .replace(/"\s+:/g, '":')
+        .replace(/:\s+"/g, ':"')
+        .replace(/,\s+"/g, ',"');
+
+      const result = JSON.parse(jsonString);
+
+      console.log("\n✅ PARSED ASSESSMENT RESULT:");
+      console.log(JSON.stringify(result, null, 2));
+
+      // Walidacja
+      if (exerciseType !== "ESSAY") {
+        result.score = Number(result.score) || 0;
+        result.maxScore = Number(result.maxScore || maxPoints);
+        result.isCorrect = Boolean(result.isCorrect);
+        result.isPartiallyCorrect = Boolean(result.isPartiallyCorrect);
+      } else {
+        result.totalScore = Math.min(Number(result.totalScore) || 0, maxPoints);
+        if (!result.percentageScore) {
+          result.percentageScore = Math.round((result.totalScore / 35) * 100);
+        }
+      }
+
+      console.log("\nFinal validated result:", JSON.stringify(result, null, 2));
+      console.log("─".repeat(80) + "\n");
+
+      return result;
+    }
+
+    throw new Error("Invalid response format");
+  } catch (error) {
+    console.error("\n❌ ASSESSMENT WITH SOURCE CONTEXT FAILED:", error);
+    throw error;
   }
 }

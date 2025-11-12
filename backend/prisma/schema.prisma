@@ -13,7 +13,7 @@ model User {
   username      String    @unique
   password      String
   role          UserRole  @default(STUDENT)
-  
+
   // Relacje - MUSZĄ BYĆ!
   profile       UserProfile?
   levelProgress UserLevelProgress?
