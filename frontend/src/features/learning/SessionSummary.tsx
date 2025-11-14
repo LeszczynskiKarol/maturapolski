@@ -26,16 +26,16 @@ interface SessionSummaryProps {
       timeSpent: number;
       streak: number;
     };
-    comparison: {
+    comparison?: {
       accuracyChange: number;
       isImprovement: boolean;
     };
-    highlights: string[];
-    improvements: string[];
-    areasToFocus: string[];
+    highlights?: string[];
+    improvements?: string[];
+    areasToFocus?: string[];
     motivationalMessage: string;
-    comparisonToPrevious: string;
-    nextSteps: string[];
+    comparisonToPrevious?: string;
+    nextSteps?: string[];
   };
   onClose: () => void;
 }
@@ -81,9 +81,11 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
               value={`${sessionMetrics.accuracy}%`}
               color={sessionMetrics.accuracy >= 70 ? "green" : "yellow"}
               badge={
-                comparison.isImprovement
+                comparison?.isImprovement
                   ? `+${comparison.accuracyChange}%`
-                  : `${comparison.accuracyChange}%`
+                  : comparison?.accuracyChange
+                  ? `${comparison.accuracyChange}%`
+                  : undefined
               }
             />
             <MetricCard
@@ -121,22 +123,24 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
           )}
 
           {/* Porównanie z poprzednimi sesjami */}
-          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl">
-            <div className="flex items-start gap-3">
-              <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-1 flex-shrink-0" />
-              <div>
-                <p className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
-                  Porównanie z poprzednimi sesjami
-                </p>
-                <p className="text-sm text-blue-800 dark:text-blue-200">
-                  {summary.comparisonToPrevious}
-                </p>
+          {summary.comparisonToPrevious && (
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl">
+              <div className="flex items-start gap-3">
+                <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-1 flex-shrink-0" />
+                <div>
+                  <p className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+                    Porównanie z poprzednimi sesjami
+                  </p>
+                  <p className="text-sm text-blue-800 dark:text-blue-200">
+                    {summary.comparisonToPrevious}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Osiągnięcia */}
-          {summary.highlights.length > 0 && (
+          {summary.highlights && summary.highlights.length > 0 && (
             <Section
               title="🌟 Twoje osiągnięcia w tej sesji"
               items={summary.highlights}
@@ -145,7 +149,7 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
           )}
 
           {/* Postępy */}
-          {summary.improvements.length > 0 && (
+          {summary.improvements && summary.improvements.length > 0 && (
             <Section
               title="📈 Widoczny postęp"
               items={summary.improvements}
@@ -154,7 +158,7 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
           )}
 
           {/* Obszary do pracy */}
-          {summary.areasToFocus.length > 0 && (
+          {summary.areasToFocus && summary.areasToFocus.length > 0 && (
             <Section
               title="🎯 Na co warto zwrócić uwagę"
               items={summary.areasToFocus}
@@ -164,7 +168,7 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
           )}
 
           {/* Następne kroki */}
-          {summary.nextSteps.length > 0 && (
+          {summary.nextSteps && summary.nextSteps.length > 0 && (
             <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-6 rounded-xl border border-purple-200 dark:border-purple-800">
               <h3 className="font-bold text-lg text-purple-900 dark:text-purple-100 mb-3 flex items-center gap-2">
                 <ArrowRight className="w-5 h-5" />
