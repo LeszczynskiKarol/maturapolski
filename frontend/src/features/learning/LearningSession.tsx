@@ -151,7 +151,6 @@ export const LearningSession: React.FC = () => {
   });
 
   const loadSelectedExercise = (exercise: any) => {
-    console.log("Loading selected exercise:", exercise.id);
     setCurrentExercise(exercise);
     setAnswer(null);
     setShowFeedback(false);
@@ -357,7 +356,6 @@ export const LearningSession: React.FC = () => {
   const sessionExit = useSessionExit({
     isActive: sessionActive && !sessionComplete,
     onExit: async () => {
-      console.log("=== SESSION EXIT TRIGGERED ===");
       await endSession();
     },
     shouldBlock: sessionActive && !sessionComplete,
@@ -381,11 +379,11 @@ export const LearningSession: React.FC = () => {
   // SPRAWDŹ CZY SĄ FILTRY Z PLANU TYGODNIOWEGO
   const [sessionFilters, setSessionFilters] = useState<SessionFilters>(() => {
     const storedFilters = localStorage.getItem("sessionFilters");
-    console.log("Reading filters from localStorage:", storedFilters);
+
     if (storedFilters) {
       try {
         const filters = JSON.parse(storedFilters);
-        console.log("Parsed filters:", filters);
+
         return filters;
       } catch {
         console.log("Failed to parse filters");
@@ -490,10 +488,8 @@ export const LearningSession: React.FC = () => {
   };
 
   const handleSessionComplete = async () => {
-    console.log("=== SESSION COMPLETE - GENERATING SUMMARY ===");
-
     if (sessionId && sessionStats.completed > 0) {
-      setIsLoadingSummary(true); // ✅ START LOADING
+      setIsLoadingSummary(true);
 
       try {
         // 1. Zapisz sesję
@@ -502,7 +498,6 @@ export const LearningSession: React.FC = () => {
           stats: sessionStats,
           completedExercises: completedExercises,
         });
-        console.log("✅ Session saved successfully");
 
         // 2. Pobierz AI summary
         const summaryResponse = await api.post(
@@ -510,7 +505,7 @@ export const LearningSession: React.FC = () => {
           {
             sessionId,
             userName:
-              userData?.username || userData?.email?.split("@")[0] || "Uczniu", // ✅ Przekaż userName
+              userData?.username || userData?.email?.split("@")[0] || "Uczniu",
           }
         );
 
@@ -521,7 +516,7 @@ export const LearningSession: React.FC = () => {
         toast.error("Nie udało się wygenerować podsumowania");
         completeFallbackSession();
       } finally {
-        setIsLoadingSummary(false); // ✅ STOP LOADING
+        setIsLoadingSummary(false);
       }
     }
   };
@@ -693,39 +688,6 @@ export const LearningSession: React.FC = () => {
       setSubmissionResult(result);
 
       // ========================================
-      // 🔍 ROZSZERZONE LOGOWANIE (dla debugowania)
-      // ========================================
-      console.log("\n" + "=".repeat(80));
-      console.log("✅ SUBMIT SUCCESS - FULL RESPONSE");
-      console.log("=".repeat(80));
-      console.log("Exercise ID:", currentExercise.id);
-      console.log("Exercise type:", currentExercise.type);
-      console.log("\nResponse structure:");
-      console.log(JSON.stringify(result, null, 2));
-      console.log("\nKey fields:");
-      console.log("  - result.score:", result.score);
-      console.log(
-        "  - result.feedback:",
-        result.feedback ? "Present" : "Missing"
-      );
-      console.log(
-        "  - result.assessment:",
-        result.assessment ? "Present" : "Missing"
-      );
-      console.log("  - result.message:", result.message);
-
-      if (result.feedback) {
-        console.log("\nFeedback structure:");
-        console.log(JSON.stringify(result.feedback, null, 2));
-      }
-
-      if (result.assessment) {
-        console.log("\nAssessment structure:");
-        console.log(JSON.stringify(result.assessment, null, 2));
-      }
-      console.log("=".repeat(80) + "\n");
-
-      // ========================================
       // WALIDACJA SESJI
       // ========================================
       if (!sessionId) {
@@ -740,19 +702,12 @@ export const LearningSession: React.FC = () => {
       // ZAPIS DO SESJI
       // ========================================
       try {
-        console.log("💾 Zapisuję do sesji:", {
-          sessionId,
-          exerciseId: currentExercise.id,
-          score: result.score,
-        });
-
         await api.post("/api/learning/session/update-completed", {
           sessionId: sessionId,
           exerciseId: currentExercise.id,
           score: result.score,
         });
 
-        console.log("✅ Zapisano pomyślnie do sesji");
         setHasSubmitted(true);
       } catch (error: any) {
         console.error("❌ Błąd zapisu do sesji:", error);
@@ -770,10 +725,6 @@ export const LearningSession: React.FC = () => {
       // AKTUALIZACJA STATYSTYK
       // ========================================
       const isCorrect = result.score > 0;
-
-      console.log(
-        `📊 Updating stats - isCorrect: ${isCorrect}, score: ${result.score}`
-      );
 
       setCompletedExercises((prev) => [
         ...prev,
@@ -795,12 +746,9 @@ export const LearningSession: React.FC = () => {
       // LEVEL PROGRESS (dla pytań z poziomami trudności)
       // ========================================
       if (result.levelProgress) {
-        console.log("🎯 Level progress update:", result.levelProgress);
-
         queryClient.setQueryData(["difficulty-progress"], result.levelProgress);
 
         if (result.unlockedNewLevel) {
-          console.log("🎉 NEW LEVEL UNLOCKED!");
           confetti({
             particleCount: 300,
             spread: 100,
@@ -827,7 +775,6 @@ export const LearningSession: React.FC = () => {
         const newStreak = sessionStats.streak + 1;
 
         if (newStreak % 5 === 0) {
-          console.log(`🔥 STREAK MILESTONE: ${newStreak}`);
           toast.success(
             `🔥 BRAWO! To już ${newStreak}. Twoja poprawna odpowiedź z rzędu. Kontynuuj passę!`,
             { duration: 4000 }
@@ -838,7 +785,7 @@ export const LearningSession: React.FC = () => {
       // ========================================
       // POKAŻ FEEDBACK - KRYTYCZNE!
       // ========================================
-      console.log("👁️  Setting showFeedback = true");
+
       setShowFeedback(true);
     },
     onError: (error: any) => {
@@ -891,22 +838,14 @@ export const LearningSession: React.FC = () => {
   const startSession = async () => {
     try {
       // ZAWSZE sprawdź czy są aktywne sesje
-      console.log("=== STARTING NEW SESSION ===");
 
       try {
         const activeSessions = await api.get("/api/learning/active-sessions");
 
         if (activeSessions.data && activeSessions.data.length > 0) {
-          console.log(
-            `Found ${activeSessions.data.length} active sessions to close`
-          );
-
           for (const oldSession of activeSessions.data) {
             // Zamknij każdą aktywną sesję
             if (oldSession.completed > 0) {
-              console.log(
-                `Closing session ${oldSession.id} with ${oldSession.completed} exercises`
-              );
               try {
                 await api.post("/api/learning/session/complete", {
                   sessionId: oldSession.id,
@@ -969,7 +908,7 @@ export const LearningSession: React.FC = () => {
       setSessionId(newSessionId);
 
       // ZAWSZE nowa sesja, NIGDY nie wznawiaj
-      console.log("Starting fresh session");
+
       setSessionStats({
         completed: 0,
         correct: 0,
@@ -995,9 +934,6 @@ export const LearningSession: React.FC = () => {
             )}`
           );
         } else if (sessionFilters.work) {
-          console.log("📚 STARTING WORK REVIEW SESSION");
-          console.log("Work:", sessionFilters.work);
-
           toast.success(
             `Rozpoczynam powtórkę z lektury: ${sessionFilters.work}`
           );
@@ -1053,23 +989,14 @@ export const LearningSession: React.FC = () => {
   };
 
   const endSession = async () => {
-    console.log("=== END SESSION CALLED ===");
-    console.log("SessionId:", sessionId);
-    console.log("Stats:", sessionStats);
-    console.log("Completed exercises:", completedExercises.length);
-
     // ✅ ZAWSZE zapisuj sesję, nawet jeśli completed = 0
     if (sessionId) {
       try {
-        console.log("Saving session to database...");
-
         await saveSessionMutation.mutateAsync({
           sessionId,
           stats: sessionStats,
           completedExercises: completedExercises,
         });
-
-        console.log("✅ Session saved successfully");
       } catch (error) {
         console.error("❌ Failed to save session:", error);
         // Kontynuuj mimo błędu
@@ -1117,16 +1044,12 @@ export const LearningSession: React.FC = () => {
       queryClient.invalidateQueries({
         predicate: (query) => query.queryKey[0] === "all-sessions", // ✅ Dopasuj po pierwszym elemencie
       });
-      console.log("🔄 Query invalidated with delay");
     }, 500);
-
-    console.log("✅ END SESSION COMPLETE");
   };
 
   // Next exercise with filters
   const goToNextExercise = async () => {
     if (sessionStats.completed >= SESSION_LIMIT) {
-      console.log("=== SESSION LIMIT REACHED - NO MORE QUESTIONS ===");
       return;
     }
 
@@ -1148,7 +1071,6 @@ export const LearningSession: React.FC = () => {
         setCurrentExercise(data);
         setNoExercisesError(null);
       } else {
-        console.log("No more exercises available");
         toast.error("Brak więcej dostępnych ćwiczeń");
         setSessionComplete(true);
         setSessionActive(false);
@@ -1164,7 +1086,6 @@ export const LearningSession: React.FC = () => {
   const skipExercise = async () => {
     // Prevent double-clicking
     if (isChangingExercise) {
-      console.log("Already changing exercise, ignoring skip");
       return;
     }
 
@@ -1172,15 +1093,11 @@ export const LearningSession: React.FC = () => {
 
     // Jeśli to ten sam exercise co ostatnio - ignore
     if (skippedExerciseId === lastExerciseId.current) {
-      console.log("Trying to skip same exercise twice!");
       return;
     }
 
     setIsChangingExercise(true);
     lastExerciseId.current = skippedExerciseId;
-
-    console.log("=== SKIP EXERCISE ===");
-    console.log("Skipping exercise:", skippedExerciseId);
 
     setAnswer(null);
     setShowFeedback(false);
@@ -1250,18 +1167,12 @@ export const LearningSession: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log("=== useEffect CHECK ===");
     const storedFilters = localStorage.getItem("sessionFilters");
     const isStudyPlanSession = localStorage.getItem("isStudyPlanSession");
     const isEpochReview = localStorage.getItem("isEpochReview");
     const autoStart = localStorage.getItem("autoStartSession");
     const isWorkReview = localStorage.getItem("isWorkReview");
     setIsPlanSession(!!isStudyPlanSession || !!isEpochReview || !!isWorkReview);
-
-    console.log("Raw localStorage filters:", storedFilters);
-    console.log("Is StudyPlan session:", isStudyPlanSession);
-    console.log("Is Epoch Review:", isEpochReview);
-    console.log("Is Work Review:", isWorkReview);
 
     if (
       storedFilters &&
@@ -1273,14 +1184,12 @@ export const LearningSession: React.FC = () => {
       setIsAutoStarting(true); // ✅ DODANE
       try {
         const filters = JSON.parse(storedFilters);
-        console.log("Parsed filters:", filters);
 
         setSessionFilters(filters);
         setIsPlanSession(!!isStudyPlanSession || !!isEpochReview);
 
         // Opóźnienie dla pewności
         setTimeout(async () => {
-          console.log("Auto-starting session with filters:", filters);
           await startSession();
           setIsAutoStarting(false); // ✅ DODANE
         }, 100);
@@ -2417,28 +2326,11 @@ export const LearningSession: React.FC = () => {
                   (() => {
                     const responseData = submitMutation.data?.data;
 
-                    // ✅ DEBUGOWANIE
-                    console.log("=== RENDERING FEEDBACK ===");
-                    console.log(
-                      "Response data:",
-                      JSON.stringify(responseData, null, 2)
-                    );
-                    console.log("Exercise type:", currentExercise.type);
-                    console.log("Exercise points:", currentExercise.points);
-
                     // Pobierz dane AI z POPRAWNEJ lokalizacji
                     const aiData =
                       responseData?.feedback ||
                       responseData?.assessment ||
                       responseData;
-
-                    console.log(
-                      "AI Data selected:",
-                      JSON.stringify(aiData, null, 2)
-                    );
-                    console.log("AI Data.score:", aiData?.score);
-                    console.log("AI Data.maxScore:", aiData?.maxScore);
-                    console.log("AI Data.totalScore:", aiData?.totalScore);
 
                     // Jeśli nie ma danych AI
                     if (!aiData) {
@@ -2460,13 +2352,6 @@ export const LearningSession: React.FC = () => {
                       0;
                     const displayMaxScore =
                       aiData.maxScore ?? currentExercise.points ?? 2;
-
-                    console.log(
-                      "Display score:",
-                      displayScore,
-                      "/ max:",
-                      displayMaxScore
-                    );
 
                     // Określ czy poprawne
                     const isCorrect =
@@ -2839,7 +2724,6 @@ export const LearningSession: React.FC = () => {
           {/* End Session Button */}
           <button
             onClick={() => {
-              console.log("=== ZAKOŃCZ SESJĘ BUTTON CLICKED ===");
               setShowExitDialog(true); // Tylko pokaż dialog, nie zapisuj tutaj
             }}
             className="w-full sm:w-auto px-4 py-2 text-gray-600 dark:text-gray-400 
@@ -3013,8 +2897,6 @@ export const LearningSession: React.FC = () => {
         sessionStats={sessionStats}
         isSessionComplete={sessionStats.completed >= SESSION_LIMIT}
         onConfirm={async () => {
-          console.log("=== CONFIRM EXIT DIALOG - ZAKOŃCZ I WYJDŹ ===");
-
           // Jeśli sesja jest kompletna (20/20), pokaż summary
           if (sessionStats.completed >= SESSION_LIMIT) {
             setShowExitDialog(false);

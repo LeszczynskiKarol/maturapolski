@@ -125,19 +125,16 @@ export const CookieConsentProvider: React.FC<{ children: ReactNode }> = ({
 
   const saveConsent = useCallback(
     (newConsent: CookieConsent) => {
-      console.log("💾 SAVING CONSENT:", newConsent); // DEBUG
       localStorage.setItem(CONSENT_KEY, JSON.stringify(newConsent));
       localStorage.setItem(CONSENT_TIMESTAMP_KEY, Date.now().toString());
       setConsent(newConsent);
       updateGoogleConsent(newConsent);
       setShowBanner(false);
-      console.log("✅ CONSENT SAVED TO LOCALSTORAGE"); // DEBUG
     },
     [updateGoogleConsent]
   );
 
   const acceptAll = useCallback(() => {
-    console.log("🎯 ACCEPT ALL CALLED"); // DEBUG
     const allGranted: CookieConsent = {
       analytics_storage: "granted",
       ad_storage: "granted",
@@ -189,8 +186,6 @@ export const CookieConsentProvider: React.FC<{ children: ReactNode }> = ({
     resetConsent,
     hasConsent: consent !== null && !showBanner,
   };
-
-  console.log("📊 CURRENT CONSENT STATE:", consent); // DEBUG
 
   return (
     <CookieConsentContext.Provider value={value}>
