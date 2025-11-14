@@ -84,6 +84,79 @@ const getCategoryLabel = (categoryValue: string): string => {
   return category?.label || categoryValue;
 };
 
+// 🆕 HELPER - wyciąga minimum słów (dolną granicę)
+const getMinWords = (exercise: any): number => {
+  // Szukaj w requirements: "100-150 słów" lub "minimum 100 słów"
+  const requirements = exercise.content?.requirements || [];
+  for (const req of requirements) {
+    // Pattern: "100-150 słów"
+    const rangeMatch = req.match(/(\d+)-\d+\s+słów/);
+    if (rangeMatch) return parseInt(rangeMatch[1]); // Dolna granica
+
+    // Pattern: "minimum 100 słów" lub "min. 100 słów"
+    const minMatch = req.match(/min(?:imum)?\.?\s*(\d+)\s+słów/i);
+    if (minMatch) return parseInt(minMatch[1]);
+  }
+
+  // Fallback z wordLimit (dolna granica)
+  const minFromLimit =
+    exercise.content?.wordLimit?.min || exercise.metadata?.wordLimit?.min;
+  if (minFromLimit) return minFromLimit;
+
+  // Fallback z content.minWords
+  if (exercise.content?.minWords) return exercise.content.minWords;
+
+  // Domyślne
+  if (exercise.type === "ESSAY") return 400;
+  if (exercise.type === "SYNTHESIS_NOTE") return 100;
+  return 50; // SHORT_ANSWER
+};
+
+const WordCounter: React.FC<{
+  text: string;
+  minWords?: number;
+  showAlways?: boolean; // Jeśli true, pokazuje zawsze (dla ESSAY)
+}> = ({ text, minWords, showAlways = false }) => {
+  const wordCount = (text || "").split(/\s+/).filter(Boolean).length;
+
+  // Pokaż tylko gdy > 10 słów LUB showAlways = true
+  if (!showAlways && wordCount <= 10) return null;
+
+  let colorClass = "text-gray-600 dark:text-gray-400";
+
+  if (minWords) {
+    if (wordCount < minWords) {
+      colorClass = "text-red-600 dark:text-red-400";
+    } else {
+      colorClass = "text-green-600 dark:text-green-400";
+    }
+  }
+
+  return (
+    <div className="text-sm text-gray-500 dark:text-gray-400 mt-2 flex items-center gap-2">
+      <span className="flex items-center gap-1">
+        📝 Liczba słów:{" "}
+        <span className={`font-semibold ${colorClass}`}>
+          {wordCount}
+          {minWords && ` / ${minWords} min`}
+        </span>
+      </span>
+
+      {minWords && wordCount < minWords && (
+        <span className="text-xs text-red-500 dark:text-red-400">
+          (jeszcze {minWords - wordCount} słów do minimum)
+        </span>
+      )}
+
+      {minWords && wordCount >= minWords && (
+        <span className="text-xs text-green-500 dark:text-green-400">
+          ✓ Minimum spełnione
+        </span>
+      )}
+    </div>
+  );
+};
+
 export const LearningSession: React.FC = () => {
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
   const [noExercisesError, setNoExercisesError] = useState<string | null>(null);
@@ -1970,6 +2043,10 @@ export const LearningSession: React.FC = () => {
                                     step.id || index + 1
                                   }...`}
                                 />
+                                <WordCounter
+                                  text={answer || ""}
+                                  minWords={getMinWords(currentExercise)}
+                                />
                               </label>
                             </div>
                           )
@@ -2008,6 +2085,10 @@ export const LearningSession: React.FC = () => {
                         />
                       </>
                     )}
+                    <WordCounter
+                      text={answer || ""}
+                      minWords={getMinWords(currentExercise)}
+                    />
                   </>
                 )}
 
@@ -2063,13 +2144,10 @@ export const LearningSession: React.FC = () => {
                       placeholder="Napisz notatkę syntetyzującą zgodnie z wymaganiami..."
                     />
 
-                    {/* Licznik słów */}
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      Liczba słów:{" "}
-                      <span className="font-semibold text-gray-700 dark:text-gray-300">
-                        {(answer || "").split(/\s+/).filter(Boolean).length}
-                      </span>
-                    </div>
+                    <WordCounter
+                      text={answer || ""}
+                      minWords={getMinWords(currentExercise)}
+                    />
                   </div>
                 )}
 
@@ -2181,65 +2259,11 @@ export const LearningSession: React.FC = () => {
                       placeholder="Napisz wypracowanie zgodnie z wymaganiami..."
                     />
 
-                    {/* Licznik słów z walidacją */}
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="text-gray-500 dark:text-gray-400">
-                        Liczba słów:{" "}
-                        {(() => {
-                          const wordCount = (answer || "")
-                            .split(/\s+/)
-                            .filter(Boolean).length;
-                          const minWords =
-                            currentExercise.content?.wordLimit?.min ||
-                            currentExercise.metadata?.wordLimit?.min;
-                          const maxWords =
-                            currentExercise.content?.wordLimit?.max ||
-                            currentExercise.metadata?.wordLimit?.max;
-
-                          let colorClass = "text-gray-600 dark:text-gray-400";
-                          if (minWords && maxWords) {
-                            if (wordCount < minWords) {
-                              colorClass = "text-red-600 dark:text-red-400";
-                            } else if (wordCount > maxWords) {
-                              colorClass =
-                                "text-orange-600 dark:text-orange-400";
-                            } else {
-                              colorClass = "text-green-600 dark:text-green-400";
-                            }
-                          }
-
-                          return (
-                            <span className={`font-semibold ${colorClass}`}>
-                              {wordCount}
-                              {minWords &&
-                                maxWords &&
-                                ` / ${minWords}-${maxWords}`}
-                            </span>
-                          );
-                        })()}
-                      </div>
-
-                      {/* Wskaźnik postępu */}
-                      {currentExercise.content?.wordLimit?.min && (
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                          {(() => {
-                            const wordCount = (answer || "")
-                              .split(/\s+/)
-                              .filter(Boolean).length;
-                            const minWords =
-                              currentExercise.content.wordLimit.min;
-
-                            if (wordCount < minWords) {
-                              return `Jeszcze ${
-                                minWords - wordCount
-                              } słów do minimum`;
-                            } else {
-                              return "✓ Wymóg spełniony";
-                            }
-                          })()}
-                        </div>
-                      )}
-                    </div>
+                    <WordCounter
+                      text={answer || ""}
+                      minWords={getMinWords(currentExercise)}
+                      showAlways={true}
+                    />
                   </div>
                 )}
                 <div className="flex justify-end mt-6">
