@@ -32136,6 +32136,618 @@ Bo tego śmierć nie słucha, kto jej wzywać śmie.`,
     },
     // ======================= KONIEC PYTAŃ PAN TADEUSZ ===================//
 
+    // ======================= POCZĄTEK PYTAŃ ZBRODNIA I KARA ===================//
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Kto jest autorem powieści „Zbrodnia i kara”?",
+      content: {
+        options: [
+          "Lew Tołstoj",
+          "Fiodor Dostojewski",
+          "Anton Czechow",
+          "Iwan Turgieniew",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "„Zbrodnia i kara” to najsłynniejsza powieść Fiodora Dostojewskiego, opublikowana w 1866 roku.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "W jakim mieście toczy się akcja „Zbrodni i kary”?",
+      content: {
+        options: ["Moskwa", "Petersburg", "Kijów", "Odessa"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Akcja powieści toczy się w Petersburgu - stolicy Rosji carskiej, mieście kontrastów między bogactwem a nędzą.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Jak ma na imię główny bohater powieści?",
+      content: {
+        options: [
+          "Piotr Raskolnikow",
+          "Rodion Raskolnikow",
+          "Dmitrij Raskolnikow",
+          "Aleksiej Raskolnikow",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Głównym bohaterem jest Rodion Romanowicz Raskolnikow - były student prawa mieszkający w Petersburgu.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Kim z wykształcenia jest Raskolnikow?",
+      content: {
+        options: ["Lekarzem", "Studentem prawa", "Inżynierem", "Nauczycielem"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Raskolnikow był studentem prawa, ale z powodu biedy musiał przerwać studia.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Ilu ludzi zabił Raskolnikow?",
+      content: {
+        options: ["Jedną osobę", "Dwie osoby", "Trzy osoby", "Cztery osoby"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Raskolnikow zabił dwie osoby: starą lichwiarkę Alonę Iwanownę (planowane morderstwo) i jej siostrę Lizawietę (przypadkowo).",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Kto jest autorem powieści „Zbrodnia i kara”?",
+      content: {
+        options: [
+          "Lew Tołstoj",
+          "Fiodor Dostojewski",
+          "Anton Czechow",
+          "Iwan Turgieniew",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "„Zbrodnia i kara” to najsłynniejsza powieść Fiodora Dostojewskiego, opublikowana w 1866 roku.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "W jakim mieście toczy się akcja „Zbrodni i kary”?",
+      content: {
+        options: ["Moskwa", "Petersburg", "Kijów", "Odessa"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Akcja powieści toczy się w Petersburgu - stolicy Rosji carskiej, mieście kontrastów między bogactwem a nędzą.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Jak ma na imię główny bohater powieści?",
+      content: {
+        options: [
+          "Piotr Raskolnikow",
+          "Rodion Raskolnikow",
+          "Dmitrij Raskolnikow",
+          "Aleksiej Raskolnikow",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Głównym bohaterem jest Rodion Romanowicz Raskolnikow - były student prawa mieszkający w Petersburgu.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Kim z wykształcenia jest Raskolnikow?",
+      content: {
+        options: ["Lekarzem", "Studentem prawa", "Inżynierem", "Nauczycielem"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Raskolnikow był studentem prawa, ale z powodu biedy musiał przerwać studia.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Ilu ludzi zabił Raskolnikow?",
+      content: {
+        options: ["Jedną osobę", "Dwie osoby", "Trzy osoby", "Cztery osoby"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Raskolnikow zabił dwie osoby: starą lichwiarkę Alonę Iwanownę (planowane morderstwo) i jej siostrę Lizawietę (przypadkowo).",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Kim jest Sonia Marmeladowa?",
+      content: {
+        options: [
+          "Siostra Raskolnikowa",
+          "Gospodyni",
+          "Prostytutka, córka pijaka Marmeladowa",
+          "Lichwarka",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Sonia to córka urzędnika Marmeladowa, która zmuszona nędzą rodziny stała się prostytutką, by utrzymać macochę i jej dzieci.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Jak nazywa się siostra Raskolnikowa?",
+      content: {
+        options: ["Dunia", "Sonia", "Katarzyna", "Nastasja"],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Awdotia (Dunia) Romanowna to młodsza siostra Raskolnikowa, która pracowała jako guwernantka u państwa Swidrygajłowych.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Kim jest Porfiry Pietrowicz?",
+      content: {
+        options: [
+          "Lekarz Raskolnikowa",
+          "Śledczy prowadzący sprawę morderstwa",
+          "Przyjaciel Raskolnikowa",
+          "Mąż Duni",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Porfiry Pietrowicz to komisarz śledczy prowadzący sprawę zabójstwa lichwiarki, który psychologicznie rozgrywa Raskolnikowa.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Kim jest Razumichin?",
+      content: {
+        options: [
+          "Bratem Raskolnikowa",
+          "Najlepszym przyjacielem Raskolnikowa",
+          "Śledczym",
+          "Lekarzem",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Razumichin to jedyny prawdziwy przyjaciel Raskolnikowa - student, wesoły i dobry człowiek, który później zakocha się w Duni.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Kim był Siemion Marmeladow?",
+      content: {
+        options: [
+          "Bogatym kupcem",
+          "Pijanym urzędnikiem",
+          "Lekarzem",
+          "Księdzem",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Marmeladow to tragiczna postać pijanego urzędnika, który przez alkoholizm doprowadził rodzinę do skrajnej nędzy i zginął pod kołami powozu.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Jak nazywa się stara lichwarka zabita przez Raskolnikowa?",
+      content: {
+        options: [
+          "Alona Iwanowna",
+          "Pulcheria Aleksandrowna",
+          "Marta Pietrowna",
+          "Nastasja Fiłipowna",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Alona Iwanowna to 60-letnia lichwarka, u której Raskolnikow zastawiał rzeczy i którą zamordował toporkiem.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Jak nazywała się druga ofiara Raskolnikowa?",
+      content: {
+        options: ["Sonia", "Lizawieta", "Dunia", "Katarzyna"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Lizawieta to przyrodnia siostra lichwiarki - łagodna, prosta kobieta, którą Raskolnikow zabił przypadkowo, gdy wróciła niespodziewanie do mieszkania.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Kim jest Arkadiusz Swidrigajłow?",
+      content: {
+        options: [
+          "Ojcem Duni",
+          "Byłym pracodawcą Duni, libertyn próbujący ją uwieść",
+          "Przyjacielem Raskolnikowa",
+          "Bratem Soni",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Swidrigajłow to były pracodawca Duni, który ją prześladował - cynik i libertyn, który podsłuchał wyznanie Raskolnikowa i później popełnił samobójstwo.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Kim jest Piotr Pietrowicz Łużyn?",
+      content: {
+        options: [
+          "Bratem Raskolnikowa",
+          "Narzeczonym Duni, próżnym i podłym karierowiczem",
+          "Lekarzem",
+          "Komisarzem policji",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Łużyn to 45-letni karierowicz, który chce poślubić biedną Dunię, żeby miała wobec niego wdzięczność i była mu podporządkowana.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Dlaczego Sonia stała się prostytutką?",
+      content: {
+        options: [
+          "Z własnego wyboru",
+          "Została zmuszona przez Raskolnikowa",
+          "Z rozpaczy po śmierci ojca",
+          "Aby wykarmić głodujące rodzeństwo i chorą macochę",
+        ],
+      },
+      correctAnswer: 3,
+      metadata: {
+        explanation:
+          "Sonia poświęciła się dla rodziny - poszła na żółty bilet, żeby wyżywić troje małych dzieci macochy i chorobliwie zazdrosną Katarzynę Iwanownę.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Jaka choroba dotknęła Katarzynę Iwanownę (żonę Marmeladowa)?",
+      content: {
+        options: ["Rak", "Gruźlica (suchoty)", "Tyfus", "Cholera"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Katarzyna Iwanowna cierpiała na gruźlicę - kasłała krwią, miała gorączkę i czerwone plamy na policzkach, ostatecznie zmarła z krwotokiem.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question:
+        "Kto był Nikołaj i dlaczego się przyznał do zbrodni Raskolnikowa?",
+      content: {
+        options: [
+          "Malarz, który chciał przyjąć na siebie cierpienie ze względów religijnych",
+          "Prawdziwy morderca",
+          "Był torturowany przez policję",
+          "Brat Raskolnikowa",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Nikołaj to młody malarz-raskolnik, który malował mieszkanie w dniu zbrodni i fałszywie się przyznał, bo chciał 'przyjąć cierpienie' zgodnie ze swoją wiarą.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 2,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Kto w końcu wyszedł za mąż za Razumichina?",
+      content: {
+        options: ["Sonia", "Dunia", "Nastasja", "Katarzyna"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Dunia wyszła za mąż za Razumichina - przyjaciela jej brata, który opiekował się rodziną Raskolnikowów podczas choroby Rodiona.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Czym Raskolnikow zabił lichwiarkę?",
+      content: {
+        options: ["Nożem", "Rewolwerem", "Toporem", "Trucizną"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Raskolnikow zabił Alonę Iwanownę siekierą (toporem), którą ukradł ze stróżówki tuż przed morderstwem.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Gdzie Raskolnikow ukrył łupy z morderstwa?",
+      content: {
+        options: [
+          "W swoim pokoju",
+          "Pod kamieniem na podwórzu",
+          "U Razumichina",
+          "Wyrzucił do rzeki",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Raskolnikow ukrył łupy (portmonetkę i biżuterię) pod dużym kamieniem na jakimś podwórzu, później nigdy ich nie odkopał.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Co stało się z Raskolnikowem po zabójstwie?",
+      content: {
+        options: [
+          "Natychmiast uciekł z miasta",
+          "Popadł w chorobę i gorączkę",
+          "Stał się jeszcze bardziej pewny siebie",
+          "Od razu się przyznał",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Po morderstwie Raskolnikow popadł w chorobliwą gorączkę i majaczy przez kilka dni, traci przytomność, ma halucynacje.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Jak zginął Marmeladow?",
+      content: {
+        options: [
+          "Zmarł z choroba",
+          "Został zamordowany",
+          "Rozjechał go powóz",
+          "Popełnił samobójstwo",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Pijany Marmeladow wpadł pod konie i powóz, odniósł śmiertelne obrażenia i zmarł w obecności rodziny, księdza i Raskolnikowa.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question:
+        "Ile pieniędzy Raskolnikow dał rodzinie Marmeladowów po śmierci ojca?",
+      content: {
+        options: ["10 rubli", "20 rubli", "50 rubli", "100 rubli"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Raskolnikow dał Katarzynie Iwanownie 20 rubli - prawie wszystkie pieniądze, które otrzymał od matki. To była duża suma dla niego.",
+      },
+    },
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "REALISM",
+      work: "Zbrodnia i kara",
+      question: "Jak zakończyła swoje życie Katarzyna Iwanowna?",
+      content: {
+        options: [
+          "Zmarła z gruźlicy podczas żebrania z dziećmi na ulicy",
+          "Została zamordowana",
+          "Popełniła samobójstwo",
+          "Wyzdrowiała",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Katarzyna, wypędzona przez gospodynię, zmusiła dzieci do żebrania na ulicy. Dostała krwotoku i zmarła w mieszkaniu Soni.",
+      },
+    },
+
+    // ======================= KONIEC PYTAŃ ZBRODNIA I KARA ===================//
+
     // Zadania o epoce współczesnej
     {
       type: "SHORT_ANSWER",

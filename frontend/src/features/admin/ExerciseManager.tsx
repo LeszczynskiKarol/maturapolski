@@ -16,6 +16,8 @@ import {
   ChevronLeft,
   ChevronRight,
   BookOpen,
+  CheckCircle,
+  Info,
   Hash,
   BarChart,
   FileText,
@@ -1035,22 +1037,163 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
 }) => {
   const [importData, setImportData] = useState<string>("");
   const [errors, setErrors] = useState<string[]>([]);
+  const [showExample, setShowExample] = useState<boolean>(false);
+
+  const exampleData = `[
+  {
+    "type": "CLOSED_SINGLE",
+    "category": "HISTORICAL_LITERARY",
+    "difficulty": 1,
+    "points": 1,
+    "epoch": "REALISM",
+    "work": "Zbrodnia i kara",
+    "question": "Kto jest autorem powieści „Zbrodnia i kara"?",
+    "content": {
+      "options": [
+        "Lew Tołstoj",
+        "Fiodor Dostojewski",
+        "Anton Czechow",
+        "Iwan Turgieniew"
+      ]
+    },
+    "correctAnswer": 1,
+    "tags": ["Dostojewski", "Realizm"],
+    "metadata": {
+      "explanation": "„Zbrodnia i kara" to najsłynniejsza powieść Fiodora Dostojewskiego, opublikowana w 1866 roku."
+    }
+  }
+]`;
 
   const handleImport = async (): Promise<void> => {
+    const newErrors: string[] = [];
+
     try {
-      const exercises = JSON.parse(importData) as Exercise[];
-      if (!Array.isArray(exercises)) {
-        setErrors(["Dane muszą być tablicą zadań"]);
+      // Sprawdź czy JSON jest pusty
+      if (!importData.trim()) {
+        setErrors(["Proszę wkleić dane JSON"]);
         return;
       }
 
-      const validExercises = exercises.filter(
-        (ex) => ex.question && ex.type && ex.category && ex.points
-      );
+      // Sprawdź podstawowe błędy składni
+      const trimmed = importData.trim();
+      if (trimmed.startsWith("{ {")) {
+        setErrors([
+          "❌ Błąd składni: Podwójny nawias otwierający '{ {'",
+          "",
+          "JSON powinien zaczynać się od:",
+          "• '[{' dla tablicy obiektów (zalecane)",
+          "• '{' dla pojedynczego obiektu",
+        ]);
+        return;
+      }
+
+      // Próba naprawy pojedynczego obiektu
+      let dataToP = trimmed;
+      if (trimmed.startsWith("{") && !trimmed.startsWith("[")) {
+        dataToP = "[" + trimmed + "]";
+        console.log("Auto-wrapping single object in array");
+      }
+
+      let exercises: any;
+      try {
+        exercises = JSON.parse(dataToP);
+      } catch (parseError: any) {
+        const errorMsg = parseError.message;
+        const position = errorMsg.match(/position (\d+)/)?.[1];
+
+        setErrors([
+          "❌ Błąd parsowania JSON:",
+          errorMsg,
+          "",
+          "Sprawdź czy:",
+          "• JSON zaczyna się od '[' i kończy na ']'",
+          '• Wszystkie klucze są w cudzysłowach: "type", "question"',
+          "• Nie ma dodatkowych przecinków na końcu",
+          "• Wszystkie nawiasy są zamknięte",
+          "• Znaki specjalne (np. ą, ę) są poprawnie zapisane",
+          "",
+          position
+            ? `Problem występuje około pozycji ${position}`
+            : "Użyj walidatora JSON online, aby znaleźć błąd",
+        ]);
+        return;
+      }
+
+      if (!Array.isArray(exercises)) {
+        setErrors([
+          "❌ Dane muszą być tablicą zadań",
+          "",
+          "Poprawny format:",
+          "[",
+          '  { "type": "CLOSED_SINGLE", ... },',
+          '  { "type": "CLOSED_MULTIPLE", ... }',
+          "]",
+        ]);
+        return;
+      }
+
+      if (exercises.length === 0) {
+        setErrors(["Tablica jest pusta - dodaj przynajmniej jedno zadanie"]);
+        return;
+      }
+
+      // Walidacja każdego zadania
+      const validExercises: any[] = [];
+      exercises.forEach((ex, index) => {
+        const exerciseErrors: string[] = [];
+
+        if (!ex.question) exerciseErrors.push("brak 'question'");
+        if (!ex.type) exerciseErrors.push("brak 'type'");
+        if (!ex.category) exerciseErrors.push("brak 'category'");
+        if (ex.points === undefined || ex.points === null)
+          exerciseErrors.push("brak 'points'");
+        if (!ex.content) exerciseErrors.push("brak 'content'");
+
+        // Auto-fix: dodaj puste tagi jeśli brak
+        if (!ex.tags) ex.tags = [];
+
+        // Walidacja typu
+        const validTypes = [
+          "CLOSED_SINGLE",
+          "CLOSED_MULTIPLE",
+          "SHORT_ANSWER",
+          "SYNTHESIS_NOTE",
+          "ESSAY",
+        ];
+        if (ex.type && !validTypes.includes(ex.type)) {
+          exerciseErrors.push(`nieprawidłowy 'type': ${ex.type}`);
+        }
+
+        // Walidacja kategorii
+        const validCategories = [
+          "LANGUAGE_USE",
+          "HISTORICAL_LITERARY",
+          "WRITING",
+        ];
+        if (ex.category && !validCategories.includes(ex.category)) {
+          exerciseErrors.push(`nieprawidłowa 'category': ${ex.category}`);
+        }
+
+        if (exerciseErrors.length > 0) {
+          newErrors.push(`Zadanie ${index + 1}: ${exerciseErrors.join(", ")}`);
+        } else {
+          validExercises.push(ex);
+        }
+      });
 
       if (validExercises.length === 0) {
-        setErrors(["Brak poprawnych zadań do zaimportowania"]);
+        setErrors([
+          "❌ Brak poprawnych zadań do zaimportowania",
+          "",
+          "Problemy:",
+          ...newErrors,
+        ]);
         return;
+      }
+
+      // Informacja o pominiętych zadaniach
+      if (newErrors.length > 0) {
+        console.warn("Pominięte zadania:", newErrors);
       }
 
       // Wyślij do API
@@ -1061,52 +1204,144 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
 
       if (response.data.exercises) {
         onImport(response.data.exercises);
+        if (newErrors.length > 0) {
+          alert(
+            `⚠️ Zaimportowano ${validExercises.length} z ${exercises.length} zadań.\nPominięto ${newErrors.length} zadań z błędami.`
+          );
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Import error:", error);
-      setErrors(["Błąd importu - sprawdź format danych"]);
+      setErrors([
+        "❌ Błąd importu:",
+        error.response?.data?.message || error.message || "Nieznany błąd",
+        "",
+        "Sprawdź:",
+        "• Połączenie z serwerem",
+        "• Uprawnienia admina",
+        "• Konsolę przeglądarki dla szczegółów",
+      ]);
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg w-full max-w-2xl">
+      <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="border-b p-6 flex justify-between items-center">
-          <h2 className="text-xl font-bold">Import zadań</h2>
+          <div>
+            <h2 className="text-xl font-bold">Import zadań (JSON)</h2>
+            <p className="text-sm text-gray-600 mt-1">
+              Wklej tablicę JSON z zadaniami
+            </p>
+          </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Wklej dane JSON
-            </label>
-            <textarea
-              value={importData}
-              onChange={(e) => setImportData(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg font-mono text-sm"
-              rows={10}
-              placeholder='[{"question": "...", "type": "CLOSED_SINGLE", ...}]'
-            />
+          {/* Example toggle */}
+          <div className="flex justify-between items-center">
+            <button
+              onClick={() => setShowExample(!showExample)}
+              className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+            >
+              <Info className="w-4 h-4" />
+              {showExample ? "Ukryj" : "Pokaż"} przykład formatu
+            </button>
+            {showExample && (
+              <button
+                onClick={() => setImportData(exampleData)}
+                className="text-sm text-gray-600 hover:text-gray-800"
+              >
+                Użyj przykładu
+              </button>
+            )}
           </div>
 
-          {errors.length > 0 && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-              {errors.map((error, idx) => (
-                <div
-                  key={idx}
-                  className="text-red-700 text-sm flex items-center gap-2"
-                >
-                  <AlertCircle className="w-4 h-4" />
-                  {error}
-                </div>
-              ))}
+          {/* Example */}
+          {showExample && (
+            <div className="bg-gray-50 rounded-lg p-4 border">
+              <pre className="text-xs text-gray-700 overflow-x-auto">
+                {exampleData}
+              </pre>
             </div>
           )}
 
-          <div className="flex justify-end gap-3">
+          {/* Format tips */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <div className="flex gap-2">
+              <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-blue-900">
+                <p className="font-medium mb-1">Wymagany format:</p>
+                <ul className="space-y-1 text-blue-800">
+                  <li>
+                    • Tablica obiektów:{" "}
+                    <code className="bg-blue-100 px-1 rounded">
+                      [{"{...}"}, {"{...}"}]
+                    </code>
+                  </li>
+                  <li>• Wszystkie klucze w cudzysłowach</li>
+                  <li>
+                    • Pola wymagane: type, category, question, content, points
+                  </li>
+                  <li>
+                    • Pole tags może być puste:{" "}
+                    <code className="bg-blue-100 px-1 rounded">[]</code>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* JSON input */}
+          <div>
+            <label className="block text-sm font-medium mb-2">Dane JSON</label>
+            <textarea
+              value={importData}
+              onChange={(e) => {
+                setImportData(e.target.value);
+                setErrors([]); // Clear errors on change
+              }}
+              className="w-full px-3 py-2 border rounded-lg font-mono text-sm"
+              rows={12}
+              placeholder='[{"type": "CLOSED_SINGLE", "question": "...", ...}]'
+            />
+            <div className="mt-1 text-xs text-gray-500">
+              {importData.trim().length > 0 && (
+                <>
+                  Znaki: {importData.length} |{" "}
+                  {importData.trim().startsWith("[")
+                    ? "✓ Tablica"
+                    : "⚠️ Nie tablica"}
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Errors display */}
+          {errors.length > 0 && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="flex gap-2">
+                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                <div className="flex-1">
+                  {errors.map((error, idx) => (
+                    <div
+                      key={idx}
+                      className={`text-sm ${
+                        error === "" ? "h-2" : "text-red-700"
+                      }`}
+                    >
+                      {error}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex justify-end gap-3 pt-4 border-t">
             <button
               onClick={onClose}
               className="px-4 py-2 border rounded-lg hover:bg-gray-50"
@@ -1115,8 +1350,10 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
             </button>
             <button
               onClick={handleImport}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              disabled={!importData.trim()}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
+              <Upload className="w-4 h-4" />
               Importuj
             </button>
           </div>
