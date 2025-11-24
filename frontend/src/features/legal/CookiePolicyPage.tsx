@@ -1,12 +1,18 @@
 // frontend/src/features/legal/CookiePolicyPage.tsx
 
-import React from "react";
+import React, { useState } from "react";
 import { PublicLayout } from "../../components/PublicLayout";
+import { CookieSettings } from "../../components/CookieSettings";
 import { Cookie, Shield, Eye, Target, BarChart3, Settings } from "lucide-react";
 
 export const CookiePolicyPage: React.FC = () => {
+  const [showSettings, setShowSettings] = useState(false);
   return (
     <PublicLayout>
+      {showSettings && (
+        <CookieSettings onClose={() => setShowSettings(false)} />
+      )}
+
       <div className="max-w-4xl mx-auto px-4 py-12">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
@@ -185,11 +191,7 @@ export const CookiePolicyPage: React.FC = () => {
                     strony.
                   </p>
                   <button
-                    onClick={() => {
-                      // To będzie działać bo CookieSettingsLink jest globalny
-                      const event = new CustomEvent("openCookieSettings");
-                      window.dispatchEvent(event);
-                    }}
+                    onClick={() => setShowSettings(true)} // ← Prosta zmiana
                     className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
                   >
                     Zarządzaj ustawieniami cookies

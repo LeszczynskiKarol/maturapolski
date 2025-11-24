@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { contentService } from "../services/contentService";
 import { Link, useLocation } from "react-router-dom";
-import { BookOpen, ChevronDown, ArrowLeft, X } from "lucide-react";
+import { CookieSettings } from "./CookieSettings";
+import { BookOpen, Cookie, ChevronDown, ArrowLeft, X } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 
 interface PublicLayoutProps {
@@ -36,11 +37,12 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [featuredHubs, setFeaturedHubs] = useState<any[]>([]);
+  const [showCookieSettings, setShowCookieSettings] = useState(false);
   const [testHubs, setTestHubs] = useState<TestHub[]>([]);
 
   // Domyślne wartości SEO
   const defaultTitle =
-    "Testy Maturalne z Polskiego Online | MaturaPolski.pl - Kursy i Sprawdziany";
+    "Testy Maturalne z Polskiego Online | Kursy, Quizy i Sprawdziany Wiedzy";
   const defaultDescription =
     "✓ Testy maturalne z języka polskiego online ✓ Kursy maturalne z polskiego ✓ Sprawdziany wiedzy ✓ Interaktywna nauka lektur ✓ Przygotuj się do matury 2025/2026!";
   const defaultKeywords =
@@ -71,6 +73,10 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
+      {showCookieSettings && (
+        <CookieSettings onClose={() => setShowCookieSettings(false)} />
+      )}
+
       {/* SEO Meta Tags */}
       <Helmet>
         <title>{pageTitle}</title>
@@ -359,6 +365,13 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
                 <Link to="/rodo" className="hover:text-white transition-colors">
                   RODO
                 </Link>
+                <button
+                  onClick={() => setShowCookieSettings(true)}
+                  className="hover:text-white transition-colors flex items-center gap-1.5"
+                >
+                  <Cookie className="w-4 h-4" />
+                  Ustawienia Cookies
+                </button>
               </div>
             </div>
           </div>
