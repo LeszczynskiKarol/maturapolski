@@ -52,36 +52,20 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
   const pageUrl = canonicalUrl || `https://maturapolski.pl${location.pathname}`;
 
   useEffect(() => {
-    loadFeaturedHubs();
-  }, []);
-
-  useEffect(() => {
     loadFooterData();
   }, []);
 
   const loadFooterData = async () => {
     try {
-      // Pobierz huby z testami
-      const tests = await contentService.getHubsWithTests(5);
+      // Pobierz WSZYSTKIE huby z testami
+      const tests = await contentService.getHubsWithTests(10000); // lub duża liczba
       setTestHubs(tests);
 
-      // Pobierz featured huby dla bazy wiedzy
-      const hubs = await contentService.getHubs({ limit: 5 });
+      // Pobierz WSZYSTKIE huby dla bazy wiedzy
+      const hubs = await contentService.getHubs({ limit: 10000 }); // lub duża liczba
       setFeaturedHubs(hubs.hubs || []);
     } catch (error) {
       console.error("Error loading footer data:", error);
-    }
-  };
-
-  const loadFeaturedHubs = async () => {
-    try {
-      const response = await contentService.getHubs({
-        type: "LITERARY_WORK",
-        limit: 5,
-      });
-      setFeaturedHubs(response.hubs || []);
-    } catch (error) {
-      console.error("Error loading featured hubs:", error);
     }
   };
 
@@ -323,7 +307,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
             <div>
               <h4 className="font-bold mb-4 text-lg">Baza wiedzy</h4>
               <ul className="space-y-3 text-gray-400">
-                {featuredHubs.slice(0, 500000).map((hub) => (
+                {featuredHubs.map((hub) => (
                   <li key={hub.id}>
                     <a
                       href={`/baza-wiedzy/${hub.slug}`}
@@ -340,7 +324,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
             <div>
               <h4 className="font-bold mb-4 text-lg">Testy z lektur</h4>
               <ul className="space-y-3 text-gray-400">
-                {testHubs.slice(0, 5000000).map((hub) => (
+                {testHubs.map((hub) => (
                   <li key={hub.id}>
                     <a
                       href={`/test/${hub.slug}`}
