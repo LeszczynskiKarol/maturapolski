@@ -323,7 +323,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
             <div>
               <h4 className="font-bold mb-4 text-lg">Baza wiedzy</h4>
               <ul className="space-y-3 text-gray-400">
-                {featuredHubs.slice(0, 5).map((hub) => (
+                {featuredHubs.slice(0, 500000).map((hub) => (
                   <li key={hub.id}>
                     <a
                       href={`/baza-wiedzy/${hub.slug}`}
@@ -340,7 +340,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
             <div>
               <h4 className="font-bold mb-4 text-lg">Testy z lektur</h4>
               <ul className="space-y-3 text-gray-400">
-                {testHubs.slice(0, 5).map((hub) => (
+                {testHubs.slice(0, 5000000).map((hub) => (
                   <li key={hub.id}>
                     <a
                       href={`/test/${hub.slug}`}
