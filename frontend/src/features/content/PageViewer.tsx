@@ -51,11 +51,107 @@ export function PageViewer() {
   const isLalkaChapters =
     hubSlug === "lalka" &&
     pageSlug === "lalka-streszczenie-szczegolowe-dokladne-lektury";
+  const isZbrodniaChapters =
+    hubSlug === "zbrodnia-i-kara" &&
+    pageSlug?.includes("zbrodnia-i-kara-streszczenie-szczegolowe");
   const [hubPages, setHubPages] = useState<any[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [page, setPage] = useState<PageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+
+  function parseZbrodniaStructure(contentPages: any[][]) {
+    return contentPages.map((pageBlocks, index) => {
+      // Szukaj pierwszego H2 na stronie
+      const firstH2 = pageBlocks.find(
+        (b) => b.type === "h2" || b.type === "heading"
+      );
+      const h2Content = firstH2?.content || "";
+
+      // Parsuj "Część X, Rozdział Y" lub "Część X"
+      const partMatch = h2Content.match(
+        /Część\s+(pierwsza|druga|trzecia|czwarta|piąta|szósta|[\w]+)/i
+      );
+      const chapterMatch = h2Content.match(/Rozdział\s+([IVXLCDM]+|\d+)/i);
+
+      // Mapowanie słów na liczby
+      const partNameToNumber: Record<string, number> = {
+        pierwsza: 1,
+        druga: 2,
+        trzecia: 3,
+        czwarta: 4,
+        piąta: 5,
+        szósta: 6,
+      };
+
+      let partNumber = 0;
+      let partName = "";
+
+      if (partMatch) {
+        const partText = partMatch[1].toLowerCase();
+        partNumber = partNameToNumber[partText] || parseInt(partText) || 0;
+        partName = `Część ${partMatch[1]}`;
+      }
+
+      // Znajdź który to rozdział w tej części
+      let chapterInPart = 1;
+      if (index > 0) {
+        // Policz ile stron od ostatniej zmiany części
+        for (let i = index - 1; i >= 0; i--) {
+          const prevH2 = contentPages[i].find(
+            (b) => b.type === "h2" || b.type === "heading"
+          );
+          const prevContent = prevH2?.content || "";
+          const prevPartMatch = prevContent.match(
+            /Część\s+(pierwsza|druga|trzecia|czwarta|piąta|szósta|[\w]+)/i
+          );
+
+          if (prevPartMatch) {
+            const prevPartText = prevPartMatch[1].toLowerCase();
+            const prevPartNumber =
+              partNameToNumber[prevPartText] || parseInt(prevPartText) || 0;
+
+            if (prevPartNumber !== partNumber) {
+              // Znaleźliśmy poprzednią część - przestajemy liczyć
+              break;
+            }
+          }
+          chapterInPart++;
+        }
+      }
+
+      // Czy ta strona zaczyna nową część?
+      const startsNewPart =
+        index === 0 ||
+        (() => {
+          if (index === 0) return true;
+          const prevH2 = contentPages[index - 1].find(
+            (b) => b.type === "h2" || b.type === "heading"
+          );
+          const prevContent = prevH2?.content || "";
+          const prevPartMatch = prevContent.match(
+            /Część\s+(pierwsza|druga|trzecia|czwarta|piąta|szósta|[\w]+)/i
+          );
+
+          if (!prevPartMatch && partMatch) return true;
+          if (prevPartMatch && partMatch) {
+            return (
+              prevPartMatch[1].toLowerCase() !== partMatch[1].toLowerCase()
+            );
+          }
+          return false;
+        })();
+
+      return {
+        partNumber,
+        partName,
+        chapterNumber: chapterMatch ? chapterMatch[1] : null,
+        chapterInPart,
+        startsNewPart,
+        fullTitle: h2Content,
+      };
+    });
+  }
 
   // Podziel treść na "strony" na podstawie page_break
   const contentPages = page?.content?.blocks
@@ -454,6 +550,14 @@ export function PageViewer() {
         };
       })
     : [];
+
+  const zbrodniaInfo = isZbrodniaChapters
+    ? parseZbrodniaStructure(contentPages)
+    : [];
+
+  const currentZbrodniaInfo = isZbrodniaChapters
+    ? zbrodniaInfo[currentPageIndex]
+    : null;
 
   const currentVolumeInfo = isLalkaChapters
     ? volumeInfo[currentPageIndex]
@@ -884,6 +988,17 @@ export function PageViewer() {
                             </span>
                           )}
                         </>
+                      ) : isZbrodniaChapters && currentZbrodniaInfo ? (
+                        <>
+                          {currentZbrodniaInfo.chapterNumber
+                            ? `Rozdział ${currentZbrodniaInfo.chapterNumber}`
+                            : `Strona ${currentPageIndex + 1}`}
+                          {currentZbrodniaInfo.partName && (
+                            <span className="text-sm text-gray-500 ml-2">
+                              ({currentZbrodniaInfo.partName})
+                            </span>
+                          )}
+                        </>
                       ) : (
                         <>
                           Strona {currentPageIndex + 1} z {totalPages}
@@ -951,10 +1066,23 @@ export function PageViewer() {
                         >
                           <ChevronLeft className="w-4 h-4" />
                           <span className="hidden sm:inline">
-                            {isLalkaChapters
+                            {isLalkaChapters || isZbrodniaChapters
                               ? "Poprzedni rozdział"
                               : "Poprzednia strona"}
                           </span>
+                        </button>
+
+                        <button
+                          onClick={() => goToPage(currentPageIndex + 1)}
+                          disabled={currentPageIndex === totalPages - 1}
+                          className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <span className="hidden sm:inline">
+                            {isLalkaChapters || isZbrodniaChapters
+                              ? "Następny rozdział"
+                              : "Następna strona"}
+                          </span>
+                          <ChevronRight className="w-4 h-4" />
                         </button>
 
                         <button
@@ -974,54 +1102,106 @@ export function PageViewer() {
                       {/* Numeracja stron */}
                       <div className="flex flex-wrap gap-2 justify-center items-start max-w-full">
                         {Array.from({ length: totalPages }, (_, i) => {
-                          const info =
-                            isLalkaChapters && volumeInfo[i]
-                              ? volumeInfo[i]
-                              : null;
-                          const displayNumber = info
-                            ? info.chapterInVolume
-                            : i + 1;
-                          const showVolumeSeparator =
-                            info?.startsWithVolumeBreak;
+                          // Lalka
+                          if (isLalkaChapters && volumeInfo[i]) {
+                            const info = volumeInfo[i];
+                            const displayNumber = info.chapterInVolume;
+                            const showVolumeSeparator =
+                              info.startsWithVolumeBreak;
 
-                          return (
-                            <div
-                              key={i}
-                              className={`flex items-center gap-2 ${
-                                showVolumeSeparator && i !== 0
-                                  ? "w-full justify-center mt-2"
-                                  : ""
-                              }`}
-                            >
-                              {/* Separator tomu - KLIKALNE */}
-                              {showVolumeSeparator && (
+                            return (
+                              <div
+                                key={i}
+                                className={`flex items-center gap-2 ${
+                                  showVolumeSeparator && i !== 0
+                                    ? "w-full justify-center mt-2"
+                                    : ""
+                                }`}
+                              >
+                                {showVolumeSeparator && (
+                                  <button
+                                    onClick={() => goToPage(i)}
+                                    className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg font-semibold text-sm border-2 border-purple-300 hover:bg-purple-200 transition-colors cursor-pointer"
+                                    title={`Przejdź do ${info.volumeTitle}`}
+                                  >
+                                    {info.volumeTitle ||
+                                      `Tom ${info.volumeNumber}`}
+                                  </button>
+                                )}
                                 <button
                                   onClick={() => goToPage(i)}
-                                  className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg font-semibold text-sm border-2 border-purple-300 hover:bg-purple-200 transition-colors cursor-pointer"
-                                  title={`Przejdź do ${info!.volumeTitle}`}
+                                  className={`min-w-[2.5rem] h-10 px-2 rounded-lg text-sm font-medium transition-colors ${
+                                    i === currentPageIndex
+                                      ? "bg-blue-600 text-white shadow-md"
+                                      : "border border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+                                  }`}
+                                  title={`Rozdział ${displayNumber}`}
                                 >
-                                  {info!.volumeTitle ||
-                                    `Tom ${info!.volumeNumber}`}
+                                  {displayNumber}
                                 </button>
-                              )}
+                              </div>
+                            );
+                          }
 
-                              {/* Przycisk rozdziału/strony */}
-                              <button
-                                onClick={() => goToPage(i)}
-                                className={`min-w-[2.5rem] h-10 px-2 rounded-lg text-sm font-medium transition-colors ${
-                                  i === currentPageIndex
-                                    ? "bg-blue-600 text-white shadow-md"
-                                    : "border border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+                          // Zbrodnia i kara
+                          if (isZbrodniaChapters && zbrodniaInfo[i]) {
+                            const info = zbrodniaInfo[i];
+                            const displayNumber =
+                              info.chapterNumber || info.chapterInPart;
+                            const showPartSeparator =
+                              info.startsNewPart && info.partName;
+
+                            return (
+                              <div
+                                key={i}
+                                className={`flex items-center gap-2 ${
+                                  showPartSeparator && i !== 0
+                                    ? "w-full justify-center mt-3 pt-2 border-t"
+                                    : ""
                                 }`}
-                                title={
-                                  info
-                                    ? `Rozdział ${displayNumber}`
-                                    : `Strona ${displayNumber}`
-                                }
                               >
-                                {displayNumber}
-                              </button>
-                            </div>
+                                {showPartSeparator && (
+                                  <button
+                                    onClick={() => goToPage(i)}
+                                    className="px-4 py-1.5 bg-red-100 text-red-700 rounded-lg font-semibold text-sm border-2 border-red-300 hover:bg-red-200 transition-colors cursor-pointer"
+                                    title={`Przejdź do ${info.partName}`}
+                                  >
+                                    {info.partName}
+                                  </button>
+                                )}
+                                <button
+                                  onClick={() => goToPage(i)}
+                                  className={`min-w-[2.5rem] h-10 px-2 rounded-lg text-sm font-medium transition-colors ${
+                                    i === currentPageIndex
+                                      ? "bg-blue-600 text-white shadow-md"
+                                      : "border border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+                                  }`}
+                                  title={
+                                    info.chapterNumber
+                                      ? `Rozdział ${info.chapterNumber}`
+                                      : `Strona ${i + 1}`
+                                  }
+                                >
+                                  {displayNumber}
+                                </button>
+                              </div>
+                            );
+                          }
+
+                          // Domyślna paginacja
+                          return (
+                            <button
+                              key={i}
+                              onClick={() => goToPage(i)}
+                              className={`min-w-[2.5rem] h-10 px-2 rounded-lg text-sm font-medium transition-colors ${
+                                i === currentPageIndex
+                                  ? "bg-blue-600 text-white shadow-md"
+                                  : "border border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+                              }`}
+                              title={`Strona ${i + 1}`}
+                            >
+                              {i + 1}
+                            </button>
                           );
                         })}
                       </div>
