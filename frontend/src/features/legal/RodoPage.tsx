@@ -144,7 +144,7 @@ export const RodoPage: React.FC = () => {
                 Analityka i reklamy
               </li>
               <li>
-                <strong>OpenAI:</strong> Ocena wypracowań przez AI (dane
+                <strong>Anthropic:</strong> Ocena wypracowań przez AI (dane
                 anonimizowane)
               </li>
               <li>
@@ -171,7 +171,7 @@ export const RodoPage: React.FC = () => {
             </p>
             <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
               <li>
-                <strong>USA (Google, OpenAI, Stripe):</strong> Na podstawie
+                <strong>USA (Google, Anthropic, Stripe):</strong> Na podstawie
                 odpowiednich zabezpieczeń (Standard Contractual Clauses,
                 certyfikacje zgodności)
               </li>

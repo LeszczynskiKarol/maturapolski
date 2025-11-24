@@ -1084,126 +1084,162 @@ export function PageViewer() {
                           </span>
                           <ChevronRight className="w-4 h-4" />
                         </button>
-
-                        <button
-                          onClick={() => goToPage(currentPageIndex + 1)}
-                          disabled={currentPageIndex === totalPages - 1}
-                          className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <span className="hidden sm:inline">
-                            {isLalkaChapters
-                              ? "Następny rozdział"
-                              : "Następna strona"}
-                          </span>
-                          <ChevronRight className="w-4 h-4" />
-                        </button>
                       </div>
 
                       {/* Numeracja stron */}
-                      <div className="flex flex-wrap gap-2 justify-center items-start max-w-full">
-                        {Array.from({ length: totalPages }, (_, i) => {
-                          // Lalka
-                          if (isLalkaChapters && volumeInfo[i]) {
-                            const info = volumeInfo[i];
-                            const displayNumber = info.chapterInVolume;
-                            const showVolumeSeparator =
-                              info.startsWithVolumeBreak;
+                      <div className="flex flex-col gap-3 items-center max-w-full">
+                        {(() => {
+                          // Lalka - grupowanie po tomach
+                          if (isLalkaChapters) {
+                            const volumeGroups: {
+                              volumeTitle: string;
+                              pages: number[];
+                            }[] = [];
+                            let currentGroup: {
+                              volumeTitle: string;
+                              pages: number[];
+                            } | null = null;
 
-                            return (
+                            volumeInfo.forEach((info, i) => {
+                              if (info.startsWithVolumeBreak) {
+                                if (currentGroup)
+                                  volumeGroups.push(currentGroup);
+                                currentGroup = {
+                                  volumeTitle:
+                                    info.volumeTitle ||
+                                    `Tom ${info.volumeNumber}`,
+                                  pages: [i],
+                                };
+                              } else {
+                                if (currentGroup) currentGroup.pages.push(i);
+                                else {
+                                  currentGroup = {
+                                    volumeTitle: `Tom 1`,
+                                    pages: [i],
+                                  };
+                                }
+                              }
+                            });
+                            if (currentGroup) volumeGroups.push(currentGroup);
+
+                            return volumeGroups.map((group, groupIndex) => (
                               <div
-                                key={i}
-                                className={`flex items-center gap-2 ${
-                                  showVolumeSeparator && i !== 0
-                                    ? "w-full justify-center mt-2"
-                                    : ""
-                                }`}
+                                key={groupIndex}
+                                className="flex flex-wrap items-center gap-2 justify-center"
                               >
-                                {showVolumeSeparator && (
-                                  <button
-                                    onClick={() => goToPage(i)}
-                                    className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg font-semibold text-sm border-2 border-purple-300 hover:bg-purple-200 transition-colors cursor-pointer"
-                                    title={`Przejdź do ${info.volumeTitle}`}
-                                  >
-                                    {info.volumeTitle ||
-                                      `Tom ${info.volumeNumber}`}
-                                  </button>
-                                )}
                                 <button
-                                  onClick={() => goToPage(i)}
-                                  className={`min-w-[2.5rem] h-10 px-2 rounded-lg text-sm font-medium transition-colors ${
-                                    i === currentPageIndex
-                                      ? "bg-blue-600 text-white shadow-md"
-                                      : "border border-gray-300 hover:bg-gray-50 hover:border-gray-400"
-                                  }`}
-                                  title={`Rozdział ${displayNumber}`}
+                                  onClick={() => goToPage(group.pages[0])}
+                                  className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg font-semibold text-sm border-2 border-purple-300 hover:bg-purple-200 transition-colors cursor-pointer"
                                 >
-                                  {displayNumber}
+                                  {group.volumeTitle}
                                 </button>
+                                {group.pages.map((pageIndex) => {
+                                  const info = volumeInfo[pageIndex];
+                                  return (
+                                    <button
+                                      key={pageIndex}
+                                      onClick={() => goToPage(pageIndex)}
+                                      className={`min-w-[2.5rem] h-10 px-2 rounded-lg text-sm font-medium transition-colors ${
+                                        pageIndex === currentPageIndex
+                                          ? "bg-blue-600 text-white shadow-md"
+                                          : "border border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+                                      }`}
+                                      title={`Rozdział ${info.chapterInVolume}`}
+                                    >
+                                      {info.chapterInVolume}
+                                    </button>
+                                  );
+                                })}
                               </div>
-                            );
+                            ));
                           }
 
-                          // Zbrodnia i kara
-                          if (isZbrodniaChapters && zbrodniaInfo[i]) {
-                            const info = zbrodniaInfo[i];
-                            const displayNumber =
-                              info.chapterNumber || info.chapterInPart;
-                            const showPartSeparator =
-                              info.startsNewPart && info.partName;
+                          // Zbrodnia i kara - grupowanie po częściach
+                          if (isZbrodniaChapters) {
+                            const partGroups: {
+                              partName: string;
+                              pages: number[];
+                            }[] = [];
+                            let currentGroup: {
+                              partName: string;
+                              pages: number[];
+                            } | null = null;
 
-                            return (
+                            zbrodniaInfo.forEach((info, i) => {
+                              if (info.startsNewPart && info.partName) {
+                                if (currentGroup) partGroups.push(currentGroup);
+                                currentGroup = {
+                                  partName: info.partName,
+                                  pages: [i],
+                                };
+                              } else {
+                                if (currentGroup) currentGroup.pages.push(i);
+                                else {
+                                  currentGroup = {
+                                    partName: info.partName || "Część 1",
+                                    pages: [i],
+                                  };
+                                }
+                              }
+                            });
+                            if (currentGroup) partGroups.push(currentGroup);
+
+                            return partGroups.map((group, groupIndex) => (
                               <div
-                                key={i}
-                                className={`flex items-center gap-2 ${
-                                  showPartSeparator && i !== 0
-                                    ? "w-full justify-center mt-3 pt-2 border-t"
-                                    : ""
-                                }`}
+                                key={groupIndex}
+                                className="flex flex-wrap items-center gap-2 justify-center"
                               >
-                                {showPartSeparator && (
-                                  <button
-                                    onClick={() => goToPage(i)}
-                                    className="px-4 py-1.5 bg-red-100 text-red-700 rounded-lg font-semibold text-sm border-2 border-red-300 hover:bg-red-200 transition-colors cursor-pointer"
-                                    title={`Przejdź do ${info.partName}`}
-                                  >
-                                    {info.partName}
-                                  </button>
-                                )}
                                 <button
-                                  onClick={() => goToPage(i)}
-                                  className={`min-w-[2.5rem] h-10 px-2 rounded-lg text-sm font-medium transition-colors ${
-                                    i === currentPageIndex
-                                      ? "bg-blue-600 text-white shadow-md"
-                                      : "border border-gray-300 hover:bg-gray-50 hover:border-gray-400"
-                                  }`}
-                                  title={
-                                    info.chapterNumber
-                                      ? `Rozdział ${info.chapterNumber}`
-                                      : `Strona ${i + 1}`
-                                  }
+                                  onClick={() => goToPage(group.pages[0])}
+                                  className="px-4 py-1.5 bg-red-100 text-red-700 rounded-lg font-semibold text-sm border-2 border-red-300 hover:bg-red-200 transition-colors cursor-pointer"
                                 >
-                                  {displayNumber}
+                                  {group.partName}
                                 </button>
+                                {group.pages.map((pageIndex) => {
+                                  const info = zbrodniaInfo[pageIndex];
+                                  return (
+                                    <button
+                                      key={pageIndex}
+                                      onClick={() => goToPage(pageIndex)}
+                                      className={`min-w-[2.5rem] h-10 px-2 rounded-lg text-sm font-medium transition-colors ${
+                                        pageIndex === currentPageIndex
+                                          ? "bg-blue-600 text-white shadow-md"
+                                          : "border border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+                                      }`}
+                                      title={
+                                        info.chapterNumber
+                                          ? `Rozdział ${info.chapterNumber}`
+                                          : `Strona ${pageIndex + 1}`
+                                      }
+                                    >
+                                      {info.chapterNumber || info.chapterInPart}
+                                    </button>
+                                  );
+                                })}
                               </div>
-                            );
+                            ));
                           }
 
-                          // Domyślna paginacja
+                          // Domyślna paginacja - zwykłe strony
                           return (
-                            <button
-                              key={i}
-                              onClick={() => goToPage(i)}
-                              className={`min-w-[2.5rem] h-10 px-2 rounded-lg text-sm font-medium transition-colors ${
-                                i === currentPageIndex
-                                  ? "bg-blue-600 text-white shadow-md"
-                                  : "border border-gray-300 hover:bg-gray-50 hover:border-gray-400"
-                              }`}
-                              title={`Strona ${i + 1}`}
-                            >
-                              {i + 1}
-                            </button>
+                            <div className="flex flex-wrap gap-2 justify-center">
+                              {Array.from({ length: totalPages }, (_, i) => (
+                                <button
+                                  key={i}
+                                  onClick={() => goToPage(i)}
+                                  className={`min-w-[2.5rem] h-10 px-2 rounded-lg text-sm font-medium transition-colors ${
+                                    i === currentPageIndex
+                                      ? "bg-blue-600 text-white shadow-md"
+                                      : "border border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+                                  }`}
+                                  title={`Strona ${i + 1}`}
+                                >
+                                  {i + 1}
+                                </button>
+                              ))}
+                            </div>
                           );
-                        })}
+                        })()}
                       </div>
                     </div>
                   </div>

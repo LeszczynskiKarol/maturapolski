@@ -312,20 +312,20 @@ export const PrivacyPolicyPage: React.FC = () => {
 
               <div className="bg-gray-50 rounded-xl p-5">
                 <h3 className="font-semibold mb-2">
-                  OpenAI (ocena wypracowań)
+                  Anthropic (ocena wypracowań)
                 </h3>
                 <p className="text-gray-700 text-sm mb-2">
-                  Wypracowania są wysyłane do API OpenAI w celu oceny przez AI.
-                  Dane są anonimizowane (nie przesyłamy danych
+                  Wypracowania są wysyłane do API Anthropic w celu oceny przez
+                  AI. Dane są anonimizowane (nie przesyłamy danych
                   identyfikujących).
                 </p>
                 <a
-                  href="https://openai.com/privacy/"
+                  href="https://privacy.claude.com/en/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:underline text-sm"
                 >
-                  Polityka prywatności OpenAI →
+                  Polityka prywatności Anthropic Claude →
                 </a>
               </div>
 
