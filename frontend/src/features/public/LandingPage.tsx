@@ -1,13 +1,10 @@
 // frontend/src/features/public/LandingPage.tsx
-
-import React, { useEffect, useState } from "react";
-import { contentService } from "../../services/contentService";
+import { PublicLayout } from "../../components/PublicLayout";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuthStore } from "../../store/authStore";
+
 import {
   ArrowRight,
-  ArrowLeft,
-  BookOpen,
   Trophy,
   Target,
   Brain,
@@ -40,124 +37,22 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-interface TestHub {
-  id: string;
-  slug: string;
-  title: string;
-  author?: string;
-  type: string;
-  isRequired?: boolean;
-}
-
 export const LandingPage: React.FC = () => {
-  const [testHubs, setTestHubs] = useState<TestHub[]>([]);
-  const [featuredHubs, setFeaturedHubs] = useState<any[]>([]);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
-  const user = useAuthStore((state) => state.user);
-  const isLoggedIn = !!user;
-
-  useEffect(() => {
-    loadFooterData();
-  }, []);
-
-  const loadFooterData = async () => {
-    try {
-      // Pobierz huby z testami
-      const tests = await contentService.getHubsWithTests(5);
-      setTestHubs(tests);
-
-      // Pobierz featured huby dla bazy wiedzy (jak masz obecnie)
-      const hubs = await contentService.getHubs({ limit: 5 });
-      setFeaturedHubs(hubs.hubs || []);
-    } catch (error) {
-      console.error("Error loading footer data:", error);
-    }
-  };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-lg z-50 border-b shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-center gap-2">
-              <BookOpen className="w-8 h-8 text-blue-600" />
-              <div className="flex flex-col">
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  MaturaPolski.pl
-                </span>
-                <span className="text-xs font-semibold text-gray-600 tracking-wide">
-                  Testy maturalne z polskiego
-                </span>
-              </div>
-            </Link>
-
-            <div className="hidden md:flex items-center gap-8">
-              {!isLoggedIn ? (
-                <>
-                  <a
-                    href="/#jak-dziala"
-                    className="text-gray-700 hover:text-blue-600 transition-colors"
-                  >
-                    Jak to działa
-                  </a>
-
-                  <a
-                    href="/#funkcje"
-                    className="text-gray-700 hover:text-blue-600 transition-colors"
-                  >
-                    Funkcje
-                  </a>
-
-                  <a
-                    href="/#cennik"
-                    className="text-gray-700 hover:text-blue-600 transition-colors"
-                  >
-                    Cennik
-                  </a>
-
-                  <Link
-                    to="/login"
-                    className="px-4 py-2 text-gray-700 hover:text-blue-600 transition-colors"
-                  >
-                    Zaloguj się
-                  </Link>
-                  <Link
-                    to="/register"
-                    className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all"
-                  >
-                    Załóż konto
-                  </Link>
-                </>
-              ) : (
-                <Link
-                  to="/dashboard"
-                  className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Wróć do panelu
-                </Link>
-              )}
-            </div>
-
-            {/* Mobile menu button */}
-            <button className="md:hidden p-2">
-              <ChevronDown className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 bg-gradient-to-b from-blue-50 via-purple-50 to-white">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            {/* Badge 
+    <PublicLayout>
+      <div className="min-h-screen bg-white">
+        {/* Hero Section */}
+        <section className="pt-32 pb-20 px-4 bg-gradient-to-b from-blue-50 via-purple-50 to-white">
+          <div className="max-w-7xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-16"
+            >
+              {/* Badge 
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-full mb-6">
               <Sparkles className="w-4 h-4" />
               <span className="text-sm font-semibold">
@@ -165,54 +60,55 @@ export const LandingPage: React.FC = () => {
               </span>
             </div>*/}
 
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-              Zdaj maturę z polskiego
-              <br />
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                łatwiej, niż myślisz
-              </span>
-            </h1>
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                Zdaj maturę z polskiego
+                <br />
+                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  łatwiej, niż myślisz
+                </span>
+              </h1>
 
-            <p className="text-xl md:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
-              Inteligentna platforma z testami i kursami maturalnymi z języka
-              polskiego, która ocenia Twoje wypracowania, dostosowuje zadania do
-              Twojego poziomu i prowadzi Cię krok po kroku do wymarzonego wyniku
-            </p>
+              <p className="text-xl md:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
+                Inteligentna platforma z testami i kursami maturalnymi z języka
+                polskiego, która ocenia Twoje wypracowania, dostosowuje zadania
+                do Twojego poziomu i prowadzi Cię krok po kroku do wymarzonego
+                wyniku
+              </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Link
-                to="/register"
-                className="group px-10 py-5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-2xl hover:scale-105 transition-all flex items-center justify-center gap-2 text-xl font-bold"
-              >
-                Zacznij naukę teraz
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                to="/login"
-                className="group px-10 py-5 border-2 border-gray-300 rounded-xl hover:border-blue-600 hover:bg-blue-50 transition-all flex items-center justify-center gap-2 text-xl font-semibold"
-              >
-                Mam już konto
-              </Link>
-            </div>
-
-            {/* Trust badges */}
-            <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-500">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-green-500" />
-                <span>Tylko 39 zł/miesiąc</span>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+                <Link
+                  to="/register"
+                  className="group px-10 py-5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-2xl hover:scale-105 transition-all flex items-center justify-center gap-2 text-xl font-bold"
+                >
+                  Zacznij naukę teraz
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link
+                  to="/login"
+                  className="group px-10 py-5 border-2 border-gray-300 rounded-xl hover:border-blue-600 hover:bg-blue-50 transition-all flex items-center justify-center gap-2 text-xl font-semibold"
+                >
+                  Mam już konto
+                </Link>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-green-500" />
-                <span>Ucz się, kiedy chcesz</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-green-500" />
-                <span>Zdobywaj punkty i poziomy</span>
-              </div>
-            </div>
-          </motion.div>
 
-          {/* Hero Stats 
+              {/* Trust badges */}
+              <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-500">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span>Tylko 39 zł/miesiąc</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span>Ucz się, kiedy chcesz</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span>Zdobywaj punkty i poziomy</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Hero Stats 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -224,401 +120,401 @@ export const LandingPage: React.FC = () => {
             <StatCard number="15,000+" label="Zadań w bazie" />
             <StatCard number="4.9/5" label="Ocena uczniów" icon={<Star />} />
           </motion.div>*/}
-        </div>
-      </section>
+          </div>
+        </section>
 
-      {/* Problem-Solution Section */}
-      <section className="py-20 px-4 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            {/* Problem */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="bg-white p-8 rounded-2xl shadow-lg border-2 border-red-100"
-            >
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-100 text-red-700 rounded-full mb-6">
-                <TrendingDown className="w-4 h-4" />
-                <span className="font-semibold">Tradycyjna nauka</span>
-              </div>
-              <h3 className="text-2xl font-bold mb-6 text-gray-900">
-                Czy to brzmi znajomo?
-              </h3>
-              <div className="space-y-4">
-                <ProblemItem text="Nie wiesz, od czego zacząć i jak się uczyć skutecznie" />
-                <ProblemItem text="Korepetycje są drogie (150-200 zł/1 godz.)" />
-                <ProblemItem text="Materiały są rozrzucone po internecie" />
-                <ProblemItem text="Nie widzisz swoich postępów" />
-                <ProblemItem text="Brak motywacji i systematyczności" />
-              </div>
-            </motion.div>
-
-            {/* Solution */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="bg-gradient-to-br from-blue-600 to-purple-600 p-8 rounded-2xl shadow-2xl text-white"
-            >
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full mb-6">
-                <Sparkles className="w-4 h-4" />
-                <span className="font-semibold">Nasze rozwiązanie</span>
-              </div>
-              <h3 className="text-2xl font-bold mb-6">
-                Wszystko w jednym miejscu
-              </h3>
-              <div className="space-y-4">
-                <SolutionItem text="AI tworzy spersonalizowany plan nauki tylko dla Ciebie" />
-                <SolutionItem text="Koszt jak 1 godzina korepetycji miesięcznie" />
-                <SolutionItem text="AI ocenia wypracowania w 30 sekund" />
-                <SolutionItem text="Tysiące zadań uporządkowanych według epok" />
-                <SolutionItem text="Szczegółowe statystyki i analiza postępów" />
-                <SolutionItem text="System poziomów i nagród motywuje do nauki" />
-              </div>
-              <Link
-                to="/register"
-                className="mt-8 block w-full text-center px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors"
+        {/* Problem-Solution Section */}
+        <section className="py-20 px-4 bg-gray-50">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              {/* Problem */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="bg-white p-8 rounded-2xl shadow-lg border-2 border-red-100"
               >
-                Załóż konto
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section id="jak-dziala" className="py-20 px-4 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Jak to działa?
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Prosta ścieżka od rejestracji do wymarzonego wyniku na maturze
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-8">
-            <StepCard
-              number="1"
-              title="Załóż konto"
-              description="Stwórz konto w 30 sekund, zamów subskrypcję i rozpocznij naukę od razu."
-              icon={<User className="w-8 h-8" />}
-            />
-            <StepCard
-              number="2"
-              title="Pisz i odpowiadaj"
-              description="Rozwiązuj testy maturalne z polskiego i pisz zadania oceniane przez AI"
-              icon={<Target className="w-8 h-8" />}
-            />
-            <StepCard
-              number="3"
-              title="Ucz się systematycznie"
-              description="Regularnie wykonuj ćwiczenia i zbieraj punkty doświadczenia"
-              icon={<Brain className="w-8 h-8" />}
-            />
-            <StepCard
-              number="4"
-              title="Testy maturalne z polskiego"
-              description="Śledź postępy i osiagaj cele edukacyjne"
-              icon={<Trophy className="w-8 h-8" />}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* App Screenshot with Features */}
-      <section className="py-20 px-4 bg-gradient-to-b from-gray-50 to-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Wszystko, czego potrzebujesz do matury z polskiego
-            </h2>
-            <p className="text-xl text-gray-600">
-              w jednej, przejrzystej aplikacji
-            </p>
-          </div>
-
-          {/* Main App Screenshot Placeholder */}
-          <div className="relative mb-20">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur-3xl opacity-20" />
-            <div className="relative bg-white rounded-2xl shadow-2xl border-8 border-gray-200 overflow-hidden">
-              <div className="bg-gray-800 px-4 py-3 flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-500" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                <div className="w-3 h-3 rounded-full bg-green-500" />
-              </div>
-              <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
-                  <img
-                    src="https://maturapolski.s3.eu-north-1.amazonaws.com/content/dashboard_opt.webp"
-                    alt="Dashboard z pełnymi statystykami"
-                    className="w-full h-full object-cover"
-                  />
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-100 text-red-700 rounded-full mb-6">
+                  <TrendingDown className="w-4 h-4" />
+                  <span className="font-semibold">Tradycyjna nauka</span>
                 </div>
-              </div>
-            </div>
-          </div>
+                <h3 className="text-2xl font-bold mb-6 text-gray-900">
+                  Czy to brzmi znajomo?
+                </h3>
+                <div className="space-y-4">
+                  <ProblemItem text="Nie wiesz, od czego zacząć i jak się uczyć skutecznie" />
+                  <ProblemItem text="Korepetycje są drogie (150-200 zł/1 godz.)" />
+                  <ProblemItem text="Materiały są rozrzucone po internecie" />
+                  <ProblemItem text="Nie widzisz swoich postępów" />
+                  <ProblemItem text="Brak motywacji i systematyczności" />
+                </div>
+              </motion.div>
 
-          {/* Feature Grid with Screenshots */}
-          <div className="grid md:grid-cols-2 gap-16">
-            <FeatureWithImage
-              title="Dashboard z pełnymi statystykami"
-              description="Zobacz swoje postępy na pierwszy rzut oka. Analiza mocnych i słabych stron, wykres rozwoju, aktualny poziom i cele do osiągnięcia."
-              features={[
-                "Aktualny poziom trudności (1-5)",
-                "Wykres postępów w czasie",
-                "Analiza według epok literackich",
-                "Dzienne cele i streaki",
-              ]}
-              imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/postepy_opt.webp"
-            />
-
-            <FeatureWithImage
-              title="Adaptacyjny system nauki"
-              description="AI automatycznie dostosowuje trudność zadań do Twojego poziomu. Im lepiej sobie radzisz, tym trudniejsze pytania - zawsze w strefie optymalnego rozwoju."
-              features={[
-                "Automatyczne dopasowanie trudności",
-                "System 5 poziomów zaawansowania",
-                "Odblokowanie wyższych poziomów",
-                "Punkty doświadczenia (XP)",
-              ]}
-              imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/analiza_postepow_opt.webp"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Core Features - Detailed */}
-      <section id="funkcje" className="py-20 px-4 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Testy, pytania i zadania maturalne z polskiego
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Profesjonalne funkcje stworzone z myślą o maksymalnej efektywności
-              nauki
-            </p>
-          </div>
-
-          <div className="space-y-24">
-            {/* Feature 1: AI Essay Grading */}
-            <FeatureSection
-              title="AI ocenia Twoje wypracowania"
-              subtitle="Natychmiastowy, szczegółowy feedback według kryteriów CKE"
-              description="Nasz algorytm AI został nauczony na tysiącach rzeczywistych wypracowań maturalnych. Ocenia każdy aspekt Twojej pracy zgodnie z oficjalnymi kryteriami egzaminacyjnymi."
-              features={[
-                {
-                  icon: <PenTool className="w-6 h-6" />,
-                  title: "Ocena według CKE",
-                  text: "Analizujemy kompozycję, język, styl, ortografię i argumentację",
-                },
-                {
-                  icon: <MessageSquare className="w-6 h-6" />,
-                  title: "Konkretne wskazówki",
-                  text: "Otrzymujesz precyzyjne sugestie jak poprawić swoją pracę",
-                },
-                {
-                  icon: <Clock className="w-6 h-6" />,
-                  title: "Wynik w 30 sekund",
-                  text: "Nie czekaj dni na korektę - ucz się natychmiast na błędach",
-                },
-                {
-                  icon: <TrendingUp className="w-6 h-6" />,
-                  title: "Śledź postępy",
-                  text: "Zobacz jak poprawiają się kolejne wypracowania",
-                },
-              ]}
-              imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/ai_opt.webp"
-              imageOnRight={true}
-            />
-
-            {/* Feature 2: Epoch Review System */}
-            <FeatureSection
-              title="Powtórki z epok literackich"
-              subtitle="Inteligentny system spaced repetition"
-              description="Wykorzystujemy algorytm spaced repetition, aby zagwarantować, że zapamiętasz wszystkie lektury i charakterystykę epok na długo - nie tylko na jeden dzień przed egzaminem."
-              features={[
-                {
-                  icon: <Repeat className="w-6 h-6" />,
-                  title: "Spaced Repetition",
-                  text: "System przypomina Ci o powtórkach w optymalnych momentach",
-                },
-                {
-                  icon: <BookMarked className="w-6 h-6" />,
-                  title: "Wszystkie epoki",
-                  text: "Od średniowiecza po współczesność - pełna baza wiedzy",
-                },
-                {
-                  icon: <Brain className="w-6 h-6" />,
-                  title: "Fiszki i quizy",
-                  text: "Interaktywne materiały do szybkiego zapamiętywania",
-                },
-                {
-                  icon: <BarChart3 className="w-6 h-6" />,
-                  title: "Tracking zapamiętywania",
-                  text: "Zobacz które epoki znasz najlepiej i nad czym popracować",
-                },
-              ]}
-              imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/epoki_opt.webp"
-              imageOnRight={false}
-            />
-
-            {/* Feature 3: Exercise Database */}
-            <FeatureSection
-              title="Setki uporządkowanych zadań"
-              subtitle="Od podstaw po poziom rozszerzony"
-              description="Nasza baza zawiera wszystkie typy zadań występujących na maturze: interpretacje, analizy, testy, pytania otwarte, pytania zamknięte i wypracowania."
-              features={[
-                {
-                  icon: <FileText className="w-6 h-6" />,
-                  title: "Wszystkie typy zadań",
-                  text: "Pytania testowe, otwarte, interpretacje i rozprawki",
-                },
-                {
-                  icon: <Target className="w-6 h-6" />,
-                  title: "Filtrowanie po epokach",
-                  text: "Łatwo znajdź zadania z konkretnego okresu literackiego",
-                },
-                {
-                  icon: <Award className="w-6 h-6" />,
-                  title: "5 poziomów trudności",
-                  text: "Od podstawowego po poziom rozszerzony - rozwijaj się stopniowo",
-                },
-                {
-                  icon: <Lightbulb className="w-6 h-6" />,
-                  title: "Szczegółowe wyjaśnienia",
-                  text: "Do każdego zadania pełne wyjaśnienie odpowiedzi",
-                },
-              ]}
-              imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/zadanie_opt.webp"
-              imageOnRight={true}
-            />
-
-            {/* Feature 4: Progress Tracking */}
-            <FeatureSection
-              title="Szczegółowa analiza postępów"
-              subtitle="Widzisz dokładnie nad czym pracować"
-              description="Dashboard pokazuje Twoje mocne i słabe strony w różnych obszarach. Algorytm AI analizuje Twoje odpowiedzi i sugeruje na czym się skupić."
-              features={[
-                {
-                  icon: <BarChart3 className="w-6 h-6" />,
-                  title: "Wykresy i statystyki",
-                  text: "Wizualizacja postępów w czasie i według kategorii",
-                },
-                {
-                  icon: <Calendar className="w-6 h-6" />,
-                  title: "Historia sesji",
-                  text: "Przeglądaj wszystkie swoje sesje nauki i wyniki",
-                },
-                {
-                  icon: <Target className="w-6 h-6" />,
-                  title: "Cele i milestone'y",
-                  text: "Wyznaczaj cele i celebruj ich osiągnięcie",
-                },
-                {
-                  icon: <Flame className="w-6 h-6" />,
-                  title: "Streaki motywacyjne",
-                  text: "Buduj serie dni z rzędu i nie przerywaj passy",
-                },
-              ]}
-              imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/zbior_pytan_opt.webp"
-              imageOnRight={false}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Gamification Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-purple-50 via-blue-50 to-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full mb-4">
-              <Trophy className="w-4 h-4" />
-              <span className="text-sm font-semibold">System motywacji</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Nauka może być wciągająca
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              System punktów, poziomów i osiągnięć sprawia, że każda sesja nauki
-              to progres
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            <GamificationCard
-              icon={<Zap className="w-12 h-12" />}
-              title="Punkty AI"
-              description="Zbieraj punkty za rozwiązywanie zadań i pisanie wypracowań. Używaj ich do odblokowania funkcji Premium."
-              color="from-yellow-400 to-orange-500"
-            />
-            <GamificationCard
-              icon={<Trophy className="w-12 h-12" />}
-              title="System poziomów"
-              description="Zacznij od poziomu 1 i odblokowuj kolejne stopnie trudności (do poziomu 5). Im wyższy poziom, tym trudniejsze wyzwania."
-              color="from-blue-500 to-purple-600"
-            />
-            <GamificationCard
-              icon={<Award className="w-12 h-12" />}
-              title="Osiągnięcia"
-              description="Zdobywaj odznaki za różne wyzwania: serie dni, perfekcyjne wyniki, ukończenie epok i wiele więcej."
-              color="from-green-400 to-emerald-500"
-            />
-          </div>
-
-          {/* Level Progress Visualization */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
-            <h3 className="text-2xl font-bold mb-8 text-center">
-              Twoja ścieżka rozwoju
-            </h3>
-            <div className="grid md:grid-cols-5 gap-4">
-              {[1, 2, 3, 4, 5].map((level) => (
-                <div
-                  key={level}
-                  className={`p-6 rounded-xl border-2 text-center ${
-                    level <= 2
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-gray-200 bg-gray-50"
-                  }`}
+              {/* Solution */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="bg-gradient-to-br from-blue-600 to-purple-600 p-8 rounded-2xl shadow-2xl text-white"
+              >
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full mb-6">
+                  <Sparkles className="w-4 h-4" />
+                  <span className="font-semibold">Nasze rozwiązanie</span>
+                </div>
+                <h3 className="text-2xl font-bold mb-6">
+                  Wszystko w jednym miejscu
+                </h3>
+                <div className="space-y-4">
+                  <SolutionItem text="AI tworzy spersonalizowany plan nauki tylko dla Ciebie" />
+                  <SolutionItem text="Koszt jak 1 godzina korepetycji miesięcznie" />
+                  <SolutionItem text="AI ocenia wypracowania w 30 sekund" />
+                  <SolutionItem text="Tysiące zadań uporządkowanych według epok" />
+                  <SolutionItem text="Szczegółowe statystyki i analiza postępów" />
+                  <SolutionItem text="System poziomów i nagród motywuje do nauki" />
+                </div>
+                <Link
+                  to="/register"
+                  className="mt-8 block w-full text-center px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors"
                 >
-                  <div
-                    className={`w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center ${
-                      level <= 2
-                        ? "bg-gradient-to-br from-blue-500 to-purple-600 text-white"
-                        : "bg-gray-200 text-gray-400"
-                    }`}
-                  >
-                    <span className="text-xl font-bold">{level}</span>
-                  </div>
-                  <p className="font-semibold mb-1">
-                    {level <= 2 ? "Odblokowany" : "Zablokowany"}
-                  </p>
-                  <p className="text-xs text-gray-500">Poziom {level}</p>
-                </div>
-              ))}
+                  Załóż konto
+                </Link>
+              </motion.div>
             </div>
-            <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-700">
-                  Postęp do poziomu 3
-                </span>
-                <span className="text-sm font-bold text-blue-600">65%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-3">
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 h-3 rounded-full w-[65%]" />
-              </div>
-              <p className="text-xs text-gray-600 mt-2">
-                Jeszcze 350 punktów do odblokowania poziomu 3
+          </div>
+        </section>
+
+        {/* How It Works */}
+        <section id="jak-dziala" className="py-20 px-4 bg-white">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                Jak to działa?
+              </h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                Prosta ścieżka od rejestracji do wymarzonego wyniku na maturze
               </p>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Social Proof - Testimonials 
+            <div className="grid md:grid-cols-4 gap-8">
+              <StepCard
+                number="1"
+                title="Załóż konto"
+                description="Stwórz konto w 30 sekund, zamów subskrypcję i rozpocznij naukę od razu."
+                icon={<User className="w-8 h-8" />}
+              />
+              <StepCard
+                number="2"
+                title="Pisz i odpowiadaj"
+                description="Rozwiązuj testy maturalne z polskiego i pisz zadania oceniane przez AI"
+                icon={<Target className="w-8 h-8" />}
+              />
+              <StepCard
+                number="3"
+                title="Ucz się systematycznie"
+                description="Regularnie wykonuj ćwiczenia i zbieraj punkty doświadczenia"
+                icon={<Brain className="w-8 h-8" />}
+              />
+              <StepCard
+                number="4"
+                title="Testy maturalne z polskiego"
+                description="Śledź postępy i osiagaj cele edukacyjne"
+                icon={<Trophy className="w-8 h-8" />}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* App Screenshot with Features */}
+        <section className="py-20 px-4 bg-gradient-to-b from-gray-50 to-white">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                Wszystko, czego potrzebujesz do matury z polskiego
+              </h2>
+              <p className="text-xl text-gray-600">
+                w jednej, przejrzystej aplikacji
+              </p>
+            </div>
+
+            {/* Main App Screenshot Placeholder */}
+            <div className="relative mb-20">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur-3xl opacity-20" />
+              <div className="relative bg-white rounded-2xl shadow-2xl border-8 border-gray-200 overflow-hidden">
+                <div className="bg-gray-800 px-4 py-3 flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                  <div className="w-3 h-3 rounded-full bg-green-500" />
+                </div>
+                <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                  <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
+                    <img
+                      src="https://maturapolski.s3.eu-north-1.amazonaws.com/content/dashboard_opt.webp"
+                      alt="Dashboard z pełnymi statystykami"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature Grid with Screenshots */}
+            <div className="grid md:grid-cols-2 gap-16">
+              <FeatureWithImage
+                title="Dashboard z pełnymi statystykami"
+                description="Zobacz swoje postępy na pierwszy rzut oka. Analiza mocnych i słabych stron, wykres rozwoju, aktualny poziom i cele do osiągnięcia."
+                features={[
+                  "Aktualny poziom trudności (1-5)",
+                  "Wykres postępów w czasie",
+                  "Analiza według epok literackich",
+                  "Dzienne cele i streaki",
+                ]}
+                imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/postepy_opt.webp"
+              />
+
+              <FeatureWithImage
+                title="Adaptacyjny system nauki"
+                description="AI automatycznie dostosowuje trudność zadań do Twojego poziomu. Im lepiej sobie radzisz, tym trudniejsze pytania - zawsze w strefie optymalnego rozwoju."
+                features={[
+                  "Automatyczne dopasowanie trudności",
+                  "System 5 poziomów zaawansowania",
+                  "Odblokowanie wyższych poziomów",
+                  "Punkty doświadczenia (XP)",
+                ]}
+                imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/analiza_postepow_opt.webp"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Core Features - Detailed */}
+        <section id="funkcje" className="py-20 px-4 bg-white">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                Testy, pytania i zadania maturalne z polskiego
+              </h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                Profesjonalne funkcje stworzone z myślą o maksymalnej
+                efektywności nauki
+              </p>
+            </div>
+
+            <div className="space-y-24">
+              {/* Feature 1: AI Essay Grading */}
+              <FeatureSection
+                title="AI ocenia Twoje wypracowania"
+                subtitle="Natychmiastowy, szczegółowy feedback według kryteriów CKE"
+                description="Nasz algorytm AI został nauczony na tysiącach rzeczywistych wypracowań maturalnych. Ocenia każdy aspekt Twojej pracy zgodnie z oficjalnymi kryteriami egzaminacyjnymi."
+                features={[
+                  {
+                    icon: <PenTool className="w-6 h-6" />,
+                    title: "Ocena według CKE",
+                    text: "Analizujemy kompozycję, język, styl, ortografię i argumentację",
+                  },
+                  {
+                    icon: <MessageSquare className="w-6 h-6" />,
+                    title: "Konkretne wskazówki",
+                    text: "Otrzymujesz precyzyjne sugestie jak poprawić swoją pracę",
+                  },
+                  {
+                    icon: <Clock className="w-6 h-6" />,
+                    title: "Wynik w 30 sekund",
+                    text: "Nie czekaj dni na korektę - ucz się natychmiast na błędach",
+                  },
+                  {
+                    icon: <TrendingUp className="w-6 h-6" />,
+                    title: "Śledź postępy",
+                    text: "Zobacz jak poprawiają się kolejne wypracowania",
+                  },
+                ]}
+                imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/ai_opt.webp"
+                imageOnRight={true}
+              />
+
+              {/* Feature 2: Epoch Review System */}
+              <FeatureSection
+                title="Powtórki z epok literackich"
+                subtitle="Inteligentny system spaced repetition"
+                description="Wykorzystujemy algorytm spaced repetition, aby zagwarantować, że zapamiętasz wszystkie lektury i charakterystykę epok na długo - nie tylko na jeden dzień przed egzaminem."
+                features={[
+                  {
+                    icon: <Repeat className="w-6 h-6" />,
+                    title: "Spaced Repetition",
+                    text: "System przypomina Ci o powtórkach w optymalnych momentach",
+                  },
+                  {
+                    icon: <BookMarked className="w-6 h-6" />,
+                    title: "Wszystkie epoki",
+                    text: "Od średniowiecza po współczesność - pełna baza wiedzy",
+                  },
+                  {
+                    icon: <Brain className="w-6 h-6" />,
+                    title: "Fiszki i quizy",
+                    text: "Interaktywne materiały do szybkiego zapamiętywania",
+                  },
+                  {
+                    icon: <BarChart3 className="w-6 h-6" />,
+                    title: "Tracking zapamiętywania",
+                    text: "Zobacz które epoki znasz najlepiej i nad czym popracować",
+                  },
+                ]}
+                imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/epoki_opt.webp"
+                imageOnRight={false}
+              />
+
+              {/* Feature 3: Exercise Database */}
+              <FeatureSection
+                title="Setki uporządkowanych zadań"
+                subtitle="Od podstaw po poziom rozszerzony"
+                description="Nasza baza zawiera wszystkie typy zadań występujących na maturze: interpretacje, analizy, testy, pytania otwarte, pytania zamknięte i wypracowania."
+                features={[
+                  {
+                    icon: <FileText className="w-6 h-6" />,
+                    title: "Wszystkie typy zadań",
+                    text: "Pytania testowe, otwarte, interpretacje i rozprawki",
+                  },
+                  {
+                    icon: <Target className="w-6 h-6" />,
+                    title: "Filtrowanie po epokach",
+                    text: "Łatwo znajdź zadania z konkretnego okresu literackiego",
+                  },
+                  {
+                    icon: <Award className="w-6 h-6" />,
+                    title: "5 poziomów trudności",
+                    text: "Od podstawowego po poziom rozszerzony - rozwijaj się stopniowo",
+                  },
+                  {
+                    icon: <Lightbulb className="w-6 h-6" />,
+                    title: "Szczegółowe wyjaśnienia",
+                    text: "Do każdego zadania pełne wyjaśnienie odpowiedzi",
+                  },
+                ]}
+                imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/zadanie_opt.webp"
+                imageOnRight={true}
+              />
+
+              {/* Feature 4: Progress Tracking */}
+              <FeatureSection
+                title="Szczegółowa analiza postępów"
+                subtitle="Widzisz dokładnie nad czym pracować"
+                description="Dashboard pokazuje Twoje mocne i słabe strony w różnych obszarach. Algorytm AI analizuje Twoje odpowiedzi i sugeruje na czym się skupić."
+                features={[
+                  {
+                    icon: <BarChart3 className="w-6 h-6" />,
+                    title: "Wykresy i statystyki",
+                    text: "Wizualizacja postępów w czasie i według kategorii",
+                  },
+                  {
+                    icon: <Calendar className="w-6 h-6" />,
+                    title: "Historia sesji",
+                    text: "Przeglądaj wszystkie swoje sesje nauki i wyniki",
+                  },
+                  {
+                    icon: <Target className="w-6 h-6" />,
+                    title: "Cele i milestone'y",
+                    text: "Wyznaczaj cele i celebruj ich osiągnięcie",
+                  },
+                  {
+                    icon: <Flame className="w-6 h-6" />,
+                    title: "Streaki motywacyjne",
+                    text: "Buduj serie dni z rzędu i nie przerywaj passy",
+                  },
+                ]}
+                imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/zbior_pytan_opt.webp"
+                imageOnRight={false}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Gamification Section */}
+        <section className="py-20 px-4 bg-gradient-to-br from-purple-50 via-blue-50 to-white">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full mb-4">
+                <Trophy className="w-4 h-4" />
+                <span className="text-sm font-semibold">System motywacji</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                Nauka może być wciągająca
+              </h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                System punktów, poziomów i osiągnięć sprawia, że każda sesja
+                nauki to progres
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8 mb-12">
+              <GamificationCard
+                icon={<Zap className="w-12 h-12" />}
+                title="Punkty AI"
+                description="Zbieraj punkty za rozwiązywanie zadań i pisanie wypracowań. Używaj ich do odblokowania funkcji Premium."
+                color="from-yellow-400 to-orange-500"
+              />
+              <GamificationCard
+                icon={<Trophy className="w-12 h-12" />}
+                title="System poziomów"
+                description="Zacznij od poziomu 1 i odblokowuj kolejne stopnie trudności (do poziomu 5). Im wyższy poziom, tym trudniejsze wyzwania."
+                color="from-blue-500 to-purple-600"
+              />
+              <GamificationCard
+                icon={<Award className="w-12 h-12" />}
+                title="Osiągnięcia"
+                description="Zdobywaj odznaki za różne wyzwania: serie dni, perfekcyjne wyniki, ukończenie epok i wiele więcej."
+                color="from-green-400 to-emerald-500"
+              />
+            </div>
+
+            {/* Level Progress Visualization */}
+            <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+              <h3 className="text-2xl font-bold mb-8 text-center">
+                Twoja ścieżka rozwoju
+              </h3>
+              <div className="grid md:grid-cols-5 gap-4">
+                {[1, 2, 3, 4, 5].map((level) => (
+                  <div
+                    key={level}
+                    className={`p-6 rounded-xl border-2 text-center ${
+                      level <= 2
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-200 bg-gray-50"
+                    }`}
+                  >
+                    <div
+                      className={`w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center ${
+                        level <= 2
+                          ? "bg-gradient-to-br from-blue-500 to-purple-600 text-white"
+                          : "bg-gray-200 text-gray-400"
+                      }`}
+                    >
+                      <span className="text-xl font-bold">{level}</span>
+                    </div>
+                    <p className="font-semibold mb-1">
+                      {level <= 2 ? "Odblokowany" : "Zablokowany"}
+                    </p>
+                    <p className="text-xs text-gray-500">Poziom {level}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-semibold text-gray-700">
+                    Postęp do poziomu 3
+                  </span>
+                  <span className="text-sm font-bold text-blue-600">65%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div className="bg-gradient-to-r from-blue-600 to-purple-600 h-3 rounded-full w-[65%]" />
+                </div>
+                <p className="text-xs text-gray-600 mt-2">
+                  Jeszcze 350 punktów do odblokowania poziomu 3
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Social Proof - Testimonials 
       <section id="opinie" className="py-20 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -739,463 +635,338 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>*/}
 
-      {/* Comparison Table */}
-      <section className="py-20 px-4 bg-gray-50">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Dlaczego my?
-            </h2>
-            <p className="text-xl text-gray-600">
-              Porównaj nas z tradycyjnymi metodami nauki
-            </p>
-          </div>
+        {/* Comparison Table */}
+        <section className="py-20 px-4 bg-gray-50">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                Dlaczego my?
+              </h2>
+              <p className="text-xl text-gray-600">
+                Porównaj nas z tradycyjnymi metodami nauki
+              </p>
+            </div>
 
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-                <tr>
-                  <th className="px-6 py-4 text-left">Funkcja</th>
-                  <th className="px-6 py-4 text-center">Korepetycje</th>
-                  <th className="px-6 py-4 text-center">Podręczniki</th>
-                  <th className="px-6 py-4 text-center bg-blue-700">
-                    MaturaPolski.pl
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                <ComparisonRow
-                  feature="Koszt miesięczny"
-                  traditional="600-800 zł"
-                  books="0 zł (jednorazowo 100-200 zł)"
-                  us="39 zł"
-                />
-                <ComparisonRow
-                  feature="Dostępność 24/7"
-                  traditional={false}
-                  books={true}
-                  us={true}
-                />
-                <ComparisonRow
-                  feature="Natychmiastowy feedback"
-                  traditional={false}
-                  books={false}
-                  us={true}
-                />
-                <ComparisonRow
-                  feature="Adaptacja do poziomu"
-                  traditional={true}
-                  books={false}
-                  us={true}
-                />
-                <ComparisonRow
-                  feature="15,000+ zadań"
-                  traditional={false}
-                  books={false}
-                  us={true}
-                />
-                <ComparisonRow
-                  feature="AI ocena wypracowań"
-                  traditional={false}
-                  books={false}
-                  us={true}
-                />
-                <ComparisonRow
-                  feature="Tracking postępów"
-                  traditional={false}
-                  books={false}
-                  us={true}
-                />
-                {/*<ComparisonRow
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                  <tr>
+                    <th className="px-6 py-4 text-left">Funkcja</th>
+                    <th className="px-6 py-4 text-center">Korepetycje</th>
+                    <th className="px-6 py-4 text-center">Podręczniki</th>
+                    <th className="px-6 py-4 text-center bg-blue-700">
+                      MaturaPolski.pl
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <ComparisonRow
+                    feature="Koszt miesięczny"
+                    traditional="600-800 zł"
+                    books="0 zł (jednorazowo 100-200 zł)"
+                    us="39 zł"
+                  />
+                  <ComparisonRow
+                    feature="Dostępność 24/7"
+                    traditional={false}
+                    books={true}
+                    us={true}
+                  />
+                  <ComparisonRow
+                    feature="Natychmiastowy feedback"
+                    traditional={false}
+                    books={false}
+                    us={true}
+                  />
+                  <ComparisonRow
+                    feature="Adaptacja do poziomu"
+                    traditional={true}
+                    books={false}
+                    us={true}
+                  />
+                  <ComparisonRow
+                    feature="15,000+ zadań"
+                    traditional={false}
+                    books={false}
+                    us={true}
+                  />
+                  <ComparisonRow
+                    feature="AI ocena wypracowań"
+                    traditional={false}
+                    books={false}
+                    us={true}
+                  />
+                  <ComparisonRow
+                    feature="Tracking postępów"
+                    traditional={false}
+                    books={false}
+                    us={true}
+                  />
+                  {/*<ComparisonRow
                   feature="Aplikacja mobilna"
                   traditional={false}
                   books={false}
                   us={true}
                 />*/}
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Additional Features Grid */}
-      <section className="py-20 px-4 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              I jeszcze więcej...
-            </h2>
-            <p className="text-xl text-gray-600">
-              Funkcje które sprawiają, że nauka jest przyjemnością
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <FeatureCard
-              icon={<Smartphone className="w-8 h-8" />}
-              title="Dostosowanie do urządzeń mobilnych"
-              description="Ucz się w dowolnym miejscu - w drodze do szkoły, w przerwie, przed snem. Pełna synchronizacja z wersją web."
-            />
-            <FeatureCard
-              icon={<Moon className="w-8 h-8" />}
-              title="Tryb ciemny"
-              description="Wygodna nauka wieczorem bez męczenia oczu. Automatyczne przełączanie według pory dnia."
-            />
-            <FeatureCard
-              icon={<Shield className="w-8 h-8" />}
-              title="Bezpieczeństwo danych"
-              description="Twoje dane są szyfrowane i bezpieczne. Zgodność z RODO i najwyższymi standardami."
-            />
-            <FeatureCard
-              icon={<RefreshCw className="w-8 h-8" />}
-              title="Regularne aktualizacje"
-              description="Nowe zadania, funkcje i ulepszenia co tydzień. Zawsze na bieżąco z CKE."
-            />
-            <FeatureCard
-              icon={<Users className="w-8 h-8" />}
-              title="Wsparcie 7 dni w tygodniu"
-              description="Nasz zespół odpowiada na pytania w ciągu kilku godzin. Jesteśmy tu dla Ciebie."
-            />
-            <FeatureCard
-              icon={<GraduationCap className="w-8 h-8" />}
-              title="Eksperci od polskiego"
-              description="Wszystkie materiały przygotowane przez nauczycieli i egzaminatorów CKE."
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-20 px-4 bg-gray-50">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Najczęściej zadawane pytania
-            </h2>
-            <p className="text-xl text-gray-600">Wszystko co musisz wiedzieć</p>
-          </div>
-
-          <div className="space-y-4">
-            <FAQItem
-              question="Jak mogę zacząć korzystać z platformy?"
-              answer="Po zarejestrowaniu się i opłaceniu subskrypcji (39 zł/miesiąc) otrzymujesz natychmiastowy dostęp do całej platformy. Możesz od razu rozpocząć naukę - rozwiązywać zadania, pisać wypracowania i korzystać ze wszystkich funkcji."
-              isOpen={faqOpen === 0}
-              onClick={() => setFaqOpen(faqOpen === 0 ? null : 0)}
-            />
-            <FAQItem
-              question="Jak działa AI oceniające wypracowania?"
-              answer="Nasz algorytm został wytrenowany na tysiącach rzeczywistych wypracowań maturalnych. Ocenia kompozycję, język, styl, ortografię i argumentację zgodnie z kryteriami CKE. Dostaniesz szczegółowy feedback w 30 sekund."
-              isOpen={faqOpen === 1}
-              onClick={() => setFaqOpen(faqOpen === 1 ? null : 1)}
-            />
-            <FAQItem
-              question="Czy materiały są zgodne z aktualnym programem CKE?"
-              answer="Tak! Wszystkie materiały są przygotowane przez nauczycieli i egzaminatorów CKE. Regularnie aktualizujemy bazę zadań, aby była zgodna z najnowszymi wytycznymi."
-              isOpen={faqOpen === 2}
-              onClick={() => setFaqOpen(faqOpen === 2 ? null : 2)}
-            />
-            <FAQItem
-              question="Czy mogę anulować subskrypcję w dowolnym momencie?"
-              answer="Oczywiście! Możesz anulować subskrypcję w dowolnym momencie bez żadnych opłat. Zachowasz dostęp do końca opłaconego okresu. Dodatkowo oferujemy 30-dniową gwarancję zwrotu pieniędzy."
-              isOpen={faqOpen === 3}
-              onClick={() => setFaqOpen(faqOpen === 3 ? null : 3)}
-            />
-            <FAQItem
-              question="Czy aplikacja działa na telefonie?"
-              answer="Tak! Mamy responsywną aplikację webową działającą świetnie na wszystkich urządzeniach. Możesz się uczyć na komputerze, tablecie i telefonie z pełną synchronizacją."
-              isOpen={faqOpen === 4}
-              onClick={() => setFaqOpen(faqOpen === 4 ? null : 4)}
-            />
-            <FAQItem
-              question="Ile czasu dziennie powinienem poświęcić na naukę?"
-              answer="Zalecamy minimum 20-30 minut dziennie. Regularność jest ważniejsza niż długość sesji. Nasz system motywuje do codziennej nauki poprzez streaki i cele."
-              isOpen={faqOpen === 5}
-              onClick={() => setFaqOpen(faqOpen === 5 ? null : 5)}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="cennik" className="py-20 px-4 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Prosty, przejrzysty cennik
-            </h2>
-            <p className="text-xl text-gray-600">
-              Jedna subskrypcja - pełen dostęp do wszystkiego
-            </p>
-          </div>
-
-          {/* Single Pricing Card - Centered */}
-          <div className="max-w-xl mx-auto">
-            <motion.div
-              whileHover={{ y: -8 }}
-              className="relative rounded-2xl p-10 bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow-2xl border-4 border-blue-400"
-            >
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-yellow-400 text-yellow-900 text-sm font-bold rounded-full">
-                KOMPLETNY PAKIET
-              </div>
-
-              <div className="text-center mb-8">
-                <h3 className="text-3xl font-bold mb-3">Premium</h3>
-                <p className="text-blue-100 mb-6">
-                  Wszystko czego potrzebujesz do matury
-                </p>
-                <div className="mb-4">
-                  <span className="text-6xl font-bold">39 zł</span>
-                  <span className="text-2xl ml-2">/miesiąc</span>
-                </div>
-                <p className="text-blue-100 text-sm">
-                  Koszt jednej godziny korepetycji
-                </p>
-              </div>
-
-              <ul className="space-y-4 mb-10">
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
-                  <span className="text-base">
-                    <strong>Nielimitowane zadania</strong> - 15,000+ pytań do
-                    wyboru
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
-                  <span className="text-base">
-                    <strong>AI ocena wypracowań</strong> - szczegółowy feedback
-                    w 30 sekund
-                  </span>
-                </li>
-
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
-                  <span className="text-base">
-                    <strong>Spaced Repetition</strong> - inteligentne powtórki z
-                    epok
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
-                  <span className="text-base">
-                    <strong>Szczegółowe statystyki</strong> - analiza postępów i
-                    mocnych stron
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
-                  <span className="text-base">
-                    <strong>System poziomów</strong> - gamifikacja i motywacja
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
-                  <span className="text-base">
-                    <strong>Aplikacja mobilna</strong> - ucz się wszędzie
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
-                  <span className="text-base">
-                    <strong>Tryb ciemny</strong> - wygodna nauka wieczorem
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
-                  <span className="text-base">
-                    <strong>Wsparcie 7 dni w tygodniu</strong> - zawsze tu
-                    jesteśmy
-                  </span>
-                </li>
-              </ul>
-
-              <Link
-                to="/register"
-                className="block text-center py-4 rounded-xl font-bold text-lg transition-all bg-white text-blue-600 hover:bg-blue-50 shadow-2xl hover:shadow-3xl hover:scale-105"
-              >
-                Rozpocznij naukę za 39 zł
-              </Link>
-
-              <p className="text-center text-blue-100 text-sm mt-4">
-                Anuluj w dowolnym momencie
+        {/* Additional Features Grid */}
+        <section className="py-20 px-4 bg-white">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                I jeszcze więcej...
+              </h2>
+              <p className="text-xl text-gray-600">
+                Funkcje które sprawiają, że nauka jest przyjemnością
               </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              <FeatureCard
+                icon={<Smartphone className="w-8 h-8" />}
+                title="Dostosowanie do urządzeń mobilnych"
+                description="Ucz się w dowolnym miejscu - w drodze do szkoły, w przerwie, przed snem. Pełna synchronizacja z wersją web."
+              />
+              <FeatureCard
+                icon={<Moon className="w-8 h-8" />}
+                title="Tryb ciemny"
+                description="Wygodna nauka wieczorem bez męczenia oczu. Automatyczne przełączanie według pory dnia."
+              />
+              <FeatureCard
+                icon={<Shield className="w-8 h-8" />}
+                title="Bezpieczeństwo danych"
+                description="Twoje dane są szyfrowane i bezpieczne. Zgodność z RODO i najwyższymi standardami."
+              />
+              <FeatureCard
+                icon={<RefreshCw className="w-8 h-8" />}
+                title="Regularne aktualizacje"
+                description="Nowe zadania, funkcje i ulepszenia co tydzień. Zawsze na bieżąco z CKE."
+              />
+              <FeatureCard
+                icon={<Users className="w-8 h-8" />}
+                title="Wsparcie 7 dni w tygodniu"
+                description="Nasz zespół odpowiada na pytania w ciągu kilku godzin. Jesteśmy tu dla Ciebie."
+              />
+              <FeatureCard
+                icon={<GraduationCap className="w-8 h-8" />}
+                title="Eksperci od polskiego"
+                description="Wszystkie materiały przygotowane przez nauczycieli i egzaminatorów CKE."
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="py-20 px-4 bg-gray-50">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                Najczęściej zadawane pytania
+              </h2>
+              <p className="text-xl text-gray-600">
+                Wszystko co musisz wiedzieć
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <FAQItem
+                question="Jak mogę zacząć korzystać z platformy?"
+                answer="Po zarejestrowaniu się i opłaceniu subskrypcji (39 zł/miesiąc) otrzymujesz natychmiastowy dostęp do całej platformy. Możesz od razu rozpocząć naukę - rozwiązywać zadania, pisać wypracowania i korzystać ze wszystkich funkcji."
+                isOpen={faqOpen === 0}
+                onClick={() => setFaqOpen(faqOpen === 0 ? null : 0)}
+              />
+              <FAQItem
+                question="Jak działa AI oceniające wypracowania?"
+                answer="Nasz algorytm został wytrenowany na tysiącach rzeczywistych wypracowań maturalnych. Ocenia kompozycję, język, styl, ortografię i argumentację zgodnie z kryteriami CKE. Dostaniesz szczegółowy feedback w 30 sekund."
+                isOpen={faqOpen === 1}
+                onClick={() => setFaqOpen(faqOpen === 1 ? null : 1)}
+              />
+              <FAQItem
+                question="Czy materiały są zgodne z aktualnym programem CKE?"
+                answer="Tak! Wszystkie materiały są przygotowane przez nauczycieli i egzaminatorów CKE. Regularnie aktualizujemy bazę zadań, aby była zgodna z najnowszymi wytycznymi."
+                isOpen={faqOpen === 2}
+                onClick={() => setFaqOpen(faqOpen === 2 ? null : 2)}
+              />
+              <FAQItem
+                question="Czy mogę anulować subskrypcję w dowolnym momencie?"
+                answer="Oczywiście! Możesz anulować subskrypcję w dowolnym momencie bez żadnych opłat. Zachowasz dostęp do końca opłaconego okresu. Dodatkowo oferujemy 30-dniową gwarancję zwrotu pieniędzy."
+                isOpen={faqOpen === 3}
+                onClick={() => setFaqOpen(faqOpen === 3 ? null : 3)}
+              />
+              <FAQItem
+                question="Czy aplikacja działa na telefonie?"
+                answer="Tak! Mamy responsywną aplikację webową działającą świetnie na wszystkich urządzeniach. Możesz się uczyć na komputerze, tablecie i telefonie z pełną synchronizacją."
+                isOpen={faqOpen === 4}
+                onClick={() => setFaqOpen(faqOpen === 4 ? null : 4)}
+              />
+              <FAQItem
+                question="Ile czasu dziennie powinienem poświęcić na naukę?"
+                answer="Zalecamy minimum 20-30 minut dziennie. Regularność jest ważniejsza niż długość sesji. Nasz system motywuje do codziennej nauki poprzez streaki i cele."
+                isOpen={faqOpen === 5}
+                onClick={() => setFaqOpen(faqOpen === 5 ? null : 5)}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Pricing Section */}
+        <section id="cennik" className="py-20 px-4 bg-white">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                Prosty, przejrzysty cennik
+              </h2>
+              <p className="text-xl text-gray-600">
+                Jedna subskrypcja - pełen dostęp do wszystkiego
+              </p>
+            </div>
+
+            {/* Single Pricing Card - Centered */}
+            <div className="max-w-xl mx-auto">
+              <motion.div
+                whileHover={{ y: -8 }}
+                className="relative rounded-2xl p-10 bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow-2xl border-4 border-blue-400"
+              >
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-yellow-400 text-yellow-900 text-sm font-bold rounded-full">
+                  KOMPLETNY PAKIET
+                </div>
+
+                <div className="text-center mb-8">
+                  <h3 className="text-3xl font-bold mb-3">Premium</h3>
+                  <p className="text-blue-100 mb-6">
+                    Wszystko czego potrzebujesz do matury
+                  </p>
+                  <div className="mb-4">
+                    <span className="text-6xl font-bold">39 zł</span>
+                    <span className="text-2xl ml-2">/miesiąc</span>
+                  </div>
+                  <p className="text-blue-100 text-sm">
+                    Koszt jednej godziny korepetycji
+                  </p>
+                </div>
+
+                <ul className="space-y-4 mb-10">
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
+                    <span className="text-base">
+                      <strong>Nielimitowane zadania</strong> - 15,000+ pytań do
+                      wyboru
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
+                    <span className="text-base">
+                      <strong>AI ocena wypracowań</strong> - szczegółowy
+                      feedback w 30 sekund
+                    </span>
+                  </li>
+
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
+                    <span className="text-base">
+                      <strong>Spaced Repetition</strong> - inteligentne powtórki
+                      z epok
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
+                    <span className="text-base">
+                      <strong>Szczegółowe statystyki</strong> - analiza postępów
+                      i mocnych stron
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
+                    <span className="text-base">
+                      <strong>System poziomów</strong> - gamifikacja i motywacja
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
+                    <span className="text-base">
+                      <strong>Aplikacja mobilna</strong> - ucz się wszędzie
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
+                    <span className="text-base">
+                      <strong>Tryb ciemny</strong> - wygodna nauka wieczorem
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
+                    <span className="text-base">
+                      <strong>Wsparcie 7 dni w tygodniu</strong> - zawsze tu
+                      jesteśmy
+                    </span>
+                  </li>
+                </ul>
+
+                <Link
+                  to="/register"
+                  className="block text-center py-4 rounded-xl font-bold text-lg transition-all bg-white text-blue-600 hover:bg-blue-50 shadow-2xl hover:shadow-3xl hover:scale-105"
+                >
+                  Rozpocznij naukę za 39 zł
+                </Link>
+
+                <p className="text-center text-blue-100 text-sm mt-4">
+                  Anuluj w dowolnym momencie
+                </p>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Final CTA */}
+        <section className="py-20 px-4 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 text-white">
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-4xl md:text-6xl font-bold mb-6">
+                Zacznij już dziś.
+                <br />
+                Zdaj na 100%.
+              </h2>
+              <p className="text-xl md:text-2xl mb-10 text-blue-100">
+                Dołącz do zadowolonych uczniów, którzy osiągnęli swoje cele
+                dzięki naszej platformie
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+                <Link
+                  to="/register"
+                  className="group px-10 py-5 bg-white text-blue-600 rounded-xl hover:bg-blue-50 transition-all flex items-center justify-center gap-2 text-lg font-bold shadow-2xl hover:scale-105"
+                >
+                  Rozpocznij naukę teraz
+                  <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link
+                  to="/login"
+                  className="px-10 py-5 border-2 border-white/50 rounded-xl hover:bg-white/10 transition-all flex items-center justify-center gap-2 text-lg font-semibold backdrop-blur-sm"
+                >
+                  Mam już konto
+                </Link>
+              </div>
+
+              <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-blue-100">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5" />
+                  <span>Tylko 39 zł/miesiąc</span>
+                </div>
+              </div>
             </motion.div>
           </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="py-20 px-4 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-4xl md:text-6xl font-bold mb-6">
-              Zacznij już dziś.
-              <br />
-              Zdaj na 100%.
-            </h2>
-            <p className="text-xl md:text-2xl mb-10 text-blue-100">
-              Dołącz do zadowolonych uczniów, którzy osiągnęli swoje cele dzięki
-              naszej platformie
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-              <Link
-                to="/register"
-                className="group px-10 py-5 bg-white text-blue-600 rounded-xl hover:bg-blue-50 transition-all flex items-center justify-center gap-2 text-lg font-bold shadow-2xl hover:scale-105"
-              >
-                Rozpocznij naukę teraz
-                <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                to="/login"
-                className="px-10 py-5 border-2 border-white/50 rounded-xl hover:bg-white/10 transition-all flex items-center justify-center gap-2 text-lg font-semibold backdrop-blur-sm"
-              >
-                Mam już konto
-              </Link>
-            </div>
-
-            <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-blue-100">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5" />
-                <span>Tylko 39 zł/miesiąc</span>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
-            <div className="col-span-2">
-              <div className="flex items-center gap-2 mb-4">
-                <BookOpen className="w-8 h-8 text-blue-400" />
-                <span className="text-2xl font-bold">MaturaPolski.pl</span>
-              </div>
-              <p className="text-gray-400 mb-4 max-w-sm">
-                Inteligentna platforma do nauki języka polskiego, która pomaga
-                tysiącom maturzystów osiągnąć wymarzone wyniki.
-              </p>
-              {/*<div className="flex gap-4">
-                <a
-                  href="#"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
-                >
-                  <span className="sr-only">Facebook</span>
-                  FB
-                </a>
-                <a
-                  href="#"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
-                >
-                  <span className="sr-only">Instagram</span>
-                  IG
-                </a>
-                <a
-                  href="#"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
-                >
-                  <span className="sr-only">TikTok</span>
-                  TT
-                </a>
-              </div>*/}
-            </div>
-
-            <div>
-              <h4 className="font-bold mb-4 text-lg">Produkt</h4>
-              <ul className="space-y-3 text-gray-400">
-                <li>
-                  <a
-                    href="#funkcje"
-                    className="hover:text-white transition-colors"
-                  >
-                    Funkcje
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#cennik"
-                    className="hover:text-white transition-colors"
-                  >
-                    Cennik
-                  </a>
-                </li>
-
-                <li>
-                  <Link
-                    to="/register"
-                    className="hover:text-white transition-colors"
-                  >
-                    Załóż konto
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* ZAKTUALIZOWANA SEKCJA - Baza wiedzy */}
-            <div>
-              <h4 className="font-bold mb-4 text-lg">Baza wiedzy</h4>
-              <ul className="space-y-3 text-gray-400">
-                {featuredHubs.slice(0, 400000000).map((hub) => (
-                  <li key={hub.id}>
-                    <a
-                      href={`/baza-wiedzy/${hub.slug}`}
-                      className="hover:text-white transition-colors"
-                    >
-                      {hub.title}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* NOWA SEKCJA - Testy */}
-            <div>
-              <h4 className="font-bold mb-4 text-lg">Testy z lektur</h4>
-              <ul className="space-y-3 text-gray-400">
-                {testHubs.slice(0, 4).map((hub) => (
-                  <li key={hub.id}>
-                    <a
-                      href={`/test/${hub.slug}`}
-                      className="hover:text-white transition-colors"
-                    >
-                      {hub.title}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-800 pt-8">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="text-gray-400 text-sm">
-                © 2025 MaturaPolski.pl. Wszystkie prawa zastrzeżone.
-              </p>
-              <div className="flex gap-6 text-sm text-gray-400">
-                <a href="/terms" className="hover:text-white transition-colors">
-                  Regulamin
-                </a>
-                <a
-                  href="/privacy"
-                  className="hover:text-white transition-colors"
-                >
-                  Polityka prywatności
-                </a>
-                <a href="/rodo" className="hover:text-white transition-colors">
-                  RODO
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
+        </section>
+      </div>
+    </PublicLayout>
   );
 };
 
