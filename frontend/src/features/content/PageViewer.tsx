@@ -54,11 +54,32 @@ export function PageViewer() {
   const isZbrodniaChapters =
     hubSlug === "zbrodnia-i-kara" &&
     pageSlug?.includes("zbrodnia-i-kara-streszczenie-szczegolowe");
+  const isDziadyChapters =
+    hubSlug === "dziady-cz-iii" &&
+    pageSlug?.includes("streszczenie-szczegolowe");
   const [hubPages, setHubPages] = useState<any[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [page, setPage] = useState<PageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+
+  function parseDziadyStructure(contentPages: any[][]) {
+    return contentPages.map((pageBlocks, index) => {
+      // Szukaj pierwszego H2 na stronie
+      const firstH2 = pageBlocks.find(
+        (b) => b.type === "h2" || b.type === "heading"
+      );
+      const h2Content = firstH2?.content || "";
+
+      // Parsuj "Scena X" (rzymskie lub arabskie)
+      const sceneMatch = h2Content.match(/Scena\s+([IVXLCDM]+|\d+)/i);
+
+      return {
+        sceneNumber: sceneMatch ? sceneMatch[1] : (index + 1).toString(),
+        fullTitle: h2Content,
+      };
+    });
+  }
 
   function parseZbrodniaStructure(contentPages: any[][]) {
     return contentPages.map((pageBlocks, index) => {
@@ -555,6 +576,12 @@ export function PageViewer() {
     ? parseZbrodniaStructure(contentPages)
     : [];
 
+  const dziadyInfo = isDziadyChapters ? parseDziadyStructure(contentPages) : [];
+
+  const currentDziadyInfo = isDziadyChapters
+    ? dziadyInfo[currentPageIndex]
+    : null;
+
   const currentZbrodniaInfo = isZbrodniaChapters
     ? zbrodniaInfo[currentPageIndex]
     : null;
@@ -999,6 +1026,9 @@ export function PageViewer() {
                             </span>
                           )}
                         </>
+                      ) : isDziadyChapters && currentDziadyInfo ? (
+                        // ← DODAJ TO
+                        <>Scena {currentDziadyInfo.sceneNumber}</>
                       ) : (
                         <>
                           Strona {currentPageIndex + 1} z {totalPages}
@@ -1068,6 +1098,8 @@ export function PageViewer() {
                           <span className="hidden sm:inline">
                             {isLalkaChapters || isZbrodniaChapters
                               ? "Poprzedni rozdział"
+                              : isDziadyChapters
+                              ? "Poprzednia scena"
                               : "Poprzednia strona"}
                           </span>
                         </button>
@@ -1080,8 +1112,11 @@ export function PageViewer() {
                           <span className="hidden sm:inline">
                             {isLalkaChapters || isZbrodniaChapters
                               ? "Następny rozdział"
+                              : isDziadyChapters
+                              ? "Następna scena"
                               : "Następna strona"}
                           </span>
+
                           <ChevronRight className="w-4 h-4" />
                         </button>
                       </div>
@@ -1218,6 +1253,30 @@ export function PageViewer() {
                                 })}
                               </div>
                             ));
+                          }
+
+                          if (isDziadyChapters) {
+                            return (
+                              <div className="flex flex-wrap items-center gap-2 justify-center">
+                                <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg font-semibold text-sm border-2 border-emerald-300">
+                                  Sceny
+                                </span>
+                                {dziadyInfo.map((info, pageIndex) => (
+                                  <button
+                                    key={pageIndex}
+                                    onClick={() => goToPage(pageIndex)}
+                                    className={`min-w-[2.5rem] h-10 px-2 rounded-lg text-sm font-medium transition-colors ${
+                                      pageIndex === currentPageIndex
+                                        ? "bg-blue-600 text-white shadow-md"
+                                        : "border border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+                                    }`}
+                                    title={`Scena ${info.sceneNumber}`}
+                                  >
+                                    {info.sceneNumber}
+                                  </button>
+                                ))}
+                              </div>
+                            );
                           }
 
                           // Domyślna paginacja - zwykłe strony
