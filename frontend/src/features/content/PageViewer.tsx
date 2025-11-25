@@ -70,12 +70,54 @@ export function PageViewer() {
         (b) => b.type === "h2" || b.type === "heading"
       );
       const h2Content = firstH2?.content || "";
+      const h2Lower = h2Content.toLowerCase();
 
-      // Parsuj "Scena X" (rzymskie lub arabskie)
-      const sceneMatch = h2Content.match(/Scena\s+([IVXLCDM]+|\d+)/i);
+      // Określ typ sekcji i grupę
+      let sectionType: "wstep" | "akt" | "ustep" = "akt";
+      let sectionLabel = "";
+      let groupName = "";
+
+      // Przedmowa lub Prolog -> Wstęp
+      if (h2Lower.includes("przedmowa") || h2Lower.includes("prolog")) {
+        sectionType = "wstep";
+        groupName = "Wstęp";
+        sectionLabel = h2Lower.includes("przedmowa") ? "Przedmowa" : "Prolog";
+      }
+      // Ustęp - ...
+      else if (h2Lower.includes("ustęp")) {
+        sectionType = "ustep";
+        groupName = "Ustęp";
+        // Wyciągnij nazwę po "Ustęp - " lub "Ustęp – "
+        const ustepMatch = h2Content.match(/Ustęp\s*[-–]\s*(.+)/i);
+        if (ustepMatch) {
+          // Skróć długie nazwy
+          let name = ustepMatch[1].trim();
+          if (name.length > 20) {
+            name = name.substring(0, 18) + "...";
+          }
+          sectionLabel = name;
+        } else {
+          sectionLabel = "Ustęp";
+        }
+      }
+      // Scena X -> Akt I
+      else if (h2Lower.includes("scena")) {
+        sectionType = "akt";
+        groupName = "Akt I";
+        const sceneMatch = h2Content.match(/Scena\s+([IVXLCDM]+|\d+)/i);
+        sectionLabel = sceneMatch ? sceneMatch[1] : (index + 1).toString();
+      }
+      // Inne - domyślnie do Wstępu
+      else {
+        sectionType = "wstep";
+        groupName = "Wstęp";
+        sectionLabel = h2Content || `Strona ${index + 1}`;
+      }
 
       return {
-        sceneNumber: sceneMatch ? sceneMatch[1] : (index + 1).toString(),
+        sectionType,
+        groupName,
+        sectionLabel,
         fullTitle: h2Content,
       };
     });
@@ -1027,8 +1069,14 @@ export function PageViewer() {
                           )}
                         </>
                       ) : isDziadyChapters && currentDziadyInfo ? (
-                        // ← DODAJ TO
-                        <>Scena {currentDziadyInfo.sceneNumber}</>
+                        <>
+                          {currentDziadyInfo.sectionLabel}
+                          {currentDziadyInfo.groupName && (
+                            <span className="text-sm text-gray-500 ml-2">
+                              ({currentDziadyInfo.groupName})
+                            </span>
+                          )}
+                        </>
                       ) : (
                         <>
                           Strona {currentPageIndex + 1} z {totalPages}
@@ -1256,27 +1304,78 @@ export function PageViewer() {
                           }
 
                           if (isDziadyChapters) {
-                            return (
-                              <div className="flex flex-wrap items-center gap-2 justify-center">
-                                <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg font-semibold text-sm border-2 border-emerald-300">
-                                  Sceny
-                                </span>
-                                {dziadyInfo.map((info, pageIndex) => (
+                            // Grupowanie po typie sekcji
+                            const groups: {
+                              groupName: string;
+                              sectionType: string;
+                              pages: { index: number; label: string }[];
+                            }[] = [];
+
+                            let currentGroup: (typeof groups)[0] | null = null;
+
+                            dziadyInfo.forEach((info, i) => {
+                              // Sprawdź czy zaczynamy nową grupę
+                              if (
+                                !currentGroup ||
+                                currentGroup.groupName !== info.groupName
+                              ) {
+                                if (currentGroup) groups.push(currentGroup);
+                                currentGroup = {
+                                  groupName: info.groupName,
+                                  sectionType: info.sectionType,
+                                  pages: [],
+                                };
+                              }
+                              currentGroup.pages.push({
+                                index: i,
+                                label: info.sectionLabel,
+                              });
+                            });
+                            if (currentGroup) groups.push(currentGroup);
+
+                            // Kolory dla różnych grup
+                            const getGroupColors = (sectionType: string) => {
+                              switch (sectionType) {
+                                case "wstep":
+                                  return "bg-amber-100 text-amber-700 border-amber-300 hover:bg-amber-200";
+                                case "akt":
+                                  return "bg-emerald-100 text-emerald-700 border-emerald-300 hover:bg-emerald-200";
+                                case "ustep":
+                                  return "bg-indigo-100 text-indigo-700 border-indigo-300 hover:bg-indigo-200";
+                                default:
+                                  return "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200";
+                              }
+                            };
+
+                            return groups.map((group, groupIndex) => (
+                              <div
+                                key={groupIndex}
+                                className="flex flex-wrap items-center gap-2 justify-center"
+                              >
+                                <button
+                                  onClick={() => goToPage(group.pages[0].index)}
+                                  className={`px-3 py-1 rounded-lg font-semibold text-sm border-2 transition-colors cursor-pointer ${getGroupColors(
+                                    group.sectionType
+                                  )}`}
+                                >
+                                  {group.groupName}
+                                </button>
+                                {group.pages.map((page) => (
                                   <button
-                                    key={pageIndex}
-                                    onClick={() => goToPage(pageIndex)}
+                                    key={page.index}
+                                    onClick={() => goToPage(page.index)}
                                     className={`min-w-[2.5rem] h-10 px-2 rounded-lg text-sm font-medium transition-colors ${
-                                      pageIndex === currentPageIndex
+                                      page.index === currentPageIndex
                                         ? "bg-blue-600 text-white shadow-md"
                                         : "border border-gray-300 hover:bg-gray-50 hover:border-gray-400"
                                     }`}
-                                    title={`Scena ${info.sceneNumber}`}
+                                    title={dziadyInfo[page.index].fullTitle}
                                   >
-                                    {info.sceneNumber}
+                                    {page.label}
                                   </button>
                                 ))}
                               </div>
-                            );
+                            ));
                           }
 
                           // Domyślna paginacja - zwykłe strony
