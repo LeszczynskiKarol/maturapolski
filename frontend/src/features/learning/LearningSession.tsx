@@ -2369,19 +2369,30 @@ export const LearningSession: React.FC = () => {
                     }
 
                     // ✅ INTELIGENTNE POBIERANIE SCORE
-                    const displayScore =
-                      aiData.score ??
-                      aiData.totalScore ??
-                      responseData.score ??
-                      0;
-                    const displayMaxScore =
-                      aiData.maxScore ?? currentExercise.points ?? 2;
+                    // ✅ INTELIGENTNE POBIERANIE SCORE
+                    let displayScore: number;
+                    let displayMaxScore: number;
 
-                    // Określ czy poprawne
-                    const isCorrect =
-                      displayScore > 0 && displayScore >= displayMaxScore * 0.6;
+                    if (currentExercise.type === "ESSAY") {
+                      displayScore =
+                        aiData.totalScore ??
+                        (aiData.formalScore || 0) +
+                          (aiData.literaryScore || 0) +
+                          (aiData.compositionScore || 0) +
+                          (aiData.languageScore || 0);
+                      displayMaxScore = currentExercise.points || 35;
+                    } else {
+                      displayScore = aiData.score ?? responseData.score ?? 0;
+                      displayMaxScore =
+                        aiData.maxScore ?? currentExercise.points ?? 2;
+                    }
+
+                    // ✅ TERAZ DEFINIUJEMY isCorrect/isPartiallyCorrect
+                    const percentageScore =
+                      (displayScore / displayMaxScore) * 100;
+                    const isCorrect = percentageScore >= 70;
                     const isPartiallyCorrect =
-                      displayScore > 0 && displayScore < displayMaxScore * 0.6;
+                      percentageScore >= 40 && percentageScore < 70;
 
                     return (
                       <div
@@ -2400,23 +2411,24 @@ export const LearningSession: React.FC = () => {
                               <>
                                 <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
                                 <span className="font-semibold text-green-700 dark:text-green-300">
-                                  {currentExercise.type === "ESSAY"
-                                    ? "Świetne wypracowanie!"
-                                    : "Świetna odpowiedź!"}
+                                  {aiData.overallAssessment ||
+                                    "Świetna odpowiedź!"}
                                 </span>
                               </>
                             ) : isPartiallyCorrect ? (
                               <>
                                 <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
                                 <span className="font-semibold text-yellow-700 dark:text-yellow-300">
-                                  Częściowo poprawna odpowiedź
+                                  {aiData.overallAssessment ||
+                                    "Częściowo poprawna odpowiedź"}
                                 </span>
                               </>
                             ) : (
                               <>
                                 <XCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
                                 <span className="font-semibold text-red-700 dark:text-red-300">
-                                  Odpowiedź wymaga poprawy
+                                  {aiData.overallAssessment ||
+                                    "Odpowiedź wymaga poprawy"}
                                 </span>
                               </>
                             )}

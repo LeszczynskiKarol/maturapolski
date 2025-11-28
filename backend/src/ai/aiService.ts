@@ -302,7 +302,7 @@ Przyznaj punkty częściowe za częściowo poprawne odpowiedzi.
   * "Poprawnie zidentyfikowałeś..."
 
 Format JSON:
-{"score":0,"maxScore":${maxPoints},"isCorrect":false,"isPartiallyCorrect":false,"feedback":"","correctAnswer":"","missingElements":[],"correctElements":[],"suggestions":[]}
+{"score":0,"maxScore":${maxPoints},"isCorrect":false,"isPartiallyCorrect":false,"overallAssessment":"TUTAJ AI WPISUJE SWOJĄ KRÓTKĄ OCENĘ np. 'Świetna odpowiedź!' lub 'Wymaga poprawy'","feedback":"","correctAnswer":"","missingElements":[],"correctElements":[],"suggestions":[]}
 
 **WAŻNE:** 
 - Jeśli score == maxScore: correctAnswer i suggestions MUSZĄ BYĆ PUSTE ("" i [])
@@ -464,8 +464,8 @@ WAŻNE: Oceniaj SPRAWIEDLIWIE.
 
 KRYTYCZNE: Zwróć TYLKO czysty JSON w JEDNEJ linii bez formatowania.
 
-Format:
-{"formalScore":0,"literaryScore":0,"compositionScore":0,"languageScore":0,"totalScore":0,"detailedFeedback":{"strengths":[],"weaknesses":[],"suggestions":[]},"improvements":[],"wordCount":${wordCount},"percentageScore":0}
+Format JSON:
+{"formalScore":0,"literaryScore":0,"compositionScore":0,"languageScore":0,"totalScore":0,"overallAssessment":"TUTAJ AI WPISUJE SWOJĄ OCENĘ JAKOŚCI np. 'Przeciętne wypracowanie' lub 'Dobra praca!'","detailedFeedback":{"strengths":[],"weaknesses":[],"suggestions":[]},"improvements":[],"wordCount":${wordCount},"percentageScore":0}
 `;
 
   console.log("📤 SENDING TO CLAUDE:");
