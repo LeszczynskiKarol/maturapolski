@@ -41,6 +41,7 @@ const ExerciseSchema = z.object({
   difficulty: z.number().min(1).max(5),
   points: z.number().min(1).max(35),
   question: z.string().min(10),
+  work: z.string().optional(),
   content: z.object({
     options: z.array(z.string()).optional(),
     text: z.string().optional(),
