@@ -108,7 +108,7 @@ export const AiPointsWidget = () => {
             <Zap className="w-4 h-4 text-yellow-500" />
           )}
           <span className="text-sm font-semibold text-gray-900 dark:text-white">
-            Punkty AI
+            Kredyty AI
           </span>
         </div>
         <Crown className="w-4 h-4 text-yellow-500" />

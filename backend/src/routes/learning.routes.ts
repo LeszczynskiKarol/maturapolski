@@ -1267,6 +1267,74 @@ export async function learningRoutes(fastify: FastifyInstance) {
         where: { userId },
       });
 
+      // Zapisz do DailyProgress
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // ✅ SPRAWDŹ CZY PASSA POWINNA BYĆ ZRESETOWANA
+      let shouldResetStreak = false;
+      let newStreak = currentProfile?.studyStreak || 0;
+
+      // Pobierz ostatnią aktywność (wczoraj lub wcześniej)
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      yesterday.setHours(0, 0, 0, 0);
+
+      const lastActivity = await prisma.dailyProgress.findFirst({
+        where: {
+          userId,
+          date: { lt: today }, // Przed dzisiaj
+          exercisesCount: { gt: 0 },
+        },
+        orderBy: { date: "desc" },
+      });
+
+      if (lastActivity) {
+        const lastActivityDate = new Date(lastActivity.date);
+        lastActivityDate.setHours(0, 0, 0, 0);
+
+        const daysSinceLastActivity = Math.floor(
+          (today.getTime() - lastActivityDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
+
+        console.log(
+          `Last activity: ${lastActivityDate.toISOString()}, days since: ${daysSinceLastActivity}`
+        );
+
+        if (daysSinceLastActivity > 1) {
+          // Więcej niż 1 dzień przerwy - resetuj passę
+          shouldResetStreak = true;
+          newStreak = 1; // Dzisiejsza sesja to początek nowej passy
+          console.log(`Streak RESET! Gap of ${daysSinceLastActivity} days`);
+        } else if (daysSinceLastActivity === 1) {
+          // Dokładnie wczoraj - kontynuuj passę
+          if (stats.completed >= 5 && sessionAverageScore >= 50) {
+            newStreak = (currentProfile?.studyStreak || 0) + 1;
+            console.log(`Streak continued: ${newStreak}`);
+          }
+        }
+        // daysSinceLastActivity === 0 oznacza że już dziś była aktywność - nie zmieniaj
+      } else {
+        // Brak poprzedniej aktywności - to pierwsza sesja
+        newStreak = 1;
+        console.log(`First session ever - streak = 1`);
+      }
+
+      // Sprawdź czy dziś już była aktywność (nie zwiększaj passy dwukrotnie tego samego dnia)
+      const todayProgress = await prisma.dailyProgress.findUnique({
+        where: { userId_date: { userId, date: today } },
+      });
+
+      if (
+        todayProgress &&
+        todayProgress.exercisesCount > 0 &&
+        !shouldResetStreak
+      ) {
+        // Już była dziś sesja - nie zmieniaj passy
+        newStreak = currentProfile?.studyStreak || 1;
+        console.log(`Already had session today - keeping streak: ${newStreak}`);
+      }
+
       if (!currentProfile) {
         console.log("Creating new user profile");
         await prisma.userProfile.create({
@@ -1304,10 +1372,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
           where: { userId },
           data: {
             totalPoints: { increment: stats.points || 0 },
-            studyStreak:
-              stats.completed >= 5 && sessionAverageScore >= 50
-                ? { increment: 1 }
-                : undefined,
+            studyStreak: newStreak, // ✅ Użyj obliczonej wartości
             averageScore: newAverage,
             level: {
               set:
@@ -1318,10 +1383,6 @@ export async function learningRoutes(fastify: FastifyInstance) {
           },
         });
       }
-
-      // Zapisz do DailyProgress
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
 
       const existingProgress = await prisma.dailyProgress.findUnique({
         where: {
