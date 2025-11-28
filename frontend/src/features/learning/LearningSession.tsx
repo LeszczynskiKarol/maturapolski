@@ -2434,7 +2434,7 @@ export const LearningSession: React.FC = () => {
                                 <span className="text-gray-600 dark:text-gray-400">
                                   Wymogi formalne:
                                 </span>
-                                <span className="ml-2 font-semibold">
+                                <span className="ml-2 font-semibold text-gray-600 dark:text-gray-400">
                                   {aiData.formalScore}/1
                                 </span>
                               </div>
@@ -2444,7 +2444,7 @@ export const LearningSession: React.FC = () => {
                                 <span className="text-gray-600 dark:text-gray-400">
                                   Kompetencje literackie:
                                 </span>
-                                <span className="ml-2 font-semibold">
+                                <span className="ml-2 font-semibold text-gray-600 dark:text-gray-400">
                                   {aiData.literaryScore}/16
                                 </span>
                               </div>
@@ -2454,7 +2454,7 @@ export const LearningSession: React.FC = () => {
                                 <span className="text-gray-600 dark:text-gray-400">
                                   Kompozycja:
                                 </span>
-                                <span className="ml-2 font-semibold">
+                                <span className="ml-2 font-semibold text-gray-600 dark:text-gray-400">
                                   {aiData.compositionScore}/7
                                 </span>
                               </div>
@@ -2464,7 +2464,7 @@ export const LearningSession: React.FC = () => {
                                 <span className="text-gray-600 dark:text-gray-400">
                                   Styl i język:
                                 </span>
-                                <span className="ml-2 font-semibold">
+                                <span className="ml-2 font-semibold text-gray-600 dark:text-gray-400">
                                   {aiData.languageScore}/11
                                 </span>
                               </div>

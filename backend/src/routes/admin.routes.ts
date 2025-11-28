@@ -42,42 +42,10 @@ const ExerciseSchema = z.object({
   points: z.number().min(1).max(35),
   question: z.string().min(10),
   work: z.string().optional(),
-  content: z.object({
-    options: z.array(z.string()).optional(),
-    text: z.string().optional(),
-    fragments: z
-      .array(
-        z.object({
-          author: z.string(),
-          title: z.string(),
-          content: z.string(),
-        })
-      )
-      .optional(),
-  }),
-  correctAnswer: z
-    .union([
-      z.number(),
-      z.array(z.number()),
-      z.array(z.array(z.number())),
-      z.undefined(),
-    ])
-    .optional(),
+  content: z.record(z.any()).optional(),
+  correctAnswer: z.any().optional(),
   tags: z.array(z.string()).default([]),
-  metadata: z
-    .object({
-      explanation: z.string().optional(),
-      wordLimit: z
-        .object({
-          min: z.number().optional(),
-          max: z.number().optional(),
-        })
-        .optional(),
-      requiredReadings: z.array(z.string()).optional(),
-      expectedConcepts: z.array(z.string()).optional(),
-      sampleAnswer: z.string().optional(),
-    })
-    .optional(),
+  metadata: z.record(z.any()).optional(),
 });
 
 type ExerciseInput = z.infer<typeof ExerciseSchema>;
