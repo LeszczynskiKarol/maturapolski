@@ -55,7 +55,12 @@ const ExerciseSchema = z.object({
       .optional(),
   }),
   correctAnswer: z
-    .union([z.number(), z.array(z.number()), z.undefined()])
+    .union([
+      z.number(),
+      z.array(z.number()),
+      z.array(z.array(z.number())),
+      z.undefined(),
+    ])
     .optional(),
   tags: z.array(z.string()).default([]),
   metadata: z
