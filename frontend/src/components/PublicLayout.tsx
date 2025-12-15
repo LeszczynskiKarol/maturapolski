@@ -1,4 +1,4 @@
-// frontend/src/components/PublicLayout.tsx
+// frontend/src/components/PublicLayout.tsx MATURAPOLSKI
 
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
@@ -347,7 +347,16 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
           <div className="border-t border-gray-800 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-gray-400 text-sm">
-                © 2025 MaturaPolski.pl. Wszystkie prawa zastrzeżone.
+                © 2025 MaturaPolski.pl. Wszystkie prawa zastrzeżone. |
+                Realizacja:{" "}
+                <a
+                  href="https://www.torweb.pl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  TorWeb.pl
+                </a>
               </p>
               <div className="flex gap-6 text-sm text-gray-400">
                 <Link
