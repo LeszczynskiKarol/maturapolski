@@ -64,6 +64,13 @@ import { UserManager } from "./features/admin/UserManager";
 import { MaterialDetailPage } from "./features/materials/MaterialDetailPage";
 import MaterialsPage from "./features/materials/MaterialsPage";
 
+// ✅ NOWE: Guides (Poradnik)
+import {
+  GuideListPage,
+  GuideDetailPage,
+  GuideArticlePage,
+} from "./features/guides";
+
 const queryClient = new QueryClient();
 
 // Component to initialize theme
@@ -129,7 +136,8 @@ export const App: React.FC = () => {
                 path="/resend-verification"
                 element={<ResendVerificationPage />}
               />
-              {/* NOWA BAZA WIEDZY */}
+
+              {/* BAZA WIEDZY */}
               <Route path="/baza-wiedzy" element={<HubListPage />} />
               <Route path="/baza-wiedzy/:hubSlug" element={<HubDetailPage />} />
               <Route
@@ -137,9 +145,22 @@ export const App: React.FC = () => {
                 element={<PageViewer />}
               />
               <Route path="/test/:hubSlug" element={<HubTestLandingPage />} />
+
+              {/* ✅ NOWE: PORADNIK */}
+              <Route path="/poradnik" element={<GuideListPage />} />
+              <Route
+                path="/poradnik/:guideSlug"
+                element={<GuideDetailPage />}
+              />
+              <Route
+                path="/poradnik/:guideSlug/:articleSlug"
+                element={<GuideArticlePage />}
+              />
+
               {/* Public Materials routes */}
               <Route path="/materialy" element={<MaterialsPage />} />
               <Route path="/materialy/:slug" element={<MaterialDetailPage />} />
+
               {/* Admin routes */}
               <Route
                 path="/admin"
@@ -157,6 +178,7 @@ export const App: React.FC = () => {
                 <Route path="exams" element={<ExamStructureManager />} />
                 <Route path="user-sessions" element={<UserSessionsTable />} />
               </Route>
+
               {/* Student routes with layout */}
               <Route element={<Layout />}>
                 <Route
@@ -192,7 +214,7 @@ export const App: React.FC = () => {
                   }
                 />
 
-                {/* ✅ Work Review - PRZENIESIONE DO ŚRODKA LAYOUT */}
+                {/* Work Review */}
                 <Route
                   path="/works"
                   element={
@@ -275,6 +297,7 @@ export const App: React.FC = () => {
                   }
                 />
               </Route>
+
               {/* Catch all */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
