@@ -1,7 +1,7 @@
 // backend/src/services/contentService.ts
 
-import { prisma } from "../lib/prisma";
 import { HubType, LiteraryEpoch } from "@prisma/client";
+import { prisma } from "../lib/prisma";
 
 export class ContentService {
   // ==========================================

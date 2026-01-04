@@ -1,26 +1,26 @@
 // frontend/src/features/admin/ContentManager.tsx
 
-import { useRef, useState, useEffect } from "react";
 import {
-  Plus,
-  Trash2,
+  ArrowLeft,
+  BookOpen,
+  Calendar,
   Edit,
   FileText,
-  Lightbulb,
-  BookOpen,
-  ImageIcon,
-  Star,
-  Calendar,
-  User,
+  GraduationCap,
   GripVertical,
-  X,
-  ArrowLeft,
+  ImageIcon,
+  Lightbulb,
+  Plus,
   Scissors,
   Settings,
-  GraduationCap, // ✅ NOWA IKONA dla GUIDE
+  Star,
+  Trash2,
+  User,
+  X,
 } from "lucide-react";
-import { contentService } from "../../services/contentService";
+import { useEffect, useRef, useState } from "react";
 import { ImageUpload } from "../../components/ImageUpload";
+import { contentService } from "../../services/contentService";
 import { RatingsManager } from "./RatingsManager";
 
 interface Hub {

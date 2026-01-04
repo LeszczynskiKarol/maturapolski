@@ -1,6 +1,6 @@
 // backend/src/routes/content.routes.ts
 
-import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
+import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { ContentService } from "../services/contentService";
 
 const contentService = new ContentService();
