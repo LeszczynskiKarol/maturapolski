@@ -30,11 +30,77 @@ export async function contentRoutes(fastify: FastifyInstance) {
     }
   });
 
+  // GET /api/content/hubs/with-tests
+  fastify.get("/hubs/with-tests", async (request, reply) => {
+    try {
+      const { limit } = request.query as { limit?: string };
+
+      const hubs = await contentService.getHubsWithTests({
+        limit: limit ? parseInt(limit) : 10,
+      });
+
+      return reply.send(hubs);
+    } catch (error: any) {
+      return reply.status(400).send({ error: error.message });
+    }
+  });
+
+  // ==========================================
+  // GUIDE - Płaska struktura URL dla poradników
+  // ==========================================
+
+  // Lista wszystkich artykułów GUIDE (płaska)
+  // GET /api/content/guides
+  fastify.get("/guides", async (request, reply) => {
+    try {
+      const { search, page, limit } = request.query as any;
+
+      const result = await contentService.getGuideArticles({
+        search,
+        page: page ? parseInt(page) : 1,
+        limit: limit ? parseInt(limit) : 50,
+      });
+
+      return reply.send(result);
+    } catch (error: any) {
+      return reply.status(400).send({ error: error.message });
+    }
+  });
+
+  // Pojedynczy artykuł GUIDE po slug (płaska struktura)
+  // GET /api/content/guides/:articleSlug
+  // UWAGA: Ta ruta musi być PRZED /:hubSlug żeby nie kolidowała
+  fastify.get("/guides/:articleSlug", async (request, reply) => {
+    try {
+      const { articleSlug } = request.params as { articleSlug: string };
+      const article = await contentService.getGuideArticle(articleSlug);
+      return reply.send(article);
+    } catch (error: any) {
+      return reply.status(404).send({ error: error.message });
+    }
+  });
+
+  // ==========================================
+  // STANDARD HUB ROUTES (baza wiedzy)
+  // ==========================================
+
   fastify.get("/:hubSlug/test-landing", async (request, reply) => {
     try {
       const { hubSlug } = request.params as { hubSlug: string };
       const data = await contentService.getHubTestLandingData(hubSlug);
       return reply.send(data);
+    } catch (error: any) {
+      return reply.status(404).send({ error: error.message });
+    }
+  });
+
+  // Lista stron danego HUB-a (menu)
+  // GET /api/content/lalka/pages
+  fastify.get("/:hubSlug/pages", async (request, reply) => {
+    try {
+      const { hubSlug } = request.params as { hubSlug: string };
+      const pages = await contentService.getHubPages(hubSlug);
+      return reply.send(pages);
     } catch (error: any) {
       return reply.status(404).send({ error: error.message });
     }
@@ -63,18 +129,6 @@ export async function contentRoutes(fastify: FastifyInstance) {
 
       const page = await contentService.getPage(hubSlug, pageSlug);
       return reply.send(page);
-    } catch (error: any) {
-      return reply.status(404).send({ error: error.message });
-    }
-  });
-
-  // Lista stron danego HUB-a (menu)
-  // GET /api/content/lalka/pages
-  fastify.get("/:hubSlug/pages", async (request, reply) => {
-    try {
-      const { hubSlug } = request.params as { hubSlug: string };
-      const pages = await contentService.getHubPages(hubSlug);
-      return reply.send(pages);
     } catch (error: any) {
       return reply.status(404).send({ error: error.message });
     }
@@ -121,6 +175,31 @@ export async function contentRoutes(fastify: FastifyInstance) {
       const { pageId } = request.params as { pageId: string };
       const rating = await contentService.getPageRating(pageId);
       return reply.send(rating);
+    } catch (error: any) {
+      return reply.status(400).send({ error: error.message });
+    }
+  });
+
+  fastify.post("/pages/:pageId/check-rating", async (request, reply) => {
+    try {
+      const { pageId } = request.params as { pageId: string };
+      const { fingerprint } = request.body as { fingerprint: string };
+
+      let userId: string | undefined;
+      try {
+        await request.jwtVerify();
+        userId = request.user?.userId;
+      } catch {
+        // Niezalogowany
+      }
+
+      const result = await contentService.checkIfUserRated(
+        pageId,
+        fingerprint,
+        userId
+      );
+
+      return reply.send(result);
     } catch (error: any) {
       return reply.status(400).send({ error: error.message });
     }
@@ -218,21 +297,6 @@ export async function contentRoutes(fastify: FastifyInstance) {
     }
   );
 
-  // GET /api/content/hubs/with-tests
-  fastify.get("/hubs/with-tests", async (request, reply) => {
-    try {
-      const { limit } = request.query as { limit?: string };
-
-      const hubs = await contentService.getHubsWithTests({
-        limit: limit ? parseInt(limit) : 10,
-      });
-
-      return reply.send(hubs);
-    } catch (error: any) {
-      return reply.status(400).send({ error: error.message });
-    }
-  });
-
   // Usuwanie strony
   fastify.delete(
     "/pages/:id",
@@ -294,30 +358,4 @@ export async function contentRoutes(fastify: FastifyInstance) {
       }
     }
   );
-
-  fastify.post("/pages/:pageId/check-rating", async (request, reply) => {
-    try {
-      const { pageId } = request.params as { pageId: string };
-      const { fingerprint } = request.body as { fingerprint: string };
-
-      let userId: string | undefined;
-      try {
-        await request.jwtVerify();
-        userId = request.user?.userId;
-      } catch {
-        // Niezalogowany
-      }
-
-      // POPRAWKA: `checkIfUserRated` już zwraca { hasRated, rating }
-      const result = await contentService.checkIfUserRated(
-        pageId,
-        fingerprint,
-        userId
-      );
-
-      return reply.send(result); // NIE { hasRated: result }!
-    } catch (error: any) {
-      return reply.status(400).send({ error: error.message });
-    }
-  });
 }

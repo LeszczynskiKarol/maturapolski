@@ -13,6 +13,7 @@ import {
   ThumbsUp,
   Printer,
   Home,
+  Eye,
 } from "lucide-react";
 import { PublicLayout } from "../../components/PublicLayout";
 import { RatingWidget } from "../../components/RatingWidget";
@@ -28,34 +29,47 @@ interface ArticleData {
   metaTitle?: string;
   metaDescription?: string;
   hub: {
+    id: string;
     title: string;
     slug: string;
     type: string;
+    description?: string;
+    imageUrl?: string;
+  };
+  siblingArticles: SiblingArticle[];
+  allGuideArticles: AllGuideArticle[];
+}
+
+interface SiblingArticle {
+  id: string;
+  slug: string;
+  title: string;
+  order: number;
+  readingTime?: number;
+}
+
+interface AllGuideArticle {
+  id: string;
+  slug: string;
+  title: string;
+  readingTime?: number;
+  hub: {
+    title: string;
   };
 }
 
-interface SiblingPage {
-  slug: string;
-  title: string;
-}
-
 export function GuideArticlePage() {
-  const { guideSlug, articleSlug } = useParams<{
-    guideSlug: string;
-    articleSlug: string;
-  }>();
+  const { articleSlug } = useParams<{ articleSlug: string }>();
 
   const [article, setArticle] = useState<ArticleData | null>(null);
-  const [allPages, setAllPages] = useState<SiblingPage[]>([]);
   const [loading, setLoading] = useState(true);
   const [readProgress, setReadProgress] = useState(0);
 
   useEffect(() => {
-    if (guideSlug && articleSlug) {
+    if (articleSlug) {
       loadArticle();
-      loadAllPages();
     }
-  }, [guideSlug, articleSlug]);
+  }, [articleSlug]);
 
   // Track reading progress
   useEffect(() => {
@@ -74,28 +88,13 @@ export function GuideArticlePage() {
 
   const loadArticle = async () => {
     try {
-      const data = await contentService.getPage(guideSlug!, articleSlug!);
+      setLoading(true);
+      const data = await contentService.getGuideArticle(articleSlug!);
       setArticle(data);
     } catch (error) {
       console.error("Error loading article:", error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const loadAllPages = async () => {
-    try {
-      const pages = await contentService.getHubPages(guideSlug!);
-      setAllPages(
-        pages
-          .sort((a: any, b: any) => a.order - b.order)
-          .map((p: any) => ({
-            slug: p.slug,
-            title: p.title,
-          }))
-      );
-    } catch (error) {
-      console.error("Error loading pages:", error);
     }
   };
 
@@ -181,7 +180,9 @@ export function GuideArticlePage() {
           <ul key={index} className="list-disc list-inside mb-4 space-y-2 pl-4">
             {items.map((item: string, i: number) => (
               <li key={i} className="text-gray-700">
-                {item}
+                <span
+                  dangerouslySetInnerHTML={{ __html: parseMarkdown(item) }}
+                />
               </li>
             ))}
           </ul>
@@ -223,11 +224,16 @@ export function GuideArticlePage() {
     }
   };
 
-  // Find prev/next articles
-  const currentIndex = allPages.findIndex((p) => p.slug === articleSlug);
-  const prevArticle = currentIndex > 0 ? allPages[currentIndex - 1] : null;
+  // Find prev/next articles (w ramach tego samego huba)
+  const currentIndex =
+    article?.siblingArticles.findIndex((a) => a.slug === articleSlug) ?? -1;
+  const prevArticle =
+    currentIndex > 0 ? article?.siblingArticles[currentIndex - 1] : null;
   const nextArticle =
-    currentIndex < allPages.length - 1 ? allPages[currentIndex + 1] : null;
+    currentIndex >= 0 &&
+    currentIndex < (article?.siblingArticles.length || 0) - 1
+      ? article?.siblingArticles[currentIndex + 1]
+      : null;
 
   if (loading) {
     return (
@@ -249,7 +255,7 @@ export function GuideArticlePage() {
               Artykuł nie znaleziony
             </h2>
             <Link
-              to={`/poradnik/${guideSlug}`}
+              to="/poradnik"
               className="text-blue-600 hover:text-blue-700 font-medium"
             >
               ← Wróć do poradnika
@@ -305,14 +311,7 @@ export function GuideArticlePage() {
                   Poradnik
                 </Link>
                 <span>/</span>
-                <Link
-                  to={`/poradnik/${guideSlug}`}
-                  className="hover:text-blue-600"
-                >
-                  {article.hub.title}
-                </Link>
-                <span>/</span>
-                <span className="text-gray-900 font-medium truncate max-w-[200px]">
+                <span className="text-gray-900 font-medium truncate max-w-[300px]">
                   {article.title}
                 </span>
               </nav>
@@ -360,9 +359,9 @@ export function GuideArticlePage() {
                         {article.readingTime} min czytania
                       </span>
                     )}
-                    <span>•</span>
-                    <span>
-                      Artykuł {currentIndex + 1} z {allPages.length}
+                    <span className="flex items-center gap-1">
+                      <Eye className="w-4 h-4" />
+                      {article.views} wyświetleń
                     </span>
                   </div>
                 </header>
@@ -393,42 +392,47 @@ export function GuideArticlePage() {
                   />
                 </div>
 
-                {/* Navigation */}
-                <div className="mt-8 pt-8 border-t">
-                  <div className="flex justify-between gap-4">
-                    {prevArticle ? (
-                      <Link
-                        to={`/poradnik/${guideSlug}/${prevArticle.slug}`}
-                        className="flex-1 group p-4 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors"
-                      >
-                        <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-                          <ChevronLeft className="w-4 h-4" />
-                          Poprzedni artykuł
-                        </div>
-                        <div className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1">
-                          {prevArticle.title}
-                        </div>
-                      </Link>
-                    ) : (
-                      <div className="flex-1" />
-                    )}
+                {/* Navigation - prev/next w ramach tej samej kategorii */}
+                {(prevArticle || nextArticle) && (
+                  <div className="mt-8 pt-8 border-t">
+                    <p className="text-sm text-gray-500 mb-4">
+                      Więcej z kategorii: {article.hub.title}
+                    </p>
+                    <div className="flex justify-between gap-4">
+                      {prevArticle ? (
+                        <Link
+                          to={`/poradnik/${prevArticle.slug}`}
+                          className="flex-1 group p-4 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors"
+                        >
+                          <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
+                            <ChevronLeft className="w-4 h-4" />
+                            Poprzedni artykuł
+                          </div>
+                          <div className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1">
+                            {prevArticle.title}
+                          </div>
+                        </Link>
+                      ) : (
+                        <div className="flex-1" />
+                      )}
 
-                    {nextArticle && (
-                      <Link
-                        to={`/poradnik/${guideSlug}/${nextArticle.slug}`}
-                        className="flex-1 group p-4 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors text-right"
-                      >
-                        <div className="flex items-center justify-end gap-2 text-sm text-gray-500 mb-1">
-                          Następny artykuł
-                          <ChevronRight className="w-4 h-4" />
-                        </div>
-                        <div className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1">
-                          {nextArticle.title}
-                        </div>
-                      </Link>
-                    )}
+                      {nextArticle && (
+                        <Link
+                          to={`/poradnik/${nextArticle.slug}`}
+                          className="flex-1 group p-4 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors text-right"
+                        >
+                          <div className="flex items-center justify-end gap-2 text-sm text-gray-500 mb-1">
+                            Następny artykuł
+                            <ChevronRight className="w-4 h-4" />
+                          </div>
+                          <div className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1">
+                            {nextArticle.title}
+                          </div>
+                        </Link>
+                      )}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </article>
 
@@ -455,36 +459,37 @@ export function GuideArticlePage() {
                   </div>
                 )}
 
-                {/* All articles in guide */}
-                <div className="bg-white rounded-xl shadow-md p-4">
-                  <h3 className="font-semibold text-gray-900 mb-3 text-sm uppercase tracking-wide">
-                    Wszystkie artykuły
-                  </h3>
-                  <nav className="space-y-1 max-h-64 overflow-y-auto">
-                    {allPages.map((page, i) => (
-                      <Link
-                        key={page.slug}
-                        to={`/poradnik/${guideSlug}/${page.slug}`}
-                        className={`block text-sm py-2 px-3 rounded transition-colors ${
-                          page.slug === articleSlug
-                            ? "bg-blue-50 text-blue-700 font-medium"
-                            : "text-gray-600 hover:bg-gray-50"
-                        }`}
-                      >
-                        <span className="text-gray-400 mr-2">{i + 1}.</span>
-                        {page.title}
-                      </Link>
-                    ))}
-                  </nav>
-                </div>
+                {/* All guide articles */}
+                {article.allGuideArticles.length > 0 && (
+                  <div className="bg-white rounded-xl shadow-md p-4">
+                    <h3 className="font-semibold text-gray-900 mb-3 text-sm uppercase tracking-wide">
+                      Wszystkie artykuły
+                    </h3>
+                    <nav className="space-y-1 max-h-64 overflow-y-auto">
+                      {article.allGuideArticles.map((guideArticle) => (
+                        <Link
+                          key={guideArticle.id}
+                          to={`/poradnik/${guideArticle.slug}`}
+                          className={`block text-sm py-2 px-3 rounded transition-colors ${
+                            guideArticle.slug === articleSlug
+                              ? "bg-blue-50 text-blue-700 font-medium"
+                              : "text-gray-600 hover:bg-gray-50"
+                          }`}
+                        >
+                          {guideArticle.title}
+                        </Link>
+                      ))}
+                    </nav>
+                  </div>
+                )}
 
                 {/* Back to guide */}
                 <Link
-                  to={`/poradnik/${guideSlug}`}
+                  to="/poradnik"
                   className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  Wróć do spisu treści
+                  Wróć do wszystkich artykułów
                 </Link>
               </div>
             </aside>

@@ -65,11 +65,7 @@ import { MaterialDetailPage } from "./features/materials/MaterialDetailPage";
 import MaterialsPage from "./features/materials/MaterialsPage";
 
 // ✅ NOWE: Guides (Poradnik)
-import {
-  GuideListPage,
-  GuideDetailPage,
-  GuideArticlePage,
-} from "./features/guides";
+import { GuideListPage, GuideArticlePage } from "./features/guides";
 
 const queryClient = new QueryClient();
 
@@ -149,11 +145,7 @@ export const App: React.FC = () => {
               {/* ✅ NOWE: PORADNIK */}
               <Route path="/poradnik" element={<GuideListPage />} />
               <Route
-                path="/poradnik/:guideSlug"
-                element={<GuideDetailPage />}
-              />
-              <Route
-                path="/poradnik/:guideSlug/:articleSlug"
+                path="/poradnik/:articleSlug"
                 element={<GuideArticlePage />}
               />
 

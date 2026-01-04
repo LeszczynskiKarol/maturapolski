@@ -128,6 +128,7 @@ export class ContentService {
       },
     };
   }
+
   async getHub(slug: string) {
     const hub = await prisma.contentHub.findUnique({
       where: { slug, isPublished: true },
@@ -227,6 +228,170 @@ export class ContentService {
         readingTime: true,
       },
     });
+  }
+
+  // ==========================================
+  // GUIDE - Płaska struktura URL dla poradników
+  // ==========================================
+
+  /**
+   * Pobiera wszystkie artykuły typu GUIDE (płaska lista)
+   * GET /api/content/guides
+   */
+  async getGuideArticles({
+    search,
+    page = 1,
+    limit = 50,
+  }: {
+    search?: string;
+    page?: number;
+    limit?: number;
+  } = {}) {
+    // Znajdź wszystkie huby typu GUIDE
+    const guideHubs = await prisma.contentHub.findMany({
+      where: {
+        type: "GUIDE",
+        isPublished: true,
+      },
+      select: { id: true },
+    });
+
+    const hubIds = guideHubs.map((h) => h.id);
+
+    if (hubIds.length === 0) {
+      return {
+        articles: [],
+        pagination: { page, limit, total: 0, pages: 0 },
+      };
+    }
+
+    const where: any = {
+      hubId: { in: hubIds },
+      isPublished: true,
+    };
+
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: "insensitive" } },
+        { metaDescription: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
+    const [articles, total] = await Promise.all([
+      prisma.contentPage.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+        include: {
+          hub: {
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+              imageUrl: true,
+            },
+          },
+        },
+      }),
+      prisma.contentPage.count({ where }),
+    ]);
+
+    return {
+      articles,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  /**
+   * Pobiera pojedynczy artykuł GUIDE po slug (płaska struktura)
+   * GET /api/content/guides/:articleSlug
+   */
+  async getGuideArticle(articleSlug: string) {
+    // Znajdź stronę po slug w hubbach typu GUIDE
+    const page = await prisma.contentPage.findFirst({
+      where: {
+        slug: articleSlug,
+        isPublished: true,
+        hub: {
+          type: "GUIDE",
+          isPublished: true,
+        },
+      },
+      include: {
+        hub: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            type: true,
+            description: true,
+            imageUrl: true,
+          },
+        },
+      },
+    });
+
+    if (!page) throw new Error("Article not found");
+
+    // Zwiększ views
+    await prisma.contentPage.update({
+      where: { id: page.id },
+      data: { views: { increment: 1 } },
+    });
+
+    // Pobierz wszystkie artykuły z tego samego huba (do nawigacji prev/next)
+    const siblingArticles = await prisma.contentPage.findMany({
+      where: {
+        hubId: page.hubId,
+        isPublished: true,
+      },
+      orderBy: { order: "asc" },
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        order: true,
+        readingTime: true,
+      },
+    });
+
+    // Pobierz wszystkie artykuły GUIDE (do sidebar "Wszystkie artykuły")
+    const guideHubs = await prisma.contentHub.findMany({
+      where: { type: "GUIDE", isPublished: true },
+      select: { id: true },
+    });
+    const allGuideHubIds = guideHubs.map((h) => h.id);
+
+    const allGuideArticles = await prisma.contentPage.findMany({
+      where: {
+        hubId: { in: allGuideHubIds },
+        isPublished: true,
+      },
+      orderBy: [{ order: "asc" }, { title: "asc" }],
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        readingTime: true,
+        hub: {
+          select: {
+            title: true,
+          },
+        },
+      },
+    });
+
+    return {
+      ...page,
+      siblingArticles,
+      allGuideArticles,
+    };
   }
 
   // ==========================================
@@ -365,6 +530,22 @@ export class ContentService {
 
     if (!hub) throw new Error("Hub not found");
 
+    // Dla GUIDE - sprawdź czy slug jest unikalny globalnie w GUIDE
+    if (hub.type === "GUIDE") {
+      const existingPage = await prisma.contentPage.findFirst({
+        where: {
+          slug,
+          hub: { type: "GUIDE" },
+        },
+      });
+
+      if (existingPage) {
+        throw new Error(
+          `Artykuł ze slugiem "${slug}" już istnieje w poradnikach. Użyj innego sluga.`
+        );
+      }
+    }
+
     // Sanitizuj dane strony - zamień puste stringi na null
     const sanitizedData = this.sanitizePageData(data);
 
@@ -380,6 +561,30 @@ export class ContentService {
   async updatePage(id: string, data: any) {
     // Sanitizuj dane strony - zamień puste stringi na null
     const sanitizedData = this.sanitizePageData(data);
+
+    // Dla GUIDE - sprawdź unikalność slug przy update
+    if (data.slug) {
+      const currentPage = await prisma.contentPage.findUnique({
+        where: { id },
+        include: { hub: true },
+      });
+
+      if (currentPage?.hub.type === "GUIDE") {
+        const existingPage = await prisma.contentPage.findFirst({
+          where: {
+            slug: data.slug,
+            hub: { type: "GUIDE" },
+            id: { not: id },
+          },
+        });
+
+        if (existingPage) {
+          throw new Error(
+            `Artykuł ze slugiem "${data.slug}" już istnieje w poradnikach.`
+          );
+        }
+      }
+    }
 
     return prisma.contentPage.update({
       where: { id },

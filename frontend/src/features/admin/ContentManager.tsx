@@ -1450,11 +1450,9 @@ export default function ContentManager() {
                         <p className="text-sm text-gray-500">
                           URL:{" "}
                           <code className="bg-gray-100 px-2 py-1 rounded">
-                            /
                             {selectedHub.type === "GUIDE"
-                              ? "poradnik"
-                              : "baza-wiedzy"}
-                            /{selectedHub.slug}/{page.slug}
+                              ? `/poradnik/${page.slug}`
+                              : `/baza-wiedzy/${selectedHub.slug}/${page.slug}`}
                           </code>
                         </p>
                       </div>
@@ -1557,12 +1555,11 @@ export default function ContentManager() {
                     </label>
                     <div className="flex items-center gap-2">
                       <span className="text-gray-500">
-                        /
                         {selectedHub.type === "GUIDE"
-                          ? "poradnik"
-                          : "baza-wiedzy"}
-                        /{selectedHub.slug}/
+                          ? "/poradnik/"
+                          : `/baza-wiedzy/${selectedHub.slug}/`}
                       </span>
+
                       <input
                         type="text"
                         value={pageForm.customSlug}
@@ -1580,13 +1577,22 @@ export default function ContentManager() {
                         }
                       />
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Pełny URL: /
-                      {selectedHub.type === "GUIDE"
-                        ? "poradnik"
-                        : "baza-wiedzy"}
-                      /{selectedHub.slug}/{pageForm.customSlug}
-                    </p>
+                    {selectedHub.type === "GUIDE" ? (
+                      <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-800">
+                        ⚠️ <strong>Uwaga:</strong> Dla poradników slug musi być
+                        unikalny globalnie!
+                        <br />
+                        Pełny URL:{" "}
+                        <code className="bg-yellow-100 px-1 rounded">
+                          /poradnik/{pageForm.customSlug || "slug-artykulu"}
+                        </code>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-gray-500 mt-1">
+                        Pełny URL: /baza-wiedzy/{selectedHub.slug}/
+                        {pageForm.customSlug}
+                      </p>
+                    )}
                   </div>
 
                   <div>

@@ -2,7 +2,10 @@
 import { api } from "./api";
 
 export const contentService = {
-  // Public
+  // ==========================================
+  // PUBLIC - Standard (baza wiedzy)
+  // ==========================================
+
   async getHubs(params?: any) {
     const response = await api.get("/api/content/hubs", { params });
     return response.data;
@@ -30,11 +33,46 @@ export const contentService = {
     return response.data;
   },
 
-  // Ratings
+  // Landing page dla testu
+  async getHubTestLandingData(hubSlug: string) {
+    const response = await api.get(`/api/content/${hubSlug}/test-landing`);
+    return response.data;
+  },
+
+  // ==========================================
+  // PUBLIC - GUIDE (płaska struktura)
+  // ==========================================
+
+  /**
+   * Pobiera listę wszystkich artykułów poradnika
+   * GET /api/content/guides
+   */
+  async getGuideArticles(params?: {
+    search?: string;
+    page?: number;
+    limit?: number;
+  }) {
+    const response = await api.get("/api/content/guides", { params });
+    return response.data;
+  },
+
+  /**
+   * Pobiera pojedynczy artykuł poradnika po slug
+   * GET /api/content/guides/:articleSlug
+   */
+  async getGuideArticle(articleSlug: string) {
+    const response = await api.get(`/api/content/guides/${articleSlug}`);
+    return response.data;
+  },
+
+  // ==========================================
+  // RATINGS
+  // ==========================================
+
   async submitRating(pageId: string, rating: number, fingerprint?: string) {
     const response = await api.post(`/api/content/pages/${pageId}/rate`, {
       rating,
-      fingerprint, // Wyślij zamiast polegać na IP
+      fingerprint,
     });
     return response.data;
   },
@@ -54,7 +92,10 @@ export const contentService = {
     return response.data;
   },
 
-  // Admin
+  // ==========================================
+  // ADMIN
+  // ==========================================
+
   async createHub(data: any) {
     const response = await api.post("/api/content/hubs", data);
     return response.data;
@@ -87,12 +128,6 @@ export const contentService = {
     const response = await api.put(`/api/content/hubs/${hubId}/pages/reorder`, {
       pageIds,
     });
-    return response.data;
-  },
-
-  // Landing page dla testu
-  async getHubTestLandingData(hubSlug: string) {
-    const response = await api.get(`/api/content/${hubSlug}/test-landing`);
     return response.data;
   },
 
