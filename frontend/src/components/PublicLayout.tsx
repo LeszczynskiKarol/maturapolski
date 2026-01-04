@@ -313,16 +313,18 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
             <div>
               <h4 className="font-bold mb-4 text-lg">Baza wiedzy</h4>
               <ul className="space-y-3 text-gray-400">
-                {featuredHubs.map((hub) => (
-                  <li key={hub.id}>
-                    <a
-                      href={`/baza-wiedzy/${hub.slug}`}
-                      className="hover:text-white transition-colors"
-                    >
-                      {hub.title}
-                    </a>
-                  </li>
-                ))}
+                {featuredHubs
+                  .filter((hub) => hub.type !== "GUIDE") // ← DODAJ TEN FILTR
+                  .map((hub) => (
+                    <li key={hub.id}>
+                      <a
+                        href={`/baza-wiedzy/${hub.slug}`}
+                        className="hover:text-white transition-colors"
+                      >
+                        {hub.title}
+                      </a>
+                    </li>
+                  ))}
               </ul>
             </div>
 

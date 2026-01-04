@@ -42,7 +42,11 @@ export default function HubListPage() {
       }
 
       const response = await contentService.getHubs(params);
-      setHubs(response.hubs || []);
+      // Odfiltruj huby GUIDE - nie należą do bazy wiedzy
+      const filteredHubs = (response.hubs || []).filter(
+        (hub: Hub) => hub.type !== "GUIDE"
+      );
+      setHubs(filteredHubs);
     } catch (error) {
       console.error("Error loading hubs:", error);
     } finally {
