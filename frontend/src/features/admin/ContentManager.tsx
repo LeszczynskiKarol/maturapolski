@@ -79,6 +79,20 @@ const EPOCHS = [
 ];
 
 // ==========================================
+// HELPER - Generuj URL na podstawie typu huba
+// ==========================================
+function getHubUrl(hub: { type: string; slug: string }) {
+  switch (hub.type) {
+    case "GUIDE":
+      return `/poradnik/${hub.slug}`;
+    case "EXAM_SHEET":
+      return `/arkusze/${hub.slug}`;
+    default:
+      return `/baza-wiedzy/${hub.slug}`;
+  }
+}
+
+// ==========================================
 // RICH TEXT EDITOR
 // ==========================================
 
@@ -1318,6 +1332,8 @@ export default function ContentManager() {
                       className={`text-xs px-2 py-0.5 rounded-full ${
                         hub.type === "GUIDE"
                           ? "bg-green-100 text-green-700"
+                          : hub.type === "EXAM_SHEET"
+                          ? "bg-orange-100 text-orange-700"
                           : "bg-gray-100 text-gray-600"
                       }`}
                     >
@@ -1331,8 +1347,20 @@ export default function ContentManager() {
                     <p className="text-sm text-gray-600 mb-2">{hub.author}</p>
                   )}
 
+                  {/* Pokaż URL */}
+                  <p className="text-xs text-gray-400 mb-2">
+                    <code>{getHubUrl(hub)}</code>
+                  </p>
+
                   <div className="text-sm text-gray-500 mt-4">
-                    {hub.pages?.length || 0} stron(y)
+                    {hub.type === "EXAM_SHEET" ? (
+                      <span className="text-orange-600">
+                        {(hub.pages?.[0]?.content as any)?.pdfs?.length || 0}{" "}
+                        plików PDF
+                      </span>
+                    ) : (
+                      <span>{hub.pages?.length || 0} stron(y)</span>
+                    )}
                   </div>
                 </div>
               );
@@ -1756,8 +1784,7 @@ export default function ContentManager() {
                 <p className="text-sm text-gray-500 mt-2">
                   URL:{" "}
                   <code className="bg-gray-100 px-2 py-1 rounded">
-                    /{selectedHub.type === "GUIDE" ? "poradnik" : "baza-wiedzy"}
-                    /{selectedHub.slug}
+                    {getHubUrl(selectedHub)}
                   </code>
                 </p>
               </div>
@@ -1818,6 +1845,8 @@ export default function ContentManager() {
                           <code className="bg-gray-100 px-2 py-1 rounded">
                             {selectedHub.type === "GUIDE"
                               ? `/poradnik/${page.slug}`
+                              : selectedHub.type === "EXAM_SHEET"
+                              ? `/arkusze/${selectedHub.slug}`
                               : `/baza-wiedzy/${selectedHub.slug}/${page.slug}`}
                           </code>
                         </p>
@@ -1923,6 +1952,8 @@ export default function ContentManager() {
                       <span className="text-gray-500">
                         {selectedHub.type === "GUIDE"
                           ? "/poradnik/"
+                          : selectedHub.type === "EXAM_SHEET"
+                          ? `/arkusze/${selectedHub.slug}/`
                           : `/baza-wiedzy/${selectedHub.slug}/`}
                       </span>
 

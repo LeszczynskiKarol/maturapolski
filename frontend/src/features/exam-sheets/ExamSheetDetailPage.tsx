@@ -45,6 +45,7 @@ export function ExamSheetDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const [sheet, setSheet] = useState<ExamSheetData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (slug) {
@@ -55,10 +56,12 @@ export function ExamSheetDetailPage() {
   const loadSheet = async () => {
     try {
       setLoading(true);
+      setError(null);
       const data = await contentService.getExamSheet(slug!);
       setSheet(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error loading exam sheet:", error);
+      setError(error.message || "Nie udało się załadować arkusza");
     } finally {
       setLoading(false);
     }
@@ -68,13 +71,16 @@ export function ExamSheetDetailPage() {
     return (
       <PublicLayout>
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Ładowanie arkusza...</p>
+          </div>
         </div>
       </PublicLayout>
     );
   }
 
-  if (!sheet) {
+  if (error || !sheet) {
     return (
       <PublicLayout>
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -83,6 +89,9 @@ export function ExamSheetDetailPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
               Arkusz nie znaleziony
             </h2>
+            <p className="text-gray-600 mb-4">
+              {error || "Nie znaleziono arkusza o podanym adresie."}
+            </p>
             <Link
               to="/arkusze"
               className="text-orange-600 hover:text-orange-700 font-medium"
@@ -101,14 +110,23 @@ export function ExamSheetDetailPage() {
   const formula2015Pdfs = sheet.pdfs.filter((p) => p.type === "formula_2015");
   const otherPdfs = sheet.pdfs.filter((p) => p.type === "other");
 
+  const levelLabels: Record<string, string> = {
+    PODSTAWOWY: "Poziom podstawowy",
+    ROZSZERZONY: "Poziom rozszerzony",
+  };
+
   return (
     <PublicLayout>
       <Helmet>
-        <title>{sheet.metaTitle || sheet.title} | MaturaPolski.pl</title>
+        <title>
+          {sheet.metaTitle || `${sheet.title} - Arkusz maturalny`} |
+          MaturaPolski.pl
+        </title>
         <meta
           name="description"
           content={
-            sheet.metaDescription || `Pobierz arkusz maturalny: ${sheet.title}`
+            sheet.metaDescription ||
+            `Pobierz arkusz maturalny: ${sheet.title}. Arkusz CKE z języka polskiego z odpowiedziami i kluczem.`
           }
         />
       </Helmet>
@@ -123,7 +141,7 @@ export function ExamSheetDetailPage() {
                 className="hover:text-orange-600 flex items-center gap-1"
               >
                 <Home className="w-4 h-4" />
-                Arkusze
+                Arkusze maturalne
               </Link>
               <span>/</span>
               <span className="text-gray-900 font-medium">{sheet.title}</span>
@@ -142,7 +160,8 @@ export function ExamSheetDetailPage() {
                 <div className="flex flex-wrap gap-2 mb-3">
                   {sheet.metadata.level && (
                     <span className="text-sm px-3 py-1 rounded-full bg-blue-100 text-blue-700">
-                      {sheet.metadata.level}
+                      {levelLabels[sheet.metadata.level] ||
+                        sheet.metadata.level}
                     </span>
                   )}
                   {sheet.metadata.month && (
@@ -176,12 +195,30 @@ export function ExamSheetDetailPage() {
                   </span>
                   <span className="flex items-center gap-1">
                     <Download className="w-4 h-4" />
-                    {sheet.pdfs.length} plików
+                    {sheet.pdfs.length}{" "}
+                    {sheet.pdfs.length === 1
+                      ? "plik"
+                      : sheet.pdfs.length < 5
+                      ? "pliki"
+                      : "plików"}
                   </span>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Brak PDFów */}
+          {sheet.pdfs.length === 0 && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-8 text-center">
+              <FileText className="w-12 h-12 mx-auto text-yellow-500 mb-3" />
+              <h3 className="text-lg font-semibold text-yellow-800 mb-2">
+                Brak plików do pobrania
+              </h3>
+              <p className="text-yellow-700">
+                Pliki PDF dla tego arkusza nie zostały jeszcze dodane.
+              </p>
+            </div>
+          )}
 
           {/* PDFs - Arkusze główne */}
           {mainPdfs.length > 0 && (
