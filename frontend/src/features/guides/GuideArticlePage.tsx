@@ -1,20 +1,20 @@
 // frontend/src/features/guides/GuideArticlePage.tsx
 
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import {
   ArrowLeft,
   BookOpen,
   ChevronLeft,
   ChevronRight,
   Clock,
+  Eye,
+  Home,
+  Printer,
   Share2,
   ThumbsUp,
-  Printer,
-  Home,
-  Eye,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
+import { Link, useParams } from "react-router-dom";
 import { PublicLayout } from "../../components/PublicLayout";
 import { RatingWidget } from "../../components/RatingWidget";
 import { contentService } from "../../services/contentService";
@@ -215,7 +215,7 @@ export function GuideArticlePage() {
         return (
           <div
             key={index}
-            className="my-4"
+            className="my-6 html-content-block"
             dangerouslySetInnerHTML={{ __html: block.content }}
           />
         );
@@ -276,8 +276,147 @@ export function GuideArticlePage() {
     }))
     .filter((block) => block.type === "h2" || block.type === "heading");
 
+  const htmlBlockStyles = `
+  .html-content-block {
+    line-height: 1.75;
+    color: #374151;
+  }
+  .html-content-block h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  .html-content-block h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .html-content-block h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+  .html-content-block p {
+    margin-bottom: 1rem;
+  }
+  .html-content-block ul, .html-content-block ol {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .html-content-block ul {
+    list-style-type: disc;
+  }
+  .html-content-block ol {
+    list-style-type: decimal;
+  }
+  .html-content-block li {
+    margin-bottom: 0.5rem;
+    padding-left: 0.25rem;
+  }
+  .html-content-block a {
+    color: #2563eb;
+    text-decoration: underline;
+  }
+  .html-content-block a:hover {
+    color: #1d4ed8;
+  }
+  .html-content-block blockquote {
+    border-left: 4px solid #3b82f6;
+    padding-left: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    margin: 1.5rem 0;
+    background-color: #eff6ff;
+    border-radius: 0 0.5rem 0.5rem 0;
+    font-style: italic;
+    color: #4b5563;
+  }
+  .html-content-block table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+  }
+  .html-content-block th, .html-content-block td {
+    border: 1px solid #e5e7eb;
+    padding: 0.75rem 1rem;
+    text-align: left;
+  }
+  .html-content-block th {
+    background-color: #f3f4f6;
+    font-weight: 600;
+  }
+  .html-content-block tr:hover {
+    background-color: #f9fafb;
+  }
+  .html-content-block strong, .html-content-block b {
+    font-weight: 600;
+    color: #111827;
+  }
+  .html-content-block em, .html-content-block i {
+    font-style: italic;
+  }
+  .html-content-block code {
+    background-color: #f3f4f6;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-family: monospace;
+  }
+  .html-content-block pre {
+    background-color: #1f2937;
+    color: #f9fafb;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+  .html-content-block pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+  }
+  .html-content-block hr {
+    border: none;
+    border-top: 2px solid #e5e7eb;
+    margin: 2rem 0;
+  }
+  .html-content-block img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+  }
+  .html-content-block .alert, .html-content-block .info-box {
+    padding: 1rem 1.25rem;
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+  }
+  .html-content-block .alert-warning {
+    background-color: #fef3c7;
+    border-left: 4px solid #f59e0b;
+    color: #92400e;
+  }
+  .html-content-block .alert-info {
+    background-color: #dbeafe;
+    border-left: 4px solid #3b82f6;
+    color: #1e40af;
+  }
+  .html-content-block .alert-success {
+    background-color: #d1fae5;
+    border-left: 4px solid #10b981;
+    color: #065f46;
+  }
+`;
+
   return (
     <PublicLayout>
+      <style>{htmlBlockStyles}</style>
       <Helmet>
         <title>{article.metaTitle || article.title} | MaturaPolski.pl</title>
         <meta
