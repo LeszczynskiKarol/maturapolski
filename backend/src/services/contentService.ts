@@ -782,6 +782,12 @@ export class ContentService {
   private sanitizeHubData(data: any) {
     const sanitized = { ...data };
 
+    // ✅ Zamień customSlug na slug i usuń customSlug
+    if (sanitized.customSlug) {
+      sanitized.slug = sanitized.customSlug;
+    }
+    delete sanitized.customSlug;
+
     // Lista pól, które powinny być null jeśli są puste
     const optionalFields = [
       "author",
