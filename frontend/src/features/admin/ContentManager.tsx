@@ -1026,6 +1026,7 @@ export default function ContentManager() {
   // Form states
   const [hubForm, setHubForm] = useState({
     title: "",
+    customSlug: "",
     type: "LITERARY_WORK" as any,
     description: "",
     author: "",
@@ -1089,6 +1090,7 @@ export default function ContentManager() {
     setSelectedHub(hub);
     setHubForm({
       title: hub.title,
+      customSlug: hub.slug || "",
       type: hub.type as any,
       description: hub.description || "",
       author: hub.author || "",
@@ -1109,6 +1111,7 @@ export default function ContentManager() {
     try {
       const dataToSend = {
         ...hubForm,
+        slug: hubForm.customSlug || undefined,
         year: hubForm.year ? parseInt(hubForm.year) : null,
         birthYear: hubForm.birthYear ? parseInt(hubForm.birthYear) : null,
         deathYear: hubForm.deathYear ? parseInt(hubForm.deathYear) : null,
@@ -1147,6 +1150,7 @@ export default function ContentManager() {
   const resetHubForm = () => {
     setHubForm({
       title: "",
+      customSlug: "",
       type: "LITERARY_WORK",
       description: "",
       author: "",
@@ -1415,6 +1419,37 @@ export default function ContentManager() {
                       </option>
                     ))}
                   </select>
+                </div>
+
+                {/* ✅ NOWE - Pole slug dla wszystkich typów */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    URL (slug) - opcjonalnie własny
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500 text-sm">
+                      /
+                      {hubForm.type === "GUIDE"
+                        ? "poradnik"
+                        : hubForm.type === "EXAM_SHEET"
+                        ? "arkusze"
+                        : "baza-wiedzy"}
+                      /
+                    </span>
+                    <input
+                      type="text"
+                      value={hubForm.customSlug}
+                      onChange={(e) =>
+                        setHubForm({ ...hubForm, customSlug: e.target.value })
+                      }
+                      className="flex-1 px-4 py-2 border rounded"
+                      placeholder="zostaw puste = automatyczny z tytułu"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Wpisz własny slug lub zostaw puste. Używaj tylko małych
+                    liter, cyfr i myślników.
+                  </p>
                 </div>
 
                 {/* ✅ NOWE - Pola dla typu GUIDE */}
