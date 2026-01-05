@@ -323,7 +323,9 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
               <h4 className="font-bold mb-4 text-lg">Baza wiedzy</h4>
               <ul className="space-y-3 text-gray-400">
                 {featuredHubs
-                  .filter((hub) => hub.type !== "GUIDE") // ← DODAJ TEN FILTR
+                  .filter((hub) =>
+                    ["LITERARY_WORK", "EPOCH", "AUTHOR"].includes(hub.type)
+                  )
                   .map((hub) => (
                     <li key={hub.id}>
                       <a
