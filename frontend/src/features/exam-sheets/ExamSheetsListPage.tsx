@@ -81,7 +81,9 @@ export function ExamSheetsListPage() {
   return (
     <PublicLayout>
       <Helmet>
-        <title>Arkusze maturalne z polskiego | MaturaPolski.pl</title>
+        <title>
+          Arkusze maturalne CKE z języka polskiego - matura z Polaka
+        </title>
         <meta
           name="description"
           content="Pobierz arkusze maturalne z języka polskiego z lat 2015-2024. Poziom podstawowy i rozszerzony, odpowiedzi i klucze."
