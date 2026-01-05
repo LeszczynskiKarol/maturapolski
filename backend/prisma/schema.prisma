@@ -257,7 +257,8 @@ enum HubType {
   AUTHOR
   THEME
   GENRE
-  GUIDE           // ✅ NOWY TYP - Poradniki maturalne
+  GUIDE
+  EXAM_SHEET
 }
 
 

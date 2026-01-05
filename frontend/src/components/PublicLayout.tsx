@@ -1,12 +1,12 @@
 // frontend/src/components/PublicLayout.tsx MATURAPOLSKI
 
-import { useState, useEffect } from "react";
+import { ArrowLeft, BookOpen, ChevronDown, Cookie, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { contentService } from "../services/contentService";
 import { Link, useLocation } from "react-router-dom";
-import { CookieSettings } from "./CookieSettings";
-import { BookOpen, Cookie, ChevronDown, ArrowLeft, X } from "lucide-react";
+import { contentService } from "../services/contentService";
 import { useAuthStore } from "../store/authStore";
+import { CookieSettings } from "./CookieSettings";
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -248,7 +248,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
                 Inteligentna platforma do nauki języka polskiego, która pomaga
                 tysiącom maturzystów osiągnąć wymarzone wyniki.
               </p>
-              <div className="flex gap-4">
+              {/*<div className="flex gap-4">
                 <a
                   href="#"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
@@ -275,7 +275,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
                   <span className="sr-only">TikTok</span>
                   TT
                 </a>
-              </div>
+              </div>*/}
             </div>
 
             <div>
@@ -304,6 +304,15 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
                     className="hover:text-white transition-colors"
                   >
                     Załóż konto
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    to="/poradnik"
+                    className="hover:text-white transition-colors"
+                  >
+                    Poradnik
                   </Link>
                 </li>
               </ul>

@@ -19,6 +19,8 @@ import { HubDetailPage } from "./features/content/HubDetailPage";
 import HubListPage from "./features/content/HubListPage";
 import { HubTestLandingPage } from "./features/content/HubTestLandingPage";
 import { PageViewer } from "./features/content/PageViewer";
+import ExamSheetDetailPage from "./features/exam-sheets/ExamSheetDetailPage";
+import ExamSheetsListPage from "./features/exam-sheets/ExamSheetsListPage";
 import { ExamList } from "./features/exams/ExamList";
 import { ExamResults } from "./features/exams/ExamResults";
 import { MatureExamViewer } from "./features/exams/MatureExamViewer";
@@ -128,6 +130,8 @@ export const App: React.FC = () => {
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/check-email" element={<CheckEmailPage />} />
+              <Route path="/arkusze" element={<ExamSheetsListPage />} />
+              <Route path="/arkusze/:slug" element={<ExamSheetDetailPage />} />
               <Route
                 path="/resend-verification"
                 element={<ResendVerificationPage />}

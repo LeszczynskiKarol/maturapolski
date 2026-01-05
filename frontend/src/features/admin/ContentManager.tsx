@@ -59,7 +59,8 @@ const HUB_TYPES = [
   { value: "EPOCH", label: "Epoka", icon: Calendar },
   { value: "AUTHOR", label: "Autor/Twórca", icon: User },
   { value: "THEME", label: "Motyw literacki", icon: Lightbulb },
-  { value: "GUIDE", label: "Poradnik maturalny", icon: GraduationCap }, // ✅ NOWY TYP
+  { value: "GUIDE", label: "Poradnik maturalny", icon: GraduationCap },
+  { value: "EXAM_SHEET", label: "Arkusz maturalny", icon: FileText },
 ];
 
 const EPOCHS = [

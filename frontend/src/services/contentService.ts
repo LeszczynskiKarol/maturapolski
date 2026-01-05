@@ -66,6 +66,26 @@ export const contentService = {
   },
 
   // ==========================================
+  // PUBLIC - EXAM SHEETS (arkusze maturalne)
+  // ==========================================
+
+  async getExamSheets(params?: {
+    year?: number;
+    level?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+  }) {
+    const response = await api.get("/api/content/exam-sheets", { params });
+    return response.data;
+  },
+
+  async getExamSheet(slug: string) {
+    const response = await api.get(`/api/content/exam-sheets/${slug}`);
+    return response.data;
+  },
+
+  // ==========================================
   // RATINGS
   // ==========================================
 
