@@ -521,7 +521,7 @@ export class ContentService {
   }
 
   async createPage(hubId: string, data: any) {
-    const slug = data.slug || this.generateSlug(data.title);
+    let slug = data.slug || this.generateSlug(data.title);
 
     // Sprawdź czy hub istnieje
     const hub = await prisma.contentHub.findUnique({
@@ -529,6 +529,11 @@ export class ContentService {
     });
 
     if (!hub) throw new Error("Hub not found");
+
+    // ✅ NOWE - Dla GUIDE usuń prefix "poradnik/" jeśli użytkownik go wpisał
+    if (hub.type === "GUIDE") {
+      slug = slug.replace(/^poradnik\/?/i, "").replace(/^\/+/, "");
+    }
 
     // Dla GUIDE - sprawdź czy slug jest unikalny globalnie w GUIDE
     if (hub.type === "GUIDE") {
@@ -562,7 +567,7 @@ export class ContentService {
     // Sanitizuj dane strony - zamień puste stringi na null
     const sanitizedData = this.sanitizePageData(data);
 
-    // Dla GUIDE - sprawdź unikalność slug przy update
+    // ✅ NOWE - Sanityzuj slug dla GUIDE
     if (data.slug) {
       const currentPage = await prisma.contentPage.findUnique({
         where: { id },
@@ -570,9 +575,14 @@ export class ContentService {
       });
 
       if (currentPage?.hub.type === "GUIDE") {
+        // Usuń prefix "poradnik/" jeśli użytkownik go wpisał
+        sanitizedData.slug = data.slug
+          .replace(/^poradnik\/?/i, "")
+          .replace(/^\/+/, "");
+
         const existingPage = await prisma.contentPage.findFirst({
           where: {
-            slug: data.slug,
+            slug: sanitizedData.slug,
             hub: { type: "GUIDE" },
             id: { not: id },
           },
@@ -580,7 +590,7 @@ export class ContentService {
 
         if (existingPage) {
           throw new Error(
-            `Artykuł ze slugiem "${data.slug}" już istnieje w poradnikach.`
+            `Artykuł ze slugiem "${sanitizedData.slug}" już istnieje w poradnikach.`
           );
         }
       }
