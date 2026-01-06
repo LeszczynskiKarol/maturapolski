@@ -1,12 +1,12 @@
 // frontend/src/components/PublicLayout.tsx MATURAPOLSKI
 
-import { useState, useEffect } from "react";
+import { ArrowLeft, BookOpen, ChevronDown, Cookie, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { contentService } from "../services/contentService";
 import { Link, useLocation } from "react-router-dom";
-import { CookieSettings } from "./CookieSettings";
-import { BookOpen, Cookie, ChevronDown, ArrowLeft, X } from "lucide-react";
+import { contentService } from "../services/contentService";
 import { useAuthStore } from "../store/authStore";
+import { CookieSettings } from "./CookieSettings";
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -248,7 +248,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
                 Inteligentna platforma do nauki języka polskiego, która pomaga
                 tysiącom maturzystów osiągnąć wymarzone wyniki.
               </p>
-              <div className="flex gap-4">
+              {/*<div className="flex gap-4">
                 <a
                   href="#"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
@@ -275,7 +275,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
                   <span className="sr-only">TikTok</span>
                   TT
                 </a>
-              </div>
+              </div>*/}
             </div>
 
             <div>
@@ -306,6 +306,15 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
                     Załóż konto
                   </Link>
                 </li>
+
+                <li>
+                  <Link
+                    to="/poradnik"
+                    className="hover:text-white transition-colors"
+                  >
+                    Poradnik
+                  </Link>
+                </li>
               </ul>
             </div>
 
@@ -314,7 +323,9 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
               <h4 className="font-bold mb-4 text-lg">Baza wiedzy</h4>
               <ul className="space-y-3 text-gray-400">
                 {featuredHubs
-                  .filter((hub) => hub.type !== "GUIDE") // ← DODAJ TEN FILTR
+                  .filter((hub) =>
+                    ["LITERARY_WORK", "EPOCH", "AUTHOR"].includes(hub.type)
+                  )
                   .map((hub) => (
                     <li key={hub.id}>
                       <a

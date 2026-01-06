@@ -1,6 +1,6 @@
 // backend/src/routes/content.routes.ts
 
-import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
+import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { ContentService } from "../services/contentService";
 
 const contentService = new ContentService();
@@ -75,6 +75,42 @@ export async function contentRoutes(fastify: FastifyInstance) {
       const { articleSlug } = request.params as { articleSlug: string };
       const article = await contentService.getGuideArticle(articleSlug);
       return reply.send(article);
+    } catch (error: any) {
+      return reply.status(404).send({ error: error.message });
+    }
+  });
+
+  // ==========================================
+  // EXAM SHEETS - Arkusze maturalne
+  // ==========================================
+
+  // Lista arkuszy
+  // GET /api/content/exam-sheets
+  fastify.get("/exam-sheets", async (request, reply) => {
+    try {
+      const { year, level, search, page, limit } = request.query as any;
+
+      const result = await contentService.getExamSheets({
+        year: year ? parseInt(year) : undefined,
+        level,
+        search,
+        page: page ? parseInt(page) : 1,
+        limit: limit ? parseInt(limit) : 50,
+      });
+
+      return reply.send(result);
+    } catch (error: any) {
+      return reply.status(400).send({ error: error.message });
+    }
+  });
+
+  // Pojedynczy arkusz
+  // GET /api/content/exam-sheets/:slug
+  fastify.get("/exam-sheets/:slug", async (request, reply) => {
+    try {
+      const { slug } = request.params as { slug: string };
+      const sheet = await contentService.getExamSheet(slug);
+      return reply.send(sheet);
     } catch (error: any) {
       return reply.status(404).send({ error: error.message });
     }

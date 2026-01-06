@@ -1,3 +1,6 @@
+// backend/prisma/schema.prisma
+// ZAKTUALIZOWANY - dodany typ GUIDE do HubType
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,88 +11,112 @@ datasource db {
 }
 
 model User {
-  id                      String                 @id @default(cuid())
-  email                   String                 @unique
-  password                String
-  role                    UserRole               @default(STUDENT)
-  lastLogin               DateTime?
-  createdAt               DateTime               @default(now())
-  updatedAt               DateTime               @updatedAt
-  refreshToken            String?
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String    @unique
+  password      String
+  role          UserRole  @default(STUDENT)
+
+  // Relacje - MUSZĄ BYĆ!
+  profile       UserProfile?
+  levelProgress UserLevelProgress?
+  
+  refreshToken  String?
+  lastLogin     DateTime?
+
+  // Email verification
+  emailVerified           Boolean   @default(false)
+  emailVerificationToken  String?   @unique
   emailVerificationExpiry DateTime?
-  emailVerificationToken  String?                @unique
-  emailVerified           Boolean                @default(false)
+  
+  // Password reset
+  passwordResetToken      String?   @unique
   passwordResetExpiry     DateTime?
-  passwordResetToken      String?                @unique
-  username                String                 @unique
+
+  // Google profile picture
   picture                 String?
-  assessments             Assessment[]
-  dailyProgress           DailyProgress[]
-  examSessions            ExamSession[]
-  exerciseUsage           ExerciseUsage[]
-  learningSessions        LearningSession[]
-  notifications           Notification[]
-  studyGoals              StudyGoal[]
-  submissions             Submission[]
-  subscription            Subscription?
-  levelProgress           UserLevelProgress?
-  materialProgress        UserMaterialProgress[]
-  profile                 UserProfile?
-  weeklyProgress          WeeklyProgress[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt  
+  
+  // Wszystkie pozostałe relacje
+  submissions   Submission[]
+  assessments   Assessment[]
+  notifications Notification[]
+  weeklyProgress WeeklyProgress[]
+  studyGoals    StudyGoal[]
+  dailyProgress DailyProgress[]
+  materialProgress UserMaterialProgress[]
+  examSessions  ExamSession[]
+  exerciseUsage ExerciseUsage[]
+  learningSessions LearningSession[]
+  subscription    Subscription?
 }
 
 model UserLevelProgress {
-  id                 String   @id @default(cuid())
-  userId             String   @unique
-  unlockedDifficulty Int      @default(2)
+  id                String    @id @default(cuid())
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id])
+  
+  unlockedDifficulty Int      @default(2) // Domyślnie poziomy 1-2 odblokowane
+  
+  // Punkty progresji na każdym poziomie
   difficulty1Points  Int      @default(0)
-  difficulty2Points  Int      @default(0)
+  difficulty2Points  Int      @default(0) 
   difficulty3Points  Int      @default(0)
   difficulty4Points  Int      @default(0)
   difficulty5Points  Int      @default(0)
-  pointsToUnlock3    Int      @default(100)
-  pointsToUnlock4    Int      @default(200)
-  pointsToUnlock5    Int      @default(300)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  user               User     @relation(fields: [userId], references: [id])
+  
+  // Wymagane punkty do odblokowania następnego poziomu
+  pointsToUnlock3   Int       @default(100)  // 100 pkt z poziomów 1-2
+  pointsToUnlock4   Int       @default(200)  // 200 pkt z poziomu 3
+  pointsToUnlock5   Int       @default(300)  // 300 pkt z poziomu 4
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 }
+
+
 
 model UserProfile {
   id              String    @id @default(cuid())
   userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id])
+  
   examDate        DateTime?
   preferredTopics String[]
   studyStreak     Int       @default(0)
   totalPoints     Int       @default(0)
   level           Int       @default(1)
   averageScore    Float     @default(0)
+  
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
-  user            User      @relation(fields: [userId], references: [id])
 }
 
 model Exercise {
-  id                String             @id @default(cuid())
-  type              ExerciseType
-  category          Category
-  epoch             LiteraryEpoch?
-  difficulty        Int                @default(1)
-  points            Int
-  question          String
-  content           Json
-  correctAnswer     Json?
-  rubric            Json?
-  tags              String[]
-  metadata          Json?
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  work              String?
-  aiUsage           AiUsage[]
-  examQuestions     ExamQuestion[]
-  usageHistory      ExerciseUsage[]
+  id            String         @id @default(cuid())
+  type          ExerciseType
+  category      Category
+  epoch         LiteraryEpoch?
+  work        String?
+  difficulty    Int            @default(1)
+  points        Int
+  question      String
+  content       Json
+  correctAnswer Json?
+  rubric        Json?
+  tags          String[]
+  metadata      Json?
+  
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  submissions   Submission[]
   spacedRepetitions SpacedRepetition[]
-  submissions       Submission[]
+  examQuestions ExamQuestion[]
+  usageHistory  ExerciseUsage[]
+  aiUsage       AiUsage[]
 
   @@index([work])
   @@index([category, work])
@@ -98,126 +125,184 @@ model Exercise {
 model TextSource {
   id        String   @id @default(cuid())
   examId    String
+  exam      MockExam @relation(fields: [examId], references: [id])
+  
   autor     String
   tytul     String
-  fragment  String
+  fragment  String   @db.Text
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  exam      MockExam @relation(fields: [examId], references: [id])
-
+  
   @@index([examId])
 }
 
+
 model Submission {
-  id         String         @id @default(cuid())
-  userId     String
-  exerciseId String
-  answer     Json
-  score      Float?
-  feedback   Json?
-  assessedBy AssessmentType @default(SYSTEM)
-  createdAt  DateTime       @default(now())
-  timeSpent  Int?           @default(0)
-  assessment Assessment?
-  exercise   Exercise       @relation(fields: [exerciseId], references: [id])
-  user       User           @relation(fields: [userId], references: [id])
+  id          String         @id @default(cuid())
+  userId      String
+  user        User           @relation(fields: [userId], references: [id])
+  exerciseId  String
+  exercise    Exercise       @relation(fields: [exerciseId], references: [id])
+  
+  answer      Json
+  score       Float?
+  feedback    Json?
+  assessedBy  AssessmentType @default(SYSTEM)
+  timeSpent   Int?           @default(0)
+  
+  createdAt   DateTime       @default(now())
+  
+  assessment  Assessment?
 }
 
 model ExerciseUsage {
-  id         String       @id @default(cuid())
-  userId     String
-  exerciseId String
-  lastUsedAt DateTime     @default(now())
-  usageCount Int          @default(1)
-  context    UsageContext
-  exercise   Exercise     @relation(fields: [exerciseId], references: [id])
-  user       User         @relation(fields: [userId], references: [id])
-
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  exerciseId    String
+  exercise      Exercise  @relation(fields: [exerciseId], references: [id])
+  
+  lastUsedAt    DateTime  @default(now())
+  usageCount    Int       @default(1)
+  context       UsageContext // LEARNING, EXAM, STUDY_PLAN
+  
   @@unique([userId, exerciseId])
   @@index([userId, lastUsedAt])
   @@index([exerciseId])
 }
 
 model ContentHub {
-  id              String         @id @default(cuid())
-  slug            String         @unique
-  title           String
-  type            HubType
-  imageUrl        String?
-  author          String?
-  year            Int?
-  genre           String?
-  epoch           LiteraryEpoch?
-  isRequired      Boolean        @default(false)
-  birthYear       Int?
-  deathYear       Int?
-  period          String?
+  id            String    @id @default(cuid())
+  slug          String    @unique
+  title         String
+  type          HubType
+  
+  // Podstawowe info
+  description   String?   @db.Text
+  imageUrl      String?
+  imageAlignment String?   @default("full")  
+  imageWidth    String?   @default("100%")   
+  
+  // Dla lektur (LITERARY_WORK)
+  author        String?
+  year          Int?
+  genre         String?
+  epoch         LiteraryEpoch?
+  isRequired    Boolean   @default(false)
+  
+  // Dla autorów (AUTHOR)
+  birthYear     Int?
+  deathYear     Int?
+  
+  // Dla epok (EPOCH)
+  period        String?
+  
+  // SEO
   metaTitle       String?
   metaDescription String?
-  views           Int            @default(0)
-  isPublished     Boolean        @default(true)
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-  imageAlignment  String?        @default("full")
-  imageWidth      String?        @default("100%")
-  description     Json?
-  pages           ContentPage[]
-
+  
+  // Stats
+  views         Int       @default(0)
+  isPublished   Boolean   @default(true)
+  
+  // Relacje
+  pages         ContentPage[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
   @@index([type, isPublished])
   @@index([slug])
 }
 
 model ContentPage {
-  id              String       @id @default(cuid())
-  hubId           String
-  slug            String
-  title           String
-  content         Json
-  order           Int          @default(0)
+  id            String    @id @default(cuid())
+  hubId         String
+  hub           ContentHub @relation(fields: [hubId], references: [id], onDelete: Cascade)
+  
+  slug          String
+  title         String
+  
+  // Treść - Rich Text JSON
+  content       Json
+  
+  // Kolejność wyświetlania
+  order         Int       @default(0)
+  
+  // SEO
   metaTitle       String?
   metaDescription String?
-  readingTime     Int?
-  views           Int          @default(0)
-  isPublished     Boolean      @default(true)
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-  averageRating   Float?       @default(0)
-  ratingsCount    Int          @default(0)
-  hub             ContentHub   @relation(fields: [hubId], references: [id], onDelete: Cascade)
-  ratings         PageRating[]
+  
+  // Stats
+  readingTime   Int?
+  views         Int       @default(0)
+  isPublished   Boolean   @default(true)
 
+  ratings       PageRating[]
+  averageRating Float?        @default(0)
+  ratingsCount  Int           @default(0)
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
   @@unique([hubId, slug])
   @@index([hubId, order])
 }
 
+// ✅ ZAKTUALIZOWANE - dodany typ GUIDE
+enum HubType {
+  LITERARY_WORK
+  EPOCH
+  AUTHOR
+  THEME
+  GENRE
+  GUIDE
+  EXAM_SHEET
+}
+
+
+enum UsageContext {
+  LEARNING
+  EXAM
+  STUDY_PLAN
+}
+
+
 model Assessment {
-  id               String     @id @default(cuid())
-  submissionId     String     @unique
-  userId           String
-  formalScore      Float?
-  literaryScore    Float?
-  compositionScore Float?
-  languageScore    Float?
-  totalScore       Float
-  detailedFeedback Json
-  improvements     String[]
-  createdAt        DateTime   @default(now())
-  submission       Submission @relation(fields: [submissionId], references: [id])
-  user             User       @relation(fields: [userId], references: [id])
+  id           String      @id @default(cuid())
+  submissionId String      @unique
+  submission   Submission  @relation(fields: [submissionId], references: [id])
+  userId       String
+  user         User        @relation(fields: [userId], references: [id])
+  
+  formalScore       Float?
+  literaryScore     Float?
+  compositionScore  Float?
+  languageScore     Float?
+  
+  totalScore        Float
+  detailedFeedback  Json
+  improvements      String[]
+  
+  createdAt         DateTime @default(now())
 }
 
 model SpacedRepetition {
   id          String   @id @default(cuid())
   userId      String
   exerciseId  String
+  
   interval    Int      @default(1)
   easeFactor  Float    @default(2.5)
   repetitions Int      @default(0)
   nextReview  DateTime
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  
   exercise    Exercise @relation(fields: [exerciseId], references: [id])
-
+  
   @@unique([userId, exerciseId])
 }
 
@@ -226,7 +311,7 @@ model UserAchievement {
   userId        String
   achievementId String
   unlockedAt    DateTime @default(now())
-
+  
   @@unique([userId, achievementId])
 }
 
@@ -236,396 +321,469 @@ model Essay {
   topic     String
   content   String
   wordCount Int
+  
   createdAt DateTime @default(now())
 }
 
 model Notification {
   id        String   @id @default(cuid())
   userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
   type      String
   title     String
   message   String
   actionUrl String?
   read      Boolean  @default(false)
+  
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
-
+  
   @@index([userId, read])
 }
 
 model WeeklyProgress {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   userId      String
   week        Int
-  completed   Boolean   @default(false)
+  completed   Boolean  @default(false)
   completedAt DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  user        User      @relation(fields: [userId], references: [id])
-
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id])
+  
   @@unique([userId, week])
   @@index([userId])
 }
 
 model StudyGoal {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   userId      String
   title       String
   description String?
   targetDate  DateTime
-  completed   Boolean   @default(false)
+  completed   Boolean  @default(false)
   completedAt DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  user        User      @relation(fields: [userId], references: [id])
-
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id])
+  
   @@index([userId])
 }
 
 model DailyProgress {
-  id             String   @id @default(cuid())
-  userId         String
-  date           DateTime @db.Date
-  exercisesCount Int      @default(0)
-  studyTime      Int      @default(0)
-  averageScore   Float?
-  notes          String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  user           User     @relation(fields: [userId], references: [id])
-
+  id              String   @id @default(cuid())
+  userId          String
+  date            DateTime @db.Date
+  exercisesCount  Int      @default(0)
+  studyTime       Int      @default(0) // in minutes
+  averageScore    Float?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id])
+  
   @@unique([userId, date])
   @@index([userId])
 }
 
 model LiteraryWork {
-  id         String        @id @default(cuid())
-  title      String
-  author     String
-  epoch      LiteraryEpoch
-  genre      String
-  year       Int?
-  isRequired Boolean       @default(false)
-  summary    String?
-  themes     String[]
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
-  analyses   Analysis[]
-  chapters   Chapter[]
-  characters Character[]
-  materials  Material[]
-  quotes     Quote[]
+  id            String    @id @default(cuid())
+  title         String
+  author        String
+  epoch         LiteraryEpoch
+  genre         String
+  year          Int?
+  isRequired    Boolean   @default(false) // lektura obowiązkowa
+  
+  summary       String?   @db.Text // streszczenie
+  themes        String[]  // motywy
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  chapters      Chapter[]
+  characters    Character[]
+  quotes        Quote[]
+  analyses      Analysis[]
+  materials     Material[]
 }
 
 model Chapter {
-  id        String       @id @default(cuid())
-  workId    String
-  number    Int
-  title     String
-  summary   String
-  keyEvents String[]
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  work      LiteraryWork @relation(fields: [workId], references: [id])
-
+  id            String    @id @default(cuid())
+  workId        String
+  work          LiteraryWork @relation(fields: [workId], references: [id])
+  
+  number        Int
+  title         String
+  summary       String    @db.Text
+  keyEvents     String[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
   @@unique([workId, number])
 }
 
 model Character {
-  id          String       @id @default(cuid())
-  workId      String
-  name        String
-  description String
-  role        String
-  traits      String[]
-  evolution   String?
-  quotes      String[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  work        LiteraryWork @relation(fields: [workId], references: [id])
+  id            String    @id @default(cuid())
+  workId        String
+  work          LiteraryWork @relation(fields: [workId], references: [id])
+  
+  name          String
+  description   String    @db.Text
+  role          String    // główny, drugoplanowy, epizodyczny
+  traits        String[]
+  evolution     String?   @db.Text
+  quotes        String[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Quote {
-  id           String       @id @default(cuid())
-  workId       String
-  text         String
-  context      String?
-  character    String?
-  chapter      Int?
-  significance String?
-  tags         String[]
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  work         LiteraryWork @relation(fields: [workId], references: [id])
+  id            String    @id @default(cuid())
+  workId        String
+  work          LiteraryWork @relation(fields: [workId], references: [id])
+  
+  text          String    @db.Text
+  context       String?
+  character     String?
+  chapter       Int?
+  significance  String?   @db.Text
+  tags          String[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Analysis {
-  id        String       @id @default(cuid())
-  workId    String
-  title     String
-  type      AnalysisType
-  content   String
-  author    String?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  work      LiteraryWork @relation(fields: [workId], references: [id])
+  id            String    @id @default(cuid())
+  workId        String
+  work          LiteraryWork @relation(fields: [workId], references: [id])
+  
+  title         String
+  type          AnalysisType
+  content       String    @db.Text
+  author        String?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Material {
-  id              String                 @id @default(cuid())
-  title           String
-  slug            String                 @unique
-  type            MaterialType
-  category        MaterialCategory
-  content         Json
-  summary         String?
-  epoch           LiteraryEpoch?
-  workId          String?
-  tags            String[]
-  difficulty      Int                    @default(1)
-  readingTime     Int?
-  isPremium       Boolean                @default(false)
-  isPublished     Boolean                @default(true)
-  views           Int                    @default(0)
-  author          String?
-  metaTitle       String?
+  id            String    @id @default(cuid())
+  title         String
+  slug          String    @unique
+  type          MaterialType
+  category      MaterialCategory
+  
+  content       Json      // Rich text content
+  summary       String?
+  
+  epoch         LiteraryEpoch?
+  workId        String?
+  work          LiteraryWork? @relation(fields: [workId], references: [id])
+  
+  tags          String[]
+  difficulty    Int       @default(1)
+  readingTime   Int?      // w minutach
+  
+  isPremium     Boolean   @default(false)
+  isPublished   Boolean   @default(true)
+  views         Int       @default(0)
+  
+  author        String?
+  metaTitle     String?
   metaDescription String?
-  createdAt       DateTime               @default(now())
-  updatedAt       DateTime               @updatedAt
-  publishedAt     DateTime?
-  work            LiteraryWork?          @relation(fields: [workId], references: [id])
-  userProgress    UserMaterialProgress[]
-
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  publishedAt   DateTime?
+  
+  userProgress  UserMaterialProgress[]  // DODAJ TĘ LINIĘ!
+  
   @@index([slug])
   @@index([category, epoch])
   @@index([isPublished, isPremium])
 }
 
 model EpochInfo {
-  id                String        @id @default(cuid())
-  epoch             LiteraryEpoch @unique
-  name              String
-  namePolish        String
-  period            String
-  characteristics   String[]
-  philosophy        String
-  artStyle          String
-  mainGenres        String[]
-  keyAuthors        String[]
-  keyWorks          String[]
-  historicalContext String
-  timeline          Json
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
+  id            String    @id @default(cuid())
+  epoch         LiteraryEpoch @unique
+  name          String
+  namePolish    String
+  period        String    // np. "1450-1600"
+  
+  characteristics String[] // cechy epoki
+  philosophy    String    @db.Text
+  artStyle      String    @db.Text
+  mainGenres    String[]
+  keyAuthors    String[]
+  keyWorks      String[]
+  
+  historicalContext String @db.Text
+  timeline      Json      // wydarzenia w formie JSON
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model LiteraryTerm {
-  id           String   @id @default(cuid())
-  term         String   @unique
-  category     String
-  definition   String
-  examples     String[]
-  relatedTerms String[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
+  id            String    @id @default(cuid())
+  term          String    @unique
+  category      String    // środki stylistyczne, gatunki, etc.
+  definition    String    @db.Text
+  examples      String[]
+  relatedTerms  String[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
   @@index([category])
 }
 
 model EssayTemplate {
-  id        String   @id @default(cuid())
-  title     String
-  type      String
-  structure Json
-  tips      String[]
-  examples  String[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String    @id @default(cuid())
+  title         String
+  type          String    // rozprawka, interpretacja, etc.
+  structure     Json      // struktura w JSON
+  tips          String[]
+  examples      String[]  @db.Text
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model UserMaterialProgress {
-  id           String   @id @default(cuid())
-  userId       String
-  materialId   String
-  completed    Boolean  @default(false)
-  progress     Int      @default(0)
-  lastAccessed DateTime @default(now())
-  notes        String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  material     Material @relation(fields: [materialId], references: [id])
-  user         User     @relation(fields: [userId], references: [id])
-
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])  // DODAJ TĘ LINIĘ!
+  materialId    String
+  material      Material  @relation(fields: [materialId], references: [id])  // DODAJ TĘ LINIĘ!
+  
+  completed     Boolean   @default(false)
+  progress      Int       @default(0) // 0-100%
+  lastAccessed  DateTime  @default(now())
+  notes         String?   @db.Text
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
   @@unique([userId, materialId])
   @@index([userId])
 }
 
 model MockExam {
-  id          String        @id @default(cuid())
-  title       String
-  year        Int?
-  type        ExamType
-  duration    Int
-  isActive    Boolean       @default(true)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  sections    ExamSection[]
-  sessions    ExamSession[]
-  textSources TextSource[]
+  id            String    @id @default(cuid())
+  title         String
+  year          Int?      // np. 2024
+  type          ExamType  // PODSTAWOWY, ROZSZERZONY
+  duration      Int       // czas trwania w minutach (170 dla podstawowej)
+  isActive      Boolean   @default(true)
+  
+  sections      ExamSection[]
+  sessions      ExamSession[]
+  textSources   TextSource[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model ExamSection {
-  id          String         @id @default(cuid())
-  examId      String
-  order       Int
-  title       String
-  instruction String
-  timeLimit   Int?
-  questions   ExamQuestion[]
-  exam        MockExam       @relation(fields: [examId], references: [id])
-
+  id            String    @id @default(cuid())
+  examId        String
+  exam          MockExam  @relation(fields: [examId], references: [id])
+  
+  order         Int       // kolejność sekcji
+  title         String    // np. "Test historycznoliteracki"
+  instruction   String    @db.Text
+  timeLimit     Int?      // limit czasu na sekcję (opcjonalny)
+  
+  questions     ExamQuestion[]
+  
   @@unique([examId, order])
 }
 
 model ExamQuestion {
-  id         String        @id @default(cuid())
-  sectionId  String
-  order      Int
-  exerciseId String?
-  type       ExerciseType?
-  question   String?
-  content    Json?
-  points     Int
-  exercise   Exercise?     @relation(fields: [exerciseId], references: [id])
-  section    ExamSection   @relation(fields: [sectionId], references: [id])
-
+  id            String    @id @default(cuid())
+  sectionId     String
+  section       ExamSection @relation(fields: [sectionId], references: [id])
+  
+  order         Int       // kolejność w sekcji
+  exerciseId    String?   // powiązanie z istniejącym zadaniem
+  exercise      Exercise? @relation(fields: [exerciseId], references: [id])
+  
+  // Lub własne zadanie
+  type          ExerciseType?
+  question      String?   @db.Text
+  content       Json?
+  points        Int
+  
   @@unique([sectionId, order])
 }
 
 model ExamSession {
-  id            String       @id @default(cuid())
+  id            String    @id @default(cuid())
   userId        String
+  user          User      @relation(fields: [userId], references: [id])
   examId        String
-  startedAt     DateTime     @default(now())
+  exam          MockExam  @relation(fields: [examId], references: [id])
+  isIntelligent Boolean?   @default(false)
+  
+  startedAt     DateTime  @default(now())
   finishedAt    DateTime?
-  timeSpent     Int?
-  status        ExamStatus   @default(IN_PROGRESS)
+  timeSpent     Int?      // w sekundach
+  
+  status        ExamStatus @default(IN_PROGRESS)
+  
+  answers       ExamAnswer[]
+  
+  // Wyniki
   totalScore    Float?
   maxScore      Float?
   percentScore  Float?
+  
+  // Ocena szczegółowa
   assessment    Json?
-  isIntelligent Boolean?     @default(false)
-  answers       ExamAnswer[]
-  exam          MockExam     @relation(fields: [examId], references: [id])
-  user          User         @relation(fields: [userId], references: [id])
-
+  
   @@index([userId])
   @@index([examId])
 }
 
 model ExamAnswer {
-  id          String      @id @default(cuid())
-  sessionId   String
-  questionId  String
-  answer      Json
-  score       Float?
-  maxScore    Float
-  submittedAt DateTime    @default(now())
-  session     ExamSession @relation(fields: [sessionId], references: [id])
-
+  id            String    @id @default(cuid())
+  sessionId     String
+  session       ExamSession @relation(fields: [sessionId], references: [id])
+  questionId    String
+  
+  answer        Json
+  score         Float?
+  maxScore      Float
+  
+  submittedAt   DateTime  @default(now())
+  
   @@unique([sessionId, questionId])
 }
 
 model LearningSession {
-  id                 String                @id @default(cuid())
-  userId             String
-  status             LearningSessionStatus @default(IN_PROGRESS)
-  startedAt          DateTime              @default(now())
-  lastActiveAt       DateTime              @default(now())
-  finishedAt         DateTime?
-  completed          Int                   @default(0)
-  correct            Int                   @default(0)
-  streak             Int                   @default(0)
-  maxStreak          Int                   @default(0)
-  points             Int                   @default(0)
-  timeSpent          Int                   @default(0)
-  filters            Json?
-  completedExercises Json?
-  skippedExercises   Json?
-  user               User                  @relation(fields: [userId], references: [id])
-
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  
+  status        LearningSessionStatus @default(IN_PROGRESS)
+  
+  startedAt     DateTime  @default(now())
+  lastActiveAt  DateTime  @default(now())
+  finishedAt    DateTime?
+  
+  // Stan sesji
+  completed     Int       @default(0)
+  correct       Int       @default(0)
+  streak        Int       @default(0)
+  maxStreak     Int       @default(0)
+  points        Int       @default(0)
+  timeSpent     Int       @default(0) // sekundy
+  
+  // Filtry sesji
+  filters       Json?     // zapisane filtry
+  
+  // Ukończone zadania
+  completedExercises Json? // [{id, score}]
+  skippedExercises   Json? // [id1, id2...]
+  
   @@index([userId, status])
 }
 
 model Subscription {
-  id                     String             @id @default(cuid())
-  userId                 String             @unique
-  stripeCustomerId       String?            @unique
-  stripeSubscriptionId   String?            @unique
-  stripePriceId          String?
-  stripeCurrentPeriodEnd DateTime?
-  status                 SubscriptionStatus @default(INACTIVE)
-  plan                   SubscriptionPlan   @default(FREE)
-  aiPointsLimit          Int                @default(20)
-  aiPointsUsed           Int                @default(0)
-  aiPointsReset          DateTime           @default(now())
-  startDate              DateTime?
-  endDate                DateTime?
-  cancelAt               DateTime?
-  canceledAt             DateTime?
-  createdAt              DateTime           @default(now())
-  updatedAt              DateTime           @updatedAt
-  isRecurring            Boolean            @default(true)
-  metadata               Json?
-  aiUsage                AiUsage[]
-  pointsPurchases        PointsPurchase[]
-  user                   User               @relation(fields: [userId], references: [id])
+  id              String            @id @default(cuid())
+  userId          String            @unique
+  user            User              @relation(fields: [userId], references: [id])
+  
+  isRecurring        Boolean          @default(true)
 
+  // Stripe
+  stripeCustomerId      String?       @unique
+  stripeSubscriptionId  String?       @unique
+  stripePriceId         String?
+  stripeCurrentPeriodEnd DateTime?
+  
+  // Plan
+  status          SubscriptionStatus @default(INACTIVE)
+  plan            SubscriptionPlan   @default(FREE)
+  
+  // Punkty AI
+  aiPointsLimit   Int               @default(20)    // FREE: 0, PREMIUM: 300
+  aiPointsUsed    Int               @default(0)
+  aiPointsReset   DateTime          @default(now()) // data ostatniego resetu
+  
+  // Daty
+  startDate       DateTime?
+  endDate         DateTime?
+  cancelAt        DateTime?
+  canceledAt      DateTime?
+  
+  metadata        Json?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  aiUsage         AiUsage[]
+  pointsPurchases PointsPurchase[]  
+  
   @@index([userId])
   @@index([stripeCustomerId])
   @@index([stripeSubscriptionId])
 }
 
 model AiUsage {
-  id             String       @id @default(cuid())
-  userId         String
-  subscriptionId String
-  exerciseId     String
-  exerciseType   ExerciseType
-  pointsCost     Int
-  tokensUsed     Json
-  success        Boolean      @default(true)
-  errorMessage   String?
-  createdAt      DateTime     @default(now())
-  exercise       Exercise     @relation(fields: [exerciseId], references: [id])
-  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
-
+  id              String       @id @default(cuid())
+  userId          String
+  subscriptionId  String
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id])
+  
+  exerciseId      String
+  exercise        Exercise     @relation(fields: [exerciseId], references: [id])  // DODAJ TO
+  exerciseType    ExerciseType
+  
+  pointsCost      Int          // 1 dla SHORT_ANSWER, 3 dla ESSAY
+  tokensUsed      Json         // {input: X, output: Y}
+  
+  success         Boolean      @default(true)
+  errorMessage    String?
+  
+  createdAt       DateTime     @default(now())
+  
   @@index([userId, createdAt])
   @@index([subscriptionId])
-  @@index([exerciseId])
+  @@index([exerciseId])  // Ten index już jest poprawnie
 }
 
 model PageRating {
-  id        String      @id @default(cuid())
+  id        String   @id @default(cuid())
   pageId    String
-  userId    String?
-  ipAddress String?
-  rating    Int
-  createdAt DateTime    @default(now())
   page      ContentPage @relation(fields: [pageId], references: [id], onDelete: Cascade)
-
+  
+  userId    String?  // opcjonalne - anonimowe oceny
+  ipAddress String?  // do ograniczenia spamu
+  rating    Int      // 1-5 gwiazdek
+  
+  createdAt DateTime @default(now())
+  
   @@index([pageId])
   @@index([ipAddress])
 }
 
 model StripeEvent {
-  id            String   @id @default(cuid())
-  stripeEventId String   @unique
-  type          String
-  data          Json
-  processed     Boolean  @default(false)
-  createdAt     DateTime @default(now())
-
+  id              String   @id @default(cuid())
+  stripeEventId   String   @unique
+  type            String
+  data            Json
+  processed       Boolean  @default(false)
+  
+  createdAt       DateTime @default(now())
+  
   @@index([stripeEventId])
 }
 
@@ -633,30 +791,19 @@ model PointsPurchase {
   id              String       @id @default(cuid())
   userId          String
   subscriptionId  String
-  pointsAmount    Int
-  amountPaid      Int
-  stripeSessionId String       @unique
-  createdAt       DateTime     @default(now())
   subscription    Subscription @relation(fields: [subscriptionId], references: [id])
-
+  
+  pointsAmount    Int          // ile punktów kupiono
+  amountPaid      Int          // kwota w groszach (np. 1900 = 19 zł)
+  
+  stripeSessionId String       @unique
+  
+  createdAt       DateTime     @default(now())
+  
   @@index([userId, createdAt])
   @@index([subscriptionId])
 }
 
-enum HubType {
-  LITERARY_WORK
-  EPOCH
-  AUTHOR
-  THEME
-  GENRE
-  GUIDE
-}
-
-enum UsageContext {
-  LEARNING
-  EXAM
-  STUDY_PLAN
-}
 
 enum SubscriptionStatus {
   ACTIVE
@@ -688,6 +835,7 @@ enum ExamStatus {
   ABANDONED
   TIMEOUT
 }
+
 
 enum MaterialType {
   EPOCH_OVERVIEW

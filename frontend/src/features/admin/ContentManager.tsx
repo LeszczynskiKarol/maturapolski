@@ -1,33 +1,35 @@
 // frontend/src/features/admin/ContentManager.tsx
 
-import { useRef, useState, useEffect } from "react";
 import {
-  Plus,
-  Trash2,
-  Edit,
-  FileText,
-  Lightbulb,
-  BookOpen,
-  ImageIcon,
-  Star,
-  Calendar,
-  User,
-  GripVertical,
-  X,
   ArrowLeft,
+  BookOpen,
+  Calendar,
+  Download,
+  Edit,
+  ExternalLink,
+  FileText,
+  GraduationCap,
+  GripVertical,
+  ImageIcon,
+  Lightbulb,
+  Plus,
   Scissors,
   Settings,
-  GraduationCap, // ✅ NOWA IKONA dla GUIDE
+  Star,
+  Trash2,
+  User,
+  X,
 } from "lucide-react";
-import { contentService } from "../../services/contentService";
+import { useEffect, useRef, useState } from "react";
 import { ImageUpload } from "../../components/ImageUpload";
+import { contentService } from "../../services/contentService";
 import { RatingsManager } from "./RatingsManager";
 
 interface Hub {
   id: string;
   slug: string;
   title: string;
-  type: "LITERARY_WORK" | "EPOCH" | "AUTHOR" | "THEME" | "GUIDE"; // ✅ DODANE GUIDE
+  type: "LITERARY_WORK" | "EPOCH" | "AUTHOR" | "THEME" | "GUIDE" | "EXAM_SHEET";
   description?: string;
   author?: string;
   epoch?: string;
@@ -59,7 +61,8 @@ const HUB_TYPES = [
   { value: "EPOCH", label: "Epoka", icon: Calendar },
   { value: "AUTHOR", label: "Autor/Twórca", icon: User },
   { value: "THEME", label: "Motyw literacki", icon: Lightbulb },
-  { value: "GUIDE", label: "Poradnik maturalny", icon: GraduationCap }, // ✅ NOWY TYP
+  { value: "GUIDE", label: "Poradnik maturalny", icon: GraduationCap },
+  { value: "EXAM_SHEET", label: "Arkusz maturalny", icon: FileText },
 ];
 
 const EPOCHS = [
@@ -74,6 +77,20 @@ const EPOCHS = [
   { value: "INTERWAR", label: "Dwudziestolecie" },
   { value: "CONTEMPORARY", label: "Współczesność" },
 ];
+
+// ==========================================
+// HELPER - Generuj URL na podstawie typu huba
+// ==========================================
+function getHubUrl(hub: { type: string; slug: string }) {
+  switch (hub.type) {
+    case "GUIDE":
+      return `/poradnik/${hub.slug}`;
+    case "EXAM_SHEET":
+      return `/arkusze/${hub.slug}`;
+    default:
+      return `/baza-wiedzy/${hub.slug}`;
+  }
+}
 
 // ==========================================
 // RICH TEXT EDITOR
@@ -635,6 +652,362 @@ const RichTextEditor = ({ content, onChange }: any) => {
   );
 };
 
+// ==========================================
+// EXAM SHEET EDITOR - Edytor arkuszy maturalnych
+// ==========================================
+
+interface ExamSheetPdf {
+  id: string;
+  title: string;
+  url: string;
+  type: "main" | "answers" | "formula_2015" | "other";
+  fileSize?: string;
+}
+
+interface ExamSheetMetadata {
+  level?: string;
+  month?: string;
+  formula?: string;
+}
+
+interface ExamSheetContent {
+  metadata: ExamSheetMetadata;
+  pdfs: ExamSheetPdf[];
+  blocks: any[];
+}
+
+const PDF_TYPES = [
+  { value: "main", label: "Arkusz główny", color: "bg-blue-100 text-blue-700" },
+  {
+    value: "answers",
+    label: "Odpowiedzi / Klucz",
+    color: "bg-green-100 text-green-700",
+  },
+  {
+    value: "formula_2015",
+    label: "Formuła 2015",
+    color: "bg-yellow-100 text-yellow-700",
+  },
+  { value: "other", label: "Inne", color: "bg-gray-100 text-gray-700" },
+];
+
+const EXAM_LEVELS = [
+  { value: "PODSTAWOWY", label: "Poziom podstawowy" },
+  { value: "ROZSZERZONY", label: "Poziom rozszerzony" },
+];
+
+const EXAM_MONTHS = [
+  { value: "maj", label: "Maj" },
+  { value: "czerwiec", label: "Czerwiec" },
+  { value: "styczeń", label: "Styczeń (poprawkowa)" },
+  { value: "sierpień", label: "Sierpień (poprawkowa)" },
+];
+
+const ExamSheetEditor = ({
+  content,
+  onChange,
+}: {
+  content: ExamSheetContent;
+  onChange: (content: ExamSheetContent) => void;
+}) => {
+  const [metadata, setMetadata] = useState<ExamSheetMetadata>(
+    content.metadata || { level: "PODSTAWOWY", month: "maj", formula: "2023" }
+  );
+  const [pdfs, setPdfs] = useState<ExamSheetPdf[]>(content.pdfs || []);
+  const [newPdf, setNewPdf] = useState<Partial<ExamSheetPdf>>({
+    title: "",
+    url: "",
+    type: "main",
+    fileSize: "",
+  });
+
+  // Sync z parent
+  useEffect(() => {
+    onChange({ metadata, pdfs, blocks: content.blocks || [] });
+  }, [metadata, pdfs]);
+
+  const addPdf = () => {
+    if (!newPdf.title || !newPdf.url) {
+      alert("Podaj tytuł i URL pliku PDF");
+      return;
+    }
+
+    const pdf: ExamSheetPdf = {
+      id: Date.now().toString(),
+      title: newPdf.title!,
+      url: newPdf.url!,
+      type: (newPdf.type as any) || "main",
+      fileSize: newPdf.fileSize || undefined,
+    };
+
+    setPdfs([...pdfs, pdf]);
+    setNewPdf({ title: "", url: "", type: "main", fileSize: "" });
+  };
+
+  const removePdf = (id: string) => {
+    setPdfs(pdfs.filter((p) => p.id !== id));
+  };
+
+  const updatePdf = (id: string, updates: Partial<ExamSheetPdf>) => {
+    setPdfs(pdfs.map((p) => (p.id === id ? { ...p, ...updates } : p)));
+  };
+
+  const movePdfUp = (index: number) => {
+    if (index === 0) return;
+    const newPdfs = [...pdfs];
+    [newPdfs[index - 1], newPdfs[index]] = [newPdfs[index], newPdfs[index - 1]];
+    setPdfs(newPdfs);
+  };
+
+  const movePdfDown = (index: number) => {
+    if (index === pdfs.length - 1) return;
+    const newPdfs = [...pdfs];
+    [newPdfs[index], newPdfs[index + 1]] = [newPdfs[index + 1], newPdfs[index]];
+    setPdfs(newPdfs);
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Metadata */}
+      <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+        <h3 className="font-semibold text-orange-800 mb-4 flex items-center gap-2">
+          <FileText className="w-5 h-5" />
+          Informacje o arkuszu
+        </h3>
+
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Poziom</label>
+            <select
+              value={metadata.level || ""}
+              onChange={(e) =>
+                setMetadata({ ...metadata, level: e.target.value })
+              }
+              className="w-full px-3 py-2 border rounded-lg"
+            >
+              <option value="">-- Wybierz --</option>
+              {EXAM_LEVELS.map((level) => (
+                <option key={level.value} value={level.value}>
+                  {level.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Miesiąc</label>
+            <select
+              value={metadata.month || ""}
+              onChange={(e) =>
+                setMetadata({ ...metadata, month: e.target.value })
+              }
+              className="w-full px-3 py-2 border rounded-lg"
+            >
+              <option value="">-- Wybierz --</option>
+              {EXAM_MONTHS.map((month) => (
+                <option key={month.value} value={month.value}>
+                  {month.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Formuła</label>
+            <select
+              value={metadata.formula || ""}
+              onChange={(e) =>
+                setMetadata({ ...metadata, formula: e.target.value })
+              }
+              className="w-full px-3 py-2 border rounded-lg"
+            >
+              <option value="">-- Wybierz --</option>
+              <option value="2023">Formuła 2023</option>
+              <option value="2015">Formuła 2015</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Lista PDFów */}
+      <div className="bg-white border rounded-lg p-4">
+        <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <Download className="w-5 h-5" />
+          Pliki PDF ({pdfs.length})
+        </h3>
+
+        {pdfs.length > 0 ? (
+          <div className="space-y-3 mb-6">
+            {pdfs.map((pdf, index) => (
+              <div
+                key={pdf.id}
+                className="flex items-center gap-3 p-3 border rounded-lg bg-gray-50 group"
+              >
+                {/* Kontrolki kolejności */}
+                <div className="flex flex-col gap-1">
+                  <button
+                    type="button"
+                    onClick={() => movePdfUp(index)}
+                    disabled={index === 0}
+                    className="p-1 hover:bg-gray-200 rounded disabled:opacity-30"
+                  >
+                    ▲
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => movePdfDown(index)}
+                    disabled={index === pdfs.length - 1}
+                    className="p-1 hover:bg-gray-200 rounded disabled:opacity-30"
+                  >
+                    ▼
+                  </button>
+                </div>
+
+                {/* Ikona typu */}
+                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <FileText className="w-5 h-5 text-red-600" />
+                </div>
+
+                {/* Edycja */}
+                <div className="flex-1 grid grid-cols-4 gap-2">
+                  <input
+                    type="text"
+                    value={pdf.title}
+                    onChange={(e) =>
+                      updatePdf(pdf.id, { title: e.target.value })
+                    }
+                    className="col-span-2 px-2 py-1 text-sm border rounded"
+                    placeholder="Tytuł"
+                  />
+                  <select
+                    value={pdf.type}
+                    onChange={(e) =>
+                      updatePdf(pdf.id, { type: e.target.value as any })
+                    }
+                    className="px-2 py-1 text-sm border rounded"
+                  >
+                    {PDF_TYPES.map((type) => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="text"
+                    value={pdf.fileSize || ""}
+                    onChange={(e) =>
+                      updatePdf(pdf.id, { fileSize: e.target.value })
+                    }
+                    className="px-2 py-1 text-sm border rounded"
+                    placeholder="Rozmiar (np. 2.4 MB)"
+                  />
+                </div>
+
+                {/* URL */}
+                <input
+                  type="text"
+                  value={pdf.url}
+                  onChange={(e) => updatePdf(pdf.id, { url: e.target.value })}
+                  className="flex-1 px-2 py-1 text-sm border rounded font-mono text-xs"
+                  placeholder="https://s3.amazonaws.com/..."
+                />
+
+                {/* Link do podglądu */}
+
+                <a
+                  href={pdf.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 text-blue-600 hover:bg-blue-50 rounded"
+                  title="Otwórz PDF"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+
+                {/* Usuń */}
+                <button
+                  type="button"
+                  onClick={() => removePdf(pdf.id)}
+                  className="p-2 text-red-600 hover:bg-red-50 rounded"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8 text-gray-500 border-2 border-dashed rounded-lg mb-6">
+            <FileText className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+            <p>Brak plików PDF. Dodaj pierwszy poniżej.</p>
+          </div>
+        )}
+
+        {/* Formularz dodawania */}
+        <div className="border-t pt-4">
+          <h4 className="font-medium text-gray-700 mb-3">Dodaj nowy PDF</h4>
+          <div className="grid grid-cols-2 gap-3">
+            <input
+              type="text"
+              value={newPdf.title}
+              onChange={(e) => setNewPdf({ ...newPdf, title: e.target.value })}
+              className="px-3 py-2 border rounded-lg"
+              placeholder="Tytuł (np. Matura polski – maj 2024 – podstawowy)"
+            />
+            <input
+              type="text"
+              value={newPdf.url}
+              onChange={(e) => setNewPdf({ ...newPdf, url: e.target.value })}
+              className="px-3 py-2 border rounded-lg font-mono text-sm"
+              placeholder="URL do PDF na S3 (https://...)"
+            />
+            <select
+              value={newPdf.type}
+              onChange={(e) =>
+                setNewPdf({ ...newPdf, type: e.target.value as any })
+              }
+              className="px-3 py-2 border rounded-lg"
+            >
+              {PDF_TYPES.map((type) => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newPdf.fileSize}
+                onChange={(e) =>
+                  setNewPdf({ ...newPdf, fileSize: e.target.value })
+                }
+                className="flex-1 px-3 py-2 border rounded-lg"
+                placeholder="Rozmiar (opcjonalnie)"
+              />
+              <button
+                type="button"
+                onClick={addPdf}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Dodaj
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Podpowiedź */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
+        <strong>💡 Wskazówka:</strong> Najpierw prześlij pliki PDF na S3, a
+        potem wklej tutaj ich URL-e. Typowa struktura:
+        <code className="block mt-2 bg-blue-100 px-2 py-1 rounded text-xs">
+          https://twoj-bucket.s3.eu-central-1.amazonaws.com/arkusze/matura-2024-podstawowy.pdf
+        </code>
+      </div>
+    </div>
+  );
+};
+
 export default function ContentManager() {
   const [view, setView] = useState<"hubs" | "hub-detail" | "page-editor">(
     "hubs"
@@ -653,6 +1026,7 @@ export default function ContentManager() {
   // Form states
   const [hubForm, setHubForm] = useState({
     title: "",
+    customSlug: "",
     type: "LITERARY_WORK" as any,
     description: "",
     author: "",
@@ -667,7 +1041,14 @@ export default function ContentManager() {
     metaDescription: "",
   });
 
-  const [pageForm, setPageForm] = useState({
+  const [pageForm, setPageForm] = useState<{
+    title: string;
+    customSlug: string;
+    content: any; // ✅ Elastyczny typ dla różnych edytorów
+    readingTime: string;
+    metaTitle: string;
+    metaDescription: string;
+  }>({
     title: "",
     customSlug: "",
     content: { blocks: [] },
@@ -709,6 +1090,7 @@ export default function ContentManager() {
     setSelectedHub(hub);
     setHubForm({
       title: hub.title,
+      customSlug: hub.slug || "",
       type: hub.type as any,
       description: hub.description || "",
       author: hub.author || "",
@@ -729,6 +1111,7 @@ export default function ContentManager() {
     try {
       const dataToSend = {
         ...hubForm,
+        slug: hubForm.customSlug || undefined,
         year: hubForm.year ? parseInt(hubForm.year) : null,
         birthYear: hubForm.birthYear ? parseInt(hubForm.birthYear) : null,
         deathYear: hubForm.deathYear ? parseInt(hubForm.deathYear) : null,
@@ -767,6 +1150,7 @@ export default function ContentManager() {
   const resetHubForm = () => {
     setHubForm({
       title: "",
+      customSlug: "",
       type: "LITERARY_WORK",
       description: "",
       author: "",
@@ -952,6 +1336,8 @@ export default function ContentManager() {
                       className={`text-xs px-2 py-0.5 rounded-full ${
                         hub.type === "GUIDE"
                           ? "bg-green-100 text-green-700"
+                          : hub.type === "EXAM_SHEET"
+                          ? "bg-orange-100 text-orange-700"
                           : "bg-gray-100 text-gray-600"
                       }`}
                     >
@@ -965,8 +1351,20 @@ export default function ContentManager() {
                     <p className="text-sm text-gray-600 mb-2">{hub.author}</p>
                   )}
 
+                  {/* Pokaż URL */}
+                  <p className="text-xs text-gray-400 mb-2">
+                    <code>{getHubUrl(hub)}</code>
+                  </p>
+
                   <div className="text-sm text-gray-500 mt-4">
-                    {hub.pages?.length || 0} stron(y)
+                    {hub.type === "EXAM_SHEET" ? (
+                      <span className="text-orange-600">
+                        {(hub.pages?.[0]?.content as any)?.pdfs?.length || 0}{" "}
+                        plików PDF
+                      </span>
+                    ) : (
+                      <span>{hub.pages?.length || 0} stron(y)</span>
+                    )}
                   </div>
                 </div>
               );
@@ -1021,6 +1419,37 @@ export default function ContentManager() {
                       </option>
                     ))}
                   </select>
+                </div>
+
+                {/* ✅ NOWE - Pole slug dla wszystkich typów */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    URL (slug) - opcjonalnie własny
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500 text-sm">
+                      /
+                      {hubForm.type === "GUIDE"
+                        ? "poradnik"
+                        : hubForm.type === "EXAM_SHEET"
+                        ? "arkusze"
+                        : "baza-wiedzy"}
+                      /
+                    </span>
+                    <input
+                      type="text"
+                      value={hubForm.customSlug}
+                      onChange={(e) =>
+                        setHubForm({ ...hubForm, customSlug: e.target.value })
+                      }
+                      className="flex-1 px-4 py-2 border rounded"
+                      placeholder="zostaw puste = automatyczny z tytułu"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Wpisz własny slug lub zostaw puste. Używaj tylko małych
+                    liter, cyfr i myślników.
+                  </p>
                 </div>
 
                 {/* ✅ NOWE - Pola dla typu GUIDE */}
@@ -1390,8 +1819,7 @@ export default function ContentManager() {
                 <p className="text-sm text-gray-500 mt-2">
                   URL:{" "}
                   <code className="bg-gray-100 px-2 py-1 rounded">
-                    /{selectedHub.type === "GUIDE" ? "poradnik" : "baza-wiedzy"}
-                    /{selectedHub.slug}
+                    {getHubUrl(selectedHub)}
                   </code>
                 </p>
               </div>
@@ -1452,6 +1880,8 @@ export default function ContentManager() {
                           <code className="bg-gray-100 px-2 py-1 rounded">
                             {selectedHub.type === "GUIDE"
                               ? `/poradnik/${page.slug}`
+                              : selectedHub.type === "EXAM_SHEET"
+                              ? `/arkusze/${selectedHub.slug}`
                               : `/baza-wiedzy/${selectedHub.slug}/${page.slug}`}
                           </code>
                         </p>
@@ -1557,6 +1987,8 @@ export default function ContentManager() {
                       <span className="text-gray-500">
                         {selectedHub.type === "GUIDE"
                           ? "/poradnik/"
+                          : selectedHub.type === "EXAM_SHEET"
+                          ? `/arkusze/${selectedHub.slug}/`
                           : `/baza-wiedzy/${selectedHub.slug}/`}
                       </span>
 
@@ -1599,12 +2031,22 @@ export default function ContentManager() {
                     <label className="block text-sm font-medium mb-2">
                       Treść
                     </label>
-                    <RichTextEditor
-                      content={pageForm.content}
-                      onChange={(content: any) =>
-                        setPageForm({ ...pageForm, content })
-                      }
-                    />
+                    {/* ✅ Specjalny edytor dla EXAM_SHEET */}
+                    {selectedHub?.type === "EXAM_SHEET" ? (
+                      <ExamSheetEditor
+                        content={pageForm.content as ExamSheetContent}
+                        onChange={(content) =>
+                          setPageForm({ ...pageForm, content: content as any })
+                        }
+                      />
+                    ) : (
+                      <RichTextEditor
+                        content={pageForm.content}
+                        onChange={(content: any) =>
+                          setPageForm({ ...pageForm, content })
+                        }
+                      />
+                    )}
                   </div>
                   <div className="pt-4 border-t">
                     <h3 className="font-semibold mb-3 text-gray-700">
@@ -1774,6 +2216,38 @@ export default function ContentManager() {
                           setHubForm({ ...hubForm, year: e.target.value })
                         }
                         className="w-full px-4 py-2 border rounded"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {hubForm.type === "EXAM_SHEET" && (
+                  <>
+                    <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                      <p className="text-sm text-orange-700 mb-2">
+                        <FileText className="w-4 h-4 inline mr-1" />
+                        <strong>Arkusz maturalny</strong> - zestaw plików PDF z
+                        arkuszami CKE, odpowiedziami i kluczami.
+                      </p>
+                      <p className="text-xs text-orange-600">
+                        URL: /arkusze/
+                        {hubForm.title
+                          ? hubForm.title.toLowerCase().replace(/\s+/g, "-")
+                          : "slug"}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Rok matury
+                      </label>
+                      <input
+                        type="number"
+                        value={hubForm.year}
+                        onChange={(e) =>
+                          setHubForm({ ...hubForm, year: e.target.value })
+                        }
+                        className="w-full px-4 py-2 border rounded"
+                        placeholder="np. 2024"
                       />
                     </div>
                   </>

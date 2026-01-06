@@ -1,43 +1,44 @@
 // frontend/src/App.tsx
+// ZAKTUALIZOWANY - dodane routy dla sekcji Poradnik
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HubTestLandingPage } from "./features/content/HubTestLandingPage";
-import HubListPage from "./features/content/HubListPage";
-import { WorkReviewPage } from "./features/student/WorkReviewPage";
-import { HubDetailPage } from "./features/content/HubDetailPage";
-import { PageViewer } from "./features/content/PageViewer";
-import ContentManager from "./features/admin/ContentManager";
-import { useTokenRefresh } from "./hooks/useTokenRefresh";
-import { CookieBanner } from "./components/CookieBanner";
-import { PrivacyPolicyPage } from "./features/legal/PrivacyPolicyPage";
-import { TermsOfServicePage } from "./features/legal/TermsOfServicePage";
-import { CookiePolicyPage } from "./features/legal/CookiePolicyPage";
-import { RodoPage } from "./features/legal/RodoPage";
-import { GoogleTagManager } from "./components/GoogleTagManager";
-import { ResendVerificationPage } from "./features/auth/ResendVerificationPage";
-import { ForgotPasswordPage } from "./features/auth/ForgotPasswordPage";
-import { ResetPasswordPage } from "./features/auth/ResetPasswordPage";
-import { VerifyEmailCodePage } from "./features/auth/VerifyEmailCodePage";
-import { CheckEmailPage } from "./features/auth/CheckEmailPage";
-import { UserSessionsTable } from "./features/admin/UserSessionsTable";
-import { SubscriptionDashboard } from "./features/subscription/SubscriptionDashboard";
 import React, { useEffect } from "react";
-import { MatureExamViewer } from "./features/exams/MatureExamViewer";
-import { ExamStructureManager } from "./features/admin/exams/ExamStructureManager";
-import { ExamList } from "./features/exams/ExamList";
-import { ExamResults } from "./features/exams/ExamResults";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { CookieBanner } from "./components/CookieBanner";
+import { GoogleTagManager } from "./components/GoogleTagManager";
+import { ScrollToTop } from "./components/ScrollToTop";
+import ContentManager from "./features/admin/ContentManager";
+import { ExamStructureManager } from "./features/admin/exams/ExamStructureManager";
+import { UserSessionsTable } from "./features/admin/UserSessionsTable";
+import { CheckEmailPage } from "./features/auth/CheckEmailPage";
+import { ForgotPasswordPage } from "./features/auth/ForgotPasswordPage";
+import { ResendVerificationPage } from "./features/auth/ResendVerificationPage";
+import { ResetPasswordPage } from "./features/auth/ResetPasswordPage";
+import { VerifyEmailCodePage } from "./features/auth/VerifyEmailCodePage";
+import { HubDetailPage } from "./features/content/HubDetailPage";
+import HubListPage from "./features/content/HubListPage";
+import { HubTestLandingPage } from "./features/content/HubTestLandingPage";
+import { PageViewer } from "./features/content/PageViewer";
+import { ExamList } from "./features/exams/ExamList";
+import { ExamResults } from "./features/exams/ExamResults";
+import { MatureExamViewer } from "./features/exams/MatureExamViewer";
 import { LearningSession } from "./features/learning/LearningSession";
 import { SessionHistory } from "./features/learning/SessionHistory";
+import { CookiePolicyPage } from "./features/legal/CookiePolicyPage";
+import { PrivacyPolicyPage } from "./features/legal/PrivacyPolicyPage";
+import { RodoPage } from "./features/legal/RodoPage";
+import { TermsOfServicePage } from "./features/legal/TermsOfServicePage";
+import { WorkReviewPage } from "./features/student/WorkReviewPage";
+import { SubscriptionDashboard } from "./features/subscription/SubscriptionDashboard";
+import { CookieConsentProvider } from "./hooks/useCookieConsent";
+import { useTokenRefresh } from "./hooks/useTokenRefresh";
 import { useAuthStore } from "./store/authStore";
 import { useThemeStore } from "./store/themeStore";
-import { CookieConsentProvider } from "./hooks/useCookieConsent";
-import { ScrollToTop } from "./components/ScrollToTop";
 
 // Layouts
-import { Layout } from "./components/Layout";
 import { AdminLayout } from "./components/AdminLayout";
+import { Layout } from "./components/Layout";
 
 // Public
 import { LandingPage } from "./features/public/LandingPage";
@@ -51,8 +52,8 @@ import { ExerciseList } from "./features/exercises/ExerciseList";
 import { ExerciseSolver } from "./features/exercises/ExerciseSolver";
 import { LeaderboardPage } from "./features/gamification/LeaderboardPage";
 import { StudentDashboard } from "./features/student/Dashboard";
-import { ProgressTracker } from "./features/student/ProgressTracker";
 import { EpochReviewPage } from "./features/student/EpochReviewPage";
+import { ProgressTracker } from "./features/student/ProgressTracker";
 
 // Admin
 import { AdminDashboard } from "./features/admin/AdminDashboard";
@@ -65,7 +66,13 @@ import { MaterialDetailPage } from "./features/materials/MaterialDetailPage";
 import MaterialsPage from "./features/materials/MaterialsPage";
 
 // ✅ NOWE: Guides (Poradnik)
-import { GuideListPage, GuideArticlePage } from "./features/guides";
+import { GuideArticlePage, GuideListPage } from "./features/guides";
+
+// ✅ NOWE: Exam Sheets (Arkusze maturalne)
+import {
+  ExamSheetDetailPage,
+  ExamSheetsListPage,
+} from "./features/exam-sheets";
 
 const queryClient = new QueryClient();
 
@@ -145,9 +152,13 @@ export const App: React.FC = () => {
               {/* ✅ NOWE: PORADNIK */}
               <Route path="/poradnik" element={<GuideListPage />} />
               <Route
-                path="/poradnik/:articleSlug"
+                path="/poradnik/:guideSlug/:articleSlug"
                 element={<GuideArticlePage />}
               />
+
+              {/* ✅ NOWE: ARKUSZE MATURALNE */}
+              <Route path="/arkusze" element={<ExamSheetsListPage />} />
+              <Route path="/arkusze/:slug" element={<ExamSheetDetailPage />} />
 
               {/* Public Materials routes */}
               <Route path="/materialy" element={<MaterialsPage />} />

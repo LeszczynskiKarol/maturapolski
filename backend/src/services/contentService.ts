@@ -1,7 +1,7 @@
 // backend/src/services/contentService.ts
 
-import { prisma } from "../lib/prisma";
 import { HubType, LiteraryEpoch } from "@prisma/client";
+import { prisma } from "../lib/prisma";
 
 export class ContentService {
   // ==========================================
@@ -395,6 +395,130 @@ export class ContentService {
   }
 
   // ==========================================
+  // EXAM SHEETS - Arkusze maturalne
+  // ==========================================
+
+  /**
+   * Pobiera wszystkie arkusze maturalne
+   * GET /api/content/exam-sheets
+   */
+  async getExamSheets({
+    year,
+    search,
+    page = 1,
+    limit = 50,
+  }: {
+    year?: number;
+    level?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+  } = {}) {
+    const where: any = {
+      type: "EXAM_SHEET",
+      isPublished: true,
+    };
+
+    if (year) where.year = year;
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
+    const [sheets, total] = await Promise.all([
+      prisma.contentHub.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: [{ year: "desc" }, { title: "asc" }],
+        include: {
+          pages: {
+            where: { isPublished: true },
+            take: 1,
+            select: {
+              id: true,
+              content: true,
+            },
+          },
+        },
+      }),
+      prisma.contentHub.count({ where }),
+    ]);
+
+    // Wyciągnij metadane i liczbę PDFów
+    const sheetsWithMeta = sheets.map((sheet) => {
+      const pageContent = sheet.pages[0]?.content as any;
+      const pdfs = pageContent?.pdfs || [];
+
+      return {
+        id: sheet.id,
+        slug: sheet.slug,
+        title: sheet.title,
+        year: sheet.year,
+        description: sheet.description,
+        imageUrl: sheet.imageUrl,
+        metadata: pageContent?.metadata || {},
+        pdfCount: pdfs.length,
+        views: sheet.views,
+      };
+    });
+
+    return {
+      sheets: sheetsWithMeta,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  /**
+   * Pobiera pojedynczy arkusz z PDFami
+   * GET /api/content/exam-sheets/:slug
+   */
+  async getExamSheet(slug: string) {
+    const hub = await prisma.contentHub.findUnique({
+      where: { slug, isPublished: true, type: "EXAM_SHEET" },
+      include: {
+        pages: {
+          where: { isPublished: true },
+          orderBy: { order: "asc" },
+          take: 1,
+        },
+      },
+    });
+
+    if (!hub) throw new Error("Exam sheet not found");
+
+    // Zwiększ views
+    await prisma.contentHub.update({
+      where: { id: hub.id },
+      data: { views: { increment: 1 } },
+    });
+
+    const pageContent = hub.pages[0]?.content as any;
+
+    return {
+      id: hub.id,
+      slug: hub.slug,
+      title: hub.title,
+      year: hub.year,
+      description: hub.description,
+      imageUrl: hub.imageUrl,
+      metaTitle: hub.metaTitle,
+      metaDescription: hub.metaDescription,
+      views: hub.views,
+      metadata: pageContent?.metadata || {},
+      pdfs: pageContent?.pdfs || [],
+      additionalContent: pageContent?.blocks || [],
+    };
+  }
+
+  // ==========================================
   // OCENY (RATINGS)
   // ==========================================
 
@@ -667,6 +791,12 @@ export class ContentService {
   // Nowa funkcja sanityzująca - zamienia puste stringi na null
   private sanitizeHubData(data: any) {
     const sanitized = { ...data };
+
+    // ✅ Zamień customSlug na slug i usuń customSlug
+    if (sanitized.customSlug) {
+      sanitized.slug = sanitized.customSlug;
+    }
+    delete sanitized.customSlug;
 
     // Lista pól, które powinny być null jeśli są puste
     const optionalFields = [
