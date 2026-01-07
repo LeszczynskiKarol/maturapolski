@@ -801,7 +801,7 @@ export function PageViewer() {
         return (
           <div
             key={index}
-            className="html-content my-4"
+            className="html-content my-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_ul]:mb-4 [&_li]:text-gray-700 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:space-y-2 [&_ol]:mb-4"
             dangerouslySetInnerHTML={{ __html: block.content }}
           />
         );
