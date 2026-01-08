@@ -309,10 +309,10 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
 
                 <li>
                   <Link
-                    to="/poradnik"
+                    to="/arkusze"
                     className="hover:text-white transition-colors"
                   >
-                    Poradnik
+                    Arkusze maturalne
                   </Link>
                 </li>
               </ul>
