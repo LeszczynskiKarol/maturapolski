@@ -53,7 +53,9 @@ backend/temp/
 backend/src/index.ts
 backend/node_modules/
 backend/package-lock.json
+backend/src/index.ts
 
 # Testing
 coverage/
 .nyc_output/
+

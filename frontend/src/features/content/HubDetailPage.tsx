@@ -128,6 +128,29 @@ export function HubDetailPage() {
             {hub.author && (
               <p className="text-lg text-gray-600 mb-4">{hub.author}</p>
             )}
+
+            {/* Menu stron */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-semibold mb-4">Spis treści</h2>
+
+              {hub.pages.length === 0 ? (
+                <p className="text-gray-500 text-center py-8">Brak stron</p>
+              ) : (
+                <div className="space-y-2">
+                  {hub.pages.map((page) => (
+                    <Link
+                      key={page.id}
+                      to={`/baza-wiedzy/${hub.slug}/${page.slug}`}
+                      className="flex items-center gap-3 p-4 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <FileText className="w-5 h-5 text-gray-400" />
+                      <span className="font-medium">{page.title}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {hub.description && (
               <p className="text-gray-600 whitespace-pre-line">
                 {hub.description}
@@ -148,28 +171,6 @@ export function HubDetailPage() {
             hubType={hub.type}
             variant="full"
           />
-
-          {/* Menu stron */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold mb-4">Spis treści</h2>
-
-            {hub.pages.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">Brak stron</p>
-            ) : (
-              <div className="space-y-2">
-                {hub.pages.map((page) => (
-                  <Link
-                    key={page.id}
-                    to={`/baza-wiedzy/${hub.slug}/${page.slug}`}
-                    className="flex items-center gap-3 p-4 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <FileText className="w-5 h-5 text-gray-400" />
-                    <span className="font-medium">{page.title}</span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
       </div>
 
