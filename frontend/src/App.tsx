@@ -152,7 +152,7 @@ export const App: React.FC = () => {
               {/* ✅ NOWE: PORADNIK */}
               <Route path="/poradnik" element={<GuideListPage />} />
               <Route
-                path="/poradnik/:guideSlug/:articleSlug"
+                path="/poradnik/:articleSlug"
                 element={<GuideArticlePage />}
               />
 

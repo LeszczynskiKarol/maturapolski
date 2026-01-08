@@ -908,7 +908,7 @@ const ExamSheetEditor = ({
                   type="text"
                   value={pdf.url}
                   onChange={(e) => updatePdf(pdf.id, { url: e.target.value })}
-                  className="flex-1 px-2 py-1 text-sm border rounded font-mono text-xs"
+                  className="flex-1 px-2 py-1 text-sm border rounded font-mono"
                   placeholder="https://s3.amazonaws.com/..."
                 />
 
