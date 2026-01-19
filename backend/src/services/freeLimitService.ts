@@ -24,6 +24,17 @@ export class FreeLimitService {
     message?: string;
   }> {
     try {
+      // ✅ Najpierw sprawdź czy user istnieje
+      const userExists = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true },
+      });
+
+      if (!userExists) {
+        console.error(`❌ User ${userId} does not exist in freeLimitService`);
+        return this.getDefaultFreeStatus("Użytkownik nie znaleziony");
+      }
+
       // Sprawdź subskrypcję
       const subscription = await prisma.subscription.findUnique({
         where: { userId },
@@ -100,22 +111,36 @@ export class FreeLimitService {
       };
     } catch (error) {
       console.error("Error in getFullStatus:", error);
-
-      // Zwróć domyślny status w razie błędu (pozwól kontynuować)
-      const resetAt = new Date();
-      resetAt.setHours(24, 0, 0, 0);
-
-      return {
-        isPremium: false,
-        canSolve: true,
-        used: 0,
-        remaining: FREE_DAILY_LIMIT,
-        limit: FREE_DAILY_LIMIT,
-        allowedTypes: ALLOWED_FREE_TYPES,
-        resetAt: resetAt.toISOString(),
-        message: "Nie udało się pobrać statusu limitu",
-      };
+      return this.getDefaultFreeStatus("Nie udało się pobrać statusu limitu");
     }
+  }
+
+  /**
+   * Zwraca domyślny status dla FREE user (używane w przypadku błędów)
+   */
+  private getDefaultFreeStatus(message?: string): {
+    isPremium: boolean;
+    canSolve: boolean;
+    used: number;
+    remaining: number;
+    limit: number;
+    allowedTypes: string[];
+    resetAt: string;
+    message?: string;
+  } {
+    const resetAt = new Date();
+    resetAt.setHours(24, 0, 0, 0);
+
+    return {
+      isPremium: false,
+      canSolve: true, // Pozwól kontynuować w razie błędu
+      used: 0,
+      remaining: FREE_DAILY_LIMIT,
+      limit: FREE_DAILY_LIMIT,
+      allowedTypes: ALLOWED_FREE_TYPES,
+      resetAt: resetAt.toISOString(),
+      message,
+    };
   }
 
   /**

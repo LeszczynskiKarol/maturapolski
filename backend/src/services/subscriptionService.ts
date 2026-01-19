@@ -12,6 +12,11 @@ export class SubscriptionService {
   async hasAiPoints(userId: string, pointsNeeded: number): Promise<boolean> {
     const subscription = await this.getOrCreateSubscription(userId);
 
+    // Jeśli nie udało się utworzyć/pobrać subskrypcji, zwróć false
+    if (!subscription) {
+      return false;
+    }
+
     // Sprawdź czy subskrypcja aktywna
     if (subscription.status !== "ACTIVE") {
       return (
@@ -41,9 +46,13 @@ export class SubscriptionService {
     exerciseId: string,
     exerciseType: string,
     pointsCost: number,
-    tokensUsed: { input: number; output: number }
+    tokensUsed: { input: number; output: number },
   ): Promise<void> {
     const subscription = await this.getOrCreateSubscription(userId);
+
+    if (!subscription) {
+      throw new Error("SUBSCRIPTION_NOT_FOUND");
+    }
 
     // Sprawdź limit
     if (subscription.aiPointsUsed + pointsCost > subscription.aiPointsLimit) {
@@ -72,31 +81,58 @@ export class SubscriptionService {
     ]);
   }
 
-  // Pobierz lub utwórz subskrypcję (FREE domyślnie)
+  // ✅ POPRAWIONE: Pobierz lub utwórz subskrypcję (FREE domyślnie)
   async getOrCreateSubscription(userId: string) {
-    let subscription = await prisma.subscription.findUnique({
-      where: { userId },
-    });
-
-    if (!subscription) {
-      subscription = await prisma.subscription.create({
-        data: {
-          userId,
-          status: "INACTIVE",
-          plan: "FREE",
-          aiPointsLimit: 20,
-          aiPointsUsed: 0,
-          aiPointsReset: new Date(),
-        },
+    try {
+      // ✅ Najpierw sprawdź czy user istnieje
+      const userExists = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true },
       });
-    }
 
-    return subscription;
+      if (!userExists) {
+        console.error(
+          `❌ User ${userId} does not exist, cannot create subscription`,
+        );
+        return null;
+      }
+
+      let subscription = await prisma.subscription.findUnique({
+        where: { userId },
+      });
+
+      if (!subscription) {
+        subscription = await prisma.subscription.create({
+          data: {
+            userId,
+            status: "INACTIVE",
+            plan: "FREE",
+            aiPointsLimit: 20,
+            aiPointsUsed: 0,
+            aiPointsReset: new Date(),
+          },
+        });
+        console.log(`✅ Created new subscription for user ${userId}`);
+      }
+
+      return subscription;
+    } catch (error) {
+      console.error(
+        `❌ Error in getOrCreateSubscription for user ${userId}:`,
+        error,
+      );
+      return null;
+    }
   }
 
   // Reset miesięcznych punktów
   async resetMonthlyPoints(userId: string): Promise<void> {
     const subscription = await this.getOrCreateSubscription(userId);
+
+    if (!subscription) {
+      console.error(`Cannot reset points - no subscription for user ${userId}`);
+      return;
+    }
 
     await prisma.subscription.update({
       where: { id: subscription.id },
@@ -120,7 +156,16 @@ export class SubscriptionService {
 
     if (!user) throw new Error("User not found");
 
-    let customerId = user.subscription?.stripeCustomerId;
+    // ✅ Upewnij się że subskrypcja istnieje
+    let subscription = user.subscription;
+    if (!subscription) {
+      subscription = await this.getOrCreateSubscription(userId);
+      if (!subscription) {
+        throw new Error("Failed to create subscription");
+      }
+    }
+
+    let customerId = subscription?.stripeCustomerId;
 
     if (!customerId) {
       console.log("📝 Creating new Stripe customer...");
@@ -254,6 +299,9 @@ export class SubscriptionService {
 
           if (!userId) break;
 
+          // ✅ Upewnij się że subskrypcja istnieje
+          await this.getOrCreateSubscription(userId);
+
           if (purchaseType === "MONTHLY_ACCESS") {
             const hasCancelledSub =
               session.metadata?.hasCancelledSub === "true";
@@ -272,9 +320,7 @@ export class SubscriptionService {
               where: { userId },
             });
 
-            // ✅ Jeśli ma anulowaną subskrypcję, nie nadpisuj - zapisz jako pending
             if (hasCancelledSub && currentSub?.cancelAt) {
-              // ✅ POPRAW: rzutuj metadata na any lub Record<string, any>
               const existingMetadata =
                 (currentSub.metadata as Record<string, any>) || {};
 
@@ -282,7 +328,7 @@ export class SubscriptionService {
                 where: { userId },
                 data: {
                   metadata: {
-                    ...existingMetadata, // ✅ Teraz TypeScript wie że to obiekt
+                    ...existingMetadata,
                     pendingOneTimeAccess: {
                       startDate: newStartDate.toISOString(),
                       endDate: newEndDate.toISOString(),
@@ -294,10 +340,9 @@ export class SubscriptionService {
               });
 
               console.log(
-                `✅ Saved pending one-time access for user ${userId} starting ${newStartDate.toISOString()}`
+                `✅ Saved pending one-time access for user ${userId} starting ${newStartDate.toISOString()}`,
               );
             } else {
-              // ✅ Standardowy flow - aktywuj od razu
               await prisma.subscription.update({
                 where: { userId },
                 data: {
@@ -315,11 +360,10 @@ export class SubscriptionService {
               });
 
               console.log(
-                `✅ Activated 30-day access for user ${userId} until ${newEndDate.toISOString()}`
+                `✅ Activated 30-day access for user ${userId} until ${newEndDate.toISOString()}`,
               );
             }
           } else if (session.metadata?.pointsPackage) {
-            // ✅ Obsługa zakupu punktów
             const pointsAmount = parseInt(session.metadata.pointsAmount || "0");
 
             if (pointsAmount > 0) {
@@ -346,7 +390,7 @@ export class SubscriptionService {
                 });
 
                 console.log(
-                  `✅ Added ${pointsAmount} points to user ${userId}`
+                  `✅ Added ${pointsAmount} points to user ${userId}`,
                 );
               }
             }
@@ -360,38 +404,35 @@ export class SubscriptionService {
             break;
           }
 
-          // ✅ Pobierz szczegóły subskrypcji z Stripe
-          const stripeSubscription = await stripe.subscriptions.retrieve(
-            subscriptionId
-          );
+          // ✅ Upewnij się że subskrypcja istnieje
+          await this.getOrCreateSubscription(userId);
 
-          // ✅ Sprawdź czy to upgrade z pakietu jednorazowego
+          const stripeSubscription =
+            await stripe.subscriptions.retrieve(subscriptionId);
+
           const upgradedFromOneTime =
             (stripeSubscription.metadata as any)?.upgradedFromOneTime ===
             "true";
 
           if (upgradedFromOneTime) {
             console.log(
-              `🔄 User upgraded from one-time package, subscription has trial period`
+              `🔄 User upgraded from one-time package, subscription has trial period`,
             );
             console.log(
               `Trial ends at: ${new Date(
-                (stripeSubscription as any).trial_end * 1000
-              )}`
+                (stripeSubscription as any).trial_end * 1000,
+              )}`,
             );
 
-            // ✅ NIE nadpisuj obecnego pakietu, tylko dodaj informację o oczekującej subskrypcji
             await prisma.subscription.update({
               where: { userId },
               data: {
                 stripeSubscriptionId: subscriptionId,
-                // ✅ Zachowaj obecny status i dane pakietu jednorazowego
-                // Tylko dodaj informację o pending subscription
                 metadata: {
                   pendingSubscription: {
                     stripeSubscriptionId: subscriptionId,
                     willActivateAt: new Date(
-                      (stripeSubscription as any).trial_end * 1000
+                      (stripeSubscription as any).trial_end * 1000,
                     ).toISOString(),
                     createdAt: new Date().toISOString(),
                   },
@@ -400,10 +441,9 @@ export class SubscriptionService {
             });
 
             console.log(
-              `✅ Pending subscription saved, will activate after trial period ends`
+              `✅ Pending subscription saved, will activate after trial period ends`,
             );
           } else {
-            // ✅ Standardowa aktywacja subskrypcji (bez trial)
             await prisma.subscription.update({
               where: { userId },
               data: {
@@ -424,7 +464,7 @@ export class SubscriptionService {
             });
 
             console.log(
-              `✅ Subscription activated immediately for user ${userId}: ${subscriptionId}`
+              `✅ Subscription activated immediately for user ${userId}: ${subscriptionId}`,
             );
           }
         }
@@ -437,7 +477,6 @@ export class SubscriptionService {
         console.log("❌ Processing subscription deletion...");
         await this.handleSubscriptionDeleted(subscription);
 
-        // ✅ NOWE: Sprawdź czy jest pending one-time access
         const userId = subscription.metadata?.userId;
         if (userId) {
           const dbSub = await prisma.subscription.findUnique({
@@ -449,7 +488,7 @@ export class SubscriptionService {
 
           if (pendingAccess) {
             console.log(
-              `🔄 Activating pending one-time access for user ${userId}`
+              `🔄 Activating pending one-time access for user ${userId}`,
             );
 
             await prisma.subscription.update({
@@ -475,7 +514,7 @@ export class SubscriptionService {
             });
 
             console.log(
-              `✅ Activated pending one-time access for user ${userId}`
+              `✅ Activated pending one-time access for user ${userId}`,
             );
           }
         }
@@ -483,12 +522,10 @@ export class SubscriptionService {
       }
 
       case "customer.subscription.trial_will_end": {
-        // Opcjonalnie: wyślij email przypomnienia
         console.log("⏰ Trial period ending soon");
         break;
       }
 
-      // Zmodyfikuj case "invoice.payment_succeeded":
       case "invoice.payment_succeeded": {
         const invoice = event.data.object as Stripe.Invoice;
         const customerId = invoice.customer as string;
@@ -499,7 +536,6 @@ export class SubscriptionService {
 
         if (!dbSubscription) break;
 
-        // ✅ Sprawdź czy to pierwsza płatność po trial (aktywacja subskrypcji)
         const metadata = dbSubscription.metadata as any;
         const hasPendingSubscription = metadata?.pendingSubscription;
 
@@ -515,7 +551,7 @@ export class SubscriptionService {
               aiPointsUsed: 0,
               aiPointsReset: new Date(),
               startDate: new Date(),
-              endDate: null, // ✅ Subskrypcja nie ma endDate
+              endDate: null,
               metadata: {
                 lastPurchaseType: "SUBSCRIPTION",
                 activatedAt: new Date().toISOString(),
@@ -524,7 +560,6 @@ export class SubscriptionService {
             },
           });
         } else {
-          // Standardowy reset punktów na nowy miesiąc
           await prisma.subscription.update({
             where: { id: dbSubscription.id },
             data: {
@@ -536,7 +571,7 @@ export class SubscriptionService {
         }
 
         console.log(
-          `Payment succeeded, points reset for user ${dbSubscription.userId}`
+          `Payment succeeded, points reset for user ${dbSubscription.userId}`,
         );
         break;
       }
@@ -545,20 +580,8 @@ export class SubscriptionService {
       case "customer.subscription.created":
         console.log("🔄 Processing subscription update/create...");
         await this.handleSubscriptionUpdated(
-          event.data.object as Stripe.Subscription
+          event.data.object as Stripe.Subscription,
         );
-        break;
-
-      case "customer.subscription.deleted":
-        console.log("❌ Processing subscription deletion...");
-        await this.handleSubscriptionDeleted(
-          event.data.object as Stripe.Subscription
-        );
-        break;
-
-      case "invoice.payment_succeeded":
-        console.log("✅ Processing payment success...");
-        await this.handlePaymentSucceeded(event.data.object as Stripe.Invoice);
         break;
 
       case "invoice.payment_failed":
@@ -580,11 +603,11 @@ export class SubscriptionService {
   }
 
   async handleSubscriptionUpdated(
-    subscription: Stripe.Subscription
+    subscription: Stripe.Subscription,
   ): Promise<void> {
     try {
       const userId = subscription.metadata?.userId;
-      const customerId = subscription.customer as string; // ✅ Pobierz customer ID
+      const customerId = subscription.customer as string;
       const { current_period_start, current_period_end } = subscription as any;
 
       if (!userId) {
@@ -593,23 +616,23 @@ export class SubscriptionService {
       }
 
       console.log(`🔄 Updating subscription for user ${userId}`);
-      console.log(`📝 Customer ID from Stripe: ${customerId}`); // ✅ DODAJ LOG
+      console.log(`📝 Customer ID from Stripe: ${customerId}`);
 
-      const dbSubscription = await prisma.subscription.findUnique({
-        where: { userId },
-      });
-
-      if (!dbSubscription) {
-        console.error(`❌ No subscription found for user ${userId}`);
+      // ✅ Upewnij się że subskrypcja istnieje
+      const existingSubscription = await this.getOrCreateSubscription(userId);
+      if (!existingSubscription) {
+        console.error(`❌ Could not create subscription for user ${userId}`);
         return;
       }
 
       const updateData: any = {
         stripeSubscriptionId: subscription.id,
-        stripeCustomerId: customerId, // ✅ ZAPISZ CUSTOMER ID!
+        stripeCustomerId: customerId,
         status: subscription.status === "active" ? "ACTIVE" : "INACTIVE",
         plan:
-          subscription.status === "active" ? "PREMIUM" : dbSubscription.plan,
+          subscription.status === "active"
+            ? "PREMIUM"
+            : existingSubscription.plan,
         isRecurring: true,
         aiPointsLimit: 200,
         startDate: current_period_start
@@ -621,10 +644,9 @@ export class SubscriptionService {
           : null,
       };
 
-      // ✅ Jeśli to nowa subskrypcja, zresetuj punkty
       if (
         subscription.status === "active" &&
-        dbSubscription.status !== "ACTIVE"
+        existingSubscription.status !== "ACTIVE"
       ) {
         updateData.aiPointsUsed = 0;
         updateData.aiPointsReset = new Date();
@@ -636,7 +658,7 @@ export class SubscriptionService {
       });
 
       console.log(
-        `✅ Subscription updated for user ${userId} with customer ${customerId}`
+        `✅ Subscription updated for user ${userId} with customer ${customerId}`,
       );
     } catch (error) {
       console.error("❌ Error in handleSubscriptionUpdated:", error);
@@ -666,30 +688,6 @@ export class SubscriptionService {
     });
   }
 
-  private async handlePaymentSucceeded(invoice: Stripe.Invoice) {
-    const customerId = invoice.customer as string;
-
-    const dbSubscription = await prisma.subscription.findUnique({
-      where: { stripeCustomerId: customerId },
-    });
-
-    if (!dbSubscription) return;
-
-    // Reset punktów na nowy miesiąc
-    await prisma.subscription.update({
-      where: { id: dbSubscription.id },
-      data: {
-        aiPointsUsed: 0,
-        aiPointsReset: new Date(),
-        status: "ACTIVE",
-      },
-    });
-
-    console.log(
-      `Payment succeeded, points reset for user ${dbSubscription.userId}`
-    );
-  }
-
   private async handlePaymentFailed(invoice: Stripe.Invoice) {
     const customerId = invoice.customer as string;
 
@@ -710,6 +708,29 @@ export class SubscriptionService {
   // Statystyki użycia AI
   async getAiUsageStats(userId: string) {
     const subscription = await this.getOrCreateSubscription(userId);
+
+    if (!subscription) {
+      return {
+        subscription: {
+          plan: "FREE",
+          status: "INACTIVE",
+          aiPointsUsed: 0,
+          aiPointsLimit: 20,
+          percentUsed: 0,
+          resetDate: new Date(),
+        },
+        usage: {
+          totalCalls: 0,
+          totalPoints: 0,
+          byType: {
+            SHORT_ANSWER: 0,
+            SYNTHESIS_NOTE: 0,
+            ESSAY: 0,
+          },
+        },
+        recentUsage: [],
+      };
+    }
 
     const thisMonth = new Date();
     thisMonth.setDate(1);
@@ -742,7 +763,7 @@ export class SubscriptionService {
         aiPointsUsed: subscription.aiPointsUsed,
         aiPointsLimit: subscription.aiPointsLimit,
         percentUsed: Math.round(
-          (subscription.aiPointsUsed / subscription.aiPointsLimit) * 100
+          (subscription.aiPointsUsed / subscription.aiPointsLimit) * 100,
         ),
         resetDate: subscription.aiPointsReset,
       },

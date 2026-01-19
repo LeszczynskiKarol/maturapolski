@@ -58,16 +58,19 @@ export async function learningRoutes(fastify: FastifyInstance) {
 
       if (!userId) {
         console.error("No userId in request for free-limit-status");
-        return reply.code(401).send({
-          error: "Unauthorized",
-          isPremium: false,
-          canSolve: false,
-          used: 0,
-          remaining: 0,
-          limit: 5,
-          allowedTypes: ["CLOSED_SINGLE", "CLOSED_MULTIPLE"],
-          resetAt: new Date().toISOString(),
-        });
+        return reply
+          .code(401)
+          .header("Content-Type", "application/json")
+          .send({
+            error: "Unauthorized",
+            isPremium: false,
+            canSolve: false,
+            used: 0,
+            remaining: 0,
+            limit: 5,
+            allowedTypes: ["CLOSED_SINGLE", "CLOSED_MULTIPLE"],
+            resetAt: new Date().toISOString(),
+          });
       }
 
       const status = await freeLimitService.getFullStatus(userId);
@@ -78,6 +81,9 @@ export async function learningRoutes(fastify: FastifyInstance) {
       console.error("Error in free-limit-status:", error);
 
       // Zwróć domyślny status w razie błędu
+      const resetAt = new Date();
+      resetAt.setHours(24, 0, 0, 0);
+
       return reply
         .code(500)
         .header("Content-Type", "application/json")
@@ -89,7 +95,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
           remaining: 5,
           limit: 5,
           allowedTypes: ["CLOSED_SINGLE", "CLOSED_MULTIPLE"],
-          resetAt: new Date().toISOString(),
+          resetAt: resetAt.toISOString(),
         });
     }
   });
