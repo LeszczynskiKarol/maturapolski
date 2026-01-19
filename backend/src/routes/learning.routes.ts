@@ -244,7 +244,27 @@ export async function learningRoutes(fastify: FastifyInstance) {
       epoch?: string;
       difficulty?: number[];
       points?: { min: number; max: number };
+      work?: string;
     };
+
+    // 🆕 SPRAWDŹ CZY USER JEST PREMIUM
+    const limitStatus = await freeLimitService.getFullStatus(userId);
+
+    // 🆕 JEŚLI FREE USER PRÓBUJE UŻYĆ FILTRÓW EPOK/LEKTUR - ZABLOKUJ
+    if (!limitStatus.isPremium) {
+      // Wyczyść filtry epok i lektur dla FREE users
+      if (filters.epoch) {
+        console.log(`⚠️ Removing epoch filter for FREE user: ${filters.epoch}`);
+        delete filters.epoch;
+        userSessionFilters.set(userId, { ...filters, epoch: undefined });
+      }
+
+      if (filters.work) {
+        console.log(`⚠️ Removing work filter for FREE user: ${filters.work}`);
+        delete filters.work;
+        userSessionFilters.set(userId, { ...filters, work: undefined });
+      }
+    }
 
     // Zapisz w pamięci
     userSessionFilters.set(userId, filters);

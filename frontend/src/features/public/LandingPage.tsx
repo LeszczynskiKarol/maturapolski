@@ -14,6 +14,7 @@ import {
   CheckCircle,
   TrendingUp,
   Award,
+  AlertCircle,
   Zap,
   Clock,
   BarChart3,
@@ -355,8 +356,8 @@ export const LandingPage: React.FC = () => {
                   },
                   {
                     icon: <BarChart3 className="w-6 h-6" />,
-                    title: "Tracking zapamiętywania",
-                    text: "Zobacz które epoki znasz najlepiej i nad czym popracować",
+                    title: "Śledzenie zapamiętywania",
+                    text: "Zobacz, które epoki znasz najlepiej i nad czym popracować",
                   },
                 ]}
                 imageUrl="https://maturapolski.s3.eu-north-1.amazonaws.com/content/epoki_opt.webp"
@@ -686,7 +687,7 @@ export const LandingPage: React.FC = () => {
                     us={true}
                   />
                   <ComparisonRow
-                    feature="15,000+ zadań"
+                    feature="1000+ zadań"
                     traditional={false}
                     books={false}
                     us={true}
@@ -698,7 +699,7 @@ export const LandingPage: React.FC = () => {
                     us={true}
                   />
                   <ComparisonRow
-                    feature="Tracking postępów"
+                    feature="Śledzenie postępów"
                     traditional={false}
                     books={false}
                     us={true}
@@ -817,36 +818,130 @@ export const LandingPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Pricing Section */}
         <section id="cennik" className="py-20 px-4 bg-white">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                Prosty, przejrzysty cennik
+                Zacznij za darmo, rozwijaj się bez limitów
               </h2>
               <p className="text-xl text-gray-600">
-                Jedna subskrypcja - pełen dostęp do wszystkiego
+                Przetestuj platformę bez zobowiązań, a gdy będziesz gotowy -
+                odblokuj pełny potencjał
               </p>
             </div>
 
-            {/* Single Pricing Card - Centered */}
-            <div className="max-w-xl mx-auto">
+            {/* Two Pricing Cards */}
+            <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
+              {/* FREE Plan */}
+              <motion.div
+                whileHover={{ y: -4 }}
+                className="relative rounded-2xl p-8 bg-white border-2 border-gray-200 shadow-lg"
+              >
+                <div className="text-center mb-8">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                    Darmowy
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Idealny na start - poznaj platformę
+                  </p>
+                  <div className="mb-4">
+                    <span className="text-5xl font-bold text-gray-900">
+                      0 zł
+                    </span>
+                    <span className="text-xl text-gray-500 ml-2">/zawsze</span>
+                  </div>
+                  <p className="text-gray-500 text-sm">Bez karty kredytowej</p>
+                </div>
+
+                <ul className="space-y-4 mb-10">
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-green-500" />
+                    <span className="text-gray-700">
+                      <strong>5 pytań dziennie</strong> - testowych i
+                      wielokrotnego wyboru
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-green-500" />
+                    <span className="text-gray-700">
+                      <strong>Dostęp do wszystkich epok</strong> - od
+                      starożytności po współczesność
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-green-500" />
+                    <span className="text-gray-700">
+                      <strong>Wyjaśnienia odpowiedzi</strong> - ucz się na
+                      błędach
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-green-500" />
+                    <span className="text-gray-700">
+                      <strong>Śledzenie postępów</strong> - podstawowe
+                      statystyki
+                    </span>
+                  </li>
+                  {/* 🆕 NOWE - info o losowych pytaniach */}
+                  <li className="flex items-start gap-3 text-gray-400">
+                    <X className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <span>Powtórki z konkretnych epok literackich</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-gray-400">
+                    <X className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <span>Powtórki z wybranych lektur</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-gray-400">
+                    <X className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <span>Pytania otwarte z oceną AI</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-gray-400">
+                    <X className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <span>Wypracowania i notatki syntetyczne</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-gray-400">
+                    <X className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <span>Nieograniczona liczba pytań</span>
+                  </li>
+                </ul>
+
+                {/* 🆕 NOWE - info pod listą */}
+                <div className="mb-6 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <p className="text-sm text-gray-600 flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5 text-gray-400" />
+                    <span>
+                      W planie darmowym pytania są <strong>losowe</strong> z
+                      różnych epok i lektur - nie możesz wybrać konkretnego
+                      zakresu materiału do nauki.
+                    </span>
+                  </p>
+                </div>
+
+                <Link
+                  to="/register"
+                  className="block text-center py-4 rounded-xl font-bold text-lg transition-all bg-gray-100 text-gray-700 hover:bg-gray-200"
+                >
+                  Zacznij za darmo
+                </Link>
+              </motion.div>
+
+              {/* PREMIUM Plan */}
               <motion.div
                 whileHover={{ y: -8 }}
-                className="relative rounded-2xl p-10 bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow-2xl border-4 border-blue-400"
+                className="relative rounded-2xl p-8 bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow-2xl border-4 border-blue-400"
               >
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-yellow-400 text-yellow-900 text-sm font-bold rounded-full">
-                  KOMPLETNY PAKIET
+                  NAJPOPULARNIEJSZY
                 </div>
 
                 <div className="text-center mb-8">
-                  <h3 className="text-3xl font-bold mb-3">Premium</h3>
+                  <h3 className="text-2xl font-bold mb-3">Premium</h3>
                   <p className="text-blue-100 mb-6">
-                    Wszystko czego potrzebujesz do matury
+                    Pełny dostęp - maksymalne przygotowanie
                   </p>
                   <div className="mb-4">
-                    <span className="text-6xl font-bold">39 zł</span>
-                    <span className="text-2xl ml-2">/miesiąc</span>
+                    <span className="text-5xl font-bold">39 zł</span>
+                    <span className="text-xl ml-2">/miesiąc</span>
                   </div>
                   <p className="text-blue-100 text-sm">
                     Koszt jednej godziny korepetycji
@@ -855,72 +950,117 @@ export const LandingPage: React.FC = () => {
 
                 <ul className="space-y-4 mb-10">
                   <li className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
-                    <span className="text-base">
-                      <strong>Nielimitowane zadania</strong> - 15,000+ pytań do
-                      wyboru
+                    <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-200" />
+                    <span>
+                      <strong>Nieograniczone pytania</strong> - 1000+ zadań bez
+                      limitów
+                    </span>
+                  </li>
+                  {/* 🆕 NOWE - powtórki z epok */}
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-200" />
+                    <span>
+                      <strong>Powtórki z epok</strong> - ucz się wybranej epoki
+                      literackiej
+                    </span>
+                  </li>
+                  {/* 🆕 NOWE - powtórki z lektur */}
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-200" />
+                    <span>
+                      <strong>Powtórki z lektur</strong> - skup się na
+                      konkretnym utworze
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
-                    <span className="text-base">
-                      <strong>AI ocena wypracowań</strong> - szczegółowy
-                      feedback w 30 sekund
+                    <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-200" />
+                    <span>
+                      <strong>AI ocena wypracowań</strong> - feedback w 30
+                      sekund
                     </span>
                   </li>
-
                   <li className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
-                    <span className="text-base">
+                    <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-200" />
+                    <span>
+                      <strong>Notatki syntetyczne</strong> - ćwicz pisanie z AI
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-200" />
+                    <span>
                       <strong>Spaced Repetition</strong> - inteligentne powtórki
-                      z epok
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
-                    <span className="text-base">
-                      <strong>Szczegółowe statystyki</strong> - analiza postępów
-                      i mocnych stron
+                    <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-200" />
+                    <span>
+                      <strong>Szczegółowe statystyki</strong> - pełna analiza
+                      postępów
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
-                    <span className="text-base">
+                    <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-200" />
+                    <span>
                       <strong>System poziomów</strong> - gamifikacja i motywacja
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
-                    <span className="text-base">
-                      <strong>Aplikacja mobilna</strong> - ucz się wszędzie
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
-                    <span className="text-base">
-                      <strong>Tryb ciemny</strong> - wygodna nauka wieczorem
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5 text-blue-200" />
-                    <span className="text-base">
-                      <strong>Wsparcie 7 dni w tygodniu</strong> - zawsze tu
-                      jesteśmy
+                    <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-200" />
+                    <span>
+                      <strong>Priorytetowe wsparcie</strong> - odpowiedź w 24h
                     </span>
                   </li>
                 </ul>
 
                 <Link
                   to="/register"
-                  className="block text-center py-4 rounded-xl font-bold text-lg transition-all bg-white text-blue-600 hover:bg-blue-50 shadow-2xl hover:shadow-3xl hover:scale-105"
+                  className="block text-center py-4 rounded-xl font-bold text-lg transition-all bg-white text-blue-600 hover:bg-blue-50 shadow-xl hover:shadow-2xl hover:scale-105"
                 >
-                  Rozpocznij naukę za 39 zł
+                  Rozpocznij z Premium
                 </Link>
 
                 <p className="text-center text-blue-100 text-sm mt-4">
-                  Anuluj w dowolnym momencie
+                  Anuluj w dowolnym momencie • 7 dni na zwrot
                 </p>
               </motion.div>
+            </div>
+
+            {/* Bottom comparison note - 🆕 ZAKTUALIZOWANE */}
+            <div className="max-w-3xl mx-auto mt-12">
+              <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-6 border border-purple-100">
+                <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                  <Target className="w-5 h-5 text-purple-600" />
+                  Różnica w nauce z powtórkami vs losowe pytania
+                </h4>
+                <div className="grid md:grid-cols-2 gap-4 text-sm">
+                  <div className="bg-white rounded-lg p-4 border border-gray-200">
+                    <p className="font-semibold text-gray-700 mb-2">
+                      🎲 Plan darmowy:
+                    </p>
+                    <p className="text-gray-600">
+                      Pytania są losowane z całej bazy - dzisiaj możesz dostać
+                      pytanie o Mickiewiczu, jutro o Przerwie-Tetmajerze, a
+                      pojutrze o Sofoklesie. Brak systematycznej nauki.
+                    </p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4 border border-purple-200">
+                    <p className="font-semibold text-purple-700 mb-2">
+                      🎯 Plan Premium:
+                    </p>
+                    <p className="text-gray-600">
+                      Sam decydujesz czego się uczysz. Przed sprawdzianem z
+                      romantyzmu? Wybierz tylko pytania z tej epoki. Masz test z
+                      "Lalki"? Skup się na tej lekturze.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-gray-600 text-center mt-6">
+                💡 <strong>Nie wiesz co wybrać?</strong> Zacznij od planu
+                darmowego - możesz przejść na Premium w dowolnym momencie, gdy
+                poczujesz potrzebę systematycznej nauki.
+              </p>
             </div>
           </div>
         </section>

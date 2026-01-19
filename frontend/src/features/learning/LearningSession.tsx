@@ -3092,6 +3092,7 @@ export const LearningSession: React.FC = () => {
           >
             <InSessionFilters
               currentFilters={sessionFilters}
+              isPremium={isPremium}
               onFiltersChange={applyFiltersAndRefresh}
               isLoading={isLoadingNext}
               worksStats={worksStats}
@@ -3229,7 +3230,14 @@ const InSessionFilters: React.FC<{
   onFiltersChange: (filters: SessionFilters) => void;
   isLoading: boolean;
   worksStats?: any;
-}> = ({ currentFilters, onFiltersChange, isLoading, worksStats }) => {
+  isPremium: boolean; // 🆕 NOWY PROP
+}> = ({
+  currentFilters,
+  onFiltersChange,
+  isLoading,
+  worksStats,
+  isPremium,
+}) => {
   const [localFilters, setLocalFilters] =
     useState<SessionFilters>(currentFilters);
   const [selectedDifficulties, setSelectedDifficulties] = useState<number[]>(
@@ -3261,6 +3269,8 @@ const InSessionFilters: React.FC<{
     refetchInterval: 10000,
     staleTime: 5000,
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (levelProgress && selectedDifficulties.length > 0) {
@@ -3295,24 +3305,13 @@ const InSessionFilters: React.FC<{
     fetchAvailableCount(localFilters);
   }, [localFilters]);
 
-  {
-    /*}const handleCategoryToggle = (categoryValue: string) => {
-    const newCategories = selectedCategories.includes(categoryValue)
-      ? selectedCategories.filter((c) => c !== categoryValue)
-      : [...selectedCategories, categoryValue];
-
-    setSelectedCategories(newCategories);
-
-    const newFilters = {
-      ...localFilters,
-      category: newCategories.length > 0 ? newCategories.join(",") : undefined,
-    };
-    setLocalFilters(newFilters);
-    onFiltersChange(newFilters);
-  };*/
-  }
-
   const handleEpochToggle = (epochValue: string) => {
+    // 🆕 BLOKADA DLA FREE USERS
+    if (!isPremium) {
+      toast.error("Filtrowanie po epokach dostępne tylko w planie Premium!");
+      return;
+    }
+
     const newEpochs = selectedEpochs.includes(epochValue)
       ? selectedEpochs.filter((e) => e !== epochValue)
       : [...selectedEpochs, epochValue];
@@ -3321,10 +3320,24 @@ const InSessionFilters: React.FC<{
 
     const newFilters = {
       ...localFilters,
-      epoch: newEpochs.length > 0 ? newEpochs.join(",") : undefined, // Backend dostanie "ROMANTICISM,POSITIVISM"
-      // ✅ Auto-zaznacz kategorię gdy wybrano epokę
+      epoch: newEpochs.length > 0 ? newEpochs.join(",") : undefined,
       category:
         newEpochs.length > 0 ? "HISTORICAL_LITERARY" : localFilters.category,
+    };
+    setLocalFilters(newFilters);
+    onFiltersChange(newFilters);
+  };
+
+  const handleWorkSelect = (workTitle: string) => {
+    // 🆕 BLOKADA DLA FREE USERS
+    if (!isPremium && workTitle) {
+      toast.error("Filtrowanie po lekturach dostępne tylko w planie Premium!");
+      return;
+    }
+
+    const newFilters = {
+      ...localFilters,
+      work: workTitle || undefined,
     };
     setLocalFilters(newFilters);
     onFiltersChange(newFilters);
@@ -3367,6 +3380,7 @@ const InSessionFilters: React.FC<{
   const clearFilters = () => {
     setLocalFilters({});
     setSelectedDifficulties([]);
+    setSelectedEpochs([]);
     onFiltersChange({});
   };
 
@@ -3407,46 +3421,54 @@ const InSessionFilters: React.FC<{
         )}
       </div>
 
-      {/* ✅ KATEGORIE - pełny dark mode 
-      <div className="grid grid-cols-3 gap-2 mb-3">
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat.value}
-            onClick={() => handleCategoryToggle(cat.value)}
-            disabled={isLoading}
-            className={`px-3 py-2 text-xs rounded-lg border transition-colors ${
-              selectedCategories.includes(cat.value)
-                ? "border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
-                : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-300"
-            } disabled:opacity-50`}
-          >
-            {cat.label}
-          </button>
-        ))}
-      </div>*/}
-
-      {/* ✅ LEKTURA - tylko w FREE SESSION */}
+      {/* 🆕 LEKTURA - Z BLOKADĄ DLA FREE USERS */}
       {worksStats && Object.keys(worksStats).length > 0 && (
-        <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-          <label className="block text-xs font-medium text-blue-700 dark:text-blue-300 mb-2">
+        <div
+          className={`mb-3 p-3 rounded-lg border relative ${
+            isPremium
+              ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
+              : "bg-gray-100 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600"
+          }`}
+        >
+          {/* 🆕 OVERLAY DLA FREE USERS */}
+          {!isPremium && (
+            <div className="absolute inset-0 bg-gray-900/10 dark:bg-black/30 rounded-lg flex items-center justify-center z-10">
+              <div className="bg-white dark:bg-gray-800 rounded-lg px-4 py-3 shadow-lg text-center max-w-xs">
+                <Lock className="w-6 h-6 text-amber-500 mx-auto mb-2" />
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
+                  Powtórki z lektur tylko w Premium
+                </p>
+                <button
+                  onClick={() => navigate("/subscription")}
+                  className="px-4 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 
+                           text-white rounded-lg text-sm font-medium
+                           hover:from-amber-600 hover:to-orange-600 transition-all"
+                >
+                  Odblokuj Premium
+                </button>
+              </div>
+            </div>
+          )}
+
+          <label
+            className={`block text-xs font-medium mb-2 ${
+              isPremium
+                ? "text-blue-700 dark:text-blue-300"
+                : "text-gray-500 dark:text-gray-400"
+            }`}
+          >
             📚 Lektura (opcjonalnie)
           </label>
           <select
             value={currentFilters.work || ""}
-            onChange={(e) => {
-              const newFilters = {
-                ...localFilters,
-                work: e.target.value || undefined,
-              };
-              setLocalFilters(newFilters);
-            }}
-            disabled={isLoading}
-            className="w-full px-3 py-2 border rounded-lg 
+            onChange={(e) => handleWorkSelect(e.target.value)}
+            disabled={isLoading || !isPremium}
+            className={`w-full px-3 py-2 border rounded-lg 
            bg-white dark:bg-gray-800 
            text-gray-900 dark:text-white
            border-gray-300 dark:border-gray-600
            focus:ring-2 focus:ring-blue-500
-           disabled:opacity-50"
+           disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             <option value="">
               {selectedEpochs.length > 0
@@ -3460,7 +3482,6 @@ const InSessionFilters: React.FC<{
             {Object.values(worksStats)
               .filter(
                 (work: any) =>
-                  // ✅ Filtruj po wybranych epokach
                   selectedEpochs.length === 0 ||
                   selectedEpochs.includes(work.epoch),
               )
@@ -3471,16 +3492,56 @@ const InSessionFilters: React.FC<{
                 </option>
               ))}
           </select>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Wybierz lekturę do powtórki lub zostaw puste
+          <p
+            className={`text-xs mt-1 ${
+              isPremium
+                ? "text-gray-500 dark:text-gray-400"
+                : "text-gray-400 dark:text-gray-500"
+            }`}
+          >
+            {isPremium
+              ? "Wybierz lekturę do powtórki lub zostaw puste"
+              : "Funkcja dostępna w planie Premium"}
           </p>
         </div>
       )}
 
-      {/* ✅ EPOKI - pełny dark mode */}
+      {/* 🆕 EPOKI - Z BLOKADĄ DLA FREE USERS */}
       {!localFilters.work && (
-        <div className="mb-3 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-          <p className="text-xs font-medium text-purple-700 dark:text-purple-300 mb-2">
+        <div
+          className={`mb-3 p-3 rounded-lg border relative ${
+            isPremium
+              ? "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
+              : "bg-gray-100 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600"
+          }`}
+        >
+          {/* 🆕 OVERLAY DLA FREE USERS */}
+          {!isPremium && (
+            <div className="absolute inset-0 bg-gray-900/10 dark:bg-black/30 rounded-lg flex items-center justify-center z-10">
+              <div className="bg-white dark:bg-gray-800 rounded-lg px-4 py-3 shadow-lg text-center max-w-xs">
+                <Lock className="w-6 h-6 text-amber-500 mx-auto mb-2" />
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
+                  Powtórki z epok tylko w Premium
+                </p>
+                <button
+                  onClick={() => navigate("/subscription")}
+                  className="px-4 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 
+                           text-white rounded-lg text-sm font-medium
+                           hover:from-amber-600 hover:to-orange-600 transition-all"
+                >
+                  Odblokuj Premium
+                </button>
+              </div>
+            </div>
+          )}
+
+          <p
+            className={`text-xs font-medium mb-2 ${
+              isPremium
+                ? "text-purple-700 dark:text-purple-300"
+                : "text-gray-500 dark:text-gray-400"
+            }`}
+          >
             Epoka literacka{" "}
             {selectedEpochs.length > 0 &&
               `(${selectedEpochs.length} wybranych)`}
@@ -3491,21 +3552,28 @@ const InSessionFilters: React.FC<{
               <button
                 key={epoch.value}
                 onClick={() => handleEpochToggle(epoch.value)}
-                disabled={isLoading}
+                disabled={isLoading || !isPremium}
                 className={`px-2 py-1 text-xs rounded transition-colors ${
                   selectedEpochs.includes(epoch.value)
                     ? "bg-purple-600 dark:bg-purple-500 text-white"
-                    : "bg-white dark:bg-gray-700 hover:bg-purple-100 dark:hover:bg-purple-900/40 text-gray-700 dark:text-gray-300"
+                    : isPremium
+                      ? "bg-white dark:bg-gray-700 hover:bg-purple-100 dark:hover:bg-purple-900/40 text-gray-700 dark:text-gray-300"
+                      : "bg-gray-200 dark:bg-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed"
                 } disabled:opacity-50`}
               >
                 {epoch.label}
               </button>
             ))}
           </div>
+          {!isPremium && (
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+              🔒 W planie darmowym pytania są losowe z różnych epok
+            </p>
+          )}
         </div>
       )}
 
-      {/* ✅ TYP ZADANIA - pełny dark mode */}
+      {/* TYP ZADANIA - bez zmian, ale dla FREE tylko CLOSED types */}
       <div className="mb-3">
         <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
           Typ zadania{" "}
@@ -3513,37 +3581,33 @@ const InSessionFilters: React.FC<{
         </p>
         <div className="flex flex-wrap gap-1">
           {EXERCISE_TYPES.filter((type) => {
-            // ✅ LOGIKA FILTROWANIA TYPÓW
+            // Dla FREE users - tylko pytania zamknięte
+            if (!isPremium) {
+              return ["CLOSED_SINGLE", "CLOSED_MULTIPLE"].includes(type.value);
+            }
 
-            // Jeśli wybrano kategorie
+            // Dla Premium - pełna logika filtrowania
             if (selectedCategories.length > 0) {
               const hasWriting = selectedCategories.includes("WRITING");
               const hasOtherCategories = selectedCategories.some(
                 (cat) => cat !== "WRITING",
               );
 
-              // Przypadek 1: TYLKO Pisanie (bez innych kategorii)
               if (hasWriting && !hasOtherCategories) {
-                // Pokaż TYLKO zadania otwarte
                 return !["CLOSED_SINGLE", "CLOSED_MULTIPLE"].includes(
                   type.value,
                 );
               }
 
-              // Przypadek 2: Pisanie + inne kategorie
               if (hasWriting && hasOtherCategories) {
-                // Pokaż wszystko
                 return true;
               }
 
-              // Przypadek 3: Inne kategorie BEZ Pisania
               if (!hasWriting && hasOtherCategories) {
-                // Ukryj zadania otwarte (notatka i wypracowanie)
                 return !["SYNTHESIS_NOTE", "ESSAY"].includes(type.value);
               }
             }
 
-            // Domyślnie - pokaż wszystko
             return true;
           }).map((type) => (
             <button
@@ -3562,27 +3626,16 @@ const InSessionFilters: React.FC<{
           ))}
         </div>
 
-        {/* ✅ Informacja o filtrowaniu */}
-        {selectedCategories.length > 0 && (
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-            {selectedCategories.includes("WRITING") &&
-              selectedCategories.length === 1 && (
-                <>
-                  💡 Dla kategorii "Pisanie" dostępne są tylko zadania otwarte
-                </>
-              )}
-            {!selectedCategories.includes("WRITING") &&
-              selectedCategories.length > 0 && (
-                <>
-                  💡 Zadania typu Notatka i Wypracowanie dostępne tylko w
-                  kategorii "Pisanie"
-                </>
-              )}
+        {/* Info dla FREE users o typach */}
+        {!isPremium && (
+          <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 flex items-center gap-1">
+            <Lock className="w-3 h-3" />
+            Pytania otwarte (notatka, wypracowanie) dostępne w Premium
           </p>
         )}
       </div>
 
-      {/* ✅ POZIOM TRUDNOŚCI - pełny dark mode */}
+      {/* POZIOM TRUDNOŚCI - bez zmian */}
       <div>
         <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
           Poziom trudności:
@@ -3641,7 +3694,7 @@ const InSessionFilters: React.FC<{
         </div>
       </div>
 
-      {/* ✅ AKTYWNE FILTRY - pełny dark mode */}
+      {/* AKTYWNE FILTRY */}
       {hasFilters && (
         <div className="mt-3 pt-3 border-t dark:border-gray-700">
           <div className="flex flex-wrap gap-1">
