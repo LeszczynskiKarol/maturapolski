@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Clock, Zap, Lock, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 
 interface FreeLimitStatus {
   isPremium: boolean;
@@ -29,9 +30,12 @@ export function FreeLimitWidget({
   const [timeToReset, setTimeToReset] = useState("");
   const navigate = useNavigate();
 
+  // ✅ Pobierz token z authStore zamiast localStorage
+  const { token, isAuthenticated } = useAuthStore();
+
   useEffect(() => {
     fetchStatus();
-  }, []);
+  }, [token]); // ✅ Reaguj na zmiany tokena
 
   useEffect(() => {
     if (!status?.resetAt) return;
@@ -63,10 +67,9 @@ export function FreeLimitWidget({
 
   const fetchStatus = async () => {
     try {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        console.log("No token found, skipping free limit fetch");
+      // ✅ Użyj tokena z authStore
+      if (!token || !isAuthenticated) {
+        console.log("No token or not authenticated, skipping free limit fetch");
         setLoading(false);
         return;
       }
@@ -83,12 +86,13 @@ export function FreeLimitWidget({
 
       if (!response.ok) {
         console.error(`Free limit API error: ${response.status}`);
-        // Nie próbuj parsować JSON dla błędnych odpowiedzi
+        setLoading(false);
         return;
       }
 
       if (!contentType || !contentType.includes("application/json")) {
         console.error("Response is not JSON:", contentType);
+        setLoading(false);
         return;
       }
 
@@ -97,6 +101,7 @@ export function FreeLimitWidget({
       // Dodatkowe zabezpieczenie - sprawdź czy text nie jest pusty
       if (!text || text.trim() === "") {
         console.error("Empty response from free-limit-status");
+        setLoading(false);
         return;
       }
 
@@ -122,8 +127,8 @@ export function FreeLimitWidget({
     return null;
   }
 
-  // Brak statusu
-  if (!status) {
+  // Brak statusu lub niezalogowany
+  if (!status || !isAuthenticated) {
     return null;
   }
 
@@ -240,11 +245,12 @@ export function useFreeLimitStatus() {
   const [status, setStatus] = useState<FreeLimitStatus | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // ✅ Pobierz token z authStore
+  const { token, isAuthenticated } = useAuthStore();
+
   const fetchStatus = async () => {
     try {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
+      if (!token || !isAuthenticated) {
         setLoading(false);
         return;
       }
@@ -283,7 +289,7 @@ export function useFreeLimitStatus() {
 
   useEffect(() => {
     fetchStatus();
-  }, []);
+  }, [token]); // ✅ Reaguj na zmiany tokena
 
   return {
     status,

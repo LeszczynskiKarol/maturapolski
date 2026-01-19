@@ -28,12 +28,12 @@ export async function exerciseRoutes(fastify: FastifyInstance) {
         "Getting exercises with status for user:",
         userId,
         "query:",
-        query
+        query,
       );
 
       const exercises = await exerciseService.getExercisesWithStatus(
         userId,
-        query
+        query,
       );
 
       console.log("Found exercises:", exercises.length);
@@ -58,7 +58,7 @@ export async function exerciseRoutes(fastify: FastifyInstance) {
     const { limit = 10 } = request.query as { limit?: number };
     const exercises = await exerciseService.getExercisesByCategory(
       category,
-      limit
+      limit,
     );
     return reply.send(exercises);
   });
@@ -97,18 +97,18 @@ export async function exerciseRoutes(fastify: FastifyInstance) {
       if (exercise) {
         console.log(
           "Updating level progress for difficulty",
-          exercise.difficulty
+          exercise.difficulty,
         );
 
         // Pobierz stan PRZED aktualizacją
         const beforeProgress = await levelProgress.getDetailedProgress(userId);
 
-        // AKTUALIZUJ PUNKTY
+        // ✅ FIX: Użyj metody updateProgressAfterExercise (teraz istnieje)
         await levelProgress.updateProgressAfterExercise(
           userId,
           exercise.difficulty,
           result.score,
-          true
+          true,
         );
 
         // Pobierz stan PO aktualizacji
@@ -116,9 +116,10 @@ export async function exerciseRoutes(fastify: FastifyInstance) {
 
         // Dodaj do odpowiedzi
         (result as any).levelProgress = afterProgress;
+        // ✅ FIX: Użyj unlockedDifficulty zamiast currentMaxDifficulty
+        // (lub currentMaxDifficulty który teraz jest aliasem w serwisie)
         (result as any).unlockedNewLevel =
-          afterProgress.currentMaxDifficulty >
-          beforeProgress.currentMaxDifficulty;
+          afterProgress.unlockedDifficulty > beforeProgress.unlockedDifficulty;
 
         console.log("Progress updated:", afterProgress);
       }

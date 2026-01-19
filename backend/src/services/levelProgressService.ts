@@ -72,6 +72,16 @@ export class LevelProgressService {
     }
   }
 
+  // ✅ NOWA METODA: Aktualizuj postęp po ukończeniu ćwiczenia
+  async updateProgressAfterExercise(
+    userId: string,
+    difficulty: number,
+    score: number,
+    wasCorrect: boolean,
+  ) {
+    return this.addPoints(userId, difficulty, score, wasCorrect);
+  }
+
   // Dodaj punkty po ukończeniu zadania
   async addPoints(
     userId: string,
@@ -261,6 +271,8 @@ export class LevelProgressService {
 
       return {
         unlockedDifficulty: progress.unlockedDifficulty,
+        // ✅ DODANE: alias dla kompatybilności
+        currentMaxDifficulty: progress.unlockedDifficulty,
         pointsByDifficulty: {
           1: progress.difficulty1Points,
           2: progress.difficulty2Points,
@@ -280,6 +292,8 @@ export class LevelProgressService {
       // Zwróć domyślny obiekt w przypadku błędu
       return {
         unlockedDifficulty: 2,
+        // ✅ DODANE: alias dla kompatybilności
+        currentMaxDifficulty: 2,
         pointsByDifficulty: {
           1: 0,
           2: 0,

@@ -38,7 +38,7 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
         event = stripe.webhooks.constructEvent(
           request.rawBody as Buffer,
           sig,
-          process.env.STRIPE_WEBHOOK_SECRET!
+          process.env.STRIPE_WEBHOOK_SECRET!,
         );
         console.log("✅ Signature verified!");
       } catch (err: any) {
@@ -56,7 +56,7 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
         console.error("❌ Error processing webhook:", error);
         return reply.code(500).send({ error: "Webhook processing failed" });
       }
-    }
+    },
   );
 
   // CHRONIONE ENDPOINTY - wymagają JWT
@@ -101,16 +101,16 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
         ) {
           // ✅ Ustaw trial_end na datę wygaśnięcia pakietu
           trialEnd = Math.floor(
-            new Date(user.subscription.endDate).getTime() / 1000
+            new Date(user.subscription.endDate).getTime() / 1000,
           );
 
           const daysLeft = Math.ceil(
             (new Date(user.subscription.endDate).getTime() - Date.now()) /
-              (1000 * 60 * 60 * 24)
+              (1000 * 60 * 60 * 24),
           );
 
           console.log(
-            `🔄 User has active one-time package until ${user.subscription.endDate}`
+            `🔄 User has active one-time package until ${user.subscription.endDate}`,
           );
           console.log(`Setting trial_end to: ${new Date(trialEnd * 1000)}`);
 
@@ -137,7 +137,7 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
             warning: true,
             type: "subscription",
             message: `Masz aktywny pakiet na 30 dni (pozostało ${daysLeft} dni). Subskrypcja zostanie aktywowana automatycznie po jego wygaśnięciu (${new Date(
-              user.subscription.endDate
+              user.subscription.endDate,
             ).toLocaleDateString("pl-PL")}).`,
             currentEndDate: user.subscription.endDate,
             daysLeft,
@@ -180,6 +180,14 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
           if (session.payment_status === "paid") {
             const subscription =
               await subscriptionService.getOrCreateSubscription(userId);
+
+            // ✅ FIX: Dodaj null-check dla subscription
+            if (!subscription) {
+              return reply
+                .code(500)
+                .send({ error: "Failed to get subscription" });
+            }
+
             return reply.send({
               success: true,
               subscription: {
@@ -197,15 +205,21 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
         } catch (error: any) {
           return reply.code(500).send({ error: error.message });
         }
-      }
+      },
     );
 
     // Pobierz status subskrypcji
     protectedRoutes.get("/status", async (request, reply) => {
       const userId = (request.user as any).userId;
-      const subscription = await subscriptionService.getOrCreateSubscription(
-        userId
-      );
+      const subscription =
+        await subscriptionService.getOrCreateSubscription(userId);
+
+      // ✅ FIX: Dodaj null-check dla subscription
+      if (!subscription) {
+        return reply
+          .code(500)
+          .send({ error: "Failed to get subscription status" });
+      }
 
       return reply.send({
         plan: subscription.plan,
@@ -214,7 +228,7 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
         aiPointsUsed: subscription.aiPointsUsed,
         aiPointsLimit: subscription.aiPointsLimit,
         percentUsed: Math.round(
-          (subscription.aiPointsUsed / subscription.aiPointsLimit) * 100
+          (subscription.aiPointsUsed / subscription.aiPointsLimit) * 100,
         ),
         resetDate: subscription.aiPointsReset,
         cancelAt: subscription.cancelAt,
@@ -249,10 +263,10 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
         // Anuluj subskrypcję w Stripe
         try {
           await stripe.subscriptions.cancel(
-            pendingSubscription.stripeSubscriptionId
+            pendingSubscription.stripeSubscriptionId,
           );
           console.log(
-            `✅ Cancelled pending subscription: ${pendingSubscription.stripeSubscriptionId}`
+            `✅ Cancelled pending subscription: ${pendingSubscription.stripeSubscriptionId}`,
           );
         } catch (stripeError: any) {
           console.error("Error cancelling Stripe subscription:", stripeError);
@@ -302,12 +316,12 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
         // ✅ FALLBACK: jeśli nie ma customerId, pobierz z Stripe
         if (!customerId && user?.subscription?.stripeSubscriptionId) {
           console.log(
-            `⚠️ No stripeCustomerId, fetching from Stripe subscription...`
+            `⚠️ No stripeCustomerId, fetching from Stripe subscription...`,
           );
 
           try {
             const stripeSubscription = await stripe.subscriptions.retrieve(
-              user.subscription.stripeSubscriptionId
+              user.subscription.stripeSubscriptionId,
             );
             customerId = stripeSubscription.customer as string;
 
@@ -395,8 +409,8 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
                 metadata.pointsPackage === "SMALL"
                   ? "Pakiet Starter (50 pkt)"
                   : metadata.pointsPackage === "MEDIUM"
-                  ? "Pakiet Standard (150 pkt)"
-                  : "Pakiet Premium (300 pkt)";
+                    ? "Pakiet Standard (150 pkt)"
+                    : "Pakiet Premium (300 pkt)";
               description = `Doładowanie: ${packageName}`;
             } else {
               description = "Płatność";
@@ -417,7 +431,7 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
 
         // ✅ Sortuj po dacie (najnowsze pierwsze)
         payments.sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
         );
 
         console.log(`✅ Found ${payments.length} payments for user ${userId}`);
@@ -463,15 +477,15 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
         let newStartDate = new Date();
         let newEndDate = new Date();
 
-        if (hasActiveSubscription && existingSub.cancelAt) {
+        if (hasActiveSubscription && existingSub?.cancelAt) {
           // ✅ Ma anulowaną subskrypcję - pakiet zacznie się po jej wygaśnięciu
           newStartDate = new Date(existingSub.cancelAt);
           newEndDate = new Date(existingSub.cancelAt);
           newEndDate.setDate(newEndDate.getDate() + 30);
-        } else if (hasActiveOneTime) {
+        } else if (hasActiveOneTime && existingSub?.endDate) {
           // ✅ Ma aktywny pakiet jednorazowy - przedłuż od końca
-          newStartDate = new Date(existingSub.endDate!);
-          newEndDate = new Date(existingSub.endDate!);
+          newStartDate = new Date(existingSub.endDate);
+          newEndDate = new Date(existingSub.endDate);
           newEndDate.setDate(newEndDate.getDate() + 30);
         } else {
           // ✅ Brak aktywnego dostępu - zacznij od teraz
@@ -526,15 +540,15 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
             newEndDate: newEndDate.toISOString(),
             hasActiveSub: hasActiveSubscription ? "true" : "false",
             hasCancelledSub:
-              hasActiveSubscription && existingSub.cancelAt ? "true" : "false",
+              hasActiveSubscription && existingSub?.cancelAt ? "true" : "false",
           },
         });
 
         // ✅ Sprawdź czy trzeba pokazać ostrzeżenie
-        if (hasActiveSubscription && existingSub.cancelAt) {
+        if (hasActiveSubscription && existingSub?.cancelAt) {
           const daysLeft = Math.ceil(
             (new Date(existingSub.cancelAt).getTime() - Date.now()) /
-              (1000 * 60 * 60 * 24)
+              (1000 * 60 * 60 * 24),
           );
 
           return reply.send({
@@ -544,19 +558,19 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
             newEndDate: newEndDate.toISOString(),
             daysLeft,
             message: `Masz aktywną subskrypcję ważną do ${new Date(
-              existingSub.cancelAt
+              existingSub.cancelAt,
             ).toLocaleDateString(
-              "pl-PL"
+              "pl-PL",
             )}. Pakiet 30-dniowy zostanie aktywowany automatycznie po wygaśnięciu subskrypcji i będzie ważny do ${newEndDate.toLocaleDateString(
-              "pl-PL"
+              "pl-PL",
             )}.`,
             url: session.url,
             sessionId: session.id,
           });
-        } else if (hasActiveOneTime) {
+        } else if (hasActiveOneTime && existingSub?.endDate) {
           const daysLeft = Math.ceil(
-            (new Date(existingSub.endDate!).getTime() - Date.now()) /
-              (1000 * 60 * 60 * 24)
+            (new Date(existingSub.endDate).getTime() - Date.now()) /
+              (1000 * 60 * 60 * 24),
           );
 
           return reply.send({
@@ -566,11 +580,11 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
             newEndDate: newEndDate.toISOString(),
             daysLeft,
             message: `Masz aktywny dostęp ważny do ${new Date(
-              existingSub.endDate!
+              existingSub.endDate,
             ).toLocaleDateString(
-              "pl-PL"
+              "pl-PL",
             )}. Wykupienie kolejnego pakietu przedłuży dostęp do ${newEndDate.toLocaleDateString(
-              "pl-PL"
+              "pl-PL",
             )}.`,
             url: session.url,
             sessionId: session.id,
@@ -629,9 +643,13 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
     protectedRoutes.post("/create-portal-session", async (request, reply) => {
       const userId = (request.user as any).userId;
 
-      const subscription = await subscriptionService.getOrCreateSubscription(
-        userId
-      );
+      const subscription =
+        await subscriptionService.getOrCreateSubscription(userId);
+
+      // ✅ FIX: Dodaj null-check dla subscription
+      if (!subscription) {
+        return reply.code(500).send({ error: "Failed to get subscription" });
+      }
 
       if (!subscription.stripeCustomerId) {
         return reply.code(400).send({ error: "No Stripe customer found" });

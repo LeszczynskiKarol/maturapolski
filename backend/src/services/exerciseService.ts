@@ -15,7 +15,7 @@ export class ExerciseService {
     userId: string,
     exerciseId: string,
     answer: any,
-    timeSpent?: number
+    timeSpent?: number,
   ) {
     const exercise = await prisma.exercise.findUnique({
       where: { id: exerciseId },
@@ -29,7 +29,7 @@ export class ExerciseService {
     // SPRAWDZENIE PUNKTÓW AI
     // ========================================
     const requiresAI = ["SHORT_ANSWER", "SYNTHESIS_NOTE", "ESSAY"].includes(
-      exercise.type
+      exercise.type,
     );
     let pointsCost = 0;
 
@@ -37,17 +37,22 @@ export class ExerciseService {
       pointsCost = exercise.type === "ESSAY" ? 3 : 1;
       const hasPoints = await subscriptionService.hasAiPoints(
         userId,
-        pointsCost
+        pointsCost,
       );
 
       if (!hasPoints) {
-        const subscription = await subscriptionService.getOrCreateSubscription(
-          userId
-        );
+        const subscription =
+          await subscriptionService.getOrCreateSubscription(userId);
+        // ✅ FIX: Dodaj null-check dla subscription
+        if (!subscription) {
+          throw new Error(
+            `INSUFFICIENT_AI_POINTS|Brak punktów AI! Nie można pobrać informacji o subskrypcji.`,
+          );
+        }
         throw new Error(
           `INSUFFICIENT_AI_POINTS|Brak punktów AI! Masz ${
             subscription.aiPointsLimit - subscription.aiPointsUsed
-          }/${subscription.aiPointsLimit} punktów.`
+          }/${subscription.aiPointsLimit} punktów.`,
         );
       }
     }
@@ -74,7 +79,7 @@ export class ExerciseService {
         // ✅ TYLKO dla SYNTHESIS_NOTE i ESSAY używaj web research
         if (exercise.type === "SYNTHESIS_NOTE" || exercise.type === "ESSAY") {
           console.log(
-            `\n=== 🔍 WEB RESEARCH ASSESSMENT - ${exercise.type} ===`
+            `\n=== 🔍 WEB RESEARCH ASSESSMENT - ${exercise.type} ===`,
           );
           console.log("Exercise ID:", exerciseId);
 
@@ -110,7 +115,7 @@ export class ExerciseService {
             exercise.type as "SYNTHESIS_NOTE" | "ESSAY",
             exercise.points,
             workTitle,
-            additionalContext
+            additionalContext,
           );
 
           console.log("✅ Web research assessment completed");
@@ -118,7 +123,7 @@ export class ExerciseService {
 
           const estimatedTokens = {
             input: Math.ceil(
-              (exercise.question.length + answer.length + 30000) / 4
+              (exercise.question.length + answer.length + 30000) / 4,
             ),
             output: Math.ceil(JSON.stringify(aiAssessment).length / 4),
           };
@@ -128,7 +133,7 @@ export class ExerciseService {
               ? Math.min(aiAssessment.totalScore || 0, exercise.points)
               : Math.min(
                   Math.max(0, Math.round((aiAssessment.score || 0) * 10) / 10),
-                  exercise.points
+                  exercise.points,
                 );
 
           await prisma.submission.update({
@@ -181,7 +186,7 @@ export class ExerciseService {
             exerciseId,
             exercise.type,
             pointsCost,
-            estimatedTokens
+            estimatedTokens,
           );
 
           if (exercise.type === "ESSAY") {
@@ -219,8 +224,8 @@ export class ExerciseService {
               message: isCorrect
                 ? `Świetnie! Zdobyłeś ${finalScore} z ${exercise.points} punktów!`
                 : isPartiallyCorrect
-                ? `Częściowo poprawna odpowiedź. Zdobyłeś ${finalScore} z ${exercise.points} punktów.`
-                : "Odpowiedź wymaga poprawy",
+                  ? `Częściowo poprawna odpowiedź. Zdobyłeś ${finalScore} z ${exercise.points} punktów.`
+                  : "Odpowiedź wymaga poprawy",
               feedback: {
                 isCorrect,
                 isPartiallyCorrect,
@@ -246,7 +251,7 @@ export class ExerciseService {
             answer,
             exercise.question,
             content?.requirements,
-            exercise.points
+            exercise.points,
           );
 
           const finalScore = Math.min(aiAssessment.score || 0, exercise.points);
@@ -286,7 +291,7 @@ export class ExerciseService {
             exerciseId,
             exercise.type,
             pointsCost,
-            estimatedTokens
+            estimatedTokens,
           );
 
           const isCorrect = finalScore >= exercise.points * 0.6;
@@ -300,8 +305,8 @@ export class ExerciseService {
             message: isCorrect
               ? `Świetnie! Zdobyłeś ${finalScore} z ${exercise.points} punktów!`
               : isPartiallyCorrect
-              ? `Częściowo poprawna odpowiedź. Zdobyłeś ${finalScore} z ${exercise.points} punktów.`
-              : "Odpowiedź wymaga poprawy",
+                ? `Częściowo poprawna odpowiedź. Zdobyłeś ${finalScore} z ${exercise.points} punktów.`
+                : "Odpowiedź wymaga poprawy",
             feedback: {
               isCorrect,
               isPartiallyCorrect,
@@ -330,12 +335,12 @@ export class ExerciseService {
               minWords: metadata?.wordLimit?.min || 400,
               requiredText: metadata?.requiredReadings?.[0] || "Lektura",
               contexts: [],
-            }
+            },
           );
 
           const totalScore = Math.min(
             assessment.totalScore || 0,
-            exercise.points
+            exercise.points,
           );
 
           await prisma.submission.update({
@@ -364,7 +369,7 @@ export class ExerciseService {
             answer,
             exercise.question,
             content?.requirements,
-            exercise.points
+            exercise.points,
           );
 
           const finalScore = Math.min(assessment.score || 0, exercise.points);
