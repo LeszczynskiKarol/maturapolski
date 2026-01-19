@@ -4,10 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import confetti from "canvas-confetti";
 import { SessionSummary } from "./SessionSummary";
 import { QuestionWithContextLinks } from "../../components/QuestionWithContextLinks";
-import {
-  FreeLimitWidget,
-  useFreeLimitStatus,
-} from "../../components/FreeLimitWidget";
+import { useFreeLimitStatus } from "../../components/FreeLimitWidget";
 import { AnimatePresence, motion } from "framer-motion";
 import { ExerciseBrowser } from "./ExerciseBrowser";
 
@@ -20,6 +17,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
+  Zap,
   CreditCard,
   Crown,
   Filter,
@@ -1356,11 +1354,6 @@ export const LearningSession: React.FC = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-6">
-      {!isPremium && (
-        <div className="mb-4">
-          <FreeLimitWidget compact />
-        </div>
-      )}
       {/* Loading state */}
       {isLoadingNext && (
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-8 mb-6">
@@ -3512,6 +3505,9 @@ const SessionStart: React.FC<{
     queryFn: () => api.get("/api/subscription/status").then((r) => r.data),
   });
 
+  // ✅ NOWE: POBIERZ STATUS LIMITU DLA FREE USERÓW
+  const { isPremium, canSolve, remaining, limit } = useFreeLimitStatus();
+
   // ✅ POBIERZ SZCZEGÓŁOWE STATYSTYKI (tak jak w Dashboard)
   const { data: sessionsHistory } = useQuery({
     queryKey: ["all-sessions"],
@@ -3526,7 +3522,8 @@ const SessionStart: React.FC<{
     });
   }, []);
 
-  const isFreeUser = subscription?.plan === "FREE";
+  // ✅ ZMIENIONE: Sprawdzamy zarówno subscription jak i isPremium z hooka
+  const isFreeUser = subscription?.plan === "FREE" || !isPremium;
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -3545,88 +3542,107 @@ const SessionStart: React.FC<{
           Zaczynajmy dzisiejszą naukę!
         </h1>
         <p className="text-blue-100 mb-6">
-          System dopasuje zadania do Twojego poziomu i postępów. Sesja zawiera{" "}
-          {SESSION_LIMIT} zadań. Możesz zmieniać filtry w trakcie sesji!
+          System dopasuje zadania do Twojego poziomu i postępów.
+          {isFreeUser
+            ? ` W planie darmowym masz ${limit} pytań zamkniętych dziennie.`
+            : ` Sesja zawiera ${SESSION_LIMIT} zadań. Możesz zmieniać filtry w trakcie sesji!`}
         </p>
 
-        {/* BLOKADA DLA FREE USERS */}
-        {isFreeUser ? (
-          <div className="space-y-4">
-            <div className="p-4 bg-yellow-500/20 backdrop-blur-sm border border-yellow-300/30 rounded-xl">
-              <div className="flex items-start gap-3">
-                <Lock className="w-6 h-6 text-yellow-200 mt-1 flex-shrink-0" />
-                <div>
-                  <p className="font-bold text-yellow-100 text-lg mb-1">
-                    Sesje nauki dostępne tylko w Premium
-                  </p>
-                  <p className="text-yellow-50 text-sm">
-                    Aby rozpocząć sesję nauki, potrzebujesz planu Premium.
-                    Odblokuj pełny dostęp do AI i wszystkich funkcji
-                    edukacyjnych.
-                  </p>
+        {/* ✅ NOWE: INFO DLA FREE USERS - ale pozwalamy na start */}
+        {isFreeUser && (
+          <div className="mb-6 space-y-4">
+            {/* Status limitu */}
+            <div className="p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-yellow-300" />
+                  <span className="font-semibold">Plan darmowy</span>
                 </div>
+                <span
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    canSolve
+                      ? "bg-green-500/20 text-green-200"
+                      : "bg-red-500/20 text-red-200"
+                  }`}
+                >
+                  {remaining}/{limit} pytań
+                </span>
+              </div>
+
+              {/* Progress bar */}
+              <div className="h-2 bg-white/20 rounded-full overflow-hidden mb-3">
+                <div
+                  className={`h-full transition-all ${
+                    canSolve ? "bg-green-400" : "bg-red-400"
+                  }`}
+                  style={{ width: `${((limit - remaining) / limit) * 100}%` }}
+                />
+              </div>
+
+              <div className="text-sm text-blue-100 space-y-1">
+                <p>✓ Dostępne: pytania jednokrotnego i wielokrotnego wyboru</p>
+                <p>✗ Niedostępne: zadania otwarte (notatka, wypracowanie)</p>
               </div>
             </div>
 
+            {/* Limit wyczerpany */}
+            {!canSolve && (
+              <div className="p-4 bg-red-500/20 backdrop-blur-sm border border-red-300/30 rounded-xl">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="w-6 h-6 text-red-200 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-bold text-red-100 mb-1">
+                      Dzienny limit wyczerpany
+                    </p>
+                    <p className="text-red-50 text-sm">
+                      Limit resetuje się o północy. Wykup Premium, aby uczyć się
+                      bez ograniczeń!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* CTA Premium */}
             <button
               onClick={() => navigate("/subscription")}
-              className="w-full px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-500 
+              className="w-full px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 
                        text-gray-900 rounded-xl hover:from-yellow-500 hover:to-orange-600 
-                       font-bold flex items-center justify-center gap-3 transition-all
-                       shadow-lg hover:shadow-xl transform hover:scale-105"
+                       font-bold flex items-center justify-center gap-2 transition-all
+                       shadow-lg hover:shadow-xl"
             >
-              <Crown className="w-6 h-6" />
-              Ulepsz do Premium - 39 zł/miesiąc
-              <ChevronRight className="w-5 h-5" />
+              <Crown className="w-5 h-5" />
+              Odblokuj Premium - bez limitów!
             </button>
           </div>
-        ) : (
+        )}
+
+        {/* ✅ ZMIENIONE: PRZYCISK START - dla wszystkich (jeśli mają limit) */}
+        {isPremium || canSolve ? (
           <button
             onClick={onStart}
             className="px-8 py-4 bg-white text-blue-600 rounded-xl hover:bg-blue-50 
                      font-semibold flex items-center gap-2 transition-colors"
           >
             <Play className="w-5 h-5" />
-            Rozpocznij sesję nauki ({SESSION_LIMIT} zadań)
+            {isFreeUser
+              ? `Rozpocznij naukę (${remaining} pytań)`
+              : `Rozpocznij sesję nauki (${SESSION_LIMIT} zadań)`}
+          </button>
+        ) : (
+          <button
+            onClick={() => navigate("/subscription")}
+            className="px-8 py-4 bg-white/20 text-white rounded-xl 
+                     font-semibold flex items-center gap-2 cursor-not-allowed opacity-75"
+            disabled
+          >
+            <Lock className="w-5 h-5" />
+            Limit wyczerpany - wróć jutro lub wykup Premium
           </button>
         )}
       </div>
 
-      {/*!isFreeUser && stats?.activeSessions?.length > 0 && (
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4 mb-4">
-          <h3 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-3">
-            Nieukończone sesje
-          </h3>
-          <div className="space-y-2">
-            {stats.activeSessions.map((session: any) => (
-              <div
-                key={session.id}
-                className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 
-                     rounded-lg border border-yellow-200 dark:border-yellow-700"
-              >
-                <div>
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    Sesja z{" "}
-                    {new Date(session.startedAt).toLocaleDateString("pl-PL")}
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Ukończono {session.completed} z 20 zadań • {session.correct}{" "}
-                    poprawnych
-                  </p>
-                </div>
-                <button
-                  onClick={onStart}
-                  className="px-4 py-2 bg-yellow-600 text-white rounded-lg 
-                     hover:bg-yellow-700 transition-colors text-sm font-medium"
-                >
-                  Kontynuuj
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}*/}
-
+      {/* Reszta komponentu bez zmian... */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
