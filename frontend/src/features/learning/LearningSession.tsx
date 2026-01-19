@@ -511,22 +511,21 @@ export const LearningSession: React.FC = () => {
 
       const data = await response.json();
 
-      // ✅ OBSŁUŻ BŁĄD FREE_LIMIT_EXCEEDED
       if (data.error === "FREE_LIMIT_EXCEEDED") {
         setShowLimitModal(true);
-        return null; // Zwróć null gdy błąd
+        return null;
       }
 
       if (data.error) {
-        setNoExercisesError(data.message || "Brak dostępnych pytań");
+        setNoExercisesError(data.message || "Brak dostępnych pytań"); // ✅ setNoExercisesError, nie setError!
         return null;
       }
 
       setCurrentExercise(data);
-      return data; // ✅ ZWRÓĆ DANE
+      return data;
     } catch (error) {
       console.error("Failed to fetch exercise:", error);
-      setNoExercisesError("Błąd połączenia");
+      setNoExercisesError("Błąd połączenia"); // ✅ setNoExercisesError, nie setError!
       return null;
     }
   };
@@ -1057,9 +1056,14 @@ export const LearningSession: React.FC = () => {
       // Pobierz pierwsze zadanie
       setIsLoadingNext(true);
       try {
-        const { data } = await fetchNextExercise();
+        const data = await fetchNextExercise(); // ✅ BEZ destrukturyzacji!
 
         // ✅ SPRAWDŹ ERROR
+        if (!data) {
+          // fetchNextExercise zwróciło null - błąd już obsłużony
+          return;
+        }
+
         if (data?.error === "NO_EXERCISES") {
           setNoExercisesError(data.message || "Brak dostępnych ćwiczeń");
           setCurrentExercise(null);
@@ -1150,9 +1154,14 @@ export const LearningSession: React.FC = () => {
     setNoExercisesError(null); // ✅ Wyczyść poprzedni error
 
     try {
-      const { data } = await fetchNextExercise();
+      const data = await fetchNextExercise(); // ✅ BEZ destrukturyzacji!
 
       // ✅ SPRAWDŹ CZY JEST ERROR
+      if (!data) {
+        // fetchNextExercise zwróciło null - błąd już obsłużony
+        return;
+      }
+
       if (data?.error === "NO_EXERCISES") {
         setNoExercisesError(
           data.message || "Brak dostępnych ćwiczeń spełniających kryteria",
