@@ -504,12 +504,8 @@ export const LearningSession: React.FC = () => {
 
   const fetchNextExercise = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/api/learning/next", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const data = await response.json();
+      const response = await api.get("/api/learning/next");
+      const data = response.data;
 
       if (data.error === "FREE_LIMIT_EXCEEDED") {
         setShowLimitModal(true);
@@ -517,15 +513,22 @@ export const LearningSession: React.FC = () => {
       }
 
       if (data.error) {
-        setNoExercisesError(data.message || "Brak dostępnych pytań"); // ✅ setNoExercisesError, nie setError!
+        setNoExercisesError(data.message || "Brak dostępnych pytań");
         return null;
       }
 
       setCurrentExercise(data);
       return data;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to fetch exercise:", error);
-      setNoExercisesError("Błąd połączenia"); // ✅ setNoExercisesError, nie setError!
+
+      // Obsłuż błąd FREE_LIMIT_EXCEEDED z response
+      if (error.response?.data?.error === "FREE_LIMIT_EXCEEDED") {
+        setShowLimitModal(true);
+        return null;
+      }
+
+      setNoExercisesError(error.response?.data?.message || "Błąd połączenia");
       return null;
     }
   };
