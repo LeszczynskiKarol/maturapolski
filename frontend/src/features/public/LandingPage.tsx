@@ -1,6 +1,6 @@
 // frontend/src/features/public/LandingPage.tsx
 import { PublicLayout } from "../../components/PublicLayout";
-import { FeaturedSections } from "../../components/FeaturedSections";
+//import { FeaturedSections } from "../../components/FeaturedSections";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -762,9 +762,9 @@ export const LandingPage: React.FC = () => {
           </div>
         </section>
 
-        <FeaturedSections />
+        {/*<FeaturedSections />
 
-        {/* FAQ Section */}
+         FAQ Section */}
         <section className="py-20 px-4 bg-gray-50">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
