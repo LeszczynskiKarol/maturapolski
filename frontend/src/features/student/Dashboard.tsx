@@ -1,10 +1,7 @@
 // frontend/src/features/student/Dashboard.tsx
 
 import { useQuery } from "@tanstack/react-query";
-import {
-  FreeLimitWidget,
-  useFreeLimitStatus,
-} from "../../components/FreeLimitWidget";
+import { useFreeLimitStatus } from "../../components/FreeLimitWidget";
 import { motion } from "framer-motion";
 import {
   Award,
@@ -259,41 +256,6 @@ export const StudentDashboard: React.FC = () => {
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          {/* ✅ NOWE: Widget limitu dla FREE users */}
-          {isFree && <FreeLimitWidget />}
-
-          {/* Premium Banner dla FREE - TYLKO jeśli wyczerpany limit */}
-          {isFree && !canSolve && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl p-4 sm:p-6 text-white"
-            >
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
-                    <h3 className="text-lg sm:text-xl font-bold">
-                      Dzienny limit wyczerpany!
-                    </h3>
-                  </div>
-                  <p className="text-sm sm:text-base text-red-100 mb-3 sm:mb-4">
-                    Wykorzystałeś {limit} darmowych pytań na dziś. Wykup Premium
-                    aby kontynuować naukę bez ograniczeń!
-                  </p>
-                  <button
-                    onClick={() => navigate("/subscription")}
-                    className="w-full xs:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-white text-red-600 rounded-lg hover:bg-red-50
-                      font-semibold transition-colors flex items-center justify-center gap-2
-                      text-sm sm:text-base"
-                  >
-                    🚀 Odblokuj Premium
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
           {/* Premium Banner dla FREE - zachęta (gdy MA jeszcze pytania) */}
           {isFree && canSolve && (
             <motion.div

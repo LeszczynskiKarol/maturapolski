@@ -160,9 +160,141 @@ const WordCounter: React.FC<{
   );
 };
 
+// 🆕 BANNER PREMIUM DLA FREE USERS
+const PremiumBanner: React.FC<{
+  remaining: number;
+  limit: number;
+  onUpgrade: () => void;
+}> = ({ remaining, limit, onUpgrade }) => {
+  const [isMinimized, setIsMinimized] = useState(false);
+
+  if (isMinimized) {
+    return (
+      <button
+        onClick={() => setIsMinimized(false)}
+        className="mb-4 px-4 py-2 bg-gradient-to-r from-amber-500/10 to-orange-500/10 
+                   border border-amber-300/30 dark:border-amber-600/30 rounded-lg
+                   text-amber-700 dark:text-amber-300 text-sm font-medium
+                   hover:from-amber-500/20 hover:to-orange-500/20 transition-all
+                   flex items-center gap-2"
+      >
+        <Crown className="w-4 h-4" />
+        <span>Odblokuj Premium</span>
+        <span className="text-xs opacity-70">
+          ({remaining}/{limit} pytań)
+        </span>
+      </button>
+    );
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="mb-6 relative overflow-hidden rounded-2xl"
+    >
+      {/* Gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-r from-amber-500 via-orange-500 to-pink-500 opacity-90" />
+
+      {/* Pattern overlay */}
+      <div
+        className="absolute inset-0 opacity-10"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        }}
+      />
+
+      <div className="relative p-5">
+        {/* Close/minimize button */}
+        <button
+          onClick={() => setIsMinimized(true)}
+          className="absolute top-3 right-3 p-1 rounded-full bg-white/20 hover:bg-white/30 
+                     transition-colors text-white/80 hover:text-white"
+        >
+          <X className="w-4 h-4" />
+        </button>
+
+        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
+          {/* Icon */}
+          <div
+            className="flex-shrink-0 w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm 
+                          flex items-center justify-center"
+          >
+            <Crown className="w-8 h-8 text-white" />
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 text-white">
+            <h3 className="text-lg font-bold mb-1 flex items-center gap-2">
+              Odblokuj pełny potencjał nauki!
+              <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">
+                {remaining}/{limit} pytań
+              </span>
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm text-white/90 mb-3">
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-yellow-200" />
+                <span>Nieograniczona liczba pytań</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Target className="w-4 h-4 text-green-200" />
+                <span>Pytania otwarte z oceną AI</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-blue-200" />
+                <span>Wypracowania i notatki</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Award className="w-4 h-4 text-purple-200" />
+                <span>Szczegółowy feedback</span>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA Button */}
+          <button
+            onClick={onUpgrade}
+            className="flex-shrink-0 px-6 py-3 bg-white text-orange-600 rounded-xl 
+                       font-bold shadow-lg hover:shadow-xl hover:scale-105
+                       transition-all duration-200 flex items-center gap-2
+                       whitespace-nowrap"
+          >
+            <span>Aktywuj Premium</span>
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Progress indicator */}
+        <div className="mt-4 pt-3 border-t border-white/20">
+          <div className="flex items-center justify-between text-xs text-white/80 mb-1">
+            <span>Wykorzystane pytania dzisiaj</span>
+            <span className="font-medium">
+              {limit - remaining} z {limit}
+            </span>
+          </div>
+          <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
+            <motion.div
+              className="h-full bg-white rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: `${((limit - remaining) / limit) * 100}%` }}
+              transition={{ duration: 0.5 }}
+            />
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 export const LearningSession: React.FC = () => {
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
-  const { isPremium, limit, refetch: refetchLimit } = useFreeLimitStatus();
+  const {
+    isPremium,
+    limit,
+    remaining,
+    refetch: refetchLimit,
+  } = useFreeLimitStatus();
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [noExercisesError, setNoExercisesError] = useState<string | null>(null);
   const [isAutoStarting, setIsAutoStarting] = useState(false);
@@ -1433,6 +1565,16 @@ export const LearningSession: React.FC = () => {
             </p>
           </div>
         </motion.div>
+      )}
+
+      {/* Exercise Content */}
+      {/* 🆕 PREMIUM BANNER DLA FREE USERS */}
+      {!isPremium && sessionActive && !showFeedback && (
+        <PremiumBanner
+          remaining={remaining || 0}
+          limit={limit || 5}
+          onUpgrade={() => navigate("/subscription")}
+        />
       )}
 
       {/* Exercise Content */}
