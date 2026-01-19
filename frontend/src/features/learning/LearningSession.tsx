@@ -162,11 +162,23 @@ const WordCounter: React.FC<{
 
 // 🆕 BANNER PREMIUM DLA FREE USERS
 const PremiumBanner: React.FC<{
-  remaining: number;
-  limit: number;
+  remaining: number | undefined;
+  limit: number | undefined;
   onUpgrade: () => void;
-}> = ({ remaining, limit, onUpgrade }) => {
+  isLoading?: boolean;
+}> = ({ remaining, limit, onUpgrade, isLoading }) => {
   const [isMinimized, setIsMinimized] = useState(false);
+
+  // ✅ Fallback values i walidacja
+  const safeLimit = limit ?? 5;
+  const safeRemaining = remaining ?? safeLimit;
+  const used = safeLimit - safeRemaining;
+  const progressPercent = safeLimit > 0 ? (used / safeLimit) * 100 : 0;
+
+  // ✅ Nie pokazuj gdy ładowanie lub błąd
+  if (isLoading) {
+    return null;
+  }
 
   if (isMinimized) {
     return (
@@ -181,7 +193,7 @@ const PremiumBanner: React.FC<{
         <Crown className="w-4 h-4" />
         <span>Odblokuj Premium</span>
         <span className="text-xs opacity-70">
-          ({remaining}/{limit} pytań)
+          ({safeRemaining}/{safeLimit} pytań)
         </span>
       </button>
     );
@@ -228,7 +240,7 @@ const PremiumBanner: React.FC<{
             <h3 className="text-lg font-bold mb-1 flex items-center gap-2">
               Odblokuj pełny potencjał nauki!
               <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">
-                {remaining}/{limit} pytań
+                {safeRemaining}/{safeLimit} pytań
               </span>
             </h3>
 
@@ -270,14 +282,16 @@ const PremiumBanner: React.FC<{
           <div className="flex items-center justify-between text-xs text-white/80 mb-1">
             <span>Wykorzystane pytania dzisiaj</span>
             <span className="font-medium">
-              {limit - remaining} z {limit}
+              {used} z {safeLimit}
             </span>
           </div>
           <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
             <motion.div
               className="h-full bg-white rounded-full"
               initial={{ width: 0 }}
-              animate={{ width: `${((limit - remaining) / limit) * 100}%` }}
+              animate={{
+                width: `${Math.min(100, Math.max(0, progressPercent))}%`,
+              }}
               transition={{ duration: 0.5 }}
             />
           </div>
@@ -1571,8 +1585,8 @@ export const LearningSession: React.FC = () => {
       {/* 🆕 PREMIUM BANNER DLA FREE USERS */}
       {!isPremium && sessionActive && !showFeedback && (
         <PremiumBanner
-          remaining={remaining || 0}
-          limit={limit || 5}
+          remaining={remaining}
+          limit={limit}
           onUpgrade={() => navigate("/subscription")}
         />
       )}
