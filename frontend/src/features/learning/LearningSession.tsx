@@ -4,11 +4,16 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import confetti from "canvas-confetti";
 import { SessionSummary } from "./SessionSummary";
 import { QuestionWithContextLinks } from "../../components/QuestionWithContextLinks";
+import {
+  FreeLimitWidget,
+  useFreeLimitStatus,
+} from "../../components/FreeLimitWidget";
 import { AnimatePresence, motion } from "framer-motion";
 import { ExerciseBrowser } from "./ExerciseBrowser";
 
 import {
   AlertCircle,
+  AlertTriangle,
   Award,
   CheckCircle,
   ChevronDown,
@@ -159,6 +164,8 @@ const WordCounter: React.FC<{
 
 export const LearningSession: React.FC = () => {
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
+  const { isPremium, limit, refetch: refetchLimit } = useFreeLimitStatus();
+  const [showLimitModal, setShowLimitModal] = useState(false);
   const [noExercisesError, setNoExercisesError] = useState<string | null>(null);
   const [isAutoStarting, setIsAutoStarting] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
@@ -338,7 +345,7 @@ export const LearningSession: React.FC = () => {
   const handleMatch = () => {
     if (selectedLeft !== null && selectedRight !== null) {
       const newMatches = matches.filter(
-        ([l, r]) => l !== selectedLeft && r !== selectedRight
+        ([l, r]) => l !== selectedLeft && r !== selectedRight,
       );
       newMatches.push([selectedLeft, selectedRight]);
       setMatches(newMatches);
@@ -497,23 +504,32 @@ export const LearningSession: React.FC = () => {
     queryFn: () => api.get("/api/learning/stats").then((r) => r.data),
   });
 
-  const fetchNextExercise = async (excludeId?: string) => {
+  const fetchNextExercise = async () => {
     try {
-      // Najpierw ustaw filtry na backendzie
-      if (Object.keys(sessionFilters).length > 0) {
-        await api.post("/api/learning/session/filters", sessionFilters);
+      const token = localStorage.getItem("token");
+      const response = await fetch("/api/learning/next", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await response.json();
+
+      // ✅ OBSŁUŻ BŁĄD FREE_LIMIT_EXCEEDED
+      if (data.error === "FREE_LIMIT_EXCEEDED") {
+        setShowLimitModal(true);
+        return null; // Zwróć null gdy błąd
       }
 
-      const response = await api.get("/api/learning/next", {
-        params: {
-          excludeId: excludeId || undefined,
-          sequentialMode: sequentialMode ? "true" : "false", // DODANE
-        },
-      });
-      return { data: response.data };
+      if (data.error) {
+        setError(data.message || "Brak dostępnych pytań");
+        return null;
+      }
+
+      setCurrentExercise(data);
+      return data; // ✅ ZWRÓĆ DANE
     } catch (error) {
-      console.error("Error fetching exercise:", error);
-      return { data: null };
+      console.error("Failed to fetch exercise:", error);
+      setError("Błąd połączenia");
+      return null;
     }
   };
 
@@ -535,6 +551,10 @@ export const LearningSession: React.FC = () => {
       });
       setShowUpgradePrompt(true);
       return;
+    }
+
+    if (!isPremium) {
+      refetchLimit();
     }
 
     setIsSubmitting(true);
@@ -579,7 +599,7 @@ export const LearningSession: React.FC = () => {
             sessionId,
             userName:
               userData?.username || userData?.email?.split("@")[0] || "Uczniu",
-          }
+          },
         );
 
         setAiSummary(summaryResponse.data);
@@ -829,7 +849,7 @@ export const LearningSession: React.FC = () => {
           });
           toast.success(
             `Odblokowano poziom ${result.levelProgress.currentMaxDifficulty}!`,
-            { duration: 5000 }
+            { duration: 5000 },
           );
         }
       }
@@ -850,7 +870,7 @@ export const LearningSession: React.FC = () => {
         if (newStreak % 5 === 0) {
           toast.success(
             `🔥 BRAWO! To już ${newStreak}. Twoja poprawna odpowiedź z rzędu. Kontynuuj passę!`,
-            { duration: 4000 }
+            { duration: 4000 },
           );
         }
       }
@@ -935,7 +955,7 @@ export const LearningSession: React.FC = () => {
               } catch (error) {
                 console.error(
                   `Failed to close session ${oldSession.id}:`,
-                  error
+                  error,
                 );
               }
             } else {
@@ -956,7 +976,7 @@ export const LearningSession: React.FC = () => {
               } catch (error) {
                 console.error(
                   `Failed to mark empty session ${oldSession.id}:`,
-                  error
+                  error,
                 );
               }
             }
@@ -1003,12 +1023,12 @@ export const LearningSession: React.FC = () => {
         if (sessionFilters.epoch) {
           toast.success(
             `🔄 Rozpoczęto sesję z filtrami: ${getEpochLabel(
-              sessionFilters.epoch
-            )}`
+              sessionFilters.epoch,
+            )}`,
           );
         } else if (sessionFilters.work) {
           toast.success(
-            `Rozpoczynam powtórkę z lektury: ${sessionFilters.work}`
+            `Rozpoczynam powtórkę z lektury: ${sessionFilters.work}`,
           );
         } else {
           toast.success(`📚 Rozpoczęto sesję z filtrami`);
@@ -1137,7 +1157,7 @@ export const LearningSession: React.FC = () => {
       // ✅ SPRAWDŹ CZY JEST ERROR
       if (data?.error === "NO_EXERCISES") {
         setNoExercisesError(
-          data.message || "Brak dostępnych ćwiczeń spełniających kryteria"
+          data.message || "Brak dostępnych ćwiczeń spełniających kryteria",
         );
         setCurrentExercise(null);
       } else if (data) {
@@ -1336,6 +1356,11 @@ export const LearningSession: React.FC = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-6">
+      {!isPremium && (
+        <div className="mb-4">
+          <FreeLimitWidget compact />
+        </div>
+      )}
       {/* Loading state */}
       {isLoadingNext && (
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-8 mb-6">
@@ -1609,7 +1634,7 @@ export const LearningSession: React.FC = () => {
                               {option}
                             </span>
                           </label>
-                        )
+                        ),
                       )}
                     </div>
                   </>
@@ -1652,7 +1677,7 @@ export const LearningSession: React.FC = () => {
                                   {option}
                                 </span>
                               </label>
-                            )
+                            ),
                           )}
                         </div>
                       ))}
@@ -1686,13 +1711,13 @@ export const LearningSession: React.FC = () => {
                                   onClick={() => {
                                     if (isMatched) {
                                       const newMatches = matches.filter(
-                                        ([l, _]) => l !== index
+                                        ([l, _]) => l !== index,
                                       );
                                       setMatches(newMatches);
                                       setAnswer(newMatches);
                                     } else {
                                       setSelectedLeft(
-                                        isSelected ? null : index
+                                        isSelected ? null : index,
                                       );
                                     }
                                   }}
@@ -1701,8 +1726,8 @@ export const LearningSession: React.FC = () => {
                       isSelected
                         ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
                         : isMatched && pairColor
-                        ? `${pairColor.border} ${pairColor.bg}`
-                        : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
+                          ? `${pairColor.border} ${pairColor.bg}`
+                          : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
                     }`}
                                 >
                                   <span
@@ -1711,8 +1736,8 @@ export const LearningSession: React.FC = () => {
                       isSelected
                         ? "text-blue-600 dark:text-blue-400"
                         : isMatched && pairColor
-                        ? pairColor.text
-                        : "text-gray-600 dark:text-gray-300"
+                          ? pairColor.text
+                          : "text-gray-600 dark:text-gray-300"
                     }`}
                                   >
                                     {item.id}.
@@ -1724,8 +1749,8 @@ export const LearningSession: React.FC = () => {
                                       isSelected
                                         ? "text-gray-900 dark:text-gray-100"
                                         : isMatched
-                                        ? "text-gray-900 dark:text-gray-100"
-                                        : "text-gray-900 dark:text-gray-100"
+                                          ? "text-gray-900 dark:text-gray-100"
+                                          : "text-gray-900 dark:text-gray-100"
                                     }`}
                                   >
                                     {item.text}
@@ -1747,7 +1772,7 @@ export const LearningSession: React.FC = () => {
                                   )}
                                 </button>
                               );
-                            }
+                            },
                           )}
                         </div>
 
@@ -1774,13 +1799,13 @@ export const LearningSession: React.FC = () => {
                                   onClick={() => {
                                     if (isMatched) {
                                       const newMatches = matches.filter(
-                                        ([_, r]) => r !== index
+                                        ([_, r]) => r !== index,
                                       );
                                       setMatches(newMatches);
                                       setAnswer(newMatches);
                                     } else {
                                       setSelectedRight(
-                                        isSelected ? null : index
+                                        isSelected ? null : index,
                                       );
                                     }
                                   }}
@@ -1789,8 +1814,8 @@ export const LearningSession: React.FC = () => {
                       isSelected
                         ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
                         : isMatched && pairColor
-                        ? `${pairColor.border} ${pairColor.bg}`
-                        : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
+                          ? `${pairColor.border} ${pairColor.bg}`
+                          : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
                     }`}
                                 >
                                   <span
@@ -1799,8 +1824,8 @@ export const LearningSession: React.FC = () => {
                       isSelected
                         ? "text-blue-600 dark:text-blue-400"
                         : isMatched && pairColor
-                        ? pairColor.text
-                        : "text-gray-600 dark:text-gray-300"
+                          ? pairColor.text
+                          : "text-gray-600 dark:text-gray-300"
                     }`}
                                   >
                                     {item.id}.
@@ -1812,8 +1837,8 @@ export const LearningSession: React.FC = () => {
                                       isSelected
                                         ? "text-gray-900 dark:text-gray-100"
                                         : isMatched
-                                        ? "text-gray-900 dark:text-gray-100"
-                                        : "text-gray-900 dark:text-gray-100"
+                                          ? "text-gray-900 dark:text-gray-100"
+                                          : "text-gray-900 dark:text-gray-100"
                                     }`}
                                   >
                                     {item.text}
@@ -1835,7 +1860,7 @@ export const LearningSession: React.FC = () => {
                                   )}
                                 </button>
                               );
-                            }
+                            },
                           )}
                         </div>
                       </div>
@@ -1893,7 +1918,7 @@ export const LearningSession: React.FC = () => {
                                   setAnswer([...current, index]);
                                 } else {
                                   setAnswer(
-                                    current.filter((i: number) => i !== index)
+                                    current.filter((i: number) => i !== index),
                                   );
                                 }
                               }}
@@ -1903,7 +1928,7 @@ export const LearningSession: React.FC = () => {
                               {option}
                             </span>
                           </label>
-                        )
+                        ),
                       )}
                     </div>
                   )}
@@ -1942,7 +1967,7 @@ export const LearningSession: React.FC = () => {
                                 >
                                   {word}
                                 </span>
-                              )
+                              ),
                             )}
                           </div>
                         </div>
@@ -2028,7 +2053,7 @@ export const LearningSession: React.FC = () => {
                                     const newAnswer = [
                                       ...(answer ||
                                         Array(
-                                          currentExercise.content.steps.length
+                                          currentExercise.content.steps.length,
                                         ).fill("")),
                                     ];
                                     newAnswer[index] = e.target.value;
@@ -2049,7 +2074,7 @@ export const LearningSession: React.FC = () => {
                                 />
                               </label>
                             </div>
-                          )
+                          ),
                         )}
                       </div>
                     ) : (
@@ -2067,7 +2092,7 @@ export const LearningSession: React.FC = () => {
                                     <span key={idx} className="mr-3">
                                       • {hint}
                                     </span>
-                                  )
+                                  ),
                                 )}
                               </div>
                             </div>
@@ -2126,7 +2151,7 @@ export const LearningSession: React.FC = () => {
                                   </span>
                                   <span>{req}</span>
                                 </li>
-                              )
+                              ),
                             )}
                           </ul>
                         </div>
@@ -2241,7 +2266,7 @@ export const LearningSession: React.FC = () => {
                                 >
                                   {req}
                                 </span>
-                              )
+                              ),
                             )}
                           </div>
                         </div>
@@ -2400,8 +2425,8 @@ export const LearningSession: React.FC = () => {
                           isCorrect
                             ? "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
                             : isPartiallyCorrect
-                            ? "bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800"
-                            : "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
+                              ? "bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800"
+                              : "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
                         }`}
                       >
                         {/* Nagłówek z wynikiem */}
@@ -2511,7 +2536,7 @@ export const LearningSession: React.FC = () => {
                                   >
                                     • {strength}
                                   </li>
-                                )
+                                ),
                               )}
                             </ul>
                           </div>
@@ -2532,7 +2557,7 @@ export const LearningSession: React.FC = () => {
                                   >
                                     • {weakness}
                                   </li>
-                                )
+                                ),
                               )}
                             </ul>
                           </div>
@@ -2554,7 +2579,7 @@ export const LearningSession: React.FC = () => {
                                     >
                                       • {element}
                                     </li>
-                                  )
+                                  ),
                                 )}
                               </ul>
                             </div>
@@ -2576,7 +2601,7 @@ export const LearningSession: React.FC = () => {
                                     >
                                       • {element}
                                     </li>
-                                  )
+                                  ),
                                 )}
                               </ul>
                             </div>
@@ -2708,7 +2733,7 @@ export const LearningSession: React.FC = () => {
                         const categories = sessionFilters.category.split(",");
                         const uniqueCategories = [...new Set(categories)]; // Usuń duplikaty
                         const polishNames = uniqueCategories.map((cat) =>
-                          getCategoryLabel(cat.trim())
+                          getCategoryLabel(cat.trim()),
                         );
                         return polishNames.join(", ");
                       })()}
@@ -2823,7 +2848,7 @@ export const LearningSession: React.FC = () => {
                         newMode
                           ? "🔄 Tryb sekwencyjny włączony - pytania od najstarszego do najnowszego"
                           : "🧠 Tryb inteligentny włączony - algorytm adaptacyjny",
-                        { duration: 4000 }
+                        { duration: 4000 },
                       );
                     }}
                     className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 cursor-pointer"
@@ -2994,6 +3019,46 @@ export const LearningSession: React.FC = () => {
       {showSessionSummary && aiSummary && (
         <SessionSummary summary={aiSummary} onClose={handleSummaryClose} />
       )}
+      {showLimitModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertTriangle className="w-8 h-8 text-red-500" />
+              </div>
+
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                Dzienny limit wyczerpany!
+              </h2>
+
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                Wykorzystałeś już {limit} darmowych pytań na dziś. Wykup
+                Premium, aby uczyć się bez ograniczeń!
+              </p>
+
+              <div className="space-y-3">
+                <button
+                  onClick={() => navigate("/subscription")}
+                  className="w-full py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg font-semibold hover:from-blue-600 hover:to-indigo-600 transition-all"
+                >
+                  🚀 Odblokuj Premium
+                </button>
+
+                <button
+                  onClick={() => navigate("/dashboard")}
+                  className="w-full py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
+                >
+                  Wróć do panelu
+                </button>
+              </div>
+
+              <p className="text-sm text-gray-400 mt-4">
+                Limit resetuje się codziennie o północy
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -3007,13 +3072,13 @@ const InSessionFilters: React.FC<{
   const [localFilters, setLocalFilters] =
     useState<SessionFilters>(currentFilters);
   const [selectedDifficulties, setSelectedDifficulties] = useState<number[]>(
-    currentFilters.difficulty || []
+    currentFilters.difficulty || [],
   );
   const [selectedEpochs, setSelectedEpochs] = useState<string[]>(
-    currentFilters.epoch ? [currentFilters.epoch] : []
+    currentFilters.epoch ? [currentFilters.epoch] : [],
   );
   const [selectedTypes, setSelectedTypes] = useState<string[]>(
-    currentFilters.type ? [currentFilters.type] : []
+    currentFilters.type ? [currentFilters.type] : [],
   );
   const [
     selectedCategories,
@@ -3021,7 +3086,7 @@ const InSessionFilters: React.FC<{
       /*setSelectedCategories*/
     },
   ] = useState<string[]>(
-    currentFilters.category ? [currentFilters.category] : []
+    currentFilters.category ? [currentFilters.category] : [],
   );
   const [availableCount, setAvailableCount] = useState<number | null>(null);
   const [isCountLoading, setIsCountLoading] = useState(false);
@@ -3039,7 +3104,7 @@ const InSessionFilters: React.FC<{
   useEffect(() => {
     if (levelProgress && selectedDifficulties.length > 0) {
       const validDifficulties = selectedDifficulties.filter(
-        (d) => d <= levelProgress.currentMaxDifficulty
+        (d) => d <= levelProgress.currentMaxDifficulty,
       );
       if (validDifficulties.length !== selectedDifficulties.length) {
         setSelectedDifficulties(validDifficulties);
@@ -3226,7 +3291,7 @@ const InSessionFilters: React.FC<{
               {selectedEpochs.length > 0
                 ? `Wszystkie lektury z wybranych epok (${
                     Object.values(worksStats).filter((work: any) =>
-                      selectedEpochs.includes(work.epoch)
+                      selectedEpochs.includes(work.epoch),
                     ).length
                   })`
                 : "Wszystkie lektury"}
@@ -3236,7 +3301,7 @@ const InSessionFilters: React.FC<{
                 (work: any) =>
                   // ✅ Filtruj po wybranych epokach
                   selectedEpochs.length === 0 ||
-                  selectedEpochs.includes(work.epoch)
+                  selectedEpochs.includes(work.epoch),
               )
               .sort((a: any, b: any) => a.title.localeCompare(b.title, "pl"))
               .map((work: any) => (
@@ -3293,14 +3358,14 @@ const InSessionFilters: React.FC<{
             if (selectedCategories.length > 0) {
               const hasWriting = selectedCategories.includes("WRITING");
               const hasOtherCategories = selectedCategories.some(
-                (cat) => cat !== "WRITING"
+                (cat) => cat !== "WRITING",
               );
 
               // Przypadek 1: TYLKO Pisanie (bez innych kategorii)
               if (hasWriting && !hasOtherCategories) {
                 // Pokaż TYLKO zadania otwarte
                 return !["CLOSED_SINGLE", "CLOSED_MULTIPLE"].includes(
-                  type.value
+                  type.value,
                 );
               }
 
@@ -3375,8 +3440,8 @@ const InSessionFilters: React.FC<{
                   isLocked
                     ? "bg-gray-200 dark:bg-gray-700 opacity-50 cursor-not-allowed"
                     : selectedDifficulties.includes(level)
-                    ? "bg-yellow-100 dark:bg-yellow-900/30 border-yellow-500 dark:border-yellow-400"
-                    : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600"
+                      ? "bg-yellow-100 dark:bg-yellow-900/30 border-yellow-500 dark:border-yellow-400"
+                      : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600"
                 } border`}
                 title={
                   isLocked
@@ -3670,4 +3735,7 @@ function formatTime(seconds: number): string {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, "0")}`;
+}
+function setError(_arg0: any) {
+  throw new Error("Function not implemented.");
 }

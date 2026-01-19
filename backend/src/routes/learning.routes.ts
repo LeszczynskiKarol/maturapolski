@@ -1,5 +1,6 @@
 // backend/src/routes/learning.routes.ts
 
+import { freeLimitService } from "../services/freeLimitService";
 import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 import { LevelProgressService } from "../services/levelProgressService";
@@ -50,6 +51,49 @@ export async function learningRoutes(fastify: FastifyInstance) {
     }
   });
 
+  // Pobierz status dziennego limitu dla FREE users
+  fastify.get("/free-limit-status", async (request, reply) => {
+    try {
+      const userId = (request.user as any)?.userId;
+
+      if (!userId) {
+        console.error("No userId in request for free-limit-status");
+        return reply.code(401).send({
+          error: "Unauthorized",
+          isPremium: false,
+          canSolve: false,
+          used: 0,
+          remaining: 0,
+          limit: 5,
+          allowedTypes: ["CLOSED_SINGLE", "CLOSED_MULTIPLE"],
+          resetAt: new Date().toISOString(),
+        });
+      }
+
+      const status = await freeLimitService.getFullStatus(userId);
+
+      // Status już zawiera poprawne typy (string dla resetAt, number dla pozostałych)
+      return reply.header("Content-Type", "application/json").send(status);
+    } catch (error) {
+      console.error("Error in free-limit-status:", error);
+
+      // Zwróć domyślny status w razie błędu
+      return reply
+        .code(500)
+        .header("Content-Type", "application/json")
+        .send({
+          error: "Failed to get limit status",
+          isPremium: false,
+          canSolve: true, // Pozwól kontynuować w razie błędu
+          used: 0,
+          remaining: 5,
+          limit: 5,
+          allowedTypes: ["CLOSED_SINGLE", "CLOSED_MULTIPLE"],
+          resetAt: new Date().toISOString(),
+        });
+    }
+  });
+
   fastify.get("/debug/history", async (request, reply) => {
     const userId = (request.user as any).userId;
 
@@ -84,13 +128,21 @@ export async function learningRoutes(fastify: FastifyInstance) {
   fastify.post("/session/start", async (request, reply) => {
     const userId = (request.user as any).userId;
     const cache = getUserSessionCache(userId);
+    const limitStatus = await freeLimitService.getFullStatus(userId);
 
+    if (!limitStatus.isPremium && !limitStatus.canSolve) {
+      return reply.code(403).send({
+        error: "FREE_LIMIT_EXCEEDED",
+        message: `Wykorzystałeś dzienny limit ${limitStatus.limit} pytań. Wykup Premium aby kontynuować naukę bez ograniczeń!`,
+        limitStatus,
+      });
+    }
     // Czyść tylko dane specyficzne dla zakończonej sesji
     cache.completed.clear();
     cache.skipped.clear();
 
     console.log(
-      `Starting session with ${cache.currentSession.size} exercises already shown today`
+      `Starting session with ${cache.currentSession.size} exercises already shown today`,
     );
 
     if (cache.shown.size === 0) {
@@ -271,7 +323,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
       })),
       // Sprawdź duplikaty
       duplicatesInSession: completedIds.filter(
-        (id, index) => completedIds.indexOf(id) !== index
+        (id, index) => completedIds.indexOf(id) !== index,
       ),
     });
   });
@@ -357,7 +409,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
 
       const queryParams = request.query as {
         excludeId?: string;
-        sequentialMode?: string; // z query string zawsze string
+        sequentialMode?: string;
       };
 
       const excludeId = queryParams.excludeId;
@@ -366,13 +418,30 @@ export async function learningRoutes(fastify: FastifyInstance) {
       console.log("\n=== NEXT EXERCISE REQUEST ===");
       console.log("Sequential Mode:", sequentialMode);
 
-      // ===== NOWY TRYB SEKWENCYJNY =====
+      // ✅ NOWE: Sprawdź limit dla FREE users PRZED wszystkim innym
+      const limitStatus = await freeLimitService.getFullStatus(userId);
+
+      if (!limitStatus.isPremium) {
+        console.log(
+          `FREE user detected. Used: ${limitStatus.used}/${limitStatus.limit}`,
+        );
+
+        if (!limitStatus.canSolve) {
+          console.log("❌ FREE user exceeded daily limit");
+          return reply.send({
+            error: "FREE_LIMIT_EXCEEDED",
+            message: `Wykorzystałeś dzienny limit ${limitStatus.limit} darmowych pytań. Wykup Premium aby kontynuować naukę bez ograniczeń!`,
+            limitStatus,
+          });
+        }
+      }
+
+      // ===== TRYB SEKWENCYJNY (bez zmian, ale dodaj filtrowanie typów) =====
       if (sequentialMode) {
         console.log("🔄 SEQUENTIAL MODE ACTIVE - showing exercises A→Z");
 
         const cache = getUserSessionCache(userId);
 
-        // Zbierz wszystkie ID do wykluczenia
         const sessionCompletedIds: string[] = [];
         const currentSession = await prisma.learningSession.findFirst({
           where: { userId, status: "IN_PROGRESS" },
@@ -392,24 +461,31 @@ export async function learningRoutes(fastify: FastifyInstance) {
           ...(excludeId ? [excludeId] : []),
         ];
 
-        // Pobierz pytania od najstarszego (createdAt ASC)
+        // ✅ NOWE: Filtruj typy dla FREE users
+        const whereClause: any = {
+          id: { notIn: toExclude },
+        };
+
+        if (!limitStatus.isPremium) {
+          whereClause.type = { in: limitStatus.allowedTypes };
+        }
+
         const nextExercise = await prisma.exercise.findFirst({
-          where: {
-            id: { notIn: toExclude },
-          },
+          where: whereClause,
           orderBy: {
-            createdAt: "asc", // Najstarsze pierwsze (chronologicznie)
+            createdAt: "asc",
           },
         });
 
         if (!nextExercise) {
           return reply.send({
             error: "NO_EXERCISES",
-            message: "Przeszedłeś wszystkie pytania w trybie sekwencyjnym!",
+            message: limitStatus.isPremium
+              ? "Przeszedłeś wszystkie pytania w trybie sekwencyjnym!"
+              : "Brak dostępnych pytań zamkniętych. Wykup Premium aby odblokować wszystkie typy pytań!",
           });
         }
 
-        // Zapisz użycie
         await prisma.exerciseUsage.upsert({
           where: {
             userId_exerciseId: { userId, exerciseId: nextExercise.id },
@@ -429,28 +505,24 @@ export async function learningRoutes(fastify: FastifyInstance) {
         cache.currentSession.add(nextExercise.id);
 
         console.log(
-          `✅ Sequential: ${nextExercise.id} | ${nextExercise.type} | Created: ${nextExercise.createdAt}`
-        );
-        console.log(
-          `   Question: ${nextExercise.question.substring(0, 60)}...`
+          `✅ Sequential: ${nextExercise.id} | ${nextExercise.type} | Created: ${nextExercise.createdAt}`,
         );
 
         return reply.send(nextExercise);
       }
 
+      // ===== NORMALNY TRYB =====
       console.log("\n=== NEXT EXERCISE REQUEST ===");
 
-      // NOWE: Pobierz maksymalny dostępny poziom trudności
       const userProgress = await levelProgress.getOrCreateProgress(userId);
       const maxAllowedDifficulty = userProgress.unlockedDifficulty;
 
       console.log(`User max allowed difficulty: ${maxAllowedDifficulty}`);
 
-      // Pobierz dane równolegle
       const [
         userProfile,
         recentSubmissions,
-        currentSession, // TO ZOSTAJE TAK JAK BYŁO
+        currentSession,
         usageHistory,
         lastExercises,
       ] = await Promise.all([
@@ -523,7 +595,6 @@ export async function learningRoutes(fastify: FastifyInstance) {
         }),
       ]);
 
-      // DODAJ DEBUGOWANIE - wyciągnij ID z completedExercises
       const sessionCompletedIds: string[] = [];
       if (currentSession?.completedExercises) {
         const exercises = currentSession.completedExercises as any[];
@@ -533,25 +604,22 @@ export async function learningRoutes(fastify: FastifyInstance) {
           }
         });
         console.log(
-          `Session has ${sessionCompletedIds.length} completed exercises`
+          `Session has ${sessionCompletedIds.length} completed exercises`,
         );
-        console.log(`Completed IDs:`, sessionCompletedIds);
       }
 
-      // Statystyki sesji
       const currentAccuracy =
         currentSession && currentSession.completed > 0
           ? currentSession.correct / currentSession.completed
           : userProfile?.averageScore
-          ? userProfile.averageScore / 100
-          : 0.5;
+            ? userProfile.averageScore / 100
+            : 0.5;
 
       const currentStreak = currentSession?.streak || 0;
       const userLevel = userProfile?.level || 1;
       const sessionExercises =
         (currentSession?.completedExercises as any[]) || [];
 
-      // ULEPSZONA ANALIZA: Historia typów i kategorii
       const recentTypeCount = new Map<string, number>();
       const recentCategoryCount = new Map<string, number>();
       const recentEpochCount = new Map<string, number>();
@@ -562,30 +630,28 @@ export async function learningRoutes(fastify: FastifyInstance) {
         if (usage.exercise) {
           recentTypeCount.set(
             usage.exercise.type,
-            (recentTypeCount.get(usage.exercise.type) || 0) + 1
+            (recentTypeCount.get(usage.exercise.type) || 0) + 1,
           );
           recentCategoryCount.set(
             usage.exercise.category,
-            (recentCategoryCount.get(usage.exercise.category) || 0) + 1
+            (recentCategoryCount.get(usage.exercise.category) || 0) + 1,
           );
           if (usage.exercise.epoch) {
             recentEpochCount.set(
               usage.exercise.epoch,
-              (recentEpochCount.get(usage.exercise.epoch) || 0) + 1
+              (recentEpochCount.get(usage.exercise.epoch) || 0) + 1,
             );
           }
           if (usage.exercise.work) {
             recentWorkCount.set(
               usage.exercise.work,
-              (recentWorkCount.get(usage.exercise.work) || 0) + 1
+              (recentWorkCount.get(usage.exercise.work) || 0) + 1,
             );
           }
-
           usage.exercise.tags?.forEach((tag) => recentTagsSet.add(tag));
         }
       });
 
-      // Znajdź problematyczne ćwiczenia (do powtórki)
       const failedExercises = recentSubmissions
         .filter((s) => (s.score || 0) === 0)
         .map((s) => ({
@@ -594,7 +660,6 @@ export async function learningRoutes(fastify: FastifyInstance) {
             (Date.now() - new Date(s.createdAt).getTime()) / (1000 * 60 * 60),
         }));
 
-      // Filtry sesji
       const filters = userSessionFilters.get(userId) || {};
       const isStudyPlanSession = !!filters.weekNumber;
       const isWorkReview = !!filters.work;
@@ -604,78 +669,71 @@ export async function learningRoutes(fastify: FastifyInstance) {
       console.log(
         `User: Level ${userLevel}, Max Difficulty: ${maxAllowedDifficulty}, Accuracy: ${(
           currentAccuracy * 100
-        ).toFixed(0)}%, Streak: ${currentStreak}`
+        ).toFixed(0)}%, Streak: ${currentStreak}`,
       );
       console.log(
         `Type: ${
           isStudyPlanSession ? "STUDY_PLAN Week " + filters.weekNumber : "FREE"
-        }`
+        }`,
       );
       console.log(`Recent types:`, Object.fromEntries(recentTypeCount));
 
-      // BUDUJ ZAPYTANIE - TYLKO JEDNO baseWhere!
+      // ✅ BUDUJ ZAPYTANIE
       const baseWhere: any = {};
 
-      // KLUCZOWE: Wyklucz pytania z sesji ZANIM dodasz inne filtry!
+      // ✅ NOWE: Dla FREE users - ZAWSZE filtruj do pytań zamkniętych
+      if (!limitStatus.isPremium) {
+        baseWhere.type = { in: limitStatus.allowedTypes };
+        console.log(`🆓 FREE user - filtering to CLOSED types only`);
+      }
+
       const toExclude = [...sessionCompletedIds];
       if (excludeId) toExclude.push(excludeId);
 
       if (toExclude.length > 0) {
         baseWhere.id = { notIn: toExclude };
         console.log(
-          `EXCLUDING ${toExclude.length} exercises from current session`
+          `EXCLUDING ${toExclude.length} exercises from current session`,
         );
       }
 
       if (isStudyPlanSession) {
-        // StudyPlan - respektuj filtry tygodnia ALE ogranicz do odblokowanych
-        if (filters.type) baseWhere.type = filters.type;
+        if (filters.type && limitStatus.isPremium)
+          baseWhere.type = filters.type;
         if (filters.category) baseWhere.category = filters.category;
-        if (filters.epoch) baseWhere.epoch = filters.epoch;
         if (filters.epoch) baseWhere.epoch = filters.epoch;
 
         if (filters.difficulty?.length > 0) {
-          // NOWE: Filtruj tylko dostępne poziomy
           const allowedDifficulties = filters.difficulty.filter(
-            (d: number) => d <= maxAllowedDifficulty
+            (d: number) => d <= maxAllowedDifficulty,
           );
 
           if (allowedDifficulties.length === 0) {
-            // Jeśli wszystkie poziomy z planu są zablokowane
             return reply.send({
               error: "DIFFICULTY_LOCKED",
               message: `Ten tydzień wymaga poziomu trudności ${Math.min(
-                ...filters.difficulty
-              )}, ale masz odblokowany tylko poziom ${maxAllowedDifficulty}. Zdobądź więcej punktów, aby odblokować wyższe poziomy!`,
+                ...filters.difficulty,
+              )}, ale masz odblokowany tylko poziom ${maxAllowedDifficulty}.`,
               requiredLevel: Math.min(...filters.difficulty),
               currentMaxLevel: maxAllowedDifficulty,
-              pointsNeeded:
-                userProgress.pointsToUnlock3 -
-                (userProgress.difficulty1Points +
-                  userProgress.difficulty2Points),
             });
           }
 
           baseWhere.difficulty = { in: allowedDifficulties };
-          console.log(
-            `StudyPlan difficulties filtered: ${filters.difficulty} -> ${allowedDifficulties}`
-          );
         }
       } else {
-        // FREE LEARNING - inteligentna adaptacja Z OGRANICZENIEM
+        // FREE LEARNING
 
-        if (filters.type) {
+        // ✅ NOWE: Dla FREE users ignoruj filtr typu (zawsze zamknięte)
+        if (filters.type && limitStatus.isPremium) {
           const types = filters.type.split(",").map((t: string) => t.trim());
-
           if (types.length === 1) {
             baseWhere.type = types[0];
           } else {
             baseWhere.type = { in: types };
           }
-          console.log(`Filtering by type(s): ${types.join(", ")}`);
         }
 
-        // Dla WORK REVIEW i EPOCH REVIEW - NIE dodawaj kategorii (pobieraj ze wszystkich)
         if (filters.category && !isWorkReview && !isEpochReview) {
           const categories = filters.category
             .split(",")
@@ -687,22 +745,16 @@ export async function learningRoutes(fastify: FastifyInstance) {
             baseWhere.category = { in: categories };
           }
 
-          // ✅ KRYTYCZNE: Jeśli użytkownik NIE wybrał kategorii WRITING,
-          // wyklucz pytania otwarte (SHORT_ANSWER, SYNTHESIS_NOTE, ESSAY)
-          if (!categories.includes("WRITING")) {
+          // ✅ NOWE: Dla FREE users - NIE wykluczaj pytań otwartych (już są odfiltrowane przez typ)
+          if (!categories.includes("WRITING") && limitStatus.isPremium) {
             baseWhere.type = {
               notIn: ["SHORT_ANSWER", "SYNTHESIS_NOTE", "ESSAY"],
             };
-            console.log(
-              `Excluding open-ended questions (no WRITING category selected)`
-            );
           }
         }
 
-        // Dla EPOCH REVIEW - filtruj po epoce
         if (filters.epoch && isEpochReview) {
           const epochs = filters.epoch.split(",").map((e: string) => e.trim());
-
           if (epochs.length === 1) {
             baseWhere.epoch = epochs[0];
           } else {
@@ -710,23 +762,15 @@ export async function learningRoutes(fastify: FastifyInstance) {
           }
         }
 
-        // Dla WORK REVIEW - filtruj po lekturze
         if (filters.work && isWorkReview) {
           baseWhere.work = filters.work;
-          console.log(`Filtering by work: ${filters.work}`);
         }
 
         let targetDifficulty: number[];
 
-        // PRIORYTET: Jeśli user RĘCZNIE wybrał poziomy, użyj ich!
         if (filters.difficulty && filters.difficulty.length > 0) {
-          console.log(
-            `User manually selected difficulties: ${filters.difficulty}`
-          );
-
-          // Filtruj tylko odblokowane poziomy
           targetDifficulty = filters.difficulty.filter(
-            (d: number) => d <= maxAllowedDifficulty
+            (d: number) => d <= maxAllowedDifficulty,
           );
 
           if (targetDifficulty.length === 0) {
@@ -736,55 +780,24 @@ export async function learningRoutes(fastify: FastifyInstance) {
               currentMaxLevel: maxAllowedDifficulty,
             });
           }
-
-          console.log(`After filtering locked levels: ${targetDifficulty}`);
-        }
-        // Jeśli NIE wybrał ręcznie, użyj inteligentnej logiki
-        else {
-          console.log(`Using intelligent difficulty selection`);
-
-          // 🔥 NOWE: Specjalna obsługa dla ręcznie wybranych trudnych typów
-          if (
-            filters.type &&
-            ["ESSAY", "SYNTHESIS_NOTE"].includes(filters.type)
-          ) {
-            console.log(
-              `User selected ESSAY/SYNTHESIS_NOTE, using full difficulty range`
-            );
-            targetDifficulty = Array.from(
-              { length: maxAllowedDifficulty },
-              (_, i) => i + 1
-            );
-          }
-          // 🔥 NOWE: Gdy user RĘCZNIE wybrał kategorię, użyj szerokiego zakresu!
-          else if (filters.category && !isWorkReview && !isEpochReview) {
-            console.log(
-              `User manually selected category, using wider difficulty range`
-            );
-            targetDifficulty = [1, 2, 3].filter(
-              (d) => d <= maxAllowedDifficulty
-            );
-          }
-
-          // Chcemy trudniejsze zadania
-          else if (currentStreak >= 5 && currentAccuracy > 0.8) {
+        } else {
+          // ✅ Dla FREE users - łatwiejsze pytania (poziom 1-2)
+          if (!limitStatus.isPremium) {
+            targetDifficulty = [1, 2].filter((d) => d <= maxAllowedDifficulty);
+          } else if (currentStreak >= 5 && currentAccuracy > 0.8) {
             targetDifficulty = [
               Math.min(3, maxAllowedDifficulty),
               Math.min(4, maxAllowedDifficulty),
               Math.min(5, maxAllowedDifficulty),
             ].filter((d) => d >= 1 && d <= maxAllowedDifficulty);
-          }
-          // Słabo idzie - łatwiejsze zadania
-          else if (currentAccuracy < 0.4) {
+          } else if (currentAccuracy < 0.4) {
             targetDifficulty = [1, 2, 3].filter(
-              (d) => d <= maxAllowedDifficulty
+              (d) => d <= maxAllowedDifficulty,
             );
-          }
-          // Normalny zakres
-          else {
+          } else {
             const base = Math.min(
               maxAllowedDifficulty,
-              Math.max(1, Math.round(userLevel / 2))
+              Math.max(1, Math.round(userLevel / 2)),
             );
             targetDifficulty = [
               Math.max(1, base - 1),
@@ -794,52 +807,12 @@ export async function learningRoutes(fastify: FastifyInstance) {
           }
         }
 
-        // Usuń duplikaty i posortuj
         targetDifficulty = [...new Set(targetDifficulty)].sort();
-
-        console.log(
-          `Final difficulties: ${targetDifficulty} (max allowed: ${maxAllowedDifficulty}, user selected: ${!!filters.difficulty})`
-        );
         baseWhere.difficulty = { in: targetDifficulty };
       }
 
-      // ✅✅✅ DEBUGGING - DODAJ TO ✅✅✅
-      console.log(`=== EXCLUSION DEBUG ===`);
-      console.log(`sessionCompletedIds.length: ${sessionCompletedIds.length}`);
-      console.log(`toExclude.length: ${toExclude.length}`);
-      if (toExclude.length > 0) {
-        console.log(`First 10 excluded:`, toExclude.slice(0, 10));
-      }
-
-      // Sprawdź ile pytań WRITING jest w bazie OGÓŁEM
-      const totalWriting = await prisma.exercise.count({
-        where: {
-          category: "WRITING",
-        },
-      });
-      console.log(`Total WRITING exercises in DB: ${totalWriting}`);
-
-      // Sprawdź ile WRITING jest na difficulty 1-2
-      if (filters.category === "WRITING") {
-        const writingLow = await prisma.exercise.count({
-          where: {
-            category: "WRITING",
-            difficulty: { in: [1, 2] },
-          },
-        });
-        console.log(`WRITING difficulty 1-2: ${writingLow}`);
-
-        const writingAll = await prisma.exercise.count({
-          where: {
-            category: "WRITING",
-          },
-        });
-        console.log(`WRITING all difficulties: ${writingAll}`);
-      }
-
       console.log("Final WHERE clause:", JSON.stringify(baseWhere, null, 2));
-      // ✅✅✅ KONIEC DEBUGOWANIA ✅✅✅
-      // Pobierz kandydatów
+
       const allCandidates = await prisma.exercise.findMany({
         where: baseWhere,
         include: {
@@ -853,20 +826,29 @@ export async function learningRoutes(fastify: FastifyInstance) {
       });
 
       console.log(
-        `Found ${allCandidates.length} candidates after all exclusions`
+        `Found ${allCandidates.length} candidates after all exclusions`,
       );
+
+      if (allCandidates.length === 0) {
+        return reply.send({
+          error: "NO_EXERCISES",
+          message: limitStatus.isPremium
+            ? "Brak dostępnych ćwiczeń spełniających kryteria."
+            : "Brak dostępnych pytań zamkniętych. Wykup Premium aby odblokować wszystkie typy pytań!",
+          currentMaxLevel: maxAllowedDifficulty,
+          limitStatus: limitStatus.isPremium ? undefined : limitStatus,
+        });
+      }
 
       // Wyklucz używane
       const usedIds = new Set(usageHistory.map((u) => u.exerciseId));
       if (excludeId) usedIds.add(excludeId);
 
-      // ULEPSZONE SCOROWANIE (bez zmian)
       const scoredExercises = allCandidates.map((exercise) => {
         let score = 1000;
         let bonuses: string[] = [];
         let penalties: string[] = [];
 
-        // 1. NIEUŻYWANE - największy bonus
         if (!usedIds.has(exercise.id)) {
           score += 500;
           bonuses.push("+500 NEW");
@@ -883,22 +865,19 @@ export async function learningRoutes(fastify: FastifyInstance) {
           }
         }
 
-        // SPECJALNY BONUS dla StudyPlan
         if (isStudyPlanSession && !usedIds.has(exercise.id)) {
           score += 300;
           bonuses.push("+300 WEEK_FRESH");
         }
 
-        // KARA ZA ZBYT CZĘSTE ESSAY/SYNTHESIS
-        if (
-          ["ESSAY", "SYNTHESIS_NOTE"].includes(exercise.type) &&
-          sessionExercises.length < 10
-        ) {
-          score -= 200;
-          penalties.push("-200 TOO_EARLY_HARD");
+        // ✅ NOWE: Dla FREE users - bonus za pytania zamknięte (zachęta)
+        if (!limitStatus.isPremium) {
+          if (["CLOSED_SINGLE", "CLOSED_MULTIPLE"].includes(exercise.type)) {
+            score += 100;
+            bonuses.push("+100 FREE_FRIENDLY");
+          }
         }
 
-        // 2. ANTY-MONOTONIA TYPÓW
         const typeCount = recentTypeCount.get(exercise.type) || 0;
         if (typeCount > 0) {
           const typePenalty = typeCount * 200;
@@ -909,7 +888,6 @@ export async function learningRoutes(fastify: FastifyInstance) {
           bonuses.push("+150 NEW_TYPE");
         }
 
-        // 3. RÓŻNORODNOŚĆ KATEGORII
         const catCount = recentCategoryCount.get(exercise.category) || 0;
         if (catCount > 2) {
           const catPenalty = catCount * 50;
@@ -920,7 +898,6 @@ export async function learningRoutes(fastify: FastifyInstance) {
           bonuses.push("+100 NEW_CAT");
         }
 
-        // 4. RÓŻNORODNOŚĆ EPOK
         if (exercise.epoch) {
           const epochCount = recentEpochCount.get(exercise.epoch) || 0;
           if (epochCount > 1) {
@@ -933,24 +910,18 @@ export async function learningRoutes(fastify: FastifyInstance) {
           }
         }
 
-        // ✅✅✅ 4.5 RÓŻNORODNOŚĆ DZIEŁ LITERACKICH ✅✅✅
-        // UWAGA: Nie stosuj w trybie powtórki z konkretnej lektury!
         if (exercise.work && !isWorkReview) {
           const workCount = recentWorkCount.get(exercise.work) || 0;
           if (workCount > 1) {
-            // Silna kara za powtarzanie tego samego dzieła
             const workPenalty = workCount * 100;
             score -= workPenalty;
             penalties.push(`-${workPenalty} WORK_REPEAT`);
           } else if (workCount === 0) {
-            // Duży bonus za nowe dzieło
             score += 150;
             bonuses.push("+150 NEW_WORK");
           }
         }
-        // ✅✅✅ KONIEC NOWEJ SEKCJI ✅✅✅
 
-        // 5. PROGRESJA TRUDNOŚCI
         const lastDiff = lastExercises[0]?.exercise?.difficulty;
         if (lastDiff) {
           const diffChange = Math.abs(exercise.difficulty - lastDiff);
@@ -966,19 +937,17 @@ export async function learningRoutes(fastify: FastifyInstance) {
           }
         }
 
-        // 6. SPACED REPETITION dla błędów
         const failedEntry = failedExercises.find((f) => f.id === exercise.id);
         if (failedEntry) {
           if (failedEntry.hoursSince > 1 && failedEntry.hoursSince < 24) {
             const retryBonus = Math.floor(
-              300 * (1 - Math.exp(-failedEntry.hoursSince / 6))
+              300 * (1 - Math.exp(-failedEntry.hoursSince / 6)),
             );
             score += retryBonus;
             bonuses.push(`+${retryBonus} RETRY`);
           }
         }
 
-        // 7. RÓŻNORODNOŚĆ TAGÓW
         const commonTags =
           exercise.tags?.filter((tag) => recentTagsSet.has(tag)).length || 0;
         if (commonTags > 2) {
@@ -987,18 +956,20 @@ export async function learningRoutes(fastify: FastifyInstance) {
           penalties.push(`-${tagPenalty} TAG_OVERLAP`);
         }
 
-        // 8. BONUS ZA RZADKIE TYPY
-        const rareTypes = ["SYNTHESIS_NOTE", "ESSAY"];
-        if (rareTypes.includes(exercise.type) && sessionExercises.length > 5) {
-          score += 100;
-          bonuses.push("+100 RARE_TYPE");
+        // ✅ NOWE: Dla Premium users - bonus za rzadkie typy
+        if (limitStatus.isPremium) {
+          const rareTypes = ["SYNTHESIS_NOTE", "ESSAY"];
+          if (
+            rareTypes.includes(exercise.type) &&
+            sessionExercises.length > 5
+          ) {
+            score += 100;
+            bonuses.push("+100 RARE_TYPE");
+          }
         }
 
-        // 9. LOSOWOŚĆ
         const randomFactor = Math.floor(Math.random() * 100) - 50;
         score += randomFactor;
-        if (randomFactor > 25) bonuses.push(`+${randomFactor} RND`);
-        if (randomFactor < -25) penalties.push(`${randomFactor} RND`);
 
         return {
           exercise,
@@ -1009,7 +980,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
             category: exercise.category,
             difficulty: exercise.difficulty,
             epoch: exercise.epoch,
-            work: exercise.work, // ✅ DODANE do debugowania
+            work: exercise.work,
             isNew: !usedIds.has(exercise.id),
             bonuses: bonuses.join(", "),
             penalties: penalties.join(", "),
@@ -1018,7 +989,6 @@ export async function learningRoutes(fastify: FastifyInstance) {
         };
       });
 
-      // Sortuj i wyświetl debug
       scoredExercises.sort((a, b) => b.score - a.score);
 
       console.log("\nTop 5 scored exercises:");
@@ -1026,28 +996,25 @@ export async function learningRoutes(fastify: FastifyInstance) {
         console.log(
           `  ${i + 1}. [${item.score}] ${item.debug.type}/${
             item.debug.difficulty
-          }`
+          }`,
         );
-        console.log(`     + ${item.debug.bonuses || "none"}`);
-        console.log(`     - ${item.debug.penalties || "none"}`);
       });
 
-      // Wybieranie z top grupy
       const topGroup = scoredExercises.slice(
         0,
-        Math.min(5, scoredExercises.length)
+        Math.min(5, scoredExercises.length),
       );
 
       if (topGroup.length === 0) {
         return reply.send({
           error: "NO_EXERCISES",
-          message:
-            "Brak dostępnych ćwiczeń na Twoim poziomie. Sprawdź czy masz odblokowane odpowiednie poziomy trudności.",
+          message: limitStatus.isPremium
+            ? "Brak dostępnych ćwiczeń na Twoim poziomie."
+            : "Brak dostępnych pytań zamkniętych. Wykup Premium!",
           currentMaxLevel: maxAllowedDifficulty,
         });
       }
 
-      // Ważone losowanie
       const weights = [0.35, 0.25, 0.2, 0.12, 0.08];
       const random = Math.random();
       let cumulative = 0;
@@ -1064,7 +1031,6 @@ export async function learningRoutes(fastify: FastifyInstance) {
       const selected = topGroup[selectedIndex];
       const finalExercise = selected.exercise;
 
-      // Zapisz użycie
       await prisma.exerciseUsage.upsert({
         where: {
           userId_exerciseId: { userId, exerciseId: finalExercise.id },
@@ -1082,13 +1048,20 @@ export async function learningRoutes(fastify: FastifyInstance) {
       });
 
       console.log(
-        `\n✓ SELECTED: ${finalExercise.type}/${finalExercise.category}/Lv${finalExercise.difficulty}`
-      );
-      console.log(
-        `  Score: ${selected.score}, Position: #${selectedIndex + 1}`
+        `\n✓ SELECTED: ${finalExercise.type}/${finalExercise.category}/Lv${finalExercise.difficulty}`,
       );
 
-      return reply.send(finalExercise);
+      // ✅ NOWE: Dodaj info o limicie dla FREE users
+      const response: any = finalExercise;
+      if (!limitStatus.isPremium) {
+        response._freeLimitStatus = {
+          remaining: limitStatus.remaining,
+          used: limitStatus.used,
+          limit: limitStatus.limit,
+        };
+      }
+
+      return reply.send(response);
     } catch (error) {
       console.error("Error in exercise selection:", error);
       return reply.code(500).send({ error: "Failed to get next exercise" });
@@ -1193,7 +1166,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
       // Zapisz ukończone do ExerciseUsage (tylko jeśli są jakieś)
       if (completedExercises && completedExercises.length > 0) {
         console.log(
-          `Saving ${completedExercises.length} exercises to usage history`
+          `Saving ${completedExercises.length} exercises to usage history`,
         );
 
         for (const ex of completedExercises) {
@@ -1220,7 +1193,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
             } catch (error) {
               console.error(
                 `Failed to save usage for exercise ${ex.id}:`,
-                error
+                error,
               );
               // Kontynuuj mimo błędu
             }
@@ -1246,7 +1219,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
       // Jeśli completed = 0, zakończ tutaj - nie ma sensu aktualizować profilu
       if (!stats || stats.completed === 0) {
         console.log(
-          "No exercises completed, skipping profile/progress updates"
+          "No exercises completed, skipping profile/progress updates",
         );
         return reply.send({
           success: true,
@@ -1294,11 +1267,12 @@ export async function learningRoutes(fastify: FastifyInstance) {
         lastActivityDate.setHours(0, 0, 0, 0);
 
         const daysSinceLastActivity = Math.floor(
-          (today.getTime() - lastActivityDate.getTime()) / (1000 * 60 * 60 * 24)
+          (today.getTime() - lastActivityDate.getTime()) /
+            (1000 * 60 * 60 * 24),
         );
 
         console.log(
-          `Last activity: ${lastActivityDate.toISOString()}, days since: ${daysSinceLastActivity}`
+          `Last activity: ${lastActivityDate.toISOString()}, days since: ${daysSinceLastActivity}`,
         );
 
         if (daysSinceLastActivity > 1) {
@@ -1359,12 +1333,12 @@ export async function learningRoutes(fastify: FastifyInstance) {
             ? Math.round(
                 (oldAverage * totalExercises +
                   sessionAverageScore * stats.completed) /
-                  newTotalExercises
+                  newTotalExercises,
               )
             : sessionAverageScore;
 
         console.log(
-          `Updating profile: new average ${newAverage}%, +${stats.points} points`
+          `Updating profile: new average ${newAverage}%, +${stats.points} points`,
         );
 
         // Update user profile
@@ -1377,7 +1351,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
             level: {
               set:
                 Math.floor(
-                  (currentProfile.totalPoints + (stats.points || 0)) / 1000
+                  (currentProfile.totalPoints + (stats.points || 0)) / 1000,
                 ) + 1,
             },
           },
@@ -1409,7 +1383,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
               ((existingProgress.averageScore || 0) *
                 existingProgress.exercisesCount +
                 sessionAverageScore * stats.completed) /
-                (existingProgress.exercisesCount + stats.completed)
+                (existingProgress.exercisesCount + stats.completed),
             ),
           },
         });
@@ -1434,12 +1408,12 @@ export async function learningRoutes(fastify: FastifyInstance) {
               await spacedRepetition.updateRepetitionData(
                 userId,
                 exerciseData.id,
-                exerciseData.score
+                exerciseData.score,
               );
             } catch (error) {
               console.error(
                 `Failed to update spaced repetition for ${exerciseData.id}:`,
-                error
+                error,
               );
               // Kontynuuj mimo błędu
             }
@@ -1502,7 +1476,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
         completed: s.completed,
         correct: s.correct,
         points: s.points,
-      }))
+      })),
     );
   });
 
@@ -1551,7 +1525,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
     });
 
     console.log(
-      `Session now has ${currentCompleted.length} completed exercises`
+      `Session now has ${currentCompleted.length} completed exercises`,
     );
 
     return reply.send({
@@ -1599,7 +1573,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
         .filter((progress) => progress.exercisesCount > 0)
         .map((progress) => {
           const correctCount = Math.round(
-            (progress.exercisesCount * (progress.averageScore || 0)) / 100
+            (progress.exercisesCount * (progress.averageScore || 0)) / 100,
           );
           const estimatedPoints = correctCount * 2;
 
@@ -1689,7 +1663,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
 
       console.log(
         `User ${userId} has ${count} available exercises with filters:`,
-        filters
+        filters,
       );
 
       return reply.send({ count });
@@ -1807,7 +1781,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
         studyTime: session.studyTime || 0,
         averageScore: Math.round(session.averageScore || 0),
         points: Math.round(
-          (session.exercisesCount * (session.averageScore || 0)) / 50
+          (session.exercisesCount * (session.averageScore || 0)) / 50,
         ),
       }));
 
@@ -2048,7 +2022,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
       if (exercisesWithWorks.length > 0) {
         console.log(
           "Sample works:",
-          exercisesWithWorks.slice(0, 3).map((e) => e.work)
+          exercisesWithWorks.slice(0, 3).map((e) => e.work),
         );
       }
 
@@ -2264,7 +2238,7 @@ export async function learningRoutes(fastify: FastifyInstance) {
       const summary = await generateSessionSummary(
         sessionData,
         userHistory,
-        userName || "Uczniu" // ✅ Przekaż userName
+        userName || "Uczniu", // ✅ Przekaż userName
       );
 
       console.log("AI summary generated successfully");
@@ -2314,7 +2288,7 @@ async function loadUserExerciseHistory(userId: string) {
   // Wypisz pierwsze 10
   allUsage.slice(0, 10).forEach((u) => {
     console.log(
-      `  - ${u.exerciseId}: used ${u.usageCount} times, last: ${u.lastUsedAt}`
+      `  - ${u.exerciseId}: used ${u.usageCount} times, last: ${u.lastUsedAt}`,
     );
   });
 
@@ -2325,7 +2299,7 @@ async function loadUserExerciseHistory(userId: string) {
 
   console.log(`Cache after loading: ${cache.shown.size} items`);
   console.log(
-    `Sample cached IDs: ${Array.from(cache.shown).slice(0, 5).join(", ")}`
+    `Sample cached IDs: ${Array.from(cache.shown).slice(0, 5).join(", ")}`,
   );
 
   // Sprawdź czy te konkretne ID są w cache

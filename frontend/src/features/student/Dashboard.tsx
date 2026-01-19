@@ -1,6 +1,10 @@
 // frontend/src/features/student/Dashboard.tsx
 
 import { useQuery } from "@tanstack/react-query";
+import {
+  FreeLimitWidget,
+  useFreeLimitStatus,
+} from "../../components/FreeLimitWidget";
 import { motion } from "framer-motion";
 import {
   Award,
@@ -45,6 +49,18 @@ export const StudentDashboard: React.FC = () => {
   const user = useAuthStore((state) => state.user);
   const [workSearchQuery, setWorkSearchQuery] = useState("");
 
+  // ✅ HOOK DO LIMITU FREE - to jest JEDYNE źródło prawdy o isPremium
+  const {
+    isPremium,
+    canSolve,
+    remaining,
+    limit,
+    loading: _limitLoading,
+  } = useFreeLimitStatus();
+
+  // ✅ isFree bazuje na HOOKU, nie na subscription
+  const isFree = !isPremium;
+
   const { data: stats } = useQuery({
     queryKey: ["learning-stats"],
     queryFn: () => api.get("/api/learning/stats").then((r) => r.data),
@@ -55,34 +71,9 @@ export const StudentDashboard: React.FC = () => {
     queryFn: () => api.get("/api/learning/works-stats").then((r) => r.data),
   });
 
-  // ✅ Dodaj funkcję startWorkReview obok startEpochReview
-  const startWorkReview = (workTitle: string) => {
-    if (isFree) {
-      toast.error("Powtórki z lektur dostępne tylko w planie Premium!");
-      navigate("/subscription");
-      return;
-    }
-
-    const filters = {
-      category: "HISTORICAL_LITERARY",
-      work: workTitle, // ✅ Filtrujemy po tytule dzieła
-    };
-
-    localStorage.setItem("sessionFilters", JSON.stringify(filters));
-    localStorage.setItem("isWorkReview", "true");
-    localStorage.setItem("autoStartSession", "true");
-
-    navigate("/learn");
-  };
-
   const { data: detailedStats } = useQuery({
     queryKey: ["detailed-stats"],
     queryFn: () => api.get("/api/student/detailed-stats").then((r) => r.data),
-  });
-
-  const { data: subscription } = useQuery({
-    queryKey: ["subscription-status"],
-    queryFn: () => api.get("/api/subscription/status").then((r) => r.data),
   });
 
   const { data: levelProgress } = useQuery({
@@ -96,12 +87,11 @@ export const StudentDashboard: React.FC = () => {
     queryFn: () => api.get("/api/learning/epoch-stats").then((r) => r.data),
   });
 
-  const isPremium = subscription?.plan === "PREMIUM";
-  const isFree = !isPremium;
-
+  // ✅ NOWA LOGIKA: FREE users MOGĄ rozpocząć sesję (jeśli mają pozostałe pytania)
   const startLearningSession = () => {
-    if (isFree) {
-      toast.error("Sesje nauki dostępne tylko w planie Premium!");
+    // FREE user bez pozostałych pytań
+    if (isFree && !canSolve) {
+      toast.error("Wykorzystałeś dzienny limit 5 pytań. Wykup Premium!");
       navigate("/subscription");
       return;
     }
@@ -114,6 +104,7 @@ export const StudentDashboard: React.FC = () => {
     navigate("/learn");
   };
 
+  // ✅ Powtórki z epok - tylko Premium (wymaga pytań otwartych)
   const startEpochReview = (epoch: string) => {
     if (isFree) {
       toast.error("Powtórki z epok dostępne tylko w planie Premium!");
@@ -133,6 +124,26 @@ export const StudentDashboard: React.FC = () => {
     navigate("/learn");
   };
 
+  // ✅ Powtórki z lektur - tylko Premium
+  const startWorkReview = (workTitle: string) => {
+    if (isFree) {
+      toast.error("Powtórki z lektur dostępne tylko w planie Premium!");
+      navigate("/subscription");
+      return;
+    }
+
+    const filters = {
+      category: "HISTORICAL_LITERARY",
+      work: workTitle,
+    };
+
+    localStorage.setItem("sessionFilters", JSON.stringify(filters));
+    localStorage.setItem("isWorkReview", "true");
+    localStorage.setItem("autoStartSession", "true");
+
+    navigate("/learn");
+  };
+
   const greeting = () => {
     const hour = new Date().getHours();
     const username = user?.username
@@ -144,7 +155,6 @@ export const StudentDashboard: React.FC = () => {
     return `Dobry wieczór, ${username}`;
   };
 
-  // Oblicz poprawną wskazówkę dnia
   const getTipOfTheDay = () => {
     const streak = stats?.streak || 0;
     const avgScore = detailedStats?.profile?.averageScore || 0;
@@ -168,7 +178,6 @@ export const StudentDashboard: React.FC = () => {
     return "Zacznij dziś i rozpocznij swoją passę nauki!";
   };
 
-  // Oblicz informację o skuteczności
   const getPerformanceMessage = () => {
     const avgScore = detailedStats?.profile?.averageScore || 0;
 
@@ -202,14 +211,16 @@ export const StudentDashboard: React.FC = () => {
 
   const performanceMsg = getPerformanceMessage();
 
-  // Oblicz ile punktów brakuje do następnego poziomu trudności
   const pointsToNextDifficulty = levelProgress?.pointsToUnlock3
     ? Math.max(
         0,
         levelProgress.pointsToUnlock3 -
-          (levelProgress.difficulty1Points + levelProgress.difficulty2Points)
+          (levelProgress.difficulty1Points + levelProgress.difficulty2Points),
       )
     : 0;
+
+  // ✅ Sprawdź czy sesja jest zablokowana dla FREE
+  const isSessionBlocked = isFree && !canSolve;
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6 pb-32 lg:pb-6">
@@ -224,7 +235,6 @@ export const StudentDashboard: React.FC = () => {
           </p>
         </div>
 
-        {/* Przyciski ukryte na mobile */}
         <div className="hidden md:flex items-center gap-3">
           <button
             onClick={() => setShowStatsModal(true)}
@@ -249,8 +259,43 @@ export const StudentDashboard: React.FC = () => {
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          {/* Premium Banner dla FREE */}
-          {isFree && (
+          {/* ✅ NOWE: Widget limitu dla FREE users */}
+          {isFree && <FreeLimitWidget />}
+
+          {/* Premium Banner dla FREE - TYLKO jeśli wyczerpany limit */}
+          {isFree && !canSolve && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl p-4 sm:p-6 text-white"
+            >
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <h3 className="text-lg sm:text-xl font-bold">
+                      Dzienny limit wyczerpany!
+                    </h3>
+                  </div>
+                  <p className="text-sm sm:text-base text-red-100 mb-3 sm:mb-4">
+                    Wykorzystałeś {limit} darmowych pytań na dziś. Wykup Premium
+                    aby kontynuować naukę bez ograniczeń!
+                  </p>
+                  <button
+                    onClick={() => navigate("/subscription")}
+                    className="w-full xs:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-white text-red-600 rounded-lg hover:bg-red-50
+                      font-semibold transition-colors flex items-center justify-center gap-2
+                      text-sm sm:text-base"
+                  >
+                    🚀 Odblokuj Premium
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Premium Banner dla FREE - zachęta (gdy MA jeszcze pytania) */}
+          {isFree && canSolve && (
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -261,22 +306,21 @@ export const StudentDashboard: React.FC = () => {
                   <div className="flex items-center gap-2 mb-2">
                     <Crown className="w-5 h-5 sm:w-6 sm:h-6" />
                     <h3 className="text-lg sm:text-xl font-bold">
-                      Odblokuj sesje nauki
+                      Odblokuj pełny dostęp
                     </h3>
                   </div>
                   <p className="text-sm sm:text-base text-blue-100 mb-3 sm:mb-4">
-                    Plan FREE nie obejmuje sesji nauki. Wykup Premium aby
-                    otrzymywać szczegółowe oceny AI, 200 punktów miesięcznie i
-                    nielimitowany dostęp.
+                    Masz {remaining}/{limit} darmowych pytań dziennie. Premium =
+                    bez limitów + pytania otwarte + oceny AI!
                   </p>
                   <div className="flex flex-col xs:flex-row xs:flex-wrap items-start xs:items-center gap-2 xs:gap-4 text-xs sm:text-sm mb-3 sm:mb-4">
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                      <span>200 punktów AI/mies</span>
+                      <span>Bez limitów</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                      <span>Nielimitowane sesje</span>
+                      <span>Pytania otwarte</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
@@ -284,70 +328,90 @@ export const StudentDashboard: React.FC = () => {
                     </div>
                   </div>
                   <button
-                    onClick={() => navigate("/subscription")} // ✅ ZMIEŃ onClick
-                    disabled={false} // ✅ Usuń isUpgrading
+                    onClick={() => navigate("/subscription")}
                     className="w-full xs:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50
-            font-semibold transition-colors flex items-center justify-center gap-2
-            text-sm sm:text-base"
+                      font-semibold transition-colors flex items-center justify-center gap-2
+                      text-sm sm:text-base"
                   >
                     Wykup Premium
                   </button>
                 </div>
-                <Lock className="hidden sm:block w-12 h-12 opacity-20 flex-shrink-0" />
+                <Crown className="hidden sm:block w-12 h-12 opacity-20 flex-shrink-0" />
               </div>
             </motion.div>
           )}
 
-          {/* Główny CTA */}
+          {/* ✅ Główny CTA - ZMIENIONA LOGIKA */}
           <motion.div
-            whileHover={!isFree ? { scale: 1.02 } : {}}
+            whileHover={!isSessionBlocked ? { scale: 1.02 } : {}}
             className={`rounded-2xl p-4 sm:p-6 md:p-8 text-white ${
-              isFree
+              isSessionBlocked
                 ? "bg-gray-400 dark:bg-gray-700 cursor-not-allowed opacity-60"
                 : "bg-gradient-to-br from-blue-600 to-purple-600 cursor-pointer"
             }`}
-            onClick={!isFree ? startLearningSession : undefined}
+            onClick={!isSessionBlocked ? startLearningSession : undefined}
           >
             <div className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-4">
               <div className="flex-1">
                 <h2 className="text-xl sm:text-2xl font-bold mb-2 flex items-center gap-2">
-                  {isFree && <Lock className="w-5 h-5 sm:w-6 sm:h-6" />}
+                  {isSessionBlocked && (
+                    <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
+                  )}
                   Rozpocznij naukę
                 </h2>
                 <p
                   className={`mb-3 sm:mb-4 text-sm sm:text-base ${
-                    isFree ? "text-gray-200" : "text-blue-100"
+                    isSessionBlocked ? "text-gray-200" : "text-blue-100"
                   }`}
                 >
-                  {isFree
-                    ? "Sesje dostępne tylko w planie Premium"
-                    : "Sesja adaptacyjna dostosowana do Twojego poziomu"}
+                  {isSessionBlocked
+                    ? "Dzienny limit wyczerpany - wróć jutro!"
+                    : isFree
+                      ? `Masz ${remaining} pytań zamkniętych do rozwiązania`
+                      : "Sesja adaptacyjna dostosowana do Twojego poziomu"}
                 </p>
-                {!isFree && (
+                {!isSessionBlocked && (
                   <div className="flex flex-col xs:flex-row xs:flex-wrap items-start xs:items-center gap-2 xs:gap-4 text-xs sm:text-sm">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                      <span>20 zadań</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                      <span>Inteligentny dobór</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                      <span>
-                        Poziomy 1-{levelProgress?.currentMaxDifficulty || 2}
-                      </span>
-                    </div>
+                    {isFree ? (
+                      <>
+                        <div className="flex items-center gap-2">
+                          <Zap className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                          <span>
+                            {remaining}/{limit} pytań
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                          <span>Tylko zamknięte</span>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                          <span>Wszystkie typy</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                          <span>Inteligentny dobór</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                          <span>
+                            Poziomy 1-{levelProgress?.currentMaxDifficulty || 2}
+                          </span>
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
               <div
                 className={`p-4 sm:p-6 rounded-full flex-shrink-0 ${
-                  isFree ? "bg-gray-500/30" : "bg-white/20"
+                  isSessionBlocked ? "bg-gray-500/30" : "bg-white/20"
                 }`}
               >
-                {isFree ? (
+                {isSessionBlocked ? (
                   <Lock className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
                 ) : (
                   <Play className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
@@ -356,7 +420,7 @@ export const StudentDashboard: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Quick Stats - POPRAWIONE Z WŁAŚCIWYMI DANYMI */}
+          {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <StatCard
               icon={<Flame className="w-6 h-6 text-orange-500" />}
@@ -368,7 +432,7 @@ export const StudentDashboard: React.FC = () => {
 
             <StatCard
               icon={<Target className="w-6 h-6 text-blue-500" />}
-              label="Rozwiązanych dzisiaj zadań"
+              label="Rozwiązanych dzisiaj"
               value={`${stats?.todayExercises || 0}`}
               subtitle={
                 (stats?.todayExercises || 0) >= 10 ? "Świetnie!" : "Kontynuuj!"
@@ -377,7 +441,7 @@ export const StudentDashboard: React.FC = () => {
             />
             <StatCard
               icon={<Award className="w-6 h-6 text-purple-500" />}
-              label="Max trudność pytań"
+              label="Max trudność"
               value={`Poziom ${levelProgress?.currentMaxDifficulty || 1}`}
               subtitle={
                 pointsToNextDifficulty > 0
@@ -387,6 +451,7 @@ export const StudentDashboard: React.FC = () => {
               bgColor="from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20"
             />
           </div>
+
           {/* Epoch Review */}
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
@@ -402,7 +467,8 @@ export const StudentDashboard: React.FC = () => {
               <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg">
                 <p className="text-sm text-yellow-800 dark:text-yellow-200 flex items-center gap-2">
                   <Lock className="w-4 h-4" />
-                  Powtórki dostępne tylko w Premium
+                  Powtórki z epok dostępne tylko w Premium (zawierają pytania
+                  otwarte)
                 </p>
               </div>
             )}
@@ -413,9 +479,9 @@ export const StudentDashboard: React.FC = () => {
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {EPOCHS.slice(0, 20).map((epoch) => {
-                const stats = epochStats?.[epoch.value];
-                const progress = stats
-                  ? Math.round((stats.completed / stats.total) * 100)
+                const epochStat = epochStats?.[epoch.value];
+                const progress = epochStat
+                  ? Math.round((epochStat.completed / epochStat.total) * 100)
                   : 0;
 
                 return (
@@ -440,7 +506,7 @@ export const StudentDashboard: React.FC = () => {
                     <p className="font-medium text-gray-900 dark:text-white text-sm mb-1">
                       {epoch.label}
                     </p>
-                    {stats && !isFree && (
+                    {epochStat && !isFree && (
                       <div className="flex items-center gap-2">
                         <div className="flex-1 bg-gray-200 dark:bg-gray-600 rounded-full h-1.5">
                           <div
@@ -477,12 +543,11 @@ export const StudentDashboard: React.FC = () => {
               <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg">
                 <p className="text-sm text-yellow-800 dark:text-yellow-200 flex items-center gap-2">
                   <Lock className="w-4 h-4" />
-                  Powtórki dostępne tylko w Premium
+                  Powtórki z lektur dostępne tylko w Premium
                 </p>
               </div>
             )}
 
-            {/* Wyszukiwarka */}
             {!isFree && worksStats && Object.keys(worksStats).length > 0 && (
               <div className="mb-4">
                 <input
@@ -518,7 +583,6 @@ export const StudentDashboard: React.FC = () => {
                     return work.title.toLowerCase().includes(query);
                   })
                   .sort((a: any, b: any) => {
-                    // Sortuj alfabetycznie po tytule
                     return a.title.localeCompare(b.title, "pl");
                   })
                   .map((work: any) => {
@@ -655,7 +719,7 @@ export const StudentDashboard: React.FC = () => {
           <AiPointsWidget />
           <DifficultyProgress />
 
-          {/* Quick Tip - POPRAWIONE */}
+          {/* Quick Tip */}
           <div
             className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 
                         rounded-xl p-6 border border-green-200 dark:border-green-800"
@@ -671,7 +735,7 @@ export const StudentDashboard: React.FC = () => {
             </p>
           </div>
 
-          {/* Performance - POPRAWIONE */}
+          {/* Performance */}
           {detailedStats?.profile?.averageScore !== undefined && (
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6">
               <h3 className="font-bold text-gray-900 dark:text-white mb-4">
@@ -705,7 +769,6 @@ export const StudentDashboard: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Czas nauki */}
                 {detailedStats.sessions?.totalTime > 0 && (
                   <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                     <div className="flex items-center gap-2">
