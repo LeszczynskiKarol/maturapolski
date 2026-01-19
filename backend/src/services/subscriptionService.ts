@@ -12,11 +12,6 @@ export class SubscriptionService {
   async hasAiPoints(userId: string, pointsNeeded: number): Promise<boolean> {
     const subscription = await this.getOrCreateSubscription(userId);
 
-    // Jeśli nie udało się utworzyć/pobrać subskrypcji, zwróć false
-    if (!subscription) {
-      return false;
-    }
-
     // Sprawdź czy subskrypcja aktywna
     if (subscription.status !== "ACTIVE") {
       return (
@@ -50,10 +45,6 @@ export class SubscriptionService {
   ): Promise<void> {
     const subscription = await this.getOrCreateSubscription(userId);
 
-    if (!subscription) {
-      throw new Error("SUBSCRIPTION_NOT_FOUND");
-    }
-
     // Sprawdź limit
     if (subscription.aiPointsUsed + pointsCost > subscription.aiPointsLimit) {
       throw new Error("AI_POINTS_EXCEEDED");
@@ -81,58 +72,32 @@ export class SubscriptionService {
     ]);
   }
 
-  // ✅ POPRAWIONE: Pobierz lub utwórz subskrypcję (FREE domyślnie)
+  // ✅ ORYGINALNA WERSJA - bez sprawdzania userExists
   async getOrCreateSubscription(userId: string) {
-    try {
-      // ✅ Najpierw sprawdź czy user istnieje
-      const userExists = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { id: true },
+    let subscription = await prisma.subscription.findUnique({
+      where: { userId },
+    });
+
+    if (!subscription) {
+      subscription = await prisma.subscription.create({
+        data: {
+          userId,
+          status: "INACTIVE",
+          plan: "FREE",
+          aiPointsLimit: 20,
+          aiPointsUsed: 0,
+          aiPointsReset: new Date(),
+        },
       });
-
-      if (!userExists) {
-        console.error(
-          `❌ User ${userId} does not exist, cannot create subscription`,
-        );
-        return null;
-      }
-
-      let subscription = await prisma.subscription.findUnique({
-        where: { userId },
-      });
-
-      if (!subscription) {
-        subscription = await prisma.subscription.create({
-          data: {
-            userId,
-            status: "INACTIVE",
-            plan: "FREE",
-            aiPointsLimit: 20,
-            aiPointsUsed: 0,
-            aiPointsReset: new Date(),
-          },
-        });
-        console.log(`✅ Created new subscription for user ${userId}`);
-      }
-
-      return subscription;
-    } catch (error) {
-      console.error(
-        `❌ Error in getOrCreateSubscription for user ${userId}:`,
-        error,
-      );
-      return null;
+      console.log(`✅ Created new subscription for user ${userId}`);
     }
+
+    return subscription;
   }
 
   // Reset miesięcznych punktów
   async resetMonthlyPoints(userId: string): Promise<void> {
     const subscription = await this.getOrCreateSubscription(userId);
-
-    if (!subscription) {
-      console.error(`Cannot reset points - no subscription for user ${userId}`);
-      return;
-    }
 
     await prisma.subscription.update({
       where: { id: subscription.id },
@@ -160,9 +125,6 @@ export class SubscriptionService {
     let subscription = user.subscription;
     if (!subscription) {
       subscription = await this.getOrCreateSubscription(userId);
-      if (!subscription) {
-        throw new Error("Failed to create subscription");
-      }
     }
 
     let customerId = subscription?.stripeCustomerId;
@@ -203,7 +165,7 @@ export class SubscriptionService {
       success_url: `${process.env.FRONTEND_URL}/subscription?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.FRONTEND_URL}/subscription`,
       metadata: {
-        userId: user.id, // ⚠️ KLUCZOWE!
+        userId: user.id,
       },
     });
 
@@ -620,10 +582,6 @@ export class SubscriptionService {
 
       // ✅ Upewnij się że subskrypcja istnieje
       const existingSubscription = await this.getOrCreateSubscription(userId);
-      if (!existingSubscription) {
-        console.error(`❌ Could not create subscription for user ${userId}`);
-        return;
-      }
 
       const updateData: any = {
         stripeSubscriptionId: subscription.id,
@@ -708,29 +666,6 @@ export class SubscriptionService {
   // Statystyki użycia AI
   async getAiUsageStats(userId: string) {
     const subscription = await this.getOrCreateSubscription(userId);
-
-    if (!subscription) {
-      return {
-        subscription: {
-          plan: "FREE",
-          status: "INACTIVE",
-          aiPointsUsed: 0,
-          aiPointsLimit: 20,
-          percentUsed: 0,
-          resetDate: new Date(),
-        },
-        usage: {
-          totalCalls: 0,
-          totalPoints: 0,
-          byType: {
-            SHORT_ANSWER: 0,
-            SYNTHESIS_NOTE: 0,
-            ESSAY: 0,
-          },
-        },
-        recentUsage: [],
-      };
-    }
 
     const thisMonth = new Date();
     thisMonth.setDate(1);
