@@ -123,7 +123,7 @@ export function GuideArticlePage() {
     let parsed = text;
     parsed = parsed.replace(
       /\[([^\]]+)\]\(([^)]+)\)/g,
-      '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">$1</a>'
+      '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">$1</a>',
     );
     parsed = parsed.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
     parsed = parsed.replace(/\*(.*?)\*/g, "<em>$1</em>");
@@ -475,7 +475,7 @@ export function GuideArticlePage() {
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="grid lg:grid-cols-4 gap-8">
             {/* Main content */}
             <article className="lg:col-span-3">
