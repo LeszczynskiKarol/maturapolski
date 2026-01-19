@@ -518,7 +518,7 @@ export const LearningSession: React.FC = () => {
       }
 
       if (data.error) {
-        setError(data.message || "Brak dostępnych pytań");
+        setNoExercisesError(data.message || "Brak dostępnych pytań");
         return null;
       }
 
@@ -526,7 +526,7 @@ export const LearningSession: React.FC = () => {
       return data; // ✅ ZWRÓĆ DANE
     } catch (error) {
       console.error("Failed to fetch exercise:", error);
-      setError("Błąd połączenia");
+      setNoExercisesError("Błąd połączenia");
       return null;
     }
   };
@@ -3751,7 +3751,4 @@ function formatTime(seconds: number): string {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, "0")}`;
-}
-function setError(_arg0: any) {
-  throw new Error("Function not implemented.");
 }
