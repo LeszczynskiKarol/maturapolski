@@ -64,21 +64,24 @@ export function GuideListPage() {
   });
 
   // Grupowanie artykułów po hubach (kategoriach)
-  const groupedByHub = filteredArticles.reduce((acc, article) => {
-    const hubTitle = article.hub.title;
-    if (!acc[hubTitle]) {
-      acc[hubTitle] = [];
-    }
-    acc[hubTitle].push(article);
-    return acc;
-  }, {} as Record<string, GuideArticle[]>);
+  const groupedByHub = filteredArticles.reduce(
+    (acc, article) => {
+      const hubTitle = article.hub.title;
+      if (!acc[hubTitle]) {
+        acc[hubTitle] = [];
+      }
+      acc[hubTitle].push(article);
+      return acc;
+    },
+    {} as Record<string, GuideArticle[]>,
+  );
 
   // Statystyki
   const totalArticles = articles.length;
   const totalViews = articles.reduce((sum, a) => sum + a.views, 0);
   const totalReadingTime = articles.reduce(
     (sum, a) => sum + (a.readingTime || 5),
-    0
+    0,
   );
 
   return (
@@ -252,7 +255,7 @@ export function GuideListPage() {
                   to="/register"
                   className="px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors"
                 >
-                  Załóż konto za darmo
+                  Załóż darmowe konto
                 </Link>
                 <Link
                   to="/baza-wiedzy"

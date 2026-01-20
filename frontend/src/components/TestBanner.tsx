@@ -49,7 +49,7 @@ export function TestBanner({
             to={`/register`}
             className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all flex items-center justify-center gap-2 text-center"
           >
-            <span>Załóż konto i rozwiąż test</span>
+            <span>Załóż darmowe konto i rozwiąż test</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -107,7 +107,7 @@ export function TestBanner({
                 <Trophy className="w-5 h-5" />
                 {isLoggedIn
                   ? "Wróć do panelu i rozpocznij test"
-                  : "Załóż konto i rozpocznij test"}
+                  : "Załóż darmowe konto i rozpocznij test"}
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </div>

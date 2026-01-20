@@ -185,7 +185,7 @@ export function HubTestLandingPage() {
                       to="/register"
                       className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all"
                     >
-                      Załóż konto
+                      Załóż darmowe konto
                     </Link>
                   </>
                 ) : (
@@ -246,7 +246,7 @@ export function HubTestLandingPage() {
                       </>
                     ) : (
                       <>
-                        Załóż konto i zacznij
+                        Załóż darmowe konto i zacznij teraz
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                       </>
                     )}
@@ -354,7 +354,9 @@ export function HubTestLandingPage() {
                 number="1"
                 title="Rozpocznij test"
                 description={`${
-                  isLoggedIn ? "Kliknij 'Rozpocznij test'" : "Załóż konto"
+                  isLoggedIn
+                    ? "Kliknij 'Rozpocznij test'"
+                    : "Załóż darmowe konto"
                 }, zamów subskrypcję i rozpocznij naukę w ramach powtórki z lektury. Odpowiadaj na pytania i przygotuj się do matury.`}
                 icon={<Zap className="w-8 h-8" />}
               />
@@ -433,7 +435,7 @@ export function HubTestLandingPage() {
                     onClick={handleStartTest}
                     className="w-full py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors"
                   >
-                    {isLoggedIn ? "Rozpocznij test" : "Załóż konto"}
+                    {isLoggedIn ? "Rozpocznij test" : "Załóż darmowe konto"}
                   </button>
                 )}
               </div>
@@ -501,7 +503,7 @@ export function HubTestLandingPage() {
               <p className="text-xl md:text-2xl mb-10 text-blue-100">
                 {isLoggedIn
                   ? "Rozpocznij test teraz"
-                  : "Załóż konto i rozpocznij test"}
+                  : "Załóż darmowe konto i rozpocznij test"}
               </p>
 
               {shouldShowTest && (

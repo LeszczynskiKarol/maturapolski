@@ -145,7 +145,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
                     to="/register"
                     className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all"
                   >
-                    Załóż konto
+                    Załóż darmowe konto
                   </Link>
                 </>
               ) : (
@@ -214,7 +214,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
                     className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg text-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Załóż konto
+                    Załóż darmowe konto
                   </Link>
                 </div>
               ) : (
@@ -303,7 +303,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
                     to="/register"
                     className="hover:text-white transition-colors"
                   >
-                    Załóż konto
+                    Załóż darmowe konto
                   </Link>
                 </li>
 
@@ -333,7 +333,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
               <ul className="space-y-3 text-gray-400">
                 {featuredHubs
                   .filter((hub) =>
-                    ["LITERARY_WORK", "EPOCH", "AUTHOR"].includes(hub.type)
+                    ["LITERARY_WORK", "EPOCH", "AUTHOR"].includes(hub.type),
                   )
                   .map((hub) => (
                     <li key={hub.id}>

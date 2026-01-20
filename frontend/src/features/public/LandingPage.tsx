@@ -178,7 +178,7 @@ export const LandingPage: React.FC = () => {
                   to="/register"
                   className="mt-8 block w-full text-center px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors"
                 >
-                  Załóż konto
+                  Załóż darmowe konto
                 </Link>
               </motion.div>
             </div>
@@ -200,7 +200,7 @@ export const LandingPage: React.FC = () => {
             <div className="grid md:grid-cols-4 gap-8">
               <StepCard
                 number="1"
-                title="Załóż konto"
+                title="Załóż darmowe konto"
                 description="Stwórz konto w 30 sekund, zamów subskrypcję i rozpocznij naukę od razu."
                 icon={<User className="w-8 h-8" />}
               />

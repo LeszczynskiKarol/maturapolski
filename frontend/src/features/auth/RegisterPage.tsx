@@ -124,7 +124,7 @@ export const RegisterPage: React.FC = () => {
       <div className="min-h-[calc(100vh-80px)] flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
         <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold">Załóż konto</h2>
+            <h2 className="text-3xl font-bold">Załóż darmowe konto</h2>
             <p className="text-gray-600 mt-2">...i zdaj na 100%!</p>
           </div>
 
@@ -245,10 +245,10 @@ export const RegisterPage: React.FC = () => {
                           passwordStrength.score <= 2
                             ? "bg-red-500"
                             : passwordStrength.score <= 3
-                            ? "bg-yellow-500"
-                            : passwordStrength.score <= 4
-                            ? "bg-blue-500"
-                            : "bg-green-500"
+                              ? "bg-yellow-500"
+                              : passwordStrength.score <= 4
+                                ? "bg-blue-500"
+                                : "bg-green-500"
                         }`}
                         style={{
                           width: `${(passwordStrength.score / 5) * 100}%`,
@@ -350,7 +350,7 @@ export const RegisterPage: React.FC = () => {
                   Tworzenie konta...
                 </>
               ) : (
-                "Załóż konto"
+                "Załóż darmowe konto"
               )}
             </button>
 

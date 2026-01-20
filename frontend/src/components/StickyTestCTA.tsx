@@ -82,7 +82,7 @@ export function StickyTestCTA({
 
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-gray-900 truncate">
-                  {hubTitle} - załóż konto i sprawdź się na teście
+                  {hubTitle} - załóż darmowe konto i sprawdź się na teście
                 </p>
                 <p className="text-xs text-gray-600 hidden md:block">
                   Pytania maturalne + ocena wypracowań przez AI
@@ -97,7 +97,7 @@ export function StickyTestCTA({
                 className="px-4 sm:px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all text-sm sm:text-base whitespace-nowrap flex items-center gap-2"
               >
                 <Sparkles className="w-4 h-4" />
-                {isLoggedIn ? "Rozwiąż test" : "Załóż konto"}
+                {isLoggedIn ? "Rozwiąż test" : "Załóż darmowe konto"}
               </button>
 
               <button

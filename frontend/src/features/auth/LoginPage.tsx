@@ -25,7 +25,7 @@ export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { setAuth, user } = useAuthStore();
   const [verificationError, setVerificationError] = useState<string | null>(
-    null
+    null,
   );
 
   // Google Login
@@ -107,7 +107,7 @@ export const LoginPage: React.FC = () => {
                   </p>
                   <Link
                     to={`/resend-verification?email=${encodeURIComponent(
-                      verificationError
+                      verificationError,
                     )}&auto=true`}
                     className="text-sm text-yellow-900 underline font-medium"
                   >
@@ -224,7 +224,7 @@ export const LoginPage: React.FC = () => {
                 to="/register"
                 className="text-blue-600 hover:underline font-medium"
               >
-                Załóż konto
+                Załóż darmowe konto
               </Link>
             </p>
 
