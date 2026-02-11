@@ -6,9 +6,9 @@ package-lock.json
 start-app.ps1
 stop-app.ps1
 
-maturapolski-key.pem
-moja-aplikacja-key-pair.ppk
-moja-aplikacja-key-pair.pem
+maturapolski-key.pem*
+moja-aplikacja-key-pair.ppk*
+moja-aplikacja-key-pair.pem*
 
 # Environment variables
 .env
