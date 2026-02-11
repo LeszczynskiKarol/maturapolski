@@ -51,7 +51,8 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
   const pageTitle = title || defaultTitle;
   const pageDescription = description || defaultDescription;
   const pageKeywords = keywords || defaultKeywords;
-  const pageUrl = canonicalUrl || `https://maturapolski.pl${location.pathname}`;
+  const pageUrl =
+    canonicalUrl || `https://www.maturapolski.pl${location.pathname}`;
 
   useEffect(() => {
     loadFooterData();

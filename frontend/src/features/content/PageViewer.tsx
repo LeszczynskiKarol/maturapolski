@@ -67,7 +67,7 @@ export function PageViewer() {
     return contentPages.map((pageBlocks, index) => {
       // Szukaj pierwszego H2 na stronie
       const firstH2 = pageBlocks.find(
-        (b) => b.type === "h2" || b.type === "heading"
+        (b) => b.type === "h2" || b.type === "heading",
       );
       const h2Content = firstH2?.content || "";
       const h2Lower = h2Content.toLowerCase();
@@ -127,13 +127,13 @@ export function PageViewer() {
     return contentPages.map((pageBlocks, index) => {
       // Szukaj pierwszego H2 na stronie
       const firstH2 = pageBlocks.find(
-        (b) => b.type === "h2" || b.type === "heading"
+        (b) => b.type === "h2" || b.type === "heading",
       );
       const h2Content = firstH2?.content || "";
 
       // Parsuj "Część X, Rozdział Y" lub "Część X"
       const partMatch = h2Content.match(
-        /Część\s+(pierwsza|druga|trzecia|czwarta|piąta|szósta|[\w]+)/i
+        /Część\s+(pierwsza|druga|trzecia|czwarta|piąta|szósta|[\w]+)/i,
       );
       const chapterMatch = h2Content.match(/Rozdział\s+([IVXLCDM]+|\d+)/i);
 
@@ -162,11 +162,11 @@ export function PageViewer() {
         // Policz ile stron od ostatniej zmiany części
         for (let i = index - 1; i >= 0; i--) {
           const prevH2 = contentPages[i].find(
-            (b) => b.type === "h2" || b.type === "heading"
+            (b) => b.type === "h2" || b.type === "heading",
           );
           const prevContent = prevH2?.content || "";
           const prevPartMatch = prevContent.match(
-            /Część\s+(pierwsza|druga|trzecia|czwarta|piąta|szósta|[\w]+)/i
+            /Część\s+(pierwsza|druga|trzecia|czwarta|piąta|szósta|[\w]+)/i,
           );
 
           if (prevPartMatch) {
@@ -189,11 +189,11 @@ export function PageViewer() {
         (() => {
           if (index === 0) return true;
           const prevH2 = contentPages[index - 1].find(
-            (b) => b.type === "h2" || b.type === "heading"
+            (b) => b.type === "h2" || b.type === "heading",
           );
           const prevContent = prevH2?.content || "";
           const prevPartMatch = prevContent.match(
-            /Część\s+(pierwsza|druga|trzecia|czwarta|piąta|szósta|[\w]+)/i
+            /Część\s+(pierwsza|druga|trzecia|czwarta|piąta|szósta|[\w]+)/i,
           );
 
           if (!prevPartMatch && partMatch) return true;
@@ -308,7 +308,7 @@ export function PageViewer() {
             { type: "line", x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 },
           ],
           margin: [0, 0, 0, 15],
-        }
+        },
       );
 
       const allBlocks = page.content?.blocks || [];
@@ -438,7 +438,7 @@ export function PageViewer() {
                     fontSize: 10,
                     bold: true,
                     color: "#2563eb",
-                    link: "https://maturapolski.pl",
+                    link: "https://www.maturapolski.pl",
                   },
                   {
                     text: page.title,
@@ -510,7 +510,7 @@ export function PageViewer() {
                     text: "maturapolski.pl",
                     fontSize: 8,
                     color: "#2563eb",
-                    link: "https://maturapolski.pl",
+                    link: "https://www.maturapolski.pl",
                     alignment: "right",
                     width: "auto",
                     decoration: "underline",
@@ -534,7 +534,7 @@ export function PageViewer() {
       pdfMake
         .createPdf(docDefinition)
         .download(
-          `${page.title.replace(/[^a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s]/g, "_")}.pdf`
+          `${page.title.replace(/[^a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s]/g, "_")}.pdf`,
         );
 
       // Sukces - pokaż ptaszek i toast
@@ -644,7 +644,7 @@ export function PageViewer() {
       const pages = await contentService.getHubPages(hubSlug!);
       // SORTOWANIE ALFABETYCZNE - zawsze ta sama kolejność
       const sortedPages = [...pages].sort((a, b) =>
-        a.title.localeCompare(b.title, "pl", { sensitivity: "base" })
+        a.title.localeCompare(b.title, "pl", { sensitivity: "base" }),
       );
       setHubPages(sortedPages);
     } catch (error) {
@@ -710,7 +710,7 @@ export function PageViewer() {
       // Links: [tekst](url) -> <a>
       parsed = parsed.replace(
         /\[([^\]]+)\]\(([^)]+)\)/g,
-        '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">$1</a>'
+        '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">$1</a>',
       );
 
       // Bold: **text** -> <strong>
@@ -1119,7 +1119,7 @@ export function PageViewer() {
                       inLanguage: "pl",
                       hasPart: contentPages.map((blocks, i) => {
                         const chapterTitle = blocks.find(
-                          (b) => b.type === "h3"
+                          (b) => b.type === "h3",
                         )?.content;
                         return {
                           "@type": "Chapter",
@@ -1147,8 +1147,8 @@ export function PageViewer() {
                             {isLalkaChapters || isZbrodniaChapters
                               ? "Poprzedni rozdział"
                               : isDziadyChapters
-                              ? "Poprzednia scena"
-                              : "Poprzednia strona"}
+                                ? "Poprzednia scena"
+                                : "Poprzednia strona"}
                           </span>
                         </button>
 
@@ -1161,8 +1161,8 @@ export function PageViewer() {
                             {isLalkaChapters || isZbrodniaChapters
                               ? "Następny rozdział"
                               : isDziadyChapters
-                              ? "Następna scena"
-                              : "Następna strona"}
+                                ? "Następna scena"
+                                : "Następna strona"}
                           </span>
 
                           <ChevronRight className="w-4 h-4" />
@@ -1355,7 +1355,7 @@ export function PageViewer() {
                                 <button
                                   onClick={() => goToPage(group.pages[0].index)}
                                   className={`px-3 py-1 rounded-lg font-semibold text-sm border-2 transition-colors cursor-pointer ${getGroupColors(
-                                    group.sectionType
+                                    group.sectionType,
                                   )}`}
                                 >
                                   {group.groupName}
@@ -1426,7 +1426,7 @@ export function PageViewer() {
                 {contentPages.map((pageBlocks, pageIndex) => (
                   <div key={pageIndex} data-page={pageIndex + 1}>
                     {pageBlocks.map((block, blockIndex) =>
-                      renderBlock(block, blockIndex)
+                      renderBlock(block, blockIndex),
                     )}
                   </div>
                 ))}

@@ -9,7 +9,7 @@ Disallow: /login
 Disallow: /register
 
 # Sitemap
-# Sitemap: https://maturapolski.pl/sitemap.xml
+# Sitemap: https://www.maturapolski.pl/sitemap.xml
 
 # Crawl-delay
 Crawl-delay: 1
