@@ -344,99 +344,117 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
 
         console.log(`🔍 Fetching payments for customer: ${customerId}`);
 
-        // ✅ POBIERZ FAKTURY (invoices)
-        const invoices = await stripe.invoices.list({
-          customer: customerId,
-          limit: 50,
-        });
+        try {
+          // ✅ POBIERZ FAKTURY (invoices)
+          const invoices = await stripe.invoices.list({
+            customer: customerId,
+            limit: 50,
+          });
 
-        console.log(`📄 Found ${invoices.data.length} invoices`);
+          console.log(`📄 Found ${invoices.data.length} invoices`);
 
-        // ✅ POBIERZ checkout sessions
-        const sessions = await stripe.checkout.sessions.list({
-          customer: customerId,
-          limit: 50,
-        });
+          // ✅ POBIERZ checkout sessions
+          const sessions = await stripe.checkout.sessions.list({
+            customer: customerId,
+            limit: 50,
+          });
 
-        console.log(`🛒 Found ${sessions.data.length} checkout sessions`);
+          console.log(`🛒 Found ${sessions.data.length} checkout sessions`);
 
-        const payments: any[] = [];
+          const payments: any[] = [];
 
-        // ✅ Mapuj faktury (subscription payments)
-        for (const invoice of invoices.data) {
-          if (invoice.status === "paid" && invoice.amount_paid > 0) {
-            let description = "";
-            let type = "SUBSCRIPTION";
+          // ✅ Mapuj faktury (subscription payments)
+          for (const invoice of invoices.data) {
+            if (invoice.status === "paid" && invoice.amount_paid > 0) {
+              let description = "";
+              let type = "SUBSCRIPTION";
 
-            // Sprawdź czy to pierwsza płatność czy renewal
-            if (invoice.billing_reason === "subscription_create") {
-              description = "Subskrypcja Premium - pierwsza płatność";
-            } else if (invoice.billing_reason === "subscription_cycle") {
-              description = "Subskrypcja Premium - odnowienie";
-            } else {
-              description = "Płatność subskrypcji Premium";
+              if (invoice.billing_reason === "subscription_create") {
+                description = "Subskrypcja Premium - pierwsza płatność";
+              } else if (invoice.billing_reason === "subscription_cycle") {
+                description = "Subskrypcja Premium - odnowienie";
+              } else {
+                description = "Płatność subskrypcji Premium";
+              }
+
+              payments.push({
+                id: invoice.id,
+                date: new Date(invoice.created * 1000).toISOString(),
+                type,
+                description,
+                amount: invoice.amount_paid / 100,
+                currency: invoice.currency?.toUpperCase() || "PLN",
+                status: "PAID",
+                receiptUrl: invoice.hosted_invoice_url || null,
+              });
             }
-
-            payments.push({
-              id: invoice.id,
-              date: new Date(invoice.created * 1000).toISOString(),
-              type,
-              description,
-              amount: invoice.amount_paid / 100,
-              currency: invoice.currency?.toUpperCase() || "PLN",
-              status: "PAID",
-              receiptUrl: invoice.hosted_invoice_url || null,
-            });
           }
-        }
 
-        // ✅ Mapuj checkout sessions (jednorazowe płatności)
-        for (const session of sessions.data) {
-          if (
-            session.payment_status === "paid" &&
-            session.mode === "payment" // tylko jednorazowe płatności
-          ) {
-            const metadata = session.metadata || {};
-            let type = "UNKNOWN";
-            let description = "";
+          // ✅ Mapuj checkout sessions (jednorazowe płatności)
+          for (const session of sessions.data) {
+            if (
+              session.payment_status === "paid" &&
+              session.mode === "payment"
+            ) {
+              const metadata = session.metadata || {};
+              let type = "UNKNOWN";
+              let description = "";
 
-            if (metadata.purchaseType === "MONTHLY_ACCESS") {
-              type = "MONTHLY_ACCESS";
-              description = "Dostęp Premium na 30 dni";
-            } else if (metadata.pointsPackage) {
-              type = "POINTS_PURCHASE";
-              const packageName =
-                metadata.pointsPackage === "SMALL"
-                  ? "Pakiet Starter (50 pkt)"
-                  : metadata.pointsPackage === "MEDIUM"
-                    ? "Pakiet Standard (150 pkt)"
-                    : "Pakiet Premium (300 pkt)";
-              description = `Doładowanie: ${packageName}`;
-            } else {
-              description = "Płatność";
+              if (metadata.purchaseType === "MONTHLY_ACCESS") {
+                type = "MONTHLY_ACCESS";
+                description = "Dostęp Premium na 30 dni";
+              } else if (metadata.pointsPackage) {
+                type = "POINTS_PURCHASE";
+                const packageName =
+                  metadata.pointsPackage === "SMALL"
+                    ? "Pakiet Starter (50 pkt)"
+                    : metadata.pointsPackage === "MEDIUM"
+                      ? "Pakiet Standard (150 pkt)"
+                      : "Pakiet Premium (300 pkt)";
+                description = `Doładowanie: ${packageName}`;
+              } else {
+                description = "Płatność";
+              }
+
+              payments.push({
+                id: session.id,
+                date: new Date(session.created * 1000).toISOString(),
+                type,
+                description,
+                amount: (session.amount_total || 0) / 100,
+                currency: session.currency?.toUpperCase() || "PLN",
+                status: "PAID",
+                receiptUrl: null,
+              });
             }
-
-            payments.push({
-              id: session.id,
-              date: new Date(session.created * 1000).toISOString(),
-              type,
-              description,
-              amount: (session.amount_total || 0) / 100,
-              currency: session.currency?.toUpperCase() || "PLN",
-              status: "PAID",
-              receiptUrl: null, // Checkout sessions zwykle nie mają receipt URL
-            });
           }
+
+          payments.sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+          );
+
+          console.log(
+            `✅ Found ${payments.length} payments for user ${userId}`,
+          );
+
+          return reply.send({ payments });
+        } catch (stripeError: any) {
+          // ✅ Klient usunięty ze Stripe (np. wyczyszczone dane testowe)
+          if (stripeError.code === "resource_missing") {
+            console.warn(
+              `⚠️ Stripe customer ${customerId} not found - clearing from DB`,
+            );
+
+            // Wyczyść nieaktualny customerId z bazy
+            await prisma.subscription.updateMany({
+              where: { stripeCustomerId: customerId },
+              data: { stripeCustomerId: null },
+            });
+
+            return reply.send({ payments: [], stripeCustomerCleared: true });
+          }
+          throw stripeError;
         }
-
-        // ✅ Sortuj po dacie (najnowsze pierwsze)
-        payments.sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-        );
-
-        console.log(`✅ Found ${payments.length} payments for user ${userId}`);
-
-        return reply.send({ payments });
       } catch (error: any) {
         console.error("Error fetching payment history:", error);
         return reply.code(500).send({

@@ -938,32 +938,49 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
   );
 
   // DELETE - Usuń użytkownika
+  // DELETE - Usuń użytkownika
   fastify.delete<{ Params: { userId: string } }>(
     "/users/:userId",
     async (request, reply) => {
       try {
         const { userId } = request.params;
 
-        await prisma.$transaction([
-          prisma.submission.deleteMany({ where: { userId } }),
-          prisma.assessment.deleteMany({ where: { userId } }),
-          prisma.notification.deleteMany({ where: { userId } }),
-          prisma.weeklyProgress.deleteMany({ where: { userId } }),
-          prisma.studyGoal.deleteMany({ where: { userId } }),
-          prisma.dailyProgress.deleteMany({ where: { userId } }),
-          prisma.userMaterialProgress.deleteMany({ where: { userId } }),
-          prisma.examSession.deleteMany({ where: { userId } }),
-          prisma.exerciseUsage.deleteMany({ where: { userId } }),
-          prisma.learningSession.deleteMany({ where: { userId } }),
-          // DODAJ TO:
-          prisma.subscription.deleteMany({ where: { userId } }),
-          prisma.aiUsage.deleteMany({ where: { userId } }),
-          // Następnie usuń relacje jeden-do-jeden:
-          prisma.userLevelProgress.deleteMany({ where: { userId } }),
-          prisma.userProfile.deleteMany({ where: { userId } }),
-          // Na końcu usuń użytkownika:
-          prisma.user.delete({ where: { id: userId } }),
-        ]);
+        await prisma.$transaction(async (tx) => {
+          // Pobierz sessionIds do usunięcia answers
+          const sessions = await tx.examSession.findMany({
+            where: { userId },
+            select: { id: true },
+          });
+
+          // Tabele bez child-zależności
+          await tx.submission.deleteMany({ where: { userId } });
+          await tx.assessment.deleteMany({ where: { userId } });
+          await tx.notification.deleteMany({ where: { userId } });
+          await tx.weeklyProgress.deleteMany({ where: { userId } });
+          await tx.studyGoal.deleteMany({ where: { userId } });
+          await tx.dailyProgress.deleteMany({ where: { userId } });
+          await tx.userMaterialProgress.deleteMany({ where: { userId } });
+          await tx.exerciseUsage.deleteMany({ where: { userId } });
+          await tx.learningSession.deleteMany({ where: { userId } });
+
+          // ExamAnswers PRZED ExamSessions
+          await tx.examAnswer.deleteMany({
+            where: { sessionId: { in: sessions.map((s) => s.id) } },
+          });
+          await tx.examSession.deleteMany({ where: { userId } });
+
+          // AiUsage + PointsPurchase PRZED Subscription
+          await tx.aiUsage.deleteMany({ where: { userId } });
+          await tx.pointsPurchase.deleteMany({
+            where: { subscription: { userId } },
+          });
+          await tx.subscription.deleteMany({ where: { userId } });
+
+          // 1:1 relacje → User
+          await tx.userLevelProgress.deleteMany({ where: { userId } });
+          await tx.userProfile.deleteMany({ where: { userId } });
+          await tx.user.delete({ where: { id: userId } });
+        });
 
         return reply.send({ success: true });
       } catch (error) {
