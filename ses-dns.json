@@ -1,0 +1,59 @@
+{
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "_amazonses.maturapolski.pl",
+        "Type": "TXT",
+        "TTL": 300,
+        "ResourceRecords": [
+          { "Value": "\"7hxp44yDontf+UqOz7cHDrFc0ob33fY61vz2K9X2p2A=\"" }
+        ]
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "fq22xiqlfsd5ifcdmgawupfe2zltjkap._domainkey.maturapolski.pl",
+        "Type": "CNAME",
+        "TTL": 300,
+        "ResourceRecords": [
+          { "Value": "fq22xiqlfsd5ifcdmgawupfe2zltjkap.dkim.amazonses.com" }
+        ]
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "6rutog2omvwlpph3z57d5ccritak7v7t._domainkey.maturapolski.pl",
+        "Type": "CNAME",
+        "TTL": 300,
+        "ResourceRecords": [
+          { "Value": "6rutog2omvwlpph3z57d5ccritak7v7t.dkim.amazonses.com" }
+        ]
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "uzdl7xy3bzf7tfftydqy7fud6yvbfu36._domainkey.maturapolski.pl",
+        "Type": "CNAME",
+        "TTL": 300,
+        "ResourceRecords": [
+          { "Value": "uzdl7xy3bzf7tfftydqy7fud6yvbfu36.dkim.amazonses.com" }
+        ]
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "maturapolski.pl",
+        "Type": "MX",
+        "TTL": 300,
+        "ResourceRecords": [
+          { "Value": "10 web1.aftermarket.hosting" }
+        ]
+      }
+    }
+  ]
+}

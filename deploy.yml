@@ -62,8 +62,14 @@ jobs:
             cd ..
             echo "=== Start backend ==="
             pm2 delete maturapolski-backend || true
+            echo "=== Clear PM2 dump ==="
+            rm -f /home/ubuntu/.pm2/dump.pm2
+            echo "=== Current dir before pm2 start ==="
             cd /var/www/maturapolski/backend
-            pm2 start dist/index.js --name maturapolski-backend -i 1
+            pwd
+            ls dist/index.js
+            echo "=== Starting PM2 ==="
+            pm2 start /var/www/maturapolski/backend/dist/index.js --name maturapolski-backend
             pm2 save
             sleep 3
             echo "=== Status ==="

@@ -1,0 +1,16 @@
+{
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "maturapolski.pl",
+        "Type": "TXT",
+        "TTL": 300,
+        "ResourceRecords": [
+          { "Value": "\"google-site-verification=suktNarEyrds8NIvgU8pM5hP161zq6ZIpZ8Unn8dLI4\"" },
+          { "Value": "\"v=spf1 include:amazonses.com ~all\"" }
+        ]
+      }
+    }
+  ]
+}
