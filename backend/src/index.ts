@@ -7,25 +7,25 @@ console.log("AWS_REGION:", process.env.AWS_REGION);
 console.log("AWS_BUCKET_NAME:", process.env.AWS_BUCKET_NAME);
 console.log(
   "AWS_ACCESS_KEY_ID:",
-  process.env.AWS_ACCESS_KEY_ID ? "✅ SET" : "❌ MISSING"
+  process.env.AWS_ACCESS_KEY_ID ? "✅ SET" : "❌ MISSING",
 );
 console.log(
   "AWS_SECRET_ACCESS_KEY:",
-  process.env.AWS_SECRET_ACCESS_KEY ? "✅ SET" : "❌ MISSING"
+  process.env.AWS_SECRET_ACCESS_KEY ? "✅ SET" : "❌ MISSING",
 );
 console.log(
   "GOOGLE_SEARCH_API_KEY:",
-  process.env.GOOGLE_SEARCH_API_KEY ? "✅ SET" : "❌ MISSING"
+  process.env.GOOGLE_SEARCH_API_KEY ? "✅ SET" : "❌ MISSING",
 );
 console.log(
   "GOOGLE_SEARCH_ENGINE_ID:",
-  process.env.GOOGLE_SEARCH_ENGINE_ID ? "✅ SET" : "❌ MISSING"
+  process.env.GOOGLE_SEARCH_ENGINE_ID ? "✅ SET" : "❌ MISSING",
 );
 console.log("=================");
+import cors from "@fastify/cors";
 import cron from "node-cron";
 import multipart from "@fastify/multipart";
 import { uploadRoutes } from "./routes/upload.routes";
-import cors from "@fastify/cors";
 import jwt from "@fastify/jwt";
 import Fastify from "fastify";
 import { initializeAI } from "./ai/aiService";
@@ -78,22 +78,24 @@ fastify.addContentTypeParser(
       err.statusCode = 400;
       done(err, undefined);
     }
-  }
+  },
 );
 
 // Register plugins
-fastify.register(cors, {
-  origin: [
-    "http://localhost:3000",
-    "http://localhost:4000",
-    "https://app-reactapp.ngrok.app",
-    "https://server-reactapp.ngrok.app",
-    "https://maturapolski.pl",
-    "https://api.maturapolski.pl",
-    "https://www.maturapolski.pl",
-  ],
-  credentials: true,
-});
+if (process.env.ENABLE_CORS !== "false") {
+  fastify.register(cors, {
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:4000",
+      "https://app-reactapp.ngrok.app",
+      "https://server-reactapp.ngrok.app",
+      "https://maturapolski.pl",
+      "https://api.maturapolski.pl",
+      "https://www.maturapolski.pl",
+    ],
+    credentials: true,
+  });
+}
 
 fastify.register(jwt, {
   secret: process.env.JWT_SECRET || "your-jwt-secret-change-in-production",
@@ -151,7 +153,7 @@ console.log("✓ SubscriptionRoutes routes registered at /api/subscription/*");
 // Exam Structure routes (dla admina)
 fastify.register(examStructureRoutes, { prefix: "/api/admin/exam-structures" });
 console.log(
-  "✓ Exam Structure routes registered at /api/admin/exam-structures/*"
+  "✓ Exam Structure routes registered at /api/admin/exam-structures/*",
 );
 
 // Exercise routes
