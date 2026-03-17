@@ -8,6 +8,7 @@ import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-08-27.basil",
 });
+const countAll = (obj: any): number => obj?._count?._all ?? obj?._count ?? 0;
 
 const ExerciseSchema = z.object({
   type: z.enum([
@@ -150,29 +151,29 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
         if (!worksByEpoch[epochKey]) worksByEpoch[epochKey] = [];
         worksByEpoch[epochKey].push({
           work: w.work!,
-          count: w._count._all,
+          count: countAll(w),
         });
       });
 
       return reply.send({
         epochs: epochs.map((e) => ({
           value: e.epoch,
-          count: e._count._all,
+          count: countAll(e),
         })),
         works: works.map((w) => ({
           value: w.work,
           epoch: w.epoch,
-          count: w._count._all,
+          count: countAll(w),
         })),
         worksByEpoch,
         tags: sortedTags,
         categories: categories.map((c) => ({
           value: c.category,
-          count: c._count._all,
+          count: countAll(c),
         })),
         types: types.map((t) => ({
           value: t.type,
-          count: t._count._all,
+          count: countAll(t),
         })),
       });
     } catch (error) {
