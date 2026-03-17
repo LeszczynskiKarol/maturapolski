@@ -102,7 +102,7 @@ export const contentService = {
       `/api/content/pages/${pageId}/check-rating`,
       {
         fingerprint,
-      }
+      },
     );
     return response.data;
   },

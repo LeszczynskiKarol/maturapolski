@@ -35,7 +35,7 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // ✅ Response interceptor - automatyczne odświeżanie tokenu
@@ -78,7 +78,7 @@ api.interceptors.response.use(
           `${
             import.meta.env.VITE_API_URL || "http://localhost:3001"
           }/api/auth/refresh`,
-          { refreshToken }
+          { refreshToken },
         );
 
         const { token: newToken, refreshToken: newRefreshToken } =
@@ -108,5 +108,5 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );

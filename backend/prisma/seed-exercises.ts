@@ -7,11 +7,7 @@ async function seedExercises() {
   console.log("🌱 Seeding exercises...");
 
   const exercises = [
-    // ======================= LUDZIE BEZDOMNI — ZESTAW 2 (50 pytań) ===================//
-
-    // ===== DIFFICULTY 1 — CLOSED_SINGLE (5) =====
-
-    // ======================= POCZĄTEK PYTAŃ SKLEPY CYNAMONOWE ===================//
+    // ======================= POCZĄTEK PYTAŃ DŻUMA ===================//
 
     // ===== DIFFICULTY 1 — CLOSED_SINGLE (6) =====
 
@@ -20,21 +16,21 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 1,
       points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Kto jest autorem zbioru opowiadań „Sklepy cynamonowe”?",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Kto jest autorem powieści „Dżuma”?",
       content: {
         options: [
-          "Witold Gombrowicz",
-          "Bruno Schulz",
-          "Stanisław Ignacy Witkiewicz",
-          "Bolesław Leśmian",
+          "Jean-Paul Sartre",
+          "Albert Camus",
+          "Gustaw Herling-Grudziński",
+          "Franz Kafka",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "„Sklepy cynamonowe” to zbiór opowiadań Brunona Schulza, wydany w 1933 roku (postdatowany na 1934) dzięki protekcji Zofii Nałkowskiej. Jest jednym z najważniejszych dzieł polskiego dwudziestolecia międzywojennego.",
+          "„Dżuma” (fr. „La Peste”) to powieść Alberta Camusa wydana w 1947 roku. Polskie tłumaczenie Joanny Guze ukazało się w 1957 roku. Camus otrzymał Nagrodę Nobla w dziedzinie literatury w 1957 roku.",
       },
     },
     {
@@ -42,55 +38,21 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 1,
       points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Jak ma na imię ojciec narratora w „Sklepach cynamonowych”?",
-      content: {
-        options: ["Józef", "Jakub", "Jan", "Jerzy"],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Ojciec narratora ma na imię Jakub — jak biblijny patriarcha z Księgi Rodzaju. To imię jest jednym z wielu nawiązań do tradycji biblijnej i żydowskiej obecnych w zbiorze.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 1,
-      points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Jak nazywa się służąca w domu narratora?",
-      content: {
-        options: ["Maryśka", "Paulina", "Adela", "Polda"],
-      },
-      correctAnswer: 2,
-      metadata: {
-        explanation:
-          "Adela to służąca w domu narratora. Pełni kluczową rolę w zbiorze — symbolizuje zmysłową kobiecość i posiada nad ojcem niemal nieograniczoną władzę, której się bezwzględnie poddaje.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 1,
-      points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "W jakim mieście rozgrywa się akcja „Sklepów cynamonowych”?",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "W jakim mieście rozgrywa się akcja „Dżumy”?",
       content: {
         options: [
-          "W Warszawie",
-          "We Lwowie",
-          "W niewymienionym z nazwy galicyjskim miasteczku wzorowanym na Drohobyczu",
-          "W Krakowie",
+          "W Paryżu",
+          "W Algierze",
+          "W Oranie — mieście na wybrzeżu algierskim",
+          "W Marsylii",
         ],
       },
       correctAnswer: 2,
       metadata: {
         explanation:
-          "Akcja toczy się w małym galicyjskim miasteczku, nigdy niewymienianym z nazwy. Schulz wzorował je na rodzinnym Drohobyczu, nadając mu cechy mityczne — labiryntową przestrzeń, metamorfozy ulic i domów.",
+          "Akcja „Dżumy” toczy się w Oranie — mieście portowym na wybrzeżu algierskim, będącym wówczas prefekturą francuską. Camus opisuje je jako miasto brzydkie, bez drzew i gołębi, żyjące handlem.",
       },
     },
     {
@@ -98,38 +60,82 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 1,
       points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Ile opowiadań zawiera zbiór „Sklepy cynamonowe”?",
-      content: {
-        options: ["Dziesięć", "Dwanaście", "Piętnaście", "Dwadzieścia"],
-      },
-      correctAnswer: 2,
-      metadata: {
-        explanation:
-          "Zbiór „Sklepy cynamonowe” składa się z piętnastu opowiadań, od „Sierpnia” do „Nocy wielkiego sezonu”. Tworzą one luźną kompozycję powieściową, połączoną postaciami i przestrzenią.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 1,
-      points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Czym z zawodu zajmuje się ojciec narratora?",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Jaki zawód wykonuje główny bohater, Bernard Rieux?",
       content: {
         options: [
-          "Jest nauczycielem",
-          "Jest kupcem — prowadzi sklep z suknem",
+          "Jest dziennikarzem",
           "Jest lekarzem",
-          "Jest rzemieślnikiem",
+          "Jest sędzią",
+          "Jest księdzem",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Ojciec narratora jest kupcem — prowadzi sklep z suknem i materiałami na rynku miasteczka. Jednak w oczach syna jest kimś znacznie więcej: demiurgiem, magiem, filozofem i poetą.",
+          "Bernard Rieux jest lekarzem — to on jako pierwszy rozpoznaje objawy dżumy u pacjentów i walczy z epidemią przez cały czas jej trwania. Na końcu powieści okazuje się również narratorem kroniki.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Co jest pierwszym zwiastunem epidemii w Oranie?",
+      content: {
+        options: [
+          "Nagła fala upałów",
+          "Masowe pojawianie się martwych szczurów na ulicach",
+          "Trzęsienie ziemi",
+          "Skażenie wody pitnej",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Epidemię zwiastują martwe szczury, które zaczynają pojawiać się na ulicach, schodach i w domach. 25 kwietnia agencja Infdok ogłosiła, że zebrano i spalono 6231 szczurów. Wkrótce potem zaczynają chorować ludzie.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Kto okazuje się narratorem kroniki na końcu powieści?",
+      content: {
+        options: [
+          "Jean Tarrou",
+          "Raymond Rambert",
+          "Doktor Bernard Rieux",
+          "Joseph Grand",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Na końcu powieści doktor Rieux ujawnia, że to on jest autorem kroniki. Przez cały utwór mówi o sobie w trzeciej osobie, by zachować obiektywizm świadka.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Ile części (rozdziałów głównych) liczy powieść „Dżuma”?",
+      content: {
+        options: ["Trzy", "Cztery", "Pięć", "Siedem"],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "„Dżuma” składa się z pięciu części. Część I — pojawienie się szczurów i rozpoznanie epidemii, II — zamknięcie miasta i rozłąka, III — szczyt epidemii, IV — walka z dżumą, V — cofanie się choroby i otwarcie bram.",
       },
     },
 
@@ -140,22 +146,21 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 1,
       points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Które z wymienionych postaci pojawiają się w „Sklepach cynamonowych”?",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Które z wymienionych postaci są bohaterami „Dżumy”?",
       content: {
         options: [
-          "Adela — służąca",
-          "Ciotka Agata",
-          "Doktor Czernisz",
-          "Wuj Marek",
+          "Jean Tarrou — tajemniczy przybysz organizujący oddziały sanitarne",
+          "Joseph Grand — skromny urzędnik merostwa piszący książkę",
+          "Rodion Raskolnikow — student prawa z Petersburga",
+          "Ojciec Paneloux — uczony jezuita wygłaszający kazania",
         ],
       },
       correctAnswer: [0, 1, 3],
       metadata: {
         explanation:
-          "Adela, ciotka Agata i wuj Marek to postacie ze „Sklepów cynamonowych”. Doktor Czernisz to postać z „Ludzi bezdomnych” Żeromskiego.",
+          "Tarrou, Grand i ojciec Paneloux to postacie z „Dżumy”. Raskolnikow to bohater „Zbrodni i kary” Dostojewskiego.",
       },
     },
     {
@@ -163,16 +168,21 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 1,
       points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Które opowiadania wchodzą w skład zbioru „Sklepy cynamonowe”?",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Które stwierdzenia o powieści „Dżuma” są prawdziwe?",
       content: {
-        options: ["„Sierpień”", "„Ptaki”", "„Emeryt”", "„Karakony”"],
+        options: [
+          "Powieść została wydana w 1947 roku",
+          "Jest powieścią-parabolą o uniwersalnym przesłaniu",
+          "Akcja rozgrywa się w dokładnie określonym roku — 1942",
+          "Motto pochodzi z „Dziennika roku zarazy” Daniela Defoe",
+        ],
       },
       correctAnswer: [0, 1, 3],
       metadata: {
         explanation:
-          "„Sierpień”, „Ptaki” i „Karakony” to opowiadania ze „Sklepów cynamonowych”. „Emeryt” to opowiadanie z drugiego zbioru Schulza — „Sanatorium Pod Klepsydrą”.",
+          "„Dżuma” ukazała się w 1947 r., jest parabolą, a motto pochodzi od Defoe. Rok akcji NIE jest dokładnie podany — tekst mówi „194.” z celowo opuszczoną ostatnią cyfrą, co podkreśla uniwersalność.",
       },
     },
     {
@@ -180,1213 +190,21 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 1,
       points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Które stwierdzenia o zbiorze „Sklepy cynamonowe” są prawdziwe?",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Które wydarzenia następują w części I powieści?",
       content: {
         options: [
-          "Narrator opowiada w pierwszej osobie",
-          "Zbiór został wydany w 1933 roku",
-          "Schulz napisał go w Warszawie",
-          "Zbiór ukazał się dzięki protekcji Zofii Nałkowskiej",
+          "Pojawiają się martwe szczury na ulicach Oranu",
+          "Dozorca Michel umiera jako jedna z pierwszych ofiar",
+          "Bramy miasta zostają zamknięte",
+          "Doktor Rieux rozpoznaje objawy dżumy u pacjentów",
         ],
       },
       correctAnswer: [0, 1, 3],
       metadata: {
         explanation:
-          "Narracja jest pierwszoosobowa (narrator = Józef). Zbiór wydano w 1933 r. dzięki Nałkowskiej. Schulz pisał go w Drohobyczu, nie w Warszawie — nigdy na stałe nie opuścił rodzinnego miasta.",
-      },
-    },
-
-    // ===== DIFFICULTY 2 — CLOSED_SINGLE (5) =====
-
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Co ojciec narratora hoduje na strychu w opowiadaniu „Ptaki”?",
-      content: {
-        options: [
-          "Koty i psy",
-          "Egzotyczne ptaki wylęgane z zapłodnionych jaj",
-          "Rośliny tropikalne",
-          "Karakony w celach naukowych",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "W „Ptakach” ojciec sprowadza zapłodnione jaja ptasie z Hamburga, Holandii i Afryki, daje je do wylęgania kurom belgijskim i urządza na strychu „ptasie królestwo” — prawdziwą arkę Noego, do której zlatują się ptaki z dalekich stron.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Kto kończy „ptasią imprezę” ojca, rozpędzając ptaki ze strychu?",
-      content: {
-        options: ["Matka", "Adela", "Wuj Marek", "Narrator (Józef)"],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Adela, „podobna do szalejącej Menady”, wdziera się na strych z długą szczotką i w wirze piór rozpędza całą ptasią gromadę. Ojciec schodzi ze schodów jak „król-banita, który stracił tron i królowanie”.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Do jakiego biblijnego motywu nawiązuje dach domu narratora, gdy ojciec hoduje na nim ptaki?",
-      content: {
-        options: ["Wieża Babel", "Arka Noego", "Ogród Eden", "Arka Przymierza"],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Schulz wprost pisze, że dach „stał się prawdziwą gospodą ptasią, arką Noego, do której zlatywały się wszelkiego rodzaju skrzydlacze z dalekich stron”. Ojciec jest kreowany na biblijnego patriarchę.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Czego narrator poszukuje podczas nocnej wędrówki w tytułowym opowiadaniu „Sklepy cynamonowe”?",
-      content: {
-        options: [
-          "Drogi do domu po nocnym spacerze",
-          "Portfelu ojca — ale po drodze chce odwiedzić tajemnicze sklepy cynamonowe",
-          "Apteki z lekami dla chorego ojca",
-          "Szkoły, w której odbywają się nocne lekcje",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Ojciec w teatrze stwierdza, że zapomniał portfelu z pieniędzmi i dokumentami. Narrator zostaje wysłany do domu po niego, ale po drodze próbuje odnaleźć tajemnicze sklepy cynamonowe — i gubi się w labiryncie nocnych ulic.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Co ojciec głosi w „Traktacie o Manekinach”?",
-      content: {
-        options: [
-          "Że manekiny mają duszę i cierpią",
-          "Że Demiurgos nie ma monopolu na tworzenie — materia jest żywa i można ją formować, tworząc „wtórego człowieka” na obraz manekina",
-          "Że manekiny powinny zastąpić ludzi w fabrykach",
-          "Że sztuka jest bezwartościowa wobec natury",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "W „Traktacie o Manekinach” ojciec wygłasza heretycką doktrynę o materii: twierdzi, że każdy duch może tworzyć, że materia jest żywa i płodna, i postuluje stworzenie „wtórej demiurgii” — istot prowizorycznych, z tandety, na obraz manekina.",
-      },
-    },
-
-    // ===== DIFFICULTY 2 — CLOSED_MULTIPLE (4) =====
-
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Które cechy charakteryzują ojca narratora w „Sklepach cynamonowych”?",
-      content: {
-        options: [
-          "Jest ekscentryczny i pogrąża się w obsesyjnych zainteresowaniach",
-          "Wygłasza pseudofilozoficzne prelekcje o materii i tworzeniu",
-          "Jest typowym, praktycznym kupcem bez wyobraźni",
-          "Stopniowo zanika fizycznie — maleje, chudnie, znika",
-        ],
-      },
-      correctAnswer: [0, 1, 3],
-      metadata: {
-        explanation:
-          "Ojciec jest ekscentrykiem, filozofem-demiurgiem, wygłasza prelekcje o materii i manekinach. Stopniowo zanika — maleje jak „orzech zsychający się w łupinie”, aż jego resztki Adela wymata jak kupkę śmieci. Nie jest praktycznym kupcem — tę rolę pełni matka.",
-      },
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Uzupełnij zdania, wybierając poprawne opcje:",
-      content: {
-        textWithGaps:
-          "Zbiór „Sklepy cynamonowe” to gatunek zwany (1). Narrator opowiada z perspektywy (2). Czas w utworze jest (3), nie linearny.",
-        gaps: [
-          {
-            id: 1,
-            options: [
-              "powieścią realistyczną",
-              "prozą poetycką",
-              "dramatem lirycznym",
-              "poematem prozą",
-            ],
-          },
-          {
-            id: 2,
-            options: [
-              "wszechwiedzącego narratora",
-              "dziecka / dorosłego wspominającego dzieciństwo",
-              "ojca narratora",
-              "Adeli",
-            ],
-          },
-          {
-            id: 3,
-            options: [
-              "linearny i historyczny",
-              "cykliczny i mityczny",
-              "ściśle chronologiczny",
-              "odwrócony (od końca)",
-            ],
-          },
-        ],
-      },
-      correctAnswer: [1, 1, 1],
-      metadata: {
-        explanation:
-          "„Sklepy cynamonowe” to proza poetycka — łączy cechy prozy i poezji. Narrator opowiada z podwójnej perspektywy dziecka i dorosłego. Czas jest cykliczny i mityczny — wyznaczają go pory roku, nie daty.",
-      },
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Które z poniższych zwierząt i istot pojawiają się w „Sklepach cynamonowych”?",
-      content: {
-        options: [
-          "Kondor — ogromny ptak podobny do ojca",
-          "Piesek Nemrod",
-          "Koń dorożkarski, który mówi ludzkim głosem",
-          "Wilk atakujący miasteczko",
-        ],
-      },
-      correctAnswer: [0, 1, 2],
-      metadata: {
-        explanation:
-          "Kondor z „Ptaków” przypomina ojca fizycznie. Piesek Nemrod pojawia się w opowiadaniu o tym samym tytule. Koń dorożkarski w „Sklepach cynamonowych” mówi do narratora. Wilk nie występuje w zbiorze.",
-      },
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Które pory roku odgrywają kluczową rolę w strukturze zbioru?",
-      content: {
-        options: [
-          "Lato — upał, dojrzewanie, zmysłowość (opowiadanie „Sierpień”)",
-          "Zima — szarość, nuda, metamorfozy ojca (opowiadania „Ptaki”, „Manekiny”)",
-          "Wiosna — budzenie się przyrody po powstaniu styczniowym",
-          "Jesień — Wielki Sezon, handel, ptasie powroty (opowiadanie „Noc wielkiego sezonu”)",
-        ],
-      },
-      correctAnswer: [0, 1, 3],
-      metadata: {
-        explanation:
-          "Lato (żar, zmysłowość), zima (szarość, eksperymenty ojca) i jesień (Wielki Sezon handlowy, powrót ptaków) to trzy kluczowe pory w cyklu. Wiosna i powstanie styczniowe nie są motywami tego zbioru.",
-      },
-    },
-
-    // ===== DIFFICULTY 2 — SHORT_ANSWER (1) =====
-
-    {
-      type: "SHORT_ANSWER",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Kim jest Tłuja i w jakim opowiadaniu się pojawia?",
-      content: {
-        hints: [
-          "opowiadanie „Sierpień”",
-          "łóżko na śmietnisku",
-          "córka Maryśki",
-        ],
-      },
-      correctAnswer:
-        "Tłuja to upośledzona umysłowo dziewczyna, córka starej Maryśki. Pojawia się w opowiadaniu „Sierpień”. Siedzi na łóżku stojącym na śmietnisku za parkanem, wśród łopuchów i chwastów. Schulz opisuje ją jako „bożka pogańskiego” — symbol dzikiej, sierpniowej płodności natury.",
-      metadata: {
-        explanation:
-          "Tłuja to jedna z najbardziej naturalistycznych i jednocześnie mitycznych postaci zbioru. Jej scena na śmietnisku łączy brzydotę z sacrum — jest figurą pogańskiej płodności sierpniowej natury.",
-      },
-    },
-
-    // ===== DIFFICULTY 3 — CLOSED_SINGLE (5) =====
-
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 3,
-      points: 2,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Jaką funkcję pełni postać Adeli wobec ojca w zbiorze „Sklepy cynamonowe”?",
-      content: {
-        options: [
-          "Jest mu posłuszna i wykonuje wszystkie jego polecenia",
-          "Reprezentuje niszczycielską siłę zmysłowej kobiecości — ma nad ojcem absolutną władzę i niszczy jego twórcze światy",
-          "Jest jego intelektualną partnerką i wspiera jego eksperymenty",
-          "Nie ma z ojcem żadnych interakcji — zajmuje się wyłącznie domem",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Adela symbolizuje zmysłową kobiecość i cielesność, która triumfuje nad duchowymi dążeniami ojca. Rozpędza jego ptaki, grozi mu palcem (łaskotki), a ojciec reaguje paniką i poddańczym lękiem. To relacja masochistyczna — ojciec-demiurg upada przed zmysłową siłą służącej.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 3,
-      points: 2,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Co oznacza pojęcie „demiurgia” w kontekście prelekcji ojca z „Traktatu o Manekinach”?",
-      content: {
-        options: [
-          "Naukowe tworzenie sztucznych organizmów w laboratorium",
-          "Heretyckie pragnienie tworzenia na wzór Boga — lecz z tandety, prowizoryczne, na jeden raz",
-          "Reformę systemu edukacji w miasteczku",
-          "Hodowlę egzotycznych zwierząt na strychu",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Ojciec postuluje „wtórą demiurgię” — tworzenie istot na obraz manekina, z tandety i kłaków, prowizorycznych, „na jeden raz zrobionych”. Jest to herezja wobec doskonałości Demiurgosa (Boga), ale wyraża umiłowanie materii jako takiej — jej „puszystości i porowatości”.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 3,
-      points: 2,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Co symbolizuje Ulica Krokodyli w zbiorze?",
-      content: {
-        options: [
-          "Tradycyjną, szlachetną część miasteczka z bogatą historią",
-          "Tandetną, pseudoamerykańską dzielnicę handlową — świat pozorów, imitacji i moralnej degradacji",
-          "Dzielnicę artystów i intelektualistów",
-          "Tajemnicze sklepy cynamonowe, do których narrator nie może trafić",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Ulica Krokodyli to dzielnica tandetnego komercjalizmu — „pseudoamerykanizm zaszczepiony na starym gruncie”. Wszystko tam jest szare, imitacyjne, papierowe. Rzeczywistość „jest cienka jak papier i zdradza swą imitatywność”. To antyświat wobec magicznego miasteczka — krytyka nowoczesnej cywilizacji.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "LANGUAGE_USE",
-      difficulty: 3,
-      points: 2,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Czym jest oniryzm w kontekście „Sklepów cynamonowych”?",
-      content: {
-        options: [
-          "Techniką opisu snów bohaterów w realizmie psychologicznym",
-          "Konwencją literacką, w której rzeczywistość kreowana jest na wzór snu — zaburzona logika, metamorfozy, zacieranie granic jawy i marzenia",
-          "Metodą naukowej analizy snów, inspirowaną Freudem",
-          "Gatunkiem literackim, do którego należy zbiór",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Oniryzm (z gr. oneiros = sen) to konwencja literacka, w której świat przedstawiony ma cechy marzenia sennego: irracjonalność, metamorfozy, płynność czasu i przestrzeni. U Schulza oniryzm nie jest motywem, lecz formą narracji — cała rzeczywistość zbioru ma strukturę snu.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 3,
-      points: 2,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Co dzieje się z ojcem w opowiadaniu „Karakony”?",
-      content: {
-        options: [
-          "Ojciec prowadzi wojnę z karakonami, ale stopniowo sam zaczyna się w nie przemieniać",
-          "Ojciec wynajduje sposób na pozbycie się karakonów z domu",
-          "Ojciec ucieka z domu przed inwazją karakonów",
-          "Karakony okazują się ptakami, które ojciec hodował na strychu",
-        ],
-      },
-      correctAnswer: 0,
-      metadata: {
-        explanation:
-          "W „Karakonach” ojciec najpierw wchodzi w szaloną wojnę z inwazją karakonów, ale stopniowo fascynacja wstrętem wciąga go — zaczyna naśladować ich ruchy, na ciele pojawiają się czarne plamy. W końcu „zlewa się z tym czarnym plemieniem” i nie można go odróżnić od owadów. To groteska metamorfozy, nawiązująca do Kafki.",
-      },
-    },
-
-    // ===== DIFFICULTY 3 — CLOSED_MULTIPLE (4) =====
-
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 3,
-      points: 2,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Połącz opowiadania z ich kluczowymi motywami:",
-      content: {
-        matchingType: "characters_to_traits",
-        leftColumn: [
-          { id: "A", text: "„Sierpień”" },
-          { id: "B", text: "„Ptaki”" },
-          { id: "C", text: "„Traktat o Manekinach”" },
-          { id: "D", text: "„Ulica Krokodyli”" },
-        ],
-        rightColumn: [
-          { id: "1", text: "Filozofia materii, wtóra demiurgia, tandeta" },
-          { id: "2", text: "Tandetna dzielnica handlowa, świat pozorów" },
-          { id: "3", text: "Upał, dojrzewanie sierpniowe, Tłuja" },
-          { id: "4", text: "Hodowla egzotycznych ptaków na strychu" },
-        ],
-      },
-      correctAnswer: [
-        [0, 2],
-        [1, 3],
-        [2, 0],
-        [3, 1],
-      ],
-      metadata: {
-        explanation:
-          "„Sierpień” — żar lata, Tłuja jako symbol płodności. „Ptaki” — ojciec hoduje egzotyczne ptaki, Adela je rozpędza. „Traktat o Manekinach” — ojciec głosi heretycką doktrynę o materii i wtórej demiurgii. „Ulica Krokodyli” — pseudoamerykańska dzielnica tandety i pozorów.",
-      },
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 3,
-      points: 2,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Które elementy biblijne i mitologiczne obecne są w „Sklepach cynamonowych”?",
-      content: {
-        options: [
-          "Ojciec jako prorok Starego Testamentu dialogujący z Jehową (opowiadanie „Nawiedzenie”)",
-          "Dach domu jako Arka Noego (opowiadanie „Ptaki”)",
-          "Motyw Odysa wracającego do domu po wojnie trojańskiej",
-          "Adela porównana do Menady — szalejącej kapłanki Dionizosa",
-        ],
-      },
-      correctAnswer: [0, 1, 3],
-      metadata: {
-        explanation:
-          "Ojciec dialoguje z Jehową jak prorok (Nawiedzenie), dach staje się Arką Noego (Ptaki), Adela jest porównana do Menady (Ptaki). Motyw Odysa nie pojawia się w zbiorze — choć motyw wędrówki i labiryntu jest obecny.",
-      },
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "LANGUAGE_USE",
-      difficulty: 3,
-      points: 2,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Które techniki literackie stosuje Schulz w „Sklepach cynamonowych”?",
-      content: {
-        options: [
-          "Mityzacja — nadawanie codzienności cech mitu",
-          "Synestezja — łączenie wrażeń różnych zmysłów",
-          "Konsekwentny realizm społeczny w duchu pozytywizmu",
-          "Animizacja — ożywianie przedmiotów i materii",
-        ],
-      },
-      correctAnswer: [0, 1, 3],
-      metadata: {
-        explanation:
-          "Schulz stosuje mityzację (ojciec jako patriarcha, miasteczko jako mityczna kraina), synestezję (dźwięki mają barwy, barwy — zapachy), animizację (tapety rosną, lampy więdną, meble „oddychają”). Realizm społeczny jest mu całkowicie obcy.",
-      },
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 3,
-      points: 2,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Które z poniższych metamorfoz ojca zachodzą w zbiorze?",
-      content: {
-        options: [
-          "Ojciec maleje, chudnie i stopniowo zanika fizycznie",
-          "Ojciec przybiera pozy ptaków — pieje jak kogut, trzepoce rękami",
-          "Ojciec zamienia się w karakona",
-          "Ojciec przekształca się w drzewo",
-        ],
-      },
-      correctAnswer: [0, 1, 2],
-      metadata: {
-        explanation:
-          "Ojciec maleje fizycznie (Nawiedzenie), naśladuje ptaki — pieje, trzepoce rękami (Ptaki), przemienia się w karakona — naśladuje ich ruchy, ciało pokrywają czarne plamy (Karakony). Metamorfoza w drzewo nie występuje.",
-      },
-    },
-
-    // ===== DIFFICULTY 3 — SHORT_ANSWER (1) =====
-
-    {
-      type: "SHORT_ANSWER",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 3,
-      points: 2,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Co wydarzyło się z koniem dorożkarskim pod koniec opowiadania „Sklepy cynamonowe”?",
-      content: {
-        instruction: "Opisz scenę i wyjaśnij jej symboliczne znaczenie.",
-      },
-      correctAnswer:
-        "Koń dorożkarski wiezie narratora przez magiczną zimową noc, aż zatrzymuje się wyczerpany w śniegu. Na jego brzuchu widać czarną ranę. Na pytanie narratora odpowiada: „Drogi mój — to dla ciebie” i staje się mały jak konik z drzewa. To scena poświęcenia — koń oddaje życie za podróż chłopca. Symbolizuje ofiarność, ale też oniryczną logikę snu, w którym zwierzę mówi ludzkim głosem.",
-      metadata: {
-        explanation:
-          "Scena z koniem to kulminacja oniryzmu — zwierzę mówi, poświęca się, zmienia rozmiar. Łączy bajkowość (mówiący koń) z tragizmem (ofiara) i symboliką chrześcijańską (poświęcenie za kogoś).",
-      },
-    },
-
-    // ===== DIFFICULTY 3 — SYNTHESIS_NOTE (1) =====
-
-    {
-      type: "SYNTHESIS_NOTE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 3,
-      points: 3,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Napisz notatkę syntetyczną na podany temat:",
-      content: {
-        topic:
-          "Metamorfozy ojca w „Sklepach cynamonowych” — od kupca do demiurga, od demiurga do owada",
-        requirements: [
-          "Wymień co najmniej trzy etapy przemiany ojca",
-          "Wskaż opowiadania, w których zachodzą poszczególne metamorfozy",
-          "Wyjaśnij, co te metamorfozy symbolizują",
-          "100-150 słów",
-        ],
-        wordLimit: { min: 100, max: 150 },
-      },
-      correctAnswer:
-        "Notatka powinna obejmować: 1) Ojciec jako kupiec i ekscentryk (Sierpień, Nawiedzenie) — choroba, monologi, dialog z Bogiem. 2) Ojciec jako demiurg — hodowla ptaków (Ptaki), prelekcje o materii (Traktat o Manekinach). 3) Ojciec jako istota zanikająca — maleje, naśladuje ptaki, pieje jak kogut (Nawiedzenie, Ptaki). 4) Ojciec jako karakon — fascynacja przeradza się w metamorfozę, zlewa się z owadami (Karakony). Symbolika: degradacja od ducha do materii, od twórcy do stworzenia, od Boga do robaka — jak biblijny Hiob.",
-      metadata: {
-        explanation:
-          "Metamorfozy ojca są osią kompozycyjną zbioru. Schulz kreuje ojca jako figurę archetypową — od patriarchy i demiurga po istotę zanikającą, „kupkę śmieci” wymiecioną przez Adelę.",
-      },
-    },
-
-    // ===== DIFFICULTY 4 — CLOSED_SINGLE (4) =====
-
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 4,
-      points: 2,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Dlaczego tytułowe sklepy cynamonowe można interpretować jako symbol utraconej arkadii dzieciństwa?",
-      content: {
-        options: [
-          "Bo narrator odwiedza je regularnie i kupuje tam zabawki",
-          "Bo istnieją jako niedościgłe pragnienie — narrator nigdy do nich nie dociera, a ich egzotyczność ucieleśnia magiczny świat dziecięcej wyobraźni, do którego dorosły nie może powrócić",
-          "Bo są jedynym miejscem w miasteczku, gdzie ojciec jest szczęśliwy",
-          "Bo przechowują w nich pamiątki po dzieciństwie narratora",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Sklepy cynamonowe to miejsce mityczne — narrator pamięta ich zapach kadzidła, egzotyczne towary, rzadkie książki, ale podczas nocnej wędrówki nigdy do nich nie dociera. Są metaforą dziecięcego zachwytu światem, który dorosły wspomina z tęsknotą, ale którego nie może odzyskać.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 4,
-      points: 2,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Jak rozumieć zdanie ojca: „Nie ma materii martwej — martwota jest jedynie pozorem, za którym ukrywają się nieznane formy życia”?",
-      content: {
-        options: [
-          "Ojciec jest naukowcem i formułuje hipotezę biologiczną",
-          "To centralna teza jego filozofii demiurgicznej — materia jest żywa, płodna, pełna ukrytych form, czeka na impuls twórczy, by się objawić",
-          "Ojciec cytuje podręcznik fizyki kwantowej",
-          "To żart skierowany do szwaczek Poldy i Pauliny",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Zdanie to jest kluczem do filozofii ojca-demiurga: materia nie jest bierna — „faluje od nieskończonych możliwości”, „kusi tysiącem słodkich okrąglizn”. To pseudoreligijna doktryna witalistyczna, w której Schulz łączy filozofię, mistykę żydowską i surrealizmem.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 4,
-      points: 2,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Co łączy „Karakony” Schulza z „Przemianą” Kafki?",
-      content: {
-        options: [
-          "Obie opowieści rozgrywają się w Pradze",
-          "W obu utworach bohater ulega metamorfozie w owada — u Kafki jest to nagła przemiana Gregora Samsy, u Schulza stopniowa degradacja ojca, który „zlewa się” z plemieniem karakonów",
-          "Oba utwory są satyrą na życie urzędnicze w Austro-Węgrzech",
-          "Kafka i Schulz byli przyjaciółmi i wspólnie wymyślili motyw metamorfozy",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Parallela Schulz–Kafka jest klasycznym kontekstem maturalnym. U Kafki metamorfoza jest nagła i dosłowna — Gregor budzi się jako robak. U Schulza jest stopniowa, groteskowa i mityczna — ojciec wchłania karakoni rytuał, aż staje się od nich nieodróżnialny. Obie metamorfozy wyrażają degradację i wyobcowanie.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "LANGUAGE_USE",
-      difficulty: 4,
-      points: 2,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Czym jest mityzacja w prozie Schulza?",
-      content: {
-        options: [
-          "Wiernym odtworzeniem mitów greckich w realiach XX-wiecznej Polski",
-          "Zabiegiem nadającym codzienności cechy mitu — czas staje się cykliczny, ojciec archetypem, miasteczko labiryntem, a zwykłe wydarzenia zyskują wymiar sakralny",
-          "Techniką polegającą na wymyślaniu nowych mitów dla celów propagandowych",
-          "Opisywaniem snów, w których pojawiają się postaci mitologiczne",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Mityzacja u Schulza to kreowanie rzeczywistości na wzór mitu: czas jest cykliczny (pory roku, nie daty), ojciec to archetyp (patriarcha, demiurg, prorok), przestrzeń jest labiryntowa i metamorficzna. Schulz nie opowiada mitów — on mitologizuje codzienność galicyjskiego miasteczka.",
-      },
-    },
-
-    // ===== DIFFICULTY 4 — CLOSED_MULTIPLE (3) =====
-
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 4,
-      points: 2,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Które z poniższych interpretacji postaci ojca są uzasadnione tekstem?",
-      content: {
-        options: [
-          "Ojciec jako alter ego samego Schulza — artysta-wizjoner pokonany przez prozę codzienności",
-          "Ojciec jako starotestamentowy Bóg — demiurg, prorok, patriarcha z imienia (Jakub)",
-          "Ojciec jako krytyk kapitalizmu walczący z wyzyskiem robotników",
-          "Ojciec jako figura masochistyczna — poddaje się władzy Adeli i destrukcji swoich światów",
-        ],
-      },
-      correctAnswer: [0, 1, 3],
-      metadata: {
-        explanation:
-          "Ojciec jest wieloznaczny: alter ego Schulza (artysta przegrywający z banałem), figura biblijna (Jakub, Noe, prorok, demiurg), postać masochistyczna (poddańcze relacje z Adelą). Nie jest krytykiem kapitalizmu — „Ulica Krokodyli” to Schulzowski komentarz, ale nie wypowiedź ojca.",
-      },
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 4,
-      points: 2,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Które cechy „Sklepów cynamonowych” świadczą o przynależności do awangardy literackiej dwudziestolecia?",
-      content: {
-        options: [
-          "Oniryzm — zacieranie granicy między jawą a snem",
-          "Surrealistyczne metamorfozy — ludzie zamieniają się w ptaki i owady",
-          "Linearna, chronologiczna fabuła z wyraźnym początkiem i końcem",
-          "Proza poetycka — liryzacja języka, synestezja, metaforyczność opisu",
-        ],
-      },
-      correctAnswer: [0, 1, 3],
-      metadata: {
-        explanation:
-          "Schulz to awangardzista: oniryzm (senna logika narracji), surrealizm (metamorfozy, ożywianie materii), proza poetycka (język nasycony metaforą, synestezją, rytmem). Fabuła NIE jest linearna ani chronologiczna — jest luźna, epizodyczna, cykliczna.",
-      },
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 4,
-      points: 2,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Które z poniższych opozycji organizują świat „Sklepów cynamonowych”?",
-      content: {
-        options: [
-          "Ojciec (duch, wyobraźnia, kreacja) vs. Adela (ciało, zmysłowość, destrukcja)",
-          "Lato (żar, płodność, bujność) vs. zima (szarość, nuda, pustka)",
-          "Miasto (harmonia, piękno) vs. wieś (zacofanie, nędza)",
-          "Magiczne miasteczko (autentyczność, mit) vs. Ulica Krokodyli (tandeta, imitacja, pozór)",
-        ],
-      },
-      correctAnswer: [0, 1, 3],
-      metadata: {
-        explanation:
-          "Trzy kluczowe opozycje: ojciec/Adela (duch vs ciało), lato/zima (pełnia vs pustka), miasteczko/Ulica Krokodyli (autentyczność vs tandeta). Opozycja miasto/wieś nie jest obecna — cała akcja toczy się w miasteczku.",
-      },
-    },
-
-    // ===== DIFFICULTY 4 — SHORT_ANSWER (1) =====
-
-    {
-      type: "SHORT_ANSWER",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 4,
-      points: 3,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Jaką rolę pełni motyw labiryntu w zbiorze? Podaj co najmniej dwa przykłady z różnych opowiadań.",
-      content: {},
-      correctAnswer:
-        "Labirynt jest kluczową metaforą przestrzeni w zbiorze: 1) Miasteczko jako labirynt — w „Sklepach cynamonowych” narrator gubi się w nocnych ulicach, które zmieniają konfigurację, otwierają się „ulice podwójne, ulice sobowtóry”. 2) Dom rodzinny jako labirynt — w „Nawiedzeniu” mieszkanie nie ma „określonej liczby pokojów”, lokatorzy znikają, a pokoje się zapominają. 3) Psychika ojca jako labirynt — „myśl jego zapuszczała się tajnie w labirynty własnych wnętrzności”. Labirynt symbolizuje zagubienie, nieosiągalność celu i nieskończoność wyobraźni.",
-      metadata: {
-        explanation:
-          "Motyw labiryntu to jeden z najważniejszych w zbiorze — łączy przestrzeń, psychikę i narrację. Na maturze często pojawia się w pytaniach o kreację przestrzeni u Schulza.",
-      },
-    },
-    {
-      type: "SYNTHESIS_NOTE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 4,
-      points: 4,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Napisz notatkę syntetyczną na podany temat:",
-      content: {
-        topic:
-          "Ojciec jako demiurg i herezjarcha — analiza „Traktatu o Manekinach” w kontekście filozofii tworzenia",
-        requirements: [
-          "Wyjaśnij, czym jest „wtóra demiurgia” i czemu ojciec ją postuluje",
-          "Odnieś się do stosunku ojca do materii (apologia tandety)",
-          "Porównaj demiurgię ojca z twórczością Boga-Demiurgosa",
-          "Oceń, czy ojciec jest twórcą, czy szaleńcem",
-          "150-200 słów",
-        ],
-        wordLimit: { min: 150, max: 200 },
-      },
-      correctAnswer:
-        "Notatka powinna: wyjaśnić, że ojciec chce tworzyć nie w konkurencji z Bogiem, lecz „we własnej, niższej sferze” — z tandety, papier-mâché, kłaków. Jego twory mają być prowizoryczne, „na jeden raz”, z jedną ręką i jedną nogą. Apologia tandety = miłość do materii „jako takiej” — jej puszystości, oporności, niedźwiedziowatości. Kontrast z Demiurgosem: Bóg ukrywa materię pod grą życia, ojciec chce ją odsłonić. Ocena: ojciec jest jednocześnie genialnym wizjonerem (artysta tworzący nowe światy) i tragicznym szaleńcem (jego twory rozsypują się, a sam zostaje pokonany przez Adelę).",
-      metadata: {
-        explanation:
-          "„Traktat o Manekinach” to manifest artystyczny Schulza — wyrażony ustami ojca. Apologia tandety to apologia sztuki nieperfekcyjnej, ludzkiej, skazanej na porażkę, ale przez to autentycznej.",
-      },
-    },
-
-    // ===== DIFFICULTY 4 — ESSAY (1) =====
-
-    {
-      type: "ESSAY",
-      category: "WRITING",
-      difficulty: 4,
-      points: 5,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Dzieciństwo jako utracony raj. Rozważ problem, odwołując się do „Sklepów cynamonowych” Brunona Schulza i jednego innego tekstu kultury.",
-      content: {
-        requirements: [
-          "Wyjaśnij, jak Schulz kreuje dzieciństwo narratora — jako czas mityczny, magiczny, nieodzyskiwalny",
-          "Odwołaj się do co najmniej dwóch opowiadań ze zbioru",
-          "Porównaj z innym tekstem kultury (np. „Pan Tadeusz” — Soplicowo, „Mały Książę” — planeta, „Ferdydurke” — powrót do dzieciństwa)",
-          "Sformułuj wniosek: czy tęsknota za dzieciństwem jest uniwersalna?",
-          "Minimum 300 słów",
-        ],
-        wordLimit: { min: 300 },
-      },
-      correctAnswer:
-        "Rozprawka powinna: pokazać dzieciństwo u Schulza jako czas magiczny (Sierpień — zmysłowość lata, Sklepy cynamonowe — ekscytacja nocnej wędrówki, Nemrod — odkrywanie życia), kreowany jako mit (czas cykliczny, przestrzeń labiryntowa, ojciec jako bóstwo). Porównanie: np. z Panem Tadeuszem (Soplicowo = utracony raj szlachecki, epilog = tęsknota emigranta) lub Małym Księciem (planeta = świat prostoty utraconej w dorosłości). Wniosek: tęsknota za dzieciństwem jest uniwersalnym doświadczeniem, ale Schulz pokazuje, że dzieciństwo nie jest wspomnieniem faktów, lecz wspomnieniem sposobu widzenia — intensywności, wrażliwości, magii.",
-      metadata: {
-        explanation:
-          "Motyw utraconego dzieciństwa to jeden z najczęstszych tematów maturalnych w kontekście Schulza. Kluczowe: dzieciństwo u Schulza nie jest realistycznym wspomnieniem, lecz mityczną rekonstrukcją.",
-      },
-    },
-
-    // ===== DIFFICULTY 5 — CLOSED_SINGLE (3) =====
-
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 5,
-      points: 3,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Jak można zinterpretować stosunek ojciec–Adela w kontekście masochizmu Schulzowskiego?",
-      content: {
-        options: [
-          "Adela jest po prostu dobrą służącą, a ojciec szanuje jej pracę — relacja jest neutralna",
-          "Adela reprezentuje triumf cielesności i zmysłowości nad duchem i wyobraźnią — ojciec poddaje się jej z rozkosznym lękiem, co odzwierciedla Schulzowski masochizm: ekstatyczne uleganie kobiecej sile jako formę quasi-religijnego rytuału",
-          "Ojciec kontroluje Adelę i wykorzystuje ją do swoich eksperymentów",
-          "Relacja jest wyłącznie komiczna — Schulz parodiuje domowe hierarchie",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Relacja ojciec–Adela to centralna oś masochizmu Schulzowskiego, widocznego też w grafice „Xięgi Bałwochwalczej”. Ojciec-demiurg, władca ptasiego królestwa, pada na kolana przed pantofelkiem Adeli. Kobiecość jest siłą niszczycielską, ale zarazem fascynującą — ojciec doświadcza „rozkosznego spazmu” wobec jej władzy.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 5,
-      points: 3,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Dlaczego „Ulicę Krokodyli” można czytać jako metapoetycką refleksję Schulza o naturze fikcji?",
-      content: {
-        options: [
-          "Bo Schulz cytuje w niej innych pisarzy, budując intertekstualny dialog",
-          "Bo narrator wprost opisuje rzeczywistość tej dzielnicy jako „cienką jak papier”, imitatywną, „fotomontaż z wycinków zeszłorocznych gazet” — dzielnica jest fikcją w fikcji, obnażającą mechanizm literackiej iluzji",
-          "Bo opowiadanie jest autobiograficzną relacją z wizyty Schulza w wielkim mieście",
-          "Bo ulica nosi imię zwierzęcia, co zawsze oznacza alegorię",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "„Ulica Krokodyli” to jedyne opowiadanie, w którym narrator odsłania iluzoryczność świata przedstawionego: „rzeczywistość jest cienka jak papier”, „nic nie dochodzi do skutku”, wszystko „zdradza swą imitatywność”. To metafikcja — Schulz komentuje własną technikę tworzenia światów, które nie mają substancji, lecz tylko pozór.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "LANGUAGE_USE",
-      difficulty: 5,
-      points: 3,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Co oznacza synestezja w kontekście prozy Schulza i który fragment najlepiej ją ilustruje?",
-      content: {
-        sourceText: {
-          author: "Bruno Schulz",
-          title: "Sklepy cynamonowe — Sierpień",
-          text: "Cisza drgających słojów powietrznych, kwadraty blasku, śniące żarliwy swój sen na podłodze; melodia katarynki, dobyta z najgłębszej złotej żyły dnia.",
-        },
-        options: [
-          "Synestezja to opis przyrody za pomocą metafor — „złota żyła dnia” jest zwykłą metaforą, nie synestezją",
-          "Synestezja to łączenie wrażeń różnych zmysłów — w cytacie cisza jest zmysłowa (dotyk, wzrok), blaski „śnią” (personifikacja), melodia wydobywa się z „żyły” dnia (dźwięk = materia)",
-          "Synestezja to technika malarstwa abstrakcyjnego, nie literatury",
-          "Synestezja oznacza tu, że narrator nie rozróżnia swoich zmysłów z powodu choroby",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Synestezja (z gr. syn + aisthesis = współ-odczuwanie) to łączenie wrażeń z różnych zmysłów. U Schulza jest fundamentem stylu: cisza ma „słoje” (dotyk), blaski „śnią” (personifikacja), melodia wydobywa się z „złotej żyły” (dźwięk = materia, głębia). Proza Schulza jest architekturą zmysłów — nie opisuje, lecz konstruuje doznania.",
-      },
-    },
-
-    // ===== DIFFICULTY 5 — CLOSED_MULTIPLE (2) =====
-
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 5,
-      points: 3,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Które porównania międzytekstowe z innymi dziełami są uzasadnione?",
-      content: {
-        options: [
-          "Schulz i Kafka — metamorfoza człowieka w owada (Karakony vs Przemiana)",
-          "Schulz i Proust — dzieciństwo jako utracony czas, odzyskiwany przez wspomnienia zmysłowe",
-          "Schulz i Sienkiewicz — panorama społeczna XIX-wiecznej Polski",
-          "Schulz i Gombrowicz — groteska, deformacja rzeczywistości, podważanie formy (choć innymi środkami)",
-        ],
-      },
-      correctAnswer: [0, 1, 3],
-      metadata: {
-        explanation:
-          "Kafka: metamorfoza w owada. Proust: wspomnienie zmysłowe jako klucz do utraconego czasu (madlenka = owoce Adeli). Gombrowicz: obaj deformują rzeczywistość, stosują groteskę, podważają konwencje — choć Schulz lirycznie, a Gombrowicz intelektualnie. Sienkiewicz i panorama społeczna są Schulzowi zupełnie obcy.",
-      },
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 5,
-      points: 3,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Które aspekty „Sklepów cynamonowych” nawiązują do tradycji i mistyki żydowskiej?",
-      content: {
-        options: [
-          "Imię ojca — Jakub, jak patriarcha z Księgi Rodzaju",
-          "Motyw Księgi — kalendarza jako „wielkiej księgi roku” zawierającej wszelką wiedzę",
-          "Demiurgia ojca — nawiązanie do kabalistycznego pojęcia tworzenia przez emanację",
-          "Monotematyczny opis życia polskiej szlachty w Galicji",
-        ],
-      },
-      correctAnswer: [0, 1, 2],
-      metadata: {
-        explanation:
-          "Schulz czerpie z tradycji żydowskiej: Jakub = patriarcha, Księga = Tora/wiedza/kalendarz, demiurgia = kabalistyczne tworzenie przez emanację (sefirot). Ojciec jest jednocześnie prorokiem, Noem i kabalistą. Opis szlachty galicyjskiej jest obcy temu zbiorowi.",
-      },
-    },
-
-    // ===== DIFFICULTY 5 — SHORT_ANSWER (2) =====
-
-    {
-      type: "SHORT_ANSWER",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 5,
-      points: 4,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Porównaj kreację przestrzeni w „Sklepach cynamonowych” Schulza z kreacją przestrzeni w innym dziele literackim. Wskaż podobieństwa i różnice.",
-      content: {
-        instruction:
-          "Odwołaj się do motywu labiryntu, metamorfozy przestrzeni i funkcji, jaką pełni przestrzeń w obu utworach.",
-      },
-      correctAnswer:
-        "U Schulza przestrzeń jest oniryczna, labiryntowa, płynna — ulice zmieniają konfigurację, dom ma nieokreśloną liczbę pokojów, miasteczko jest zarazem konkretne i mityczne. Porównanie np. z Kafką („Proces” — biurokracja jako labirynt, sąd ukryty na strychach kamienic) lub z „Panem Tadeuszem” (Soplicowo jako arkadyjska przestrzeń zamknięta, stabilna — przeciwieństwo Schulzowskiej metamorfozy). Różnica: u Schulza przestrzeń jest projekcją psychiki narratora (dziecięca wyobraźnia przetwarza realia), u Kafki — projekcją systemu opresji, u Mickiewicza — projekcją tęsknoty emigranta.",
-      metadata: {
-        explanation:
-          "Kreacja przestrzeni to jedno z najczęstszych pytań maturalnych o Schulza (egzamin rozszerzony). Kluczowe: przestrzeń u Schulza nie jest tłem, lecz bohaterem — podlega metamorfozom jak postacie.",
-      },
-    },
-    {
-      type: "SHORT_ANSWER",
-      category: "LANGUAGE_USE",
-      difficulty: 5,
-      points: 4,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Wyjaśnij, dlaczego „Sklepy cynamonowe” nazywane są prozą poetycką. Podaj trzy cechy stylu Schulza, które uzasadniają to określenie.",
-      content: {},
-      correctAnswer:
-        "Proza poetycka to gatunek łączący prozę z poezją: 1) Metaforyczność — Schulz nie opisuje, lecz przetwarza rzeczywistość w łańcuchy metafor (lato to „wielka księga wakacji”, lampy „więdną jak bodiaki”, tapety „rosną” nocą). 2) Synestezja i rytm — łączenie zmysłów (cisza ma „słoje”, melodia katarynki wydobywa się z „złotej żyły dnia”), zdania mają rytm i kadencję poetycką. 3) Dominacja obrazu nad fabułą — fabuła jest pretekstowa, najważniejsza jest wizja, nastrój, barwa, intensywność doznania zmysłowego. Schulz nie opowiada historii — tworzy obrazy poetyckie w formie prozy.",
-      metadata: {
-        explanation:
-          "Pytanie o prozę poetycką Schulza jest klasycznym pytaniem maturalnym z zakresu LANGUAGE_USE. Kluczowe terminy: metaforyzacja, synestezja, liryzacja prozy, dominacja obrazu nad fabułą.",
-      },
-    },
-
-    // ===== DIFFICULTY 5 — SYNTHESIS_NOTE (1) =====
-
-    {
-      type: "SYNTHESIS_NOTE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 5,
-      points: 5,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question: "Napisz notatkę syntetyczną na podany temat:",
-      content: {
-        topic:
-          "„Sklepy cynamonowe” wobec tradycji literackiej — jak Schulz dialoguje z Biblią, surrealizmem i ekspresjonizmem",
-        requirements: [
-          "Wskaż elementy biblijne (imiona, motywy, ojciec jako prorok/demiurg)",
-          "Wskaż elementy surrealistyczne (oniryzm, metamorfozy, logika snu)",
-          "Wskaż elementy ekspresjonistyczne (deformacja, intensywność doznań, groteska)",
-          "Wyjaśnij, co jest specyficznie Schulzowskie — czego nie da się sprowadzić do żadnej z tych tradycji",
-          "200-250 słów",
-        ],
-        wordLimit: { min: 200, max: 250 },
-      },
-      correctAnswer:
-        "Notatka powinna: wskazać Biblię (Jakub, Noe, prorocy, Demiurgos, Księga), surrealizm (metamorfozy, oniryzm, automatyzm snu, irracjonalność), ekspresjonizm (deformacja rzeczywistości, groteska, intensywność, hiperbolizacja doznań zmysłowych). Specyficznie Schulzowskie: mityzacja codzienności galicyjskiego miasteczka — żadna tradycja z osobna nie tłumaczy tego, jak Schulz z prowincjonalnego sklepu z suknem tworzy kosmogonię, z ojca-kupca — Boga-Stwórcę, z pory roku — cykl mityczny. Schulz syntetyzuje tradycje w niepowtarzalny idiom: proza poetycka, która jest jednocześnie filozofią materii, teologią tworzenia i autobiografią wyobraźni.",
-      metadata: {
-        explanation:
-          "Pytanie o tradycje literackie jest typowe dla matury rozszerzonej (poziom 5). Kluczowe: Schulz nie „należy” do surrealizmu czy ekspresjonizmu — czerpie z nich, ale tworzy idiom niepasujący do żadnej szufladki.",
-      },
-    },
-
-    // ===== DIFFICULTY 5 — ESSAY (1) =====
-
-    {
-      type: "ESSAY",
-      category: "WRITING",
-      difficulty: 5,
-      points: 10,
-      epoch: "INTERWAR",
-      work: "Sklepy cynamonowe",
-      question:
-        "Jaką rolę w literaturze pełni groteska? Rozważ problem, odwołując się do „Sklepów cynamonowych” Brunona Schulza i jednego innego tekstu kultury.",
-      content: {
-        requirements: [
-          "Zdefiniuj groteskę jako kategorię estetyczną (łączenie komizmu z tragizmem, deformacja, absurd)",
-          "Przeanalizuj groteskę u Schulza: metamorfozy ojca, scena na urynale, relacja z Adelą, Tłuja",
-          "Porównaj z innym tekstem kultury stosującym groteskę (np. „Ferdydurke” Gombrowicza, „Proces” Kafki, „Tango” Mrożka)",
-          "Sformułuj wniosek: czy groteska odkrywa prawdę o świecie, czy go zaciemnia?",
-          "Minimum 300 słów",
-        ],
-        wordLimit: { min: 300 },
-      },
-      correctAnswer:
-        "Rozprawka powinna: zdefiniować groteskę (deformacja, mieszanie rejestrów, śmiech i groza jednocześnie). U Schulza: ojciec-prorok siedzący na urynale, demiurg uciekający przed palcem Adeli, metamorfoza w karakona — tragiczne i komiczne zarazem. Porównanie: Gombrowicz (groteska jako demaskacja formy społecznej — Ferdydurke), Kafka (groteska jako absurd systemu — Proces), Mrożek (groteska jako krytyka ideologii — Tango). Wniosek: groteska u Schulza nie zaciemnia prawdy — odsłania ją: ludzka egzystencja jest jednocześnie wzniosła i żałosna, sakralna i śmieszna. Groteska jest narzędziem prawdy, nie ucieczką od niej.",
-      metadata: {
-        explanation:
-          "Groteska to jedno z najczęstszych zagadnień maturalnych. Schulz jest wzorcowym przykładem groteski poetyckiej — łączy liryzm z absurdem, patos z komizmem.",
-      },
-    },
-
-    // ======================= KONIEC PYTAŃ SKLEPY CYNAMONOWE ===================//
-
-    // ======================= POCZATEK PYTAN KONRAD WALLENROD ===================//
-    // UWAGA: Polskie cudzyslowy zastapione prostymi "" aby nie psuc JSON
-
-    // ===== DIFFICULTY 1 — CLOSED_SINGLE (6) =====
-
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 1,
-      points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: 'Kto jest autorem "Konrada Wallenroda"?',
-      content: {
-        options: [
-          "Juliusz Slowacki",
-          "Adam Mickiewicz",
-          "Zygmunt Krasinski",
-          "Cyprian Kamil Norwid",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          '"Konrad Wallenrod" to powiesc poetycka Adama Mickiewicza, wydana w 1828 roku w Petersburgu. Utwor powstal w czasie zeslania poety w Rosji.',
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 1,
-      points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: 'Jaki gatunek literacki reprezentuje "Konrad Wallenrod"?',
-      content: {
-        options: [
-          "Ballada",
-          "Powiesc poetycka",
-          "Dramat romantyczny",
-          "Poemat dygresyjny",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          '"Konrad Wallenrod" to powiesc poetycka -- gatunek synkretyczny laczacy elementy epiki (narracja), liryki (wierszowana forma, piesni) i dramatu (dialogi). Tworcami gatunku byli Walter Scott i George Byron.',
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 1,
-      points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: 'Jak naprawde nazywa sie glowny bohater "Konrada Wallenroda"?',
-      content: {
-        options: ["Konrad von Wallenrod", "Walter Alf", "Halban", "Witold"],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Prawdziwe imie bohatera to Walter Alf -- Litwin porwany jako dziecko przez Krzyzakow. Przybral tozsamosc rycerza Wallenroda, aby wniknac w struktury Zakonu i zniszczyc go od srodka.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 1,
-      points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: 'Gdzie rozgrywa sie glowna akcja "Konrada Wallenroda"?',
-      content: {
-        options: [
-          "W Krakowie",
-          "W Maryjenburgu (Malborku) -- siedzibie Zakonu Krzyzackiego",
-          "W Wilnie",
-          "W Petersburgu",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Glowna akcja toczy sie w Maryjenburgu (Malborku) -- stolicy Zakonu Krzyzackiego. Poboczne watki dzieja sie na Litwie (Kowno, zamek Kiejstuta) i na pograniczu litewsko-pruskim.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 1,
-      points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Kim jest Aldona w utworze?",
-      content: {
-        options: [
-          "Sluzaca w zamku krzyzackim",
-          "Zona Waltera Alfa, corka ksiecia Kiejstuta, pustelnica zamknieta w wiezy",
-          "Matka Konrada Wallenroda",
-          "Zakonnica z klasztoru w Malborku",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Aldona to corka litewskiego ksiecia Kiejstuta i zona Waltera Alfa. Gdy maz odjezdza realizowac plan zemsty, Aldona zamyka sie w wiezy zamkowej jako pustelnica, aby byc blisko niego.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 1,
-      points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Kim jest Halban?",
-      content: {
-        options: [
-          "Wielkim mistrzem Zakonu Krzyzackiego",
-          "Starym wajdelota litewskim, opiekunem i powiernikiem Konrada",
-          "Bratem Aldony",
-          "Szpiegiem Krzyzakow na Litwie",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Halban to stary wajdelota (bard litewski), ktory opiekowal sie Walterem Alfem od dziecinstwa, rozbudzal w nim milosc do Litwy i nienawsc do Krzyzakow. Jest zarowno spowiednikiem, jak i powiernikiem Konrada.",
-      },
-    },
-
-    // ===== DIFFICULTY 1 — CLOSED_MULTIPLE (3) =====
-
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 1,
-      points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question:
-        'Ktore z ponizszych postaci wystepuja w "Konradzie Wallenrodzie"?',
-      content: {
-        options: [
-          "Halban -- stary wajdelota",
-          "Aldona -- zona Waltera Alfa",
-          "Jacek Soplica",
-          "Kiejstut -- ksiaze litewski",
-        ],
-      },
-      correctAnswer: [0, 1, 3],
-      metadata: {
-        explanation:
-          'Halban, Aldona i Kiejstut to postacie z "Konrada Wallenroda". Jacek Soplica to bohater "Pana Tadeusza" Mickiewicza.',
-      },
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 1,
-      points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Ktore informacje o utworze sa prawdziwe?",
-      content: {
-        options: [
-          "Utwor zostal wydany w 1828 roku",
-          "Akcja rozgrywa sie w XIV wieku",
-          "Mickiewicz pisal go na zeslaniu w Rosji",
-          "Jest to dramat w pieciu aktach",
-        ],
-      },
-      correctAnswer: [0, 1, 2],
-      metadata: {
-        explanation:
-          '"Konrad Wallenrod" ukazal sie w 1828 r., akcja toczy sie w XIV w. (czasy walk Litwy z Zakonem), Mickiewicz pisal go na zeslaniu w Rosji (1825-1827). Nie jest to dramat -- to powiesc poetycka.',
-      },
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 1,
-      points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: 'Ktore formy liryczne zawarte sa w "Konradzie Wallenrodzie"?',
-      content: {
-        options: [
-          "Hymn do Ducha Swietego",
-          "Piesn Wajdeloty",
-          'Ballada "Alpuhara"',
-          "Sonet krymski",
-        ],
-      },
-      correctAnswer: [0, 1, 2],
-      metadata: {
-        explanation:
-          'W utworze znajduja sie: Hymn (spiewany na kapitule), Piesn Wajdeloty (o historii Litwy), ballada "Alpuhara" (o podstepu Almanzora). Sonety krymskie to odrebny cykl Mickiewicza.',
+          "W części I pojawiają się szczury, umiera dozorca Michel, Rieux rozpoznaje dżumę. Zamknięcie bram następuje dopiero na KOŃCU części I — oficjalną depeszą: „Ogłoście stan dżumy. Zamknijcie miasto”.",
       },
     },
 
@@ -1397,18 +215,17 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 1,
       points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question:
-        'Z jakiego dziela pochodzi motto "Konrada Wallenroda" i co ono oznacza?',
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Skąd pochodzi motto „Dżumy” i co ono oznacza?",
       content: {
-        hints: ["Machiavelli", "lis i lew", "Ksiaze"],
+        hints: ["Daniel Defoe", "uwięzienie", "ukazywanie przez coś innego"],
       },
       correctAnswer:
-        'Motto pochodzi z "Ksiecia" Niccola Machiavellego. W tlumaczeniu brzmi: trzeba byc lisem i lwem -- czyli laczyc sile z podstepem. Zapowiada ono glowny problem utworu: koniecznosc uzycia zdrady (lis) w walce z poteznym wrogiem (lew).',
+        "Motto pochodzi z „Dziennika roku zarazy” Daniela Defoe i brzmi: „Jest rzeczą równie rozsądną ukazać jakiś rodzaj uwięzienia przez inny, jak ukazać coś, co istnieje rzeczywiście, przez coś innego, co nie istnieje”. Oznacza, że historii o epidemii nie należy czytać dosłownie — dżuma jest metaforą innego rodzaju zniewolenia (np. wojny, totalitaryzmu, zła).",
       metadata: {
         explanation:
-          "Motto z Machiavellego jest kluczem interpretacyjnym do calego utworu. Konrad Wallenrod realizuje strategie lisa -- niszczy Zakon od srodka podstepem, bo w otwartej walce (lew) Litwa nie mogla wygrać.",
+          "Motto od razu sygnalizuje paraboliczny charakter powieści. Defoe — autor „Robinsona Crusoe” — napisał również kronikę londyńskiej zarazy z 1665 roku, co tworzy intertekstualny dialog między obiema kronikami.",
       },
     },
 
@@ -1419,21 +236,21 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 2,
       points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "W jaki sposob Walter Alf trafil do Krzyzakow?",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Kim jest Raymond Rambert i dlaczego chce opuścić Oran?",
       content: {
         options: [
-          "Dobrowolnie uciekl z Litwy",
-          "Zostal porwany jako dziecko podczas najazdu Krzyzakow na litewskie miasto",
-          "Zostal sprzedany przez litewskiego kupca",
-          "Przybyl jako ambasador Kiejstuta",
+          "Jest lekarzem i chce uciec przed epidemią",
+          "Jest dziennikarzem paryskim, który przyjechał pisać reportaż o Arabach i został zaskoczony zamknięciem miasta — chce wrócić do żony w Paryżu",
+          "Jest żołnierzem, który dezerteruje z garnizonu",
+          "Jest kupcem, który chce ratować swoje towary przed konfiskatą",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Walter Alf zostal porwany jako male dziecko podczas nocnego najazdu Krzyzakow na litewskie miasto. Pamietalegal tylko krzyk matki i pozar. Wychowywal go mistrz krzyzacki Winrych.",
+          "Rambert to dziennikarz z Paryża, który przyjechał do Oranu, by przeprowadzić ankietę o warunkach życia Arabów. Zamknięcie bram odcięło go od kobiety, którą kocha. Przez długi czas próbuje legalnie i nielegalnie wydostać się z miasta.",
       },
     },
     {
@@ -1441,22 +258,21 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 2,
       points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question:
-        'Co opowiada ballada "Alpuhara" spiewana przez Konrada na uczcie?',
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Nad czym pracuje Joseph Grand przez całą powieść?",
       content: {
         options: [
-          "Historie milosci Waltera i Aldony",
-          "Historie Almanzora, ktory wraca do Hiszpanow udajac poddanie sie, aby zaraze ich dzuma",
-          "Legende o zalozeniu Zakonu Krzyzackiego",
-          "Opowiesc o wajdelocie Halbanie i jego piesniach",
+          "Nad raportem dla prefektury o stanie epidemii",
+          "Nad pierwszym zdaniem powieści o amazonce jadącej alejami Lasku Bulońskiego — nigdy nie jest z niego zadowolony",
+          "Nad tłumaczeniem „Dżumy” na język arabski",
+          "Nad planem ucieczki z Oranu",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          'Ballada "Alpuhara" opowiada o mauretanskim krolu Almanzorze, ktory po upadku twierdzy wraca do Hiszpanow, udajac ze chce sie poddac, ale w rzeczywistosci przynosi im zarase. To parabola wlasnego planu Konrada -- niszczenia wroga od srodka.',
+          "Grand przez lata dopracowuje jedno zdanie: „W piękny poranek majowy smukła amazonka, siedząc na wspaniałej kasztance, jechała kwitnącymi alejami Lasku Bulońskiego”. Zmienia przymiotniki, szlifuje rytm, ale nigdy nie przechodzi do dalszej części książki.",
       },
     },
     {
@@ -1464,21 +280,21 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 2,
       points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Czym jest wallenrodyzm?",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Czym zajmuje się Cottard w czasie epidemii?",
       content: {
         options: [
-          "Otwarta walka zbrojna z wrogiem w obronie ojczyzny",
-          "Postawa polegajaca na niszczeniu wroga od srodka za pomoca podstepu i zdrady, nawet kosztem wlasnego honoru i szczescia",
-          "Pokojowe negocjacje z nieprzyjacielem",
-          "Emigracja z ojczyzny w celu szukania pomocy za granica",
+          "Organizuje oddziały sanitarne i walczy z dżumą",
+          "Bogaci się na czarnym rynku i kontrabandzie — dżuma mu odpowiada, bo chroni go przed aresztowaniem",
+          "Pracuje jako lekarz ochotnik w szpitalu",
+          "Pisze kronikę wydarzeń dla prasy paryskiej",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Wallenrodyzm to postawa bohatera, ktory niszczy wroga od srodka -- infiltruje jego struktury, zdobywa wladze, a nastepnie celowo prowadzi do kleski. Wymaga nieetycznego postepowania (zdrada, klamstwo) w imie wyzszego celu (obrona ojczyzny). Cena: utrata honoru, milosci, zycia.",
+          "Cottard to rentier, który przed epidemią próbował popełnić samobójstwo, prawdopodobnie w obawie przed aresztowaniem. Dżuma mu odpowiada — w chaosie epidemii nikt nie prowadzi dochodzeń. Bogaci się na kontrabandzie i spekulacji.",
       },
     },
     {
@@ -1486,43 +302,43 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 2,
       points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Jak reaguje Witold na piesn Wajdeloty podczas uczty?",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Kto jako pierwszy wypowiada słowo „dżuma” w powieści?",
       content: {
         options: [
-          "Jest obojetny i nie slucha",
-          "Blednie, czerwieni sie, w koncu wybucha placzem -- pieśn porusza jego sumienie zdrajcy",
-          "Smieje sie i klaska",
-          "Wychodzi z sali protestujac przeciw obecnosci Litwina",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Witold, litewski ksiaze ktory zdrazil ojczyzne i szuka sojuszu z Zakonem, reaguje gwaltownie: blednie, sinieje, czerwieni sie, sciska szable -- a na koncu wybucha placzem, zaslaniaiac twarz plaszczem. Piesn Wajdeloty poruszyła jego sumienie.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Jak ginie Konrad Wallenrod?",
-      content: {
-        options: [
-          "Zostaje stracony publicznie przez Krzyzakow",
-          "Ginie w bitwie z Litwinami",
-          "Wypija trucizne i umiera w swojej strzelnicy, zanim Krzyzacy zdaza go schwytac",
-          "Ucieka do Litwy i ginie na granicy",
+          "Doktor Rieux",
+          "Prefekt Oranu",
+          "Stary doktor Castel",
+          "Ojciec Paneloux",
         ],
       },
       correctAnswer: 2,
       metadata: {
         explanation:
-          "Konrad, wiedzac o wyroku tajnego trybunalu, wypija trucizne w swojej strzelnicy. Przed smiercia ciska lampe z okna -- sygnal dla Aldony, ze juz nie wróci. Aldona wydaje przerazliwy krzyk i rowniez umiera.",
+          "Stary doktor Castel, który widział przypadki dżumy w Chinach i w Paryżu, jako pierwszy mówi wprost: „Pan wie oczywiście, co to jest?” i potwierdza, że to dżuma. Rieux się z nim zgadza, ale inni lekarze i władze początkowo unikają tego słowa.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Jak umiera dozorca Michel — pierwsza ofiara dżumy?",
+      content: {
+        options: [
+          "Nagle, bez objawów, podczas snu",
+          "Po kilku dniach gorączki z dymienicami, wymiotami, majaczeniem i plamami na ciele — w karetce, w drodze do szpitala",
+          "W wyniku samobójstwa z rozpaczy",
+          "Na dżumę płucną, kaszląc krwią",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Michel umiera po kilku dniach ciężkiej choroby: gorączka do 40 stopni, obrzmiałe gruczoły (dymienice), majaczenia, plamy na ciele. Umiera w karetce, a Rieux stwierdza zgon. Śmierć Michela zamyka „okres pełen mylących oznak” i rozpoczyna panikę.",
       },
     },
 
@@ -1533,36 +349,42 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 2,
       points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Polacz postacie z ich rolami w utworze:",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Połącz postacie z ich charakterystycznymi cechami:",
       content: {
         matchingType: "characters_to_traits",
         leftColumn: [
-          { id: "A", text: "Walter Alf / Konrad" },
-          { id: "B", text: "Aldona" },
-          { id: "C", text: "Halban" },
-          { id: "D", text: "Witold" },
+          { id: "A", text: "Doktor Rieux" },
+          { id: "B", text: "Jean Tarrou" },
+          { id: "C", text: "Joseph Grand" },
+          { id: "D", text: "Cottard" },
         ],
         rightColumn: [
-          { id: "1", text: "Litewski zdrajca szukajacy sojuszu z Zakonem" },
-          { id: "2", text: "Wajdelota, stroz pamieci i sumienia bohatera" },
-          { id: "3", text: "Pustelnica zamknieta w wiezy z milosci do meza" },
+          {
+            id: "1",
+            text: "Bogaci się na kontrabandzie, boi się aresztowania",
+          },
+          {
+            id: "2",
+            text: "Organizuje oddziały sanitarne, pragnie świętości bez Boga",
+          },
+          { id: "3", text: "Lekarz walczący z epidemią, narrator kroniki" },
           {
             id: "4",
-            text: "Litwin udajacy Krzyzaka, wielki mistrz-sabotazysta",
+            text: "Skromny urzędnik szlifujący jedno zdanie powieści",
           },
         ],
       },
       correctAnswer: [
-        [0, 3],
-        [1, 2],
-        [2, 1],
+        [0, 2],
+        [1, 1],
+        [2, 3],
         [3, 0],
       ],
       metadata: {
         explanation:
-          "Walter Alf/Konrad to Litwin infiltrujacy Zakon. Aldona zamknela sie w wiezy, by byc przy mezu. Halban to straznik pamieci narodowej. Witold to zdrajca, ktory jednak pod wplywem piesni odzyskuje sumienie.",
+          "Rieux to lekarz i narrator. Tarrou organizuje formacje sanitarne i pragnie „być świętym bez Boga”. Grand szlifuje zdanie o amazonce. Cottard korzysta na epidemii, bo chroni go przed wymiarem sprawiedliwości.",
       },
     },
     {
@@ -1570,46 +392,46 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 2,
       points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Uzupelnij zdania, wybierajac poprawne opcje:",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Uzupełnij zdania, wybierając poprawne opcje:",
       content: {
         textWithGaps:
-          "Konrad zostal wybrany wielkim mistrzem dzieki (1). Aby zniszczyc Zakon, ceolwo (2). Plan zniszczenia Zakonu zainspirowal go (3).",
+          "Ojciec Paneloux w pierwszym kazaniu twierdzi, że dżuma jest (1). Po śmierci dziecka sędziego Othona wygłasza drugie kazanie, w którym mówi, że trzeba (2). Rieux twierdzi natomiast, że jedynym sposobem walki z dżumą jest (3).",
         gaps: [
           {
             id: 1,
             options: [
-              "slawie wojennej i pozornej poboznosci",
-              "bogactwu i przekupstwu",
-              "protekcji papieskiej",
-              "pokrewienstwu z poprzednim mistrzem",
+              "przypadkowym zjawiskiem przyrodniczym",
+              "karą Bożą za grzechy mieszkańców",
+              "wynikiem złej higieny miasta",
+              "spiskiem władz kolonialnych",
             ],
           },
           {
             id: 2,
             options: [
-              "otrul zrodla wody w zamku",
-              "prowadzil wojny tak, aby je przegrywac",
-              "wysylal listy do Litwinow",
-              "zabiial Krzyzakow we snie",
+              "uciec z miasta za wszelką cenę",
+              "uwierzyć we wszystko albo wszystkiemu zaprzeczyć",
+              "przestać wierzyć w Boga",
+              "zorganizować modlitwy publiczne",
             ],
           },
           {
             id: 3,
             options: [
-              "Halban od dziecinstwa",
-              "Aldona przed slubem",
-              "papiez listem",
-              "Witold w czasie uczty",
+              "modlitwa i pokuta",
+              "uczciwość — wykonywanie swego zawodu",
+              "ucieczka z zamkniętego miasta",
+              "pogodzenie się z losem",
             ],
           },
         ],
       },
-      correctAnswer: [0, 1, 0],
+      correctAnswer: [1, 1, 1],
       metadata: {
         explanation:
-          "Konrad zostal mistrzem dzieki slawie rycerskiej i pozornej poboznosci. Jego plan polegeal na celowym przegrywaniu wojen -- wyniszczyl armie Zakonu na litewskich stepach. Plan zemsty rozbudzal w nim od dziecinstwa wajdelota Halban.",
+          "Paneloux w I kazaniu mówi o karze Bożej. W II kazaniu (po śmierci dziecka) zmienia stanowisko — mówi o konieczności wiary totalnej: wszystko albo nic. Rieux uważa, że walka z dżumą to kwestia uczciwości: „wykonywanie zawodu”.",
       },
     },
     {
@@ -1617,22 +439,82 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 2,
       points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question:
-        'Ktore z ponizszych motywow sa obecne w "Konradzie Wallenrodzie"?',
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Które motywy literackie są obecne w „Dżumie”?",
       content: {
         options: [
-          "Motyw zdrady w imie wyzszego celu",
-          "Motyw poety/pieśniarza jako straza pamieci narodowej",
-          "Motyw nieszczesliwej milosci -- poswieconej dla ojczyzny",
-          "Motyw sielanki wiejskiej i szczesliwego zycia na wsi",
+          "Motyw oblężonego miasta i izolacji",
+          "Motyw rozłąki z bliskimi",
+          "Motyw pojedynku rycerskiego",
+          "Motyw walki ze złem i solidarności ludzkiej",
         ],
       },
-      correctAnswer: [0, 1, 2],
+      correctAnswer: [0, 1, 3],
       metadata: {
         explanation:
-          '"Konrad Wallenrod" zawiera motywy: zdrady patriotycznej (wallenrodyzm), roli poety w narodzie (Piesn Wajdeloty o pieśni gminnej), nieszczesliwej milosci (Alf i Aldona). Nie ma motywu sielanki -- utwor jest peleon tragizmu.',
+          "Kluczowe motywy „Dżumy” to: oblężone miasto (zamknięte bramy), rozłąka (Rieux z żoną, Rambert z partnerką), walka ze złem i solidarność (formacje sanitarne). Motyw pojedynku rycerskiego nie występuje w utworze.",
+      },
+    },
+
+    // ===== DIFFICULTY 2 — SHORT_ANSWER (3) =====
+
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Kim jest stary astmatyk i jaką postawę reprezentuje?",
+      content: {
+        hints: [
+          "kramarz",
+          "groch w garnkach",
+          "bierność",
+          "nie wstaje z łóżka",
+        ],
+      },
+      correctAnswer:
+        "Stary astmatyk to emerytowany kramarz, który mając 50 lat uznał, że dosyć pracował, położył się do łóżka i już nie wstał. Mierzy czas przesypywaniem grochu z garnka do garnka zamiast zegarkiem. Reprezentuje postawę biernej akceptacji świata — nie obchodzi go dżuma, nie walczy z nią. Jego bierna filozofia kontrastuje z aktywną postawą Rieux i Tarrou.",
+      metadata: {
+        explanation:
+          "Stary astmatyk jest postacią komiczną i filozoficzną zarazem. Jego zdanie „Co to jednak znaczy — dżuma? To życie, ot i wszystko” wyraża postawę fatalistyczną. Tarrou pyta, czy jest „świętym”, i odpowiada: „Tak, jeśli świętość jest zespołem przyzwyczajeń”.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Co dzieje się z żoną doktora Rieux w trakcie epidemii?",
+      content: {},
+      correctAnswer:
+        "Żona Rieux jest chora (prawdopodobnie na gruźlicę) i wyjeżdża do sanatorium w górach dzień przed zamknięciem bram. Przez całą epidemię Rieux jest od niej oddzielony — komunikują się tylko depeszami. Na końcu powieści Rieux dowiaduje się o jej śmierci z telegramu.",
+      metadata: {
+        explanation:
+          "Rozłąka Rieux z żoną jest jednym z najważniejszych osobistych wymiarów dżumy. Rieux przeżywa tę stratę w milczeniu — co pokazuje, że walka z abstrakcją (epidemią) kosztuje utratę tego, co najbardziej osobiste.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Jakie zdarzenie otwiera fabułę powieści (scena z 16 kwietnia)?",
+      content: {
+        words: ["szczur", "podest", "dozorca"],
+      },
+      correctAnswer:
+        "Rankiem 16 kwietnia doktor Rieux wychodzi ze swojego gabinetu i na podeście zawadza nogą o martwego szczura. Dozorca Michel twierdzi stanowczo, że „nie ma szczurów w domu” i uważa to za czyjś kawał. Tego samego wieczoru Rieux widzi kolejnego szczura — umierającego, wyrzucającego krew z pyska. To początek serii wydarzeń zwiastujących epidemię.",
+      metadata: {
+        explanation:
+          "Scena z martwym szczurem na podeście to klasyczny incipit powieści. Reakcja dozorcy (zaprzeczanie oczywistości) zapowiada postawę całego społeczeństwa wobec nadciągającej katastrofy.",
       },
     },
 
@@ -1643,22 +525,21 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 2,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question:
-        'Czym jest zabieg "maski historycznej" zastosowany w "Konradzie Wallenrodzie"?',
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Dlaczego Rambert ostatecznie rezygnuje z ucieczki z Oranu?",
       content: {
         options: [
-          "Uzyciem kostiumow i masek na balu w Malborku",
-          "Osadzeniem akcji w sredniowiecznej Litwie, aby pod pozorem historii opowiadac o wspolczesnej sytuacji Polski pod zaborami",
-          "Ukryciem twarzy bohatera pod szyszakiem rycerskim",
-          "Zmiana nazwiska bohatera z Alf na Wallenrod",
+          "Nie udaje mu się zorganizować przerzutu przez bramy",
+          "Uświadamia sobie, że „może być wstyd, że człowiek jest sam tylko szczęśliwy” — po wizycie w szpitalu decyduje się zostać i walczyć z dżumą",
+          "Zostaje aresztowany przez policję przy próbie ucieczki",
+          "Jego żona przyjeżdża do Oranu i nie ma powodu uciekać",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Maska historyczna to zabieg polegajacy na ukryciu wspolczesnych tresci pod szata historyczna. Mickiewicz, piszac o walce Litwinow z Zakonem Krzyzackim (XIV w.), mowil w istocie o walce Polakow z zaborca rosyjskim (XIX w.). Zabieg pozwolil ominac cenzure caraska.",
+          "Rambert, który przez tygodnie organizował ucieczkę, zmienia zdanie po zobaczeniu pracy w szpitalu i po informacji, że żona Rieux jest w sanatorium. Mówi: „Może być wstyd, że człowiek jest sam tylko szczęśliwy”. Zostaje i dołącza do formacji sanitarnych.",
       },
     },
     {
@@ -1666,22 +547,22 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 2,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
       question:
-        "Jaka jest funkcja Piesni Wajdeloty w kontekscie calego utworu?",
+        "Co zmienia się w postawie ojca Paneloux między pierwszym a drugim kazaniem?",
       content: {
         options: [
-          "Sluzy wylacznie rozrywce gości na uczcie",
-          "Jest manifestem o roli piesni gminnej jako skarbca pamieci narodowej -- zachowujacej tozsamosc narodu nawet po utracie panstwa",
-          "Opowiada wylacznie o milosci Waltera i Aldony",
-          "Jest modlitwa do Boga o pomoc w walce z Krzyzakami",
+          "W pierwszym kazaniu nawołuje do ucieczki, w drugim — do walki z epidemią",
+          "W pierwszym kazaniu mówi „wy” i interpretuje dżumę jako karę Bożą; w drugim mówi „my”, rezygnuje z prostych wyjaśnień i stwierdza, że trzeba uwierzyć we wszystko albo wszystkiemu zaprzeczyć",
+          "W pierwszym kazaniu jest ateistą, w drugim — staje się gorliwym wierzącym",
+          "Oba kazania są identyczne — Paneloux nie zmienia stanowiska",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Piesn Wajdeloty to hymn o roli piesni gminnej (tradycji ustnej) w zyciu narodu: 'O wiesci gminna! Ty arko przymierza / Miedzy dawnymi i mlodszymi laty'. Piesn jest skarbcem pamieci -- przetrwa, gdy plomien rozgryzie malowane dzieje, a skarby mieczowi spustosza zlodzieje.",
+          "Ewolucja Paneloux to jeden z najważniejszych wątków powieści. I kazanie: pewność, oskarżenie, „wy zasłużyliście”. II kazanie (po śmierci dziecka Othona): niepewność, pokora, „my”, wiara totalna jako jedyna alternatywa wobec nihilizmu. Zmiana z „wy” na „my” pokazuje, że Paneloux sam stał się ofiarą dżumy.",
       },
     },
     {
@@ -1689,21 +570,22 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 2,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Na czym polega tragizm Konrada Wallenroda?",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Jaką scenę Camus wykorzystuje jako punkt kulminacyjny sporu o sens cierpienia?",
       content: {
         options: [
-          "Na tym, ze ponosi porazke wojenna i nie niszczy Zakonu",
-          "Na tym, ze musi wybierac miedzy dwoma wartosciami: etyke rycerska (honor) a patriotyzmem (zemsta za ojczyzne) -- kazdy wybor oznacza strate",
-          "Na tym, ze Aldona nie chce na niego czekac",
-          "Na tym, ze Halban go zdradza",
+          "Śmierć dozorcy Michela w karetce",
+          "Długą agonię syna sędziego Othona — dziecko umiera mimo zastosowania nowego serum, a Rieux mówi do Paneloux: „Ten przynajmniej był niewinny”",
+          "Samobójstwo Cottarda w finale powieści",
+          "Śmierć Tarrou na dżumę płucną",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Tragizm Konrada polega na konflikcie dwoch wartosci: honoru rycerskiego (walka twarzą w twarz) i milosci do ojczyzny (jedyny sposob na pokonanie Zakonu to zdrada). Wybierając ojczyzne, traci honor, milosc, szczescie i zycie. To klasyczny konflikt tragiczny romantyzmu.",
+          "Scena śmierci synka Othona to najważniejszy moment konfrontacji z problemem teodycei. Dziecko cierpi straszliwie, a serum Castela nie działa. Po śmierci dziecka Rieux krzyczy na Paneloux: „Nigdy nie będę kochał tego świata, gdzie dzieci są torturowane”. To zdanie jest kluczem do etyki Camusa.",
       },
     },
     {
@@ -1711,26 +593,21 @@ async function seedExercises() {
       category: "LANGUAGE_USE",
       difficulty: 3,
       points: 2,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Co oznacza porownanie sokoła w Powiesci Wajdeloty?",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Dlaczego „Dżumę” nazywamy powieścią-parabolą?",
       content: {
-        sourceText: {
-          author: "Adam Mickiewicz",
-          title: "Konrad Wallenrod",
-          text: "Jako sokol wydarty z gniazda i w klatce zywiony, / Choc srogimi mekami lowcy odbiora mu rozum / I puszczaja, zeby braci sokolow wojowal; / Skoro wzniesie sie w chmury (...) / Pojdz, mysliwcze, do domu, z klatka nie czekaj sokola.",
-        },
         options: [
-          "Symbolizuje potege Zakonu Krzyzackiego",
-          "Jest alegoria losu Waltera Alfa -- Litwina porwanego przez Krzyzakow, ktory wraca na strone ojczyzny, gdy odzyska wolnosc",
-          "Opisuje techniki sokolnictwa w sredniowieczu",
-          "Symbolizuje Aldone, ktora chce uciec z wiezy",
+          "Ponieważ opisuje wyłącznie realne wydarzenia historyczne z II wojny światowej",
+          "Ponieważ pod dosłowną warstwą opowieści o epidemii kryje się głębszy, uniwersalny sens — dżuma jest metaforą zła, wojny, totalitaryzmu i zła tkwiącego w człowieku",
+          "Ponieważ zawiera przypowieści biblijne w każdym rozdziale",
+          "Ponieważ jest napisana wierszem, jak parabola matematyczna",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Sokol to alegoria Waltera Alfa: porwany z ojczystego gniazda (Litwa), wyhodowany w niewoli (Zakon), puszczony na polowanie (walka z Litwinami) -- ale gdy poczuje wolnosc, wraca do swoich. 'Pojdz, mysliwcze, do domu, z klatka nie czekaj sokola'.",
+          "Parabola (przypowieść) to utwór, w którym warstwa dosłowna jest nośnikiem głębszego sensu. Cechy paraboli w „Dżumie”: zatarta data (194.), zamknięta przestrzeń, uniwersalne postawy bohaterów, motto z Defoe sygnalizujące alegoryczność. Dżuma = zło, wojna, totalitaryzm, ale też zło wewnętrzne człowieka.",
       },
     },
 
@@ -1741,44 +618,22 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 2,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: 'Ktore cechy powiesc poetyckiej realizuje "Konrad Wallenrod"?',
-      content: {
-        options: [
-          "Synkretyzm rodzajowy -- laczenie epiki, liryki i dramatu",
-          "Inwersja czasowa -- zdarzenia nie sa przedstawiane chronologicznie",
-          "Bohater to indywidualista rozdmierany miedzy wartosciami",
-          "Narracja prowadzona przez wszystkowiedzacego narratora bez emocji",
-        ],
-      },
-      correctAnswer: [0, 1, 2],
-      metadata: {
-        explanation:
-          '"Konrad Wallenrod" realizuje cechy powieci poetyckiej: synkretyzm (narracja + piesni liryczne + dialogi dramatyczne), inwersje czasowa (fabuła nie jest chronologiczna -- zaczynamy od obioru mistrza, przeszlosc poznajemy z piiesni), bohater-indywidualista (Konrad rozdierany miedzy honorem a ojczyzna). Narracja NIE jest obiektywna -- narrator jest zaangazowany.',
-      },
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 3,
-      points: 2,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
       question:
-        "Ktore elementy utworu stanowia nawiazania do sytuacji Polski pod zaborami?",
+        "Które interpretacje tytułu „Dżuma” są uzasadnione tekstem powieści?",
       content: {
         options: [
-          "Litwa pod naporem Zakonu = Polska pod naporem Rosji",
-          "Wallenrodyzm jako strategia walki spiskowcow (dekabrystow)",
-          "Piesn gminna jako straznik tozsamosci = literatura polska w niewoli",
-          "Zamek w Malborku = siedziba krola Polski w Krakowie",
+          "Dżuma jako dosłowna epidemia — choroba dziesiątkująca Oran",
+          "Dżuma jako metafora II wojny światowej i okupacji",
+          "Dżuma jako zło tkwiące wewnątrz każdego człowieka — „każdy nosi w sobie dżumę”",
+          "Dżuma jako kara Boża za grzechy — jedyna interpretacja wspierana przez narratora",
         ],
       },
       correctAnswer: [0, 1, 2],
       metadata: {
         explanation:
-          "Litwa vs Zakon = Polska vs Rosja (maska historyczna). Wallenrodyzm nawiazuje do strategii spiskowcow/dekabrystow (Konrad Rylejew!). Piesn gminna jako straznik pamieci = rola literatury polskiej pod zaborami. Malbork nie symbolizuje Krakowa.",
+          "Tytuł jest wieloznaczny: dosłowna epidemia, metafora wojny/totalitaryzmu, zło w człowieku (słowa Tarrou: „każdy nosi w sobie dżumę”). Interpretacja kary Bożej jest ODRZUCONA — głosi ją Paneloux w I kazaniu, ale sam wycofuje się z niej po śmierci dziecka.",
       },
     },
     {
@@ -1786,21 +641,118 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 2,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Ktore stwierdzenia o Aldonie sa prawdziwe?",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Które cytaty pochodzą z „Dżumy” i kto je wypowiada?",
       content: {
-        options: [
-          "Jest corka litewskiego ksiecia Kiejstuta",
-          "Walter nauczyl ja kochac i opowiedzial jej o Bogu chrzescijan",
-          "Zamknela sie w wiezy z wlasnej woli, by byc blisko meza",
-          "Na koncu utworu ucieka z wiezy i wraca na Litwe",
+        matchingType: "quotes_to_works",
+        leftColumn: [
+          { id: "A", text: "„Jedyny sposób walki z dżumą to uczciwość”" },
+          { id: "B", text: "„Każdy nosi w sobie dżumę”" },
+          { id: "C", text: "„Kapelusze z głów, panowie!”" },
+          {
+            id: "D",
+            text: "„W ludziach więcej rzeczy zasługuje na podziw niż na pogardę”",
+          },
+        ],
+        rightColumn: [
+          { id: "1", text: "Tarrou — o złu tkwiącym w każdym człowieku" },
+          { id: "2", text: "Grand — o swoim zdaniu o amazonce" },
+          { id: "3", text: "Rieux — o postawie wobec epidemii" },
+          { id: "4", text: "Rieux-narrator — końcowe przesłanie kroniki" },
         ],
       },
-      correctAnswer: [0, 1, 2],
+      correctAnswer: [
+        [0, 2],
+        [1, 0],
+        [2, 1],
+        [3, 3],
+      ],
       metadata: {
         explanation:
-          "Aldona to corka Kiejstuta, ktora zakochala sie w Walterze -- ten nauczyl ja milosci i opowiedzial o chrzescijanstwie. Zamknela sie w wiezy przy zamku w Malborku, by byc blisko meza. NIE ucieka -- umiera w wiezy po smierci Konrada.",
+          "Rieux mówi o uczciwości jako jedynym sposobie walki. Tarrou stwierdza, że „każdy nosi w sobie dżumę”. Grand marzy, by wydawca zdjął kapelusz. Końcowe zdanie kroniki — „w ludziach więcej rzeczy zasługuje na podziw niż na pogardę” — należy do Rieux-narratora.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Które postawy wobec dżumy (zła) reprezentują poszczególni bohaterowie?",
+      content: {
+        options: [
+          "Rieux — aktywna walka ze złem wynikająca z obowiązku zawodowego i ludzkiej uczciwości",
+          "Tarrou — bunt przeciw śmierci i pragnienie „świętości bez Boga”",
+          "Cottard — bierny opór i odmowa współpracy z władzami z pobudek patriotycznych",
+          "Paneloux — ewolucja od religijnego wyjaśnienia cierpienia do wiary totalnej",
+        ],
+      },
+      correctAnswer: [0, 1, 3],
+      metadata: {
+        explanation:
+          "Rieux = uczciwość i obowiązek. Tarrou = bunt i poszukiwanie świętości. Paneloux = ewolucja od pewności do pokory. Cottard NIE jest biernym opornikiem patriotycznym — jest oportunistą, który korzysta na epidemii i boi się powrotu porządku prawnego.",
+      },
+    },
+
+    // ===== DIFFICULTY 3 — SHORT_ANSWER (3) =====
+
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Opisz scenę w operze (Orfeusz i Eurydyka) z notatek Tarrou. Co symbolizuje?",
+      content: {
+        instruction:
+          "Odwołaj się do tego, co dzieje się na scenie i na widowni, oraz wyjaśnij symbolikę.",
+      },
+      correctAnswer:
+        "Podczas spektaklu „Orfeusza i Eurydyki” śpiewak grający Orfeusza dodaje do arii przesadne tremola, a w scenie utraty Eurydyki nagle pada na scenę. Orkiestra milknie. Publiczność, początkowo zdumiona, zaczyna w panice opuszczać salę — cicho, potem coraz szybciej, „jak po skończonym nabożeństwie wychodzi się z kościoła”. Scena symbolizuje wtargnięcie dżumy (śmierci) w przestrzeń sztuki i pozorów — eleganckie fraki nie chronią przed zarazą. Upadek Orfeusza to upadek iluzji normalności.",
+      metadata: {
+        explanation:
+          "Scena w operze to jedna z najbardziej sugestywnych scen powieści. Metateatralność: Orfeusz traci Eurydykę na scenie, jak Oran traci swoich obywateli. Publiczność ucieka, zostawiając „zapomniane wachlarze i koronki na czerwieni foteli” — symboliczny obraz porzucenia pozorów.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Co oznacza zdanie Rieux: „Jedyny sposób walki z dżumą to uczciwość”? Jak je rozumie?",
+      content: {},
+      correctAnswer:
+        "Rieux wyjaśnia, że uczciwość „w moim przypadku polega na wykonywaniu zawodu”. Nie chodzi mu o abstrakcyjną cnotę, ale o codzienną, konsekwentną pracę — leczenie chorych, diagnozowanie, izolowanie, nawet gdy nie ma nadziei na wyleczenie. Uczciwość to przeciwieństwo bohaterstwa: nie wielkie czyny, lecz wytrwałe robienie tego, co należy. To postawa Syzyfa u Camusa — świadome działanie mimo absurdu.",
+      metadata: {
+        explanation:
+          "To jedno z najważniejszych zdań powieści. Rieux odrzuca heroizm i świętość jako kategorie — zostaje uczciwość, rozumiana jako solidna, codzienna praca. To fundament etyki Camusa: sens nadaje się życiu przez działanie, nie przez wiarę.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Dlaczego narrator uważa Josepha Granda za „bohatera” kroniki? Co jest w tym paradoksalne?",
+      content: {
+        hints: ["skromność", "dwa plus dwa", "dobra wola"],
+      },
+      correctAnswer:
+        "Narrator proponuje Granda jako bohatera, bo „miał tylko dobre serce i pozornie śmieszny ideał”. Grand nie jest spektakularny — jest skromnym urzędnikiem, który po godzinach szlifuje jedno zdanie, a jednocześnie cierpliwie prowadzi statystyki formacji sanitarnych. Paradoks polega na tym, że bohaterem zostaje człowiek najzwyklejszy: to jego szarość jest heroiczna. Camus odwraca tradycyjny wzorzec — prawdziwy bohater to ktoś, kto mówi „dwa i dwa to cztery” i robi to, co należy.",
+      metadata: {
+        explanation:
+          "Narrator pisze: „dwa i dwa to cztery, a bohaterstwo — miejsce drugorzędne”. Grand ucieleśnia etykę Camusa: wielkość w zwyczajności, dobroć bez ostentacji.",
       },
     },
 
@@ -1811,25 +763,25 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 3,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Napisz notatke syntetyczna na podany temat:",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Napisz notatkę syntetyczną na podany temat:",
       content: {
         topic:
-          "Plan zemsty Waltera Alfa -- od porwania po smierc. Jak krok po kroku realizowal strategie wallenrodyzmu?",
+          "Postawy bohaterów „Dżumy” wobec epidemii — od buntu po oportunizm",
         requirements: [
-          "Wymien kluczowe etapy: porwanie, wychowanie u Krzyzakow, ucieczka na Litwe, malzenstwo, powrot pod falszywym imieniem, obior na mistrza, sabotaz, smierc",
-          "Wyjasnij, jaka role w planie odgrywal Halban",
-          "Wskazz, co Konrad poswiecil dla realizacji planu",
-          "100-150 slow",
+          "Scharakteryzuj postawę co najmniej czterech bohaterów (Rieux, Tarrou, Rambert, Cottard)",
+          "Wskaż, która postawa jest według narratora właściwa i dlaczego",
+          "Wyjaśnij, dlaczego narrator twierdzi, że „nie jest rzeczą konieczną być bohaterem”",
+          "100-150 słów",
         ],
         wordLimit: { min: 100, max: 150 },
       },
       correctAnswer:
-        "Notatka powinna obejmowac: 1) Porwanie Waltera jako dziecka, wychowanie u Krzyzakow, ale z tajnym wplywem wajdeloty Halbana, ktory rozbudzal milosc do Litwy. 2) Ucieczka na Litwe, malzenstwo z Aldona, decyzja o zemcie. 3) Powrot do Zakonu pod imieniem Wallenroda, zdobycie slawy, obior na mistrza. 4) Celowy sabotaz -- zwlekanie z wojna, przegrywanie bitew, wyniszczenie armii Zakonu na litewskich stepach. 5) Zdemaskowanie przez tajny trybunal i smierc. Halban byl 'sumieniem' planu, rozbudwal i podtrzymywal zemste. Konrad poswiecil: milosc (Aldona), honor (zdrada), zycie (samobojstwo).",
+        "Notatka powinna: 1) Rieux — aktywna walka, uczciwość, obowiązek zawodowy; nie szuka chwały, po prostu leczy. 2) Tarrou — bunt egzystencjalny, organizacja formacji sanitarnych, pragnienie „świętości bez Boga”. 3) Rambert — ewolucja od egoizmu (ucieczka) do solidarności (zostaje i walczy). 4) Cottard — oportunizm, dżuma mu sprzyja, korzysta na nieszczęściu. Narratorowi najbliższa jest postawa Granda i Rieux: zwykła uczciwość, nie bohaterstwo. „Piękne czyny mają tak wysoką cenę dlatego, że są rzadkie” — Camus odrzuca heroizm na rzecz codziennej przyzwoitości.",
       metadata: {
         explanation:
-          "Plan Konrada rozciaga sie na kilkadziesiat lat -- od dziecinstwa do smierci. Kluczowa jest rola Halbana jako 'architekta' zemsty i straznika pamieci, ktory przezyje Konrada, by opowiedziec jego historie.",
+          "Spektrum postaw bohaterów to jedno z najczęstszych pytań maturalnych o „Dżumę”. Kluczowe: Camus nie dzieli bohaterów na dobrych i złych — pokazuje różne możliwe reakcje na zło.",
       },
     },
 
@@ -1840,21 +792,21 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 4,
       points: 2,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Dlaczego Halban odmawia wypicia trucizny razem z Konradem?",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Co Tarrou rozumie przez zdanie „każdy nosi w sobie dżumę”?",
       content: {
         options: [
-          "Jest tchorzem i boi sie smierci",
-          "Chce przezyc, aby zachowac slawe czynu Konrada i przekazac ja potomnym -- piesn msciciela wstanie z tej piesni",
-          "Nie wierzy, ze Konrad naprawde zamierza umrzec",
-          "Chce uciec do Litwy i prowadzic wojne samodzielnie",
+          "Że wszyscy mieszkańcy Oranu są fizycznie zarażeni bakcylem",
+          "Że w każdym człowieku tkwi potencjał zła — skłonność do zabijania, zgody na zabójstwo, obojętności; i trzeba nieustannie czuwać, by „nie tchnąć dżumy w twarz drugiego człowieka”",
+          "Że dżuma jest chorobą dziedziczną przenoszoną genetycznie",
+          "Że każdy powinien się bać epidemii i uciekać z miasta",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Halban odmawia smierci, bo ma misje: 'Chce jeszcze zostac, zamknac twe powieki / I zyc -- azebym slawe twego czynu / Zachowal swiatu, rozglosil na wieki'. Jako wajdelota bedzie spiewal o czynie Konrada -- i 'kiedys w przyszlosci / Z tej piesni wstanie msciciel naszych kosci'. Piesn jest wieczna, bohater smiertelny.",
+          "To najważniejsze zdanie filozoficzne powieści. Tarrou mówi o „zadżumieniu” moralnym: mikrob dżumy to potencjał zła w człowieku — zgoda na wyroki śmierci, obojętność na cierpienie, „roztargnienie” pozwalające krzywdzić innych. „Uczciwy człowiek, który nie zaraża niemal nikogo, to człowiek możliwie najmniej roztargniony.”",
       },
     },
     {
@@ -1862,45 +814,49 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 4,
       points: 2,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
       question:
-        "Jak mozna zinterpretowac geneze utworu w kontekscie zycia Mickiewicza?",
+        "Jak Camus buduje postać Tarrou jako bohatera egzystencjalnego? Jakie doświadczenie go ukształtowało?",
       content: {
         options: [
-          "Mickiewicz opisuje wlasne doswiadczenia wojenne z okresu powstania listopadowego",
-          "Mickiewicz, na zeslaniu w Rosji, pracujacy dla wroga (caratu), piszzze o dylemacie czlowieka, ktory musi sluzyc nieprzyjacielowi, by go zniszczyc -- odzwierciedla to sytuacje polskich spiskowcow i dekabrystow",
-          "Utwor jest czystą fikcja historyczna bez zwiazku z biografia autora",
-          "Mickiewicz pisal utwor jako hommage dla cara Mikolaja I",
+          "Tarrou był żołnierzem i widział śmierć na polu bitwy",
+          "Jako nastolatek widział, jak ojciec — zastępca prokuratora — żąda kary śmierci dla oskarżonego; odtąd walczy z wszelką formą „zadżumienia” — zgodą na zabijanie",
+          "Tarrou stracił rodziców podczas epidemii w Chinach",
+          "Tarrou był księdzem, który utracił wiarę po śmierci parafianina",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          'Mickiewicz pisal "Konrada Wallenroda" w Rosji (1825-1827), bedac zmuszony do pracy jako urzednik carski. Poznal dekabrystow (Konrad Rylejew!) i zrozumial, ze konfrontacja z Rosja jest beznadiejna -- potrzeba podstepu. Wallenrodyzm to literacki wyraz tego dylematu: jak walczyc, gdy sluzy sie wrogowi.',
+          "Tarrou opowiada Rieux o przełomowym doświadczeniu: jako siedemnastolatek widział ojca w sądzie, żądającego „tej głowy”. Zrozumiał, że ojciec „wstawał wcześniej” by być obecny przy egzekucjach. Odtąd walczy ze „skazywaniem” — każdą formą zgody na zabijanie. Pragnie „świętości bez Boga” i „spokoju wewnętrznego”.",
       },
     },
     {
       type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
+      category: "LANGUAGE_USE",
       difficulty: 4,
       points: 2,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question:
-        "Dlaczego Aldona odmawia wyjscia z wiezy, gdy Konrad ja o to blaga?",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Jaką rolę pełni w powieści motyw „abstrakcji”?",
       content: {
+        sourceText: {
+          author: "Albert Camus",
+          title: "Dżuma",
+          text: "Kiedy abstrakcja zaczyna nas zabijać, trzeba się zająć abstrakcją.",
+        },
         options: [
-          "Bo nie kocha go juz",
-          "Bo zlozylla przysiegia na progu wiezy, boi sie, ze zniszczonaa przez lata pustelnictwa nie bedzie juz piekna Aldona z jego wspomnien, i woli zachowac idealny obraz w pamieci obojga",
-          "Bo Krzyzacy strzega wejscia i nie mozna wiezy otworzyc",
-          "Bo Halban zabronil jej wychodzic",
+          "„Abstrakcja” oznacza naukę i teorię medyczną — Rieux woli praktykę",
+          "Rieux nazywa „abstrakcją” dżumę jako system: statystyki, procedury, izolację — to, co odczłowiecza cierpienie, ale z czym trzeba walczyć, używając tych samych narzędzi",
+          "„Abstrakcja” to metafora malarstwa abstrakcyjnego, które jest modne w Oranie",
+          "To określenie filozofii Paneloux, z którą Rieux polemizuje",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Aldona odmawia z dwoch powodow: 1) Zlozyla sakralna przysieige, ze nie wyjdzie z wiezy az do smierci. 2) Boi sie, ze zyly upior, ktory z niej pozostal, zniszczy piekny obraz zachowany w pamieci Konrada: 'Tak motyl piekny, gdy w bursztyn utonie / Na wieki cala zachowuje postac... Alfie, nam lepiej takiemi pozostac'. To tragiczne i piekne zarazem -- woli byc wspomnieniem niz rzeczywistoscia.",
+          "Dla Rieux „abstrakcja” to dżuma jako system: formularze, karetki, statystyki, izolacja, pogrzeby — cały aparat, który sprowadza cierpienie do liczb. Rambert zarzuca Rieux „mówienie językiem abstrakcji”. Ale Rieux wie, że „kiedy abstrakcja zaczyna zabijać, trzeba się zająć abstrakcją” — walczyć z systemem przy użyciu systemu. To paradoks etyczny powieści.",
       },
     },
 
@@ -1911,22 +867,22 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 4,
       points: 2,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
       question:
-        'Ktore z ponizszych interpretacji ballady "Alpuhara" sa uzasadnione?',
+        "Które elementy „Dżumy” świadczą o jej parabolicznym (alegorycznym) charakterze?",
       content: {
         options: [
-          "Almanzor jest analogia Konrada -- obaj niszcza wroga od srodka, poswiecajac wlasne zycie",
-          "Pocalunek Almanzora (zarazenie dzuma) odpowiada zdradzieckim dzialalaniom Konrada jako mistrza Zakonu",
-          "Ballada sluzy wylacznie rozrywce gości i nie ma glebszego znaczenia",
-          "Konrad, spiewajac ballade, nieswiadomie zdradza swoj plan -- z czego Krzyzacy nie zdaja sobie sprawy",
+          "Celowo zatarta data — „194.” bez ostatniej cyfry",
+          "Motto z Defoe sygnalizujące, że „jeden rodzaj uwięzienia ukazuje inny”",
+          "Szczegółowe opisy architektoniczne Oranu z podaniem nazw ulic i numerów domów",
+          "Uniwersalne postawy bohaterów — nie indywidualne psychologie, lecz modele reakcji na zło",
         ],
       },
       correctAnswer: [0, 1, 3],
       metadata: {
         explanation:
-          "\"Alpuhara\" to parabola planu Konrada: Almanzor = Konrad, Hiszpanie = Krzyzacy, pocalunek/zaraza = sabotaz od srodka. Konrad w pijanym szale sam zdradza sens ballady ('Wy chcecie wiedziec o zemstie Litwina?'), ale Krzyzacy tego nie rozumieja. Ballada NIE jest pustą rozrywka -- jest kluczem do fabuły.",
+          "Cechy paraboli: zatarta data (uniwersalność), motto Defoe (klucz alegoryczny), bohaterowie jako modele postaw (nie głębokie psychologie). Opisy Oranu istnieją, ale nie są „szczegółowe” — Camus celowo kreuje miasto jako przestrzeń uniwersalną: brzydką, banalną, reprezentatywną.",
       },
     },
     {
@@ -1934,91 +890,118 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 4,
       points: 2,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
       question:
-        "Ktore porownannia miedzy Konradem Wallenrodem a innymi bohaterami romantycznymi sa uzasadnione?",
+        "Które porównania międzytekstowe z innymi dziełami są uzasadnione?",
       content: {
         options: [
-          "Konrad Wallenrod i Konrad z III cz. Dziadow -- obaj poswiecaja sie dla ojczyzny, ale Wallenrod wybiera zdrade, Konrad z Dziadow -- bunt prometejski",
-          "Konrad Wallenrod i Jacek Soplica -- obaj ukrywaja tozsamosc i dzialaja w tajemnicy dla dobra narodu",
-          "Konrad Wallenrod i Werter Goethego -- obaj koncza samobojstwem z powodu nieszczesliwej milosci",
-          "Konrad Wallenrod i Kordian Slowackiego -- obaj staja przed dylematem dzialania za pomoca zdrady",
+          "„Dżuma” i „Inny świat” Herlinga-Grudzińskiego — obie ukazują ludzi w sytuacji ekstremalnej, testując ich moralność",
+          "„Dżuma” i „Mit Syzyfa” Camusa — Rieux jak Syzyf: działa wiedząc, że walka może być daremna”",
+          "„Dżuma” i „Pan Tadeusz”— obie są epopejami narodowymi",
+          "„Dżuma” i „Proces” Kafki — absurd systemu, który przenika życie jednostki bez wyjaśnienia",
         ],
       },
       correctAnswer: [0, 1, 3],
       metadata: {
         explanation:
-          "Wallenrod-Konrad (Dziady): obaj poswiecaja sie, ale roznymi metodami (zdrada vs bunt). Wallenrod-Soplica: obaj ukrywaja tozsamosc i dzialaja w tajemnicy. Wallenrod-Kordian: obaj stoja przed dylematem dzialania (Kordian nie potrafi zabic cara -- paralizz moralny). Werter ginie z milosci, nie z patriotyzmu -- analogia powierzchowna.",
+          "„Inny świat” — obie powieści testują moralność w ekstremalnych warunkach. „Mit Syzyfa” — Rieux to Syzyf walczący z absurdem. „Proces” Kafki — absurdalny system pochłania jednostkę. „Pan Tadeusz” to epopeja szlachecka — nie ma żadnego związku z „Dżumą”.",
       },
     },
 
-    // ===== DIFFICULTY 4 — SHORT_ANSWER (2) =====
+    // ===== DIFFICULTY 4 — SHORT_ANSWER (3) =====
 
     {
       type: "SHORT_ANSWER",
       category: "HISTORICAL_LITERARY",
       difficulty: 4,
       points: 3,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
       question:
-        'Wyjasnij role piesni gminnej w "Konradzie Wallenrodzie" na podstawie Piesni Wajdeloty. Dlaczego Mickiewicz poswiecil jej tak wiele miejsca?',
-      content: {},
-      correctAnswer:
-        "Piesn gminna pelni role 'arki przymierza miedzy dawnymi i mlodszymi laty' -- jest skarbcem pamieci narodowej. Gdy plomien zniszczy kroniki, a miecz spustoszy skarby, piesn 'ujdzie calo'. Dla narodu bez panstwa (Litwa/Polska) piesn ustna jest jedynym nosnikiem tozsamosci. Mickiewicz poswiecil jej tyle miejsca, bo pisal w sytuacji, gdy polska kultura i literatura byly zagrozone rusyfikacja -- literatura = ostatni bastion narodowej pamieci. Piesn = bron: 'Ty czasem dzierzysz i bron archaniol'.",
-      metadata: {
-        explanation:
-          "Piesn Wajdeloty to manifest romantycznej idei roli poety i literatury w zyciu narodu. Przylozenie do sytuacji Polski pod zaborami jest bezposrednie: skoro nie ma panstwa, literatura staje sie straznikiem tozzsamosci.",
-      },
-    },
-    {
-      type: "SHORT_ANSWER",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 4,
-      points: 3,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question:
-        'Porownaj postaci Konrada Wallenroda i Almanzora z ballady "Alpuhara". Wskazz analogie i roznice.',
+        "Jaką rolę pełni scena nocnej kąpieli Rieux i Tarrou w morzu? Dlaczego jest ważna kompozycyjnie?",
       content: {
         instruction:
-          "Odwolaj sie do metody walki, motywacji i konsekwencji czynu obu bohaterow.",
+          "Odwołaj się do kontekstu (kiedy następuje), symboliki i relacji między bohaterami.",
       },
       correctAnswer:
-        "Analogie: obaj niszcza wroga od srodka (infiltracja), obaj poswiecaja wlasne zycie, obaj uzywaja podstepu (zdrada). Almanzor zaraza dzumma przez pocalunek, Konrad niszczy armie Zakonu przez celowy sabotaz. Roznice: Almanzor dziala impulwnie (wraca tuz po upadku twierdzy), Konrad realizuje plan przez dziesieciolecia. Almanzor umiera z smiechem na ustach (triumf), Konrad umiera w rozpaczy (utracil milosc, honor, szczescie). Almanzor nie ma dylematu moralnego, Konrad jest targany wyrzutami sumienia przez cale zycie.",
+        "Scena kąpieli następuje po zwierzeniach Tarrou o swoim życiu — jest momentem kulminacji ich przyjaźni. Rieux i Tarrou wymykają się z miasta na molo i pływają razem w morzu: „Przez kilka minut płynęli jednako, z tą samą mocą, samotni, daleko od świata, wolni nareszcie od miasta i dżumy”. To jedyna scena w powieści, gdzie bohaterowie doświadczają wolności i szczęścia. Symbolika: morze = wolność, natura, życie poza dżumą. Kompozycyjnie: scena jest „pauzą” przed finałem — wkrótce Tarrou zachoruje i umrze. Jest pożegnaniem, choć bohaterowie jeszcze o tym nie wiedzą.",
       metadata: {
         explanation:
-          'Ballada "Alpuhara" to parabola -- klucz do zrozumienia wallenrodyzmu. Na maturze wazne jest dostrzezenie zarowno podobienst, jak i roznic: Almanzor jest prosty i jednowymiaarowy, Konrad -- tragiczny i wielowymiarowy.',
+          "Scena kąpieli jest jednym z najczęściej analizowanych fragmentów powieści. Na maturze pojawia się w kontekstach: przyjaźń w sytuacji ekstremalnej, motyw morza, chwila wolności wobec zniewolenia.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Wyjaśnij sens ostatniego zdania powieści o „bakcylu dżumy, który nigdy nie umiera”. Jakie ma przesłanie?",
+      content: {},
+      correctAnswer:
+        "Rieux pisze, że „bakcyl dżumy nigdy nie umiera i nie znika, że może przez dziesiątki lat pozostać uśpiony w meblach i bieliźnie (...) i że nadejdzie być może dzień, kiedy na nieszczęście ludzi oraz dla ich nauki dżuma obudzi swe szczury i pośle je, by umierały w szczęśliwym mieście”. Przesłanie: zło nigdy nie znika na zawsze — może powrócić w każdej chwili pod nową postacią (wojna, totalitaryzm, nienawiść). Radość z wyzwolenia „jest zawsze zagrożona”. To ostrzeżenie przed łatwym optymizmem i wezwanie do wiecznej czujności moralnej.",
+      metadata: {
+        explanation:
+          "To zdanie zamykające powieść jest jednym z najczęściej cytowanych fragmentów Camusa. Na maturze kluczowe: nie jest to pesymizm, lecz realizm moralny — Camus nie zapowiada nieuchronnej klęski, ale mówi, że czujność i gotowość do walki muszą być stałe.",
       },
     },
 
-    // ===== DIFFICULTY 4 — SYNTHESIS_NOTE (1) =====
+    // ===== DIFFICULTY 4 — SYNTHESIS_NOTE (2) =====
 
     {
       type: "SYNTHESIS_NOTE",
       category: "HISTORICAL_LITERARY",
       difficulty: 4,
       points: 4,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Napisz notatke syntetyczna na podany temat:",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Napisz notatkę syntetyczną na podany temat:",
       content: {
-        topic: "Czy cel uswieca srodki? Wallenrodyzm jako problem etyczny",
+        topic:
+          "Spór Rieux z Paneloux — dwa sposoby reagowania na cierpienie niewinnych",
         requirements: [
-          "Wyjasnij, na czym polega dylemat moralny Konrada",
-          "Przedstaw argumenty za i przeciw wallenrodyzmowi",
-          "Odwolaj sie do motta z Machiavellego",
-          "Wskazz, jaka cene placi Konrad za realizacje planu",
-          "150-200 slow",
+          "Wyjaśnij stanowisko Rieux (bunt, odmowa akceptacji cierpienia)",
+          "Wyjaśnij stanowisko Paneloux (wiara totalna, przyjęcie tajemnicy)",
+          "Odwołaj się do sceny śmierci dziecka jako punktu zwrotnego",
+          "Oceń, która postawa jest bliższa przesłaniu Camusa",
+          "150-200 słów",
         ],
         wordLimit: { min: 150, max: 200 },
       },
       correctAnswer:
-        "Notatka powinna: zdefiniowac dylemat -- Konrad musi wybrac miedzy honorem rycerskim (walka twarzą w twarz, etyczne) a patriotyzmem (jedyny skuteczny sposob to zdrada, nieetyczne). Motto z Machiavellego ('trzeba byc lisem i lwem') mowi, ze w polityce nie wolno ogranniczac sie do etyki rycerskiej. Argumenty za: Zakon jest zbyt potezny na otwarta walke, zdrada to jedyna droga do ocalenia narodu. Argumenty przeciw: zdrada niszczy moralne samego bohatera -- Konrad traci milosc, honor, zycie, staje sie alkoholikiem, ginie samobojstwem. Cena: utrata Aldony, wyrzuty sumienia, samotnosc, smierc. Mickiewicz nie daje jednoznacznej odpowiedzi -- utwor jest tragedia, nie manifestem.",
+        "Notatka powinna: Rieux — odmawia akceptacji świata, „gdzie dzieci są torturowane”. Jego postawa to bunt bez metafizyki: leczy, bo tak trzeba, nie szuka wyjaśnień, nie wierzy w wyższy sens cierpienia. Paneloux — po śmierci dziecka porzuca łatwe odpowiedzi (kara Boża), ale zamiast buntu wybiera wiarę totalną: „trzeba we wszystko uwierzyć albo wszystkiemu zaprzeczyć”. Punkt zwrotny: agonia syna Othona — Paneloux klęka i modli się, Rieux mówi: „ten przynajmniej był niewinny”. Po scenie Rieux przeprasza, ale stwierdza: „nie chcę spierać się z księdzem. Pracujemy razem.” Bliższa Camusowi postawa Rieux — bunt i działanie, nie wiara. Ale Camus nie deprecjonuje Paneloux: daje mu godność i pokornę śmierć.",
       metadata: {
         explanation:
-          "Problem 'cel uswieca srodki' to centralne zagadnienie etyczne utworu i jedno z najczestszych pytan maturalnych dotyczacych \"Konrada Wallenroda\".",
+          "Spór Rieux–Paneloux to centralna oś filozoficzna powieści: egzystencjalizm vs. wiara. Na maturze pojawia się jako pytanie o teodycję, postawy wobec cierpienia i sens nadziei.",
+      },
+    },
+    {
+      type: "SYNTHESIS_NOTE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 4,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Napisz notatkę syntetyczną na podany temat:",
+      content: {
+        topic:
+          "Rozłąka jako centralne doświadczenie bohaterów „Dżumy” — formy, skutki i sens",
+        requirements: [
+          "Wskaż co najmniej trzy przykłady rozłąki w powieści",
+          "Opisz psychologiczne skutki rozłąki, jakie obserwuje narrator",
+          "Wyjaśnij, dlaczego narrator nazywa rozłąkę „wygnaniem we własnym domu”",
+          "150-200 słów",
+        ],
+        wordLimit: { min: 150, max: 200 },
+      },
+      correctAnswer:
+        "Notatka powinna: Przykłady rozłąki: 1) Rieux — żona w sanatorium, umiera bez niego. 2) Rambert — partnerka w Paryżu, nie może wyjechać. 3) Castel — żona w sąsiednim mieście, wraca mimo ryzyka. 4) Wszyscy mieszkańcy Oranu — odcięci od świata, kontakt tylko przez 10-słowowe depesze. Skutki: utrata pamięci o bliskich (twarze stają się „bezcielesne”), rezygnacja z przyszłości, monotonia cierpienia, stępienie emocji — „przyzwyczajenie się do rozpaczy gorsze niż sama rozpacz”. „Wygnanie we własnym domu” — bo ludzie są we własnym mieście, ale odcięci od tego, co stanowiło ich życie (bliscy, przyzwyczajenia, wolność). Sens: rozłąka to forma śmierci za życia — pozbawia ludzi tego, co ludzkie: czułości, miłości, nadziei.",
+      metadata: {
+        explanation:
+          "Motyw rozłąki to jeden z najczęstszych tematów maturalnych. Camus poświęca mu obszerne fragmenty w części II i III, analizując psychologię ludzi oddzielonych od bliskich.",
       },
     },
 
@@ -2029,25 +1012,25 @@ async function seedExercises() {
       category: "WRITING",
       difficulty: 4,
       points: 5,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
       question:
-        'Tragiczna milosc w literaturze. Omow problem, odwolujac sie do "Konrada Wallenroda" Adama Mickiewicza i jednego innego tekstu kultury.',
+        "Czy uczciwość wystarczy, by walczyć ze złem? Rozważ problem, odwołując się do „Dżumy” Alberta Camusa i jednego innego tekstu kultury.",
       content: {
         requirements: [
-          "Wyjasnij, dlaczego milosc Waltera i Aldony jest tragiczna",
-          "Przeanalizuj scene rozstania i scene pozegnalaa (cz. VI)",
-          "Porownaj z inna tragiczna miloscia (np. Romeo i Julia, Tristan i Izolda, Judym i Joanna)",
-          "Odpowiedz na pytanie: czy milosc musi przegrac z obowiazkiem?",
-          "Minimum 300 slow",
+          "Wyjaśnij, jak Rieux rozumie uczciwość w kontekście walki z epidemią",
+          "Przeanalizuj postawy innych bohaterów — Tarrou, Granda, Ramberta — jako warianty uczciwości",
+          "Porównaj z innym tekstem kultury (np. „Inny świat” — postawa Herlinga wobec zła w łagrze, „Lord Jim” — poczucie obowiązku)",
+          "Sformułuj wniosek: czy codzienna przyzwoitość to odpowiedź na wielkie zło?",
+          "Minimum 300 słów",
         ],
         wordLimit: { min: 300 },
       },
       correctAnswer:
-        "Rozprawka powinna: pokazac tragizm milosci Alfa i Aldony (milosc poswiecona dla wyzszego celu -- obrony ojczyzny), przeanalizowac scene pozegnania (Aldona odmawia wyjscia z wiezy, woli byc wspomnieniem niz ruina), porownac z inna para (np. Romeo i Julia -- milosc konczy smiercia z powodu konfliktu rodow; Judym i Joasia -- milosc poswiecona dla pracy spolecznej). Wniosek: u Mickiewicza milosc NIE jest slaboscia -- jest najwyzsza ofiara, jaka bohater moze zlozyc na oltarzu ojczyzny.",
+        "Rozprawka powinna: zdefiniować uczciwość u Camusa (wykonywanie zawodu, brak zgody na zło, brak heroicznej retoryki), pokazać warianty: Tarrou (bunt + pragnienie świętości), Grand (skromna praca), Rambert (ewolucja od egoizmu do solidarności). Porównanie: „Inny świat” — w łagrze uczciwość to odmowa kolaboracji z systemem; Herling podobnie jak Camus stawia na indywidualną moralność w obliczu absurdu. Wniosek: uczciwość NIE gwarantuje zwycięstwa nad złem, ale jest jedyną postawą zachowującą godność — „w ludziach więcej rzeczy zasługuje na podziw niż na pogardę”.",
       metadata: {
         explanation:
-          "Motyw tragicznej milosci to jedno z najczestszych pytan maturalnych o 'Konrada Wallenroda'. Kluczowe: milosc Alfa i Aldony nie jest sentymentalna -- jest heroiczna.",
+          "Problem uczciwości wobec zła to centralny temat maturalny. Kluczowe: Camus nie obiecuje, że uczciwość wygra — mówi, że jest jedynym godnym wyborem.",
       },
     },
 
@@ -2058,22 +1041,22 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 5,
       points: 3,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
       question:
-        "Jak mozna zinterpretowac relacje Konrad--Halban w kontekscie romantycznej koncepcji roli poety?",
+        "Jak „Dżuma” realizuje filozofię absurdu Camusa z eseju „Mit Syzyfa”?",
       content: {
         options: [
-          "Halban jest sluaczem Konrada -- wykonuje jego polecenia bez wlasnej woli",
-          "Halban jest 'sumieniem narodu' i architektem zemsty -- to on ksztaltuje Konrada od dziecinstwa, podtrzymuje plan, a po smierci bohatera zachowa jego czyn w piesni. Relacja ilustruje romantyczna idee: poeta (wajdelota) jest duchowym przywodca narodu, wazniejszym od rycerza",
-          "Halban i Konrad sa rywalaami o milosc Aldony",
-          "Relacja jest czysto fabularana -- nie ma glebszego sensu symbolicznego",
+          "Bohaterowie rezygnują z walki i godzą się z absurdem istnienia",
+          "Rieux jest współczesnym Syzyfem: wie, że walka z dżumą (śmiercią) jest skazana na porażkę, ale nadaje jej sens poprzez sam akt buntu — „nie kończącą się klęskę” przyjmuje z godnością i kontynuuje pracę",
+          "Powieść odrzuca filozofię absurdu i proponuje wiarę religijną jako rozwiązanie",
+          "Absurd polega na tym, że epidemia jest losowa — Camus krytykuje medycynę za bezradność",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Halban to wcielenie romantycznej idei poety-wieszcza: ksztaltuje bohaterow (wychowal Konrada), podtrzymuje paamiec narodu (piesn gminna), przezywa rycerza (odmawia trucizny). Poet jest wazniejszy od wojownika: 'Bard dla rycerzy w bitwach, a niewiasta / Bedzie ja w domu spiewac dla swych dzieci'. Konrad ginie -- pieśń Halbana zyje wiecznie.",
+          "W „Micie Syzyfa” Camus pisze, że „trzeba wyobrażać sobie Syzyfa szczęśliwego” — sens tkwi w samym buntowniczym działaniu, nie w jego wyniku. Rieux jest Syzyfem: leczy, choć wie, że większość chorych umrze. Jego zwycięstwa „zawsze będą tymczasowe”, ale to nie powód, by zaprzestać walki. Tarrou pyta: „czym ta dżuma jest dla pana?” Rieux odpowiada: „Nie kończącą się klęską”.",
       },
     },
     {
@@ -2081,22 +1064,22 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 5,
       points: 3,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
       question:
-        "Dlaczego Mickiewicz przedstawia wallenrodyzm jako strategie tragiczna, a nie heroiczna?",
+        "Dlaczego Tarrou pragnie „świętości bez Boga” i dlaczego tej świętości nie osiąga?",
       content: {
         options: [
-          "Poniewaz Mickiewicz byl przeciwny walce zbrojnej w kazdej formie",
-          "Poniewaz utwor pokazuje moralne koszty wallenrodyzmu -- bohater traci milosc, honor, tozsamosc, popada w alkoholizm i konczy samobojstwem. Mickiewicz nie gloryfikuje zdrady, lecz ukazuje ja jako desperacki srodek, za ktory placi sie wszystkim",
-          "Poniewaz Konrad ponosi kleeske i nie niszczy Zakonu",
-          "Poniewaz cenzura carska zmusila Mickiewicza do potepienia bohatera",
+          "Bo Tarrou jest zbyt leniwy, by konsekwentnie walczyć ze złem",
+          "Bo jest ateistą i nie akceptuje kary śmierci w żadnej formie — chce być „niewinnym mordercą”, żyć „po stronie ofiar”; nie osiąga świętości, bo umiera na dżumę tuż przed końcem epidemii — jego bunt prometeuszowy kończy się klęską fizyczną, choć moralnym zwycięstwem",
+          "Bo Paneloux odmawia udzielenia mu rozgrzeszenia",
+          "Bo Tarrou jest w istocie nihilistą i nie wierzy w żadne wartości",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Mickiewicz NIE gloryfikuje wallenrodyzmu -- ukazuje jego tragiczne konsekwencje: Konrad traci Aldone (pustelnica), honor (zdrajca), tozsamosc (zyje pod falszywym imieniem), popada w alkoholizm, a w koncu popelnia samobojstwo. Wallenrodyzm to nie program ideowy -- to desperacja. Utwor jest tragedia, nie manifestem. Pózniej Mickiewicz odrzucil wallenrodyzm na rzecz mesjanizmu (Dziady cz. III).",
+          "Tarrou jest postacią tragiczną: syn prokuratora, który zobaczył „brudne usta” wymiaru sprawiedliwości, odtąd odmawia zgody na jakąkolwiek formę zabijania. Pragnie „świętości bez Boga” — czystej etyki bez transcendencji. Nie osiąga świętości, bo dżuma zabiera go tuż przed wyzwoleniem. Rieux mówi: „Tarrou przegrał partię” — ale jego bunt nadał sens życiu.",
       },
     },
 
@@ -2107,22 +1090,22 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 5,
       points: 3,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
       question:
-        "Ktore z ponizszych aspektow utworu swiadcza o jego romantycznym charakterze?",
+        "Które aspekty „Dżumy” świadczą o jej związku z egzystencjalizmem?",
       content: {
         options: [
-          "Bohater-indywidualista rozdierany miedzy wartosciami, samotny w swoim czynie",
-          "Historyzm maski -- ukrywanie wspolczesnych tresci pod szata sredniowieczna",
-          "Kult piesni gminnej jako straznika pamieci narodowej (romantyczna rola poety)",
-          "Obiektywna, racjonalna analiza konfliktu politycznego miedzy Litwa a Zakonem",
+          "Absurd istnienia: cierpienie jest bezprzyczynowe i nie ma wyższego sensu (odrzucenie teodycei)",
+          "Wolność i odpowiedzialność: bohaterowie definiują się przez swoje wybory (Rambert: zostać czy uciec?)",
+          "Bunt jako nadanie sensu: Rieux i Tarrou walczą, wiedząc, że zwycięstwo jest tymczasowe",
+          "Deterministyczna wizja: bohaterowie nie mają wpływu na swój los i biernie poddają się epidemii",
         ],
       },
       correctAnswer: [0, 1, 2],
       metadata: {
         explanation:
-          "Cechy romantyczne: bohater-indywidualista (Konrad sam przeciw calemu Zakonowi), historyzm maski (sredniowiecze = XIX w.), kult piesni gminnej i rola poety (Piesn Wajdeloty = manifest romantyzmu). Obiektywna racjonalana analiza bylaaby cechą pozytywizmu, nie romantyzmu -- utwor jest peloen emocji, tragizmu i subiektywizmu.",
+          "Egzystencjalizm w „Dżumie”: absurd (dżuma bez przyczyny, cierpienie bez sensu), wolność (każdy bohater dokonuje wyboru — Rambert, Paneloux, Cottard), bunt (Rieux/Tarrou walczą bez nadziei na ostateczne zwycięstwo). Wizja NIE jest deterministyczna — bohaterowie MAJĄ wpływ na swoje postawy, co jest fundamentem egzystencjalizmu: „człowiek jest tym, co z siebie uczyni”.",
       },
     },
 
@@ -2133,19 +1116,19 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 5,
       points: 4,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
       question:
-        'Porownaj wallenrodyzm z prometeizmem Konrada z III czesci "Dziadow". Ktora postawa jest bardziej etyczna?',
+        "Porównaj „Dżumę” Camusa z „Innym światem” Herlinga-Grudzińskiego. Co łączy obie powieści w ujęciu problemu zła i reakcji człowieka na nie?",
       content: {
         instruction:
-          "Uwzglednij metody walki, motywacje, moralne koszty i skutecznosc obu bohaterow.",
+          "Uwzględnij sytuację graniczną, postawy bohaterów, problem solidarności i samotności oraz przesłanie.",
       },
       correctAnswer:
-        "Wallenrodyzm: niszczenie wroga od srodka za pomoca zdrady, podstepu, klamstwa. Metoda: infiltracja i sabotaz. Koszt: utrata honoru, milosci, tozsamosci, smierc. Skutecznosc: Zakon zniszczony, ale bohater zniszczony razem z nim. Prometeizm (Konrad z Dziadow III): otwarty bunt przeciw Bogu i tyranowi, cierpienie za miliony. Metoda: Wielka Improwizacja -- slowo jako bron. Koszt: szalenstwo, pycha (grzech). Skutecznosc: bezposrednia -- zerowa (Konrad nie wyzwala narodu), posrednia -- mobilizacja duchowa. Etycznie: prometeizm jest bardziej 'czysty' (otwarty bunt), ale mniej skuteczny. Wallenrodyzm jest skuteczniejszy, ale moralnie niszczacy. Mickiewicz ewoluowal od wallenrodyzmu (1828) do prometeizmu/mesjanizmu (1832).",
+        "Oba utwory: 1) Ukazują człowieka w sytuacji granicznej — zamknięte miasto (Camus) i łagier (Herling) jako laboratoria ludzkiej natury. 2) Testują moralność: czy człowiek zachowa godność, gdy system (dżuma/Gułag) dąży do jego zniszczenia? 3) Pokazują spektrum postaw — od heroizmu (Rieux/Tarrou — Kostylew) po oportunizm (Cottard — donosiciele). 4) Akcentują solidarność i samotność jednocześnie: bohaterowie walczą razem, ale cierpią samotnie. Różnice: u Camusa zło jest abstrakcyjne (bakcyl, absurd), u Herlinga — ma twarz systemu sowieckiego. Camus mówi: „w ludziach więcej rzeczy zasługuje na podziw niż na pogardę”. Herling jest mniej optymistyczny — łagier odsłania ciemne strony natury ludzkiej brutalniej.",
       metadata: {
         explanation:
-          "Porownanie wallenrodyzmu z prometeizmem to jedno z kluczowych zagadnien romantyzmu na maturze rozszerzonej. Wazne: Mickiewicz sam odrzucil wallenrodyzm na rzecz prometeizmu w Dziadach.",
+          "Porównanie „Dżumy” z „Innym światem” to klasyczne zestawienie maturalne: obie powieści z epoki CONTEMPORARY, obie o sytuacji granicznej, obie o etyce w obliczu absurdu.",
       },
     },
     {
@@ -2153,16 +1136,16 @@ async function seedExercises() {
       category: "LANGUAGE_USE",
       difficulty: 5,
       points: 4,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
       question:
-        "Wyjasnij, jak Mickiewicz buduje napiecie fabularne za pomoca inwersji czasowej i fragmentaryzmu narracji. Podaj przyklady.",
+        "Wyjaśnij, dlaczego Rieux ujawnia się jako narrator dopiero na końcu powieści. Jaką funkcję pełni ten zabieg narracyjny?",
       content: {},
       correctAnswer:
-        "Inwersja czasowa: utwor NIE opowiada historii chronologicznie. Zaczyna sie od obioru Konrada na mistrza (terazniejszosc), przeszlosc Waltera Alfa poznajemy dopiero z Powiesci Wajdeloty (cz. IV) -- opowiadanej na uczcie jako piesn. Czytelnik sklada fabuule jak puzzle. Fragmentaryzm: kluczowe wydarzenia sa pominiete lub tylko zasugerowane (np. moment zmiany tozsamosci z Alfa na Wallenroda, lata sluzby w Zakonie). Efekt: tajemniczosc bohatera -- czytelnik dlugo nie wie, kim naprawde jest Konrad. Napiecie rosnie, bo fragmenty ukladaja sie w calosc stopniowo. To cecha powieci poetyckiej zapozyczona od Byrona.",
+        "Rieux prowadzi narrację w trzeciej osobie przez całą powieść, by zachować „ton obiektywnego świadka”. Ujawnia się dopiero w ostatniej części: „Czas więc, żeby doktor Bernard Rieux wyznał, że jest jej autorem”. Funkcje zabiegu: 1) Obiektywizm — Rieux chce „świadczyć na korzyść zadżumionych”, nie na własną korzyść; mówienie o sobie w trzeciej osobie eliminuje subiektywizm. 2) Wiarygodność kroniki — narrator-lekarz ma dokumenty, świadectwa, doświadczenie. 3) Pokora — nie czyni z siebie bohatera; przez cały utwór mówi „doktor”, nie „ja”. 4) Efekt zaskoczenia — ujawnienie dodaje emocjonalny wymiar: czytelnik retrospektywnie rozumie, ile kosztowała ta „obiektywność” człowieka, który stracił żonę i przyjaciela.",
       metadata: {
         explanation:
-          "Pytanie o kompozycje to typowe pytanie LANGUAGE_USE na maturze rozszerzonej. Kluczowe terminy: inwersja czasowa, fragmentaryzm, synkretyzm rodzajowy, powiesc poetycka.",
+          "Pytanie o narrację to typowe pytanie LANGUAGE_USE na maturze rozszerzonej. Kluczowe: opóźnione ujawnienie narratora to zabieg przemyślany — Camus buduje efekt dokumentalności i pokory.",
       },
     },
 
@@ -2173,26 +1156,26 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 5,
       points: 5,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Napisz notatke syntetyczna na podany temat:",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Napisz notatkę syntetyczną na podany temat:",
       content: {
         topic:
-          'Rola poety i piesni w "Konradzie Wallenrodzie" -- od Piesni Wajdeloty do odmowy smierci Halbana',
+          "„Dżuma” jako powieść o kondycji ludzkiej — jak Camus diagnozuje człowieczeństwo w sytuacji granicznej?",
         requirements: [
-          "Przeanalizuj Piesn Wajdeloty jako manifest roli pieśni w zyciu narodu",
-          "Wyjasnij, dlaczego Halban odmawia smierci -- co to mowi o hierarchii: poeta > rycerz",
-          "Odwolaj sie do romantycznej koncepcji poety-wieszcza",
-          'Porownaj z inna realizacja motywu roli poety (np. Wielka Improwizacja, "Do mlodych" Asnyka)',
-          "200-250 slow",
+          "Wyjaśnij, czym jest „sytuacja graniczna” w filozofii egzystencjalnej i jak realizuje się w powieści",
+          "Wskaż, jakie postawy ujawnia dżuma: od solidarności po oportunizm",
+          "Odwołaj się do końcowego przesłania: „w ludziach więcej rzeczy zasługuje na podziw niż na pogardę”",
+          "Porównaj z jednym innym tekstem o sytuacji granicznej (np. „Inny świat”, „Lord Jim”)",
+          "200-250 słów",
         ],
         wordLimit: { min: 200, max: 250 },
       },
       correctAnswer:
-        "Notatka powinna: zanalizowac Piesn Wajdeloty jako manifest: piesn gminna to 'arka przymierza', straznik pamieci, bron archanioła -- przetrwa, gdy plomien zniszczy kroniki. Odmowa Halbana = dowod, ze poeta jest wazniejszy od rycerza: Konrad ginie, ale Halban zachowa jego czyn w piesni, z ktorej 'wstanie msciciel'. Hierarchia: poeta > bohater, bo bohater umiera, a pieśn jest wieczna. Romantyczna koncepcja: poeta-wieszcz = duchowy przywodca narodu (jak pozniej Konrad w Dziadach III). Porownanie: w Wielkiej Improwizacji Konrad tez twierdzi, ze 'czuje i jestem' -- ale jego narzedziem jest slowo, nie miecz. U Asnyka poeta juz nie jest wieszczem -- 'Do mlodych' to pozegnanie z romantyzmem. Wniosek: Mickiewicz w Konradzie Wallenrodzie buduje fundament romantycznej hierarchii: slowo jest silniejsze od miecza.",
+        "Notatka powinna: Sytuacja graniczna (Jaspers) = moment, w którym człowiek staje wobec śmierci, cierpienia, walki — i musi się określić. W „Dżumie” granica = zamknięte miasto, epidemia, groźba śmierci. Postawy: solidarność (Rieux, Tarrou, Grand — formacje sanitarne), bunt (Tarrou — „nie zgadzam się na zabijanie”), ewolucja (Rambert — od egoizmu do wspólnoty, Paneloux — od pewności do pokory), oportunizm (Cottard — korzysta na chaosie). Przesłanie: Camus nie idealizuje — pokazuje słabości (Rambert chce uciec, ludzie piją, kradną), ale bilans jest pozytywny: „więcej rzeczy zasługuje na podziw”. Porównanie: „Inny świat” — łagier odsłania te same postawy, ale Herling jest surowszy: system sowiecki niszczy solidarność skuteczniej niż dżuma. „Lord Jim” — jedna chwila tchórzostwa definiuje całe życie; u Camusa nie ma jednorazowego testu — jest codzienna praca. Wniosek: Camus proponuje humanizm bez iluzji — człowiek nie jest z natury dobry ani zły, jest zdolny do obu, a sytuacja graniczna wymusza wybór.",
       metadata: {
         explanation:
-          'Rola poety w narodzie to kluczowy temat romantyzmu i czeste pytanie maturalne. "Konrad Wallenrod" jest jednym z pierwszych tekstow, w ktorych Mickiewicz formulluje te ide -- pózniej rozwinięta w Dziadach.',
+          "Pytanie o kondycję ludzką to jeden z najważniejszych tematów maturalnych. „Dżuma” jest do niego idealnym tekstem — Camus celowo projektuje powieść jako laboratorium postaw.",
       },
     },
 
@@ -2203,95 +1186,541 @@ async function seedExercises() {
       category: "WRITING",
       difficulty: 5,
       points: 10,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
       question:
-        'Zdrada jako forma patriotyzmu? Rozważ problem, odwolujac sie do "Konrada Wallenroda" Adama Mickiewicza i jednego innego tekstu kultury.',
+        "Czy bunt wobec zła może nadać sens ludzkiemu życiu? Rozważ problem, odwołując się do „Dżumy” Alberta Camusa i jednego innego tekstu kultury.",
       content: {
+        thesis: "Bunt wobec zła jako sposób na nadanie sensu egzystencji",
+        structure: {
+          introduction:
+            "Przedstaw problem: absurd istnienia, brak wyższego sensu cierpienia, potrzeba buntu",
+          arguments_for:
+            "Rieux i Tarrou jako modele buntu — walczą wiedząc, że zwycięstwo jest tymczasowe; Syzyf „szczęśliwy” mimo bezsensu",
+          arguments_against:
+            "Paneloux — wiara jako alternatywa buntu; Cottard — rezygnacja z buntu; czy bunt nie jest kolejnym złudzeniem?",
+          conclusion:
+            "Sformułuj wniosek: bunt u Camusa to nie nadzieja na wygraną, lecz odmowa zgody na zło — i w tej odmowie tkwi godność człowieka",
+        },
         requirements: [
-          "Zdefiniuj wallenrodyzm jako forme dzialania i problem etyczny",
-          "Przeanalizuj moralne koszty zdrady Konrada (utrata milosci, honoru, tozsamosci, zycia)",
-          "Porownaj z innym bohaterem, ktory poswiecil etykę dla wyzszego celu (np. Jacek Soplica, Judym, Almanzor, agent wywiadu z filmu/literatury)",
-          "Sformuluj wlasne stanowisko: czy zdrada moze byc moralnaa, jesli sluzy ojczyznie?",
-          "Minimum 300 slow",
+          "Odwołaj się do filozofii absurdu (Camus, „Mit Syzyfa”)",
+          "Przeanalizuj postawy Rieux i Tarrou jako formy buntu",
+          "Porównaj z innym tekstem kultury (np. „Antygona” — bunt wobec prawa, „Dziady” III — bunt prometejski, „Inny świat” — bunt wobec systemu)",
+          "Sformułuj własne stanowisko wobec tezy",
+          "Minimum 400 słów",
         ],
-        wordLimit: { min: 300 },
+        wordLimit: { min: 400, max: 600 },
       },
       correctAnswer:
-        "Rozprawka powinna: zdefiniowac wallenrodyzm (zdrada w imie wyzszego celu), przeanalizowac moralne koszty (Konrad placi wszystkim -- miloscia, honorem, zyciem, a Mickiewicz pokazuje te cene bez gloryfikacji). Porownanie: Jacek Soplica (tez ukrywa tozsamosc i dziala w tajemnicy, ale Mickiewicz daje mu odkupienie -- Ksiadz Robak); agent wywiadu (wspolczesna realizacja wallenrodyzmu -- np. film 'Zycie za zycie' o Pileckim). Stanowisko: otwarte -- mozna argumentowac za (desperacja usprawiedliwia) i przeciw (zdrada niszczy moraalnie samego zdrajce -- Konrad ginie jako nieszczescliwy alkoholik, nie jako triumfator).",
+        "Rozprawka powinna: przedstawić filozofię absurdu (świat bez sensu, cierpienie bez przyczyny) i bunt jako odpowiedź (nie nadzieja, lecz odmowa rezygnacji). Rieux: buntuje się lekcząc, choć wie, że „zwycięstwa zawsze będą tymczasowe”. Tarrou: buntuje się odmawiając zgody na zabijanie, pragnie „niewinności”. Porównanie: Antygona — buntuje się przeciw prawu Kreona w imię prawa boskiego (bunt moralny vs. bunt egzystencjalny); Konrad z Dziadów — bunt prometejski wobec Boga (u Camusa Boga nie ma — bunt jest wobec absurdu, nie wobec Stwórcy). Stanowisko: bunt u Camusa nie obiecuje zwycięstwa, ale nadaje sens działaniu — „bakcyl dżumy nigdy nie umiera”, więc walka nigdy się nie kończy. To pesymizm metafizyczny, ale optymizm etyczny.",
       metadata: {
         explanation:
-          "Problem 'zdrada jako patriotyzm' to jedno z najtrudniejszych i najciekawszych zagadnien maturalnych. Kluczowe: Mickiewicz sam ewoluowal w tej kwestii -- odrzucil wallenrodyzm na rzecz mesjanizmu.",
+          "Bunt wobec zła to centralny temat egzystencjalizmu i jeden z najczęstszych tematów maturalnych. „Dżuma” jest wzorcowym tekstem do tego zagadnienia — łączy filozofię (absurd, bunt) z konkretnymi postawami bohaterów.",
       },
     },
+    // ======================= POCZATEK PYTAN DZUMA — ZESTAW 2 (50 pytan) ===================//
+    // UWAGA: Polskie cudzyslowy zastapione prostymi "" aby nie psuc JSON
 
-    // ===== DODATKOWE DIFFICULTY 2-3 — CLOSED (dopelnienie do 50) =====
+    // ===== DIFFICULTY 1 — CLOSED_SINGLE (6) =====
 
     {
       type: "CLOSED_SINGLE",
       category: "HISTORICAL_LITERARY",
-      difficulty: 2,
+      difficulty: 1,
       points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Kto wychowywal Waltera Alfa wśrod Krzyzakow?",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: 'W ktorym roku zostala wydana powiessc "Dzuma" Alberta Camusa?',
       content: {
-        options: [
-          "Halban",
-          "Mistrz krzyzacki Winrych",
-          "Arcykomtur Maryjenburga",
-          "Aldona",
-        ],
+        options: ["1942", "1947", "1957", "1951"],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Waltera Alfa wychowywal mistrz krzyzacki Winrych -- sam trzymal go do chrztu, kochal i piescil jak syna. Jednoczesnie po kryjomu odwiedzal go stary wajdelota (pozniejszy Halban), ktory rozbudzal w nim milosc do Litwy.",
+          '"Dzuma" ukazala sie w 1947 roku nakladem Editions Gallimard w Paryzu. Polskie tlumaczenie Joanny Guze wydano w 1957 roku. Camus otrzymal Nagrode Nobla w 1957 roku.',
       },
     },
     {
       type: "CLOSED_SINGLE",
       category: "HISTORICAL_LITERARY",
-      difficulty: 2,
+      difficulty: 1,
       points: 1,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Kim jest Kiejstut w utworze?",
-      content: {
-        options: [
-          "Wielkim mistrzem Zakonu Krzyzackiego",
-          "Litewskim ksieciem, ojcem Aldony, ktory przyjal Waltera i dal mu corke za zone",
-          "Wajdelota spiewajacym przy ognisku",
-          "Zdrajca Litwy, ktory sprzedal Waltera Krzyzakom",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Kiejstut to historyczna postac -- litewski ksiaze, ktory w utworze przyjmuje Waltera Alfa (zbieglego od Krzyzakow), docenia jego walecznosc i daje mu za zone corke Aldone, mowiac: 'Pojdz, Walterze, badz zieciem moim i bij sie za Litwe!'.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 3,
-      points: 2,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
       question:
-        "Co symbolizuje lampa, ktora Konrad ciska z okna przed smiercia?",
+        "Jak nazywa sie dozorca, ktory jest jedna z pierwszych ofiar dzumy?",
+      content: {
+        options: ["Joseph", "Michel", "Jean", "Raymond"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Michel to stary dozorca w kamienicy doktora Rieux. Stanowczo zaprzeczal, ze w domu sa szczury. Zachorowal na dzume z wysokimi goraczkami, dymienicami i majakami, i zmarl w karetce w drodze do szpitala.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Kim jest Jean Tarrou?",
       content: {
         options: [
-          "Bunt przeciwko Bogu",
-          "Umowiony sygnal dla Aldony -- jesli lampa zgasnie, Konrad juz nie wróci",
-          "Probe podpalenia zamku krzyzackiego",
-          "Rzucanie wyzwania sedziom tajnego trybunalu",
+          "Lekarze ze szpitala miejskiego",
+          "Tajemniczy przybysz zamieszkaly w hotelu, ktory organizuje ochotnicze oddzialy sanitarne",
+          "Prefekt miasta Oran",
+          "Ksiadz wygłaszajacy kazania o karze Bozej",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Konrad umowil sie z Aldona: 'Jesli lampa przed wieczorem skona -- zamknij twe okno, moze juz nie wróce'. Ciskajac gasnaaca lampe z okna, daje Aldonie ostatni sygnal -- ze umiera. Aldona odpowiada przerazliwym krzykiem i tez umiera. Lampa to symbol ich lacznosci -- gasnacy razem z zyiciem obojga.",
+          "Jean Tarrou to zamozny przybysz, ktory zamieszkal w Oranie na kilka tygodni przed epidemia. Prowadzi notatnik, w ktorym opisuje zycie miasta. Gdy wybucha dzuma, organizuje oddzialy sanitarne i walczy u boku Rieux az do smierci.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Co robi prefekt po oficjalnym stwierdzeniu epidemii?",
+      content: {
+        options: [
+          "Ewakuuje ludnosc drogami morskimi",
+          "Nakazuje zamkniecie bram miasta i izolacje Oranu od swiata",
+          "Prosi o pomoc militarna z Paryza",
+          "Rozkazuje spalic zarazone dzielnice",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          'Prefekt, po otrzymaniu depeszy z Urzedu Generalnego Gubernatora: "Ogloscie stan dzumy. Zamknijcie miasto", nakazuje zamkniecie bram. Od tej chwili Oran jest odciete od swiata — nie kursuja pociagi, statki omijaja port, korespondencje ograniczono do dziesiecioslowowych telegramow.',
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Co stalo sie z Cottardem na poczatku powiesci, przed wybuchem epidemii?",
+      content: {
+        options: [
+          "Wyjechał z Oranu do Paryza",
+          "Probowal popelnic samobojstwo przez powieszenie",
+          "Zachorowal na dzume jako pierwszy",
+          "Zostal aresztowany za przemyt",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          'Cottard probowal sie powiesic w swoim mieszkaniu. Uratowal go sasiad Grand, ktory odcial go w pore. Na drzwiach wisiala kartka: "Wejdzcie, powiesilem sie". Prawdopodobnie powodem byly obawy przed aresztowaniem za jakas dawna sprawe.',
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Ile slow mogl liczyc telegram wysylany z zamknietego Oranu?",
+      content: {
+        options: ["Piec", "Dziesiec", "Dwadziescia", "Nie bylo ograniczen"],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          'Telegramy z Oranu mogly liczyc tylko dziesiec slow. Formuly takie jak "Mam sie dobrze. Mysle o tobie. Serdecznosci" zastepowaly calą komunikacje miedzy rozlaczonymi. Listy byly zabronione, telefony miedzynarodowe przerwane.',
+      },
+    },
+
+    // ===== DIFFICULTY 1 — CLOSED_MULTIPLE (3) =====
+
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        'Ktore z ponizszych postaci sa bohaterami drugoplanowymi "Dzumy"?',
+      content: {
+        options: [
+          "Stary astmatyk — pacjent Rieux, ktory liczy czas grochem",
+          "Pan Othon — sedzia sledczy z rodzina",
+          "Doktor Castel — stary lekarz, ktory przygotowuje surowice",
+          "Meursault — urzednik zabijajacy Araba na plazy",
+        ],
+      },
+      correctAnswer: [0, 1, 2],
+      metadata: {
+        explanation:
+          'Stary astmatyk, sedzia Othon i doktor Castel to postacie z "Dzumy". Meursault to bohater innej powiesci Camusa — "Obcego" (1942).',
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Ktore skutki epidemii dotknely mieszkancow Oranu?",
+      content: {
+        options: [
+          "Zamkniecie bram miasta i zakaz opuszczania go",
+          "Ograniczenie korespondencji do dziesiecioslowowych telegramow",
+          "Calkowite zniszczenie miasta przez pozar",
+          "Racjonowanie zywnosci i wzrost cen na czarnym rynku",
+        ],
+      },
+      correctAnswer: [0, 1, 3],
+      metadata: {
+        explanation:
+          "Oran zostal zamkniety, korespondencje ograniczono, ceny zywnosci rosly, rozwijaI sie czarny rynek. Miasto NIE zostalo zniszczone pozarem — pojedyncze pożary wybuchaly w domach osob wracajacych z kwarantanny, ale nie zniszczyly miasta.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: 'Ktore zdania poprawnie opisuja narracje w "Dzumie"?',
+      content: {
+        options: [
+          "Narrator mowi o sobie w trzeciej osobie przez cala powieść",
+          "Na koncu okazuje sie, ze narratorem jest doktor Rieux",
+          "Narracja jest prowadzona przez Tarrou od poczatku do konca",
+          "Narrator korzysta z notatek Tarrou, zeznań i dokumentow",
+        ],
+      },
+      correctAnswer: [0, 1, 3],
+      metadata: {
+        explanation:
+          "Rieux prowadzi narracje w trzeciej osobie dla zachowania obiektywnosci. Ujawnia sie dopiero w czesci V. Korzysta ze zrodel: wlasne doswiadczenie, notatki Tarrou, zeznania swiadkow, dokumenty urzedowe. Tarrou NIE jest narratorem — prowadzi tylko swoje prywatne notatki.",
+      },
+    },
+
+    // ===== DIFFICULTY 1 — SHORT_ANSWER (1) =====
+
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Jak Camus opisuje Oran na poczatku powiesci? Wymien trzy cechy miasta.",
+      content: {
+        hints: ["brzydkie", "bez drzew", "handel"],
+      },
+      correctAnswer:
+        "Oran jest opisany jako miasto brzydkie, bez golebii, bez drzew i ogrodow, pozbawione malowniczosci i duszy. Jego mieszkancy zajmuja sie przede wszystkim handlem i robieniem interesow. Zycie toczy sie wedlug stalych przyzwyczajen — praca, kawiarnie, kino, kapiele morskie w weekendy. Miasto jest zbudowane tylem do zatoki, wiec nie widac morza.",
+      metadata: {
+        explanation:
+          "Opis Oranu na poczatku pelni wazna funkcje: pokazuje banalnosc, ktora zostanie rozbita przez dzume. Brak drzew, piekna i glębi duchowej symbolizuje spoleczenstwo zyjace bez refleksji — az do momentu, gdy epidemia zmusi je do zastanowienia.",
+      },
+    },
+
+    // ===== DIFFICULTY 2 — CLOSED_SINGLE (5) =====
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Kto uratowal Cottarda po probie samobojczej?",
+      content: {
+        options: [
+          "Doktor Rieux",
+          "Joseph Grand — sasiad, ktory uschlyszal halas i odcial go od sznura",
+          "Jean Tarrou",
+          "Ojciec Paneloux",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Grand wychodzil z domu, uslyszal halas i zobaczyl napis na drzwiach. Odcial Cottarda w pore i wezwal doktora Rieux. Od tego momentu Grand czuje sie odpowiedzialny za Cottarda i czuwa nad nim.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Co robi maly staruszek obserwowany przez Tarrou z balkonu hotelu?",
+      content: {
+        options: [
+          "Karmi golębie na placu miejskim",
+          "Wychodzi na balkon, wola koty, drze papier i pluje na nie z sila i precyzja",
+          "Gra na akordeonie dla przechodniow",
+          "Liczy przejeżdżajace tramwaje i notuje wyniki",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Maly staruszek to jedna z ulubionych postaci Tarrou. Codziennie o tej samej porze wychodzi na balkon, wabi koty, drze papier na kawałki, a gdy koty sie zbliżają — pluje na nie z duzą precyzja i smieje sie, gdy trafia. Gdy dżuma zabiera koty (zastrzelone przez patrole), staruszek popada w smutek.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Co doktor Richard, sekretarz syndykatu lekarzy, sadzil o epidemii?",
+      content: {
+        options: [
+          "Od poczatku twierdzil, ze to dzuma, i zadal natychmiastowych srodkow",
+          'Wahal sie, uwazal, ze nie nalezy panikować, unikal slowa "dzuma" i proponowal ostrozne formy: "goraczka z komplikacjami pachwinowymi"',
+          "Natychmiast opuscil Oran, zostawiajac pacjentow",
+          "Twierdzil, ze to zatrucie pokarmowe, nie choroba zakazna",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          'Richard reprezentuje postawe biurokratycznej ostroznosci — odmawia nazwania choroby po imieniu, bo oficjalne orzeczenie "zmuszaloby do zastosowania bezlitosnych srodkow". Rieux ripostuje: "Nie chodzi o to, by malowac w czarnych kolorach. Chodzi o to, by przedsięwziac srodki ostroznosci."',
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Jak zmienil sie sedzia Othon po smierci syna?",
+      content: {
+        options: [
+          "Opuscil Oran i wrocil do Francji",
+          "Po zakonczeniu kwarantanny poprosil o powrot do obozu jako ochotnik — chcial byc blizej syna",
+          "Zaczal glosic kazania religijne w zastepstwie Paneloux",
+          "Nie zmienil sie wcale — pozostal sztywny i oficjalny",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          'Othon, dotychczas sztywny i oficjalny sedzia-"sowa", po smierci synka calkowicie sie zmienia. Po zakonczeniu kwarantanny prosi o powrot do obozu internowanych jako ochotnik: "Czulbym sie blizej mego chlopca". Rieux dostrzega w jego oczach nowa lagodnosc. Ostatecznie Othon takze umiera na dzume.',
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Kto pomagal Rambertowi w organizacji ucieczki z Oranu?",
+      content: {
+        options: [
+          "Doktor Rieux i prefekt",
+          "Cottard, ktory znal siec przemytnikow — oraz Garcia, Raoul, Gonzales, Marcel i Louis",
+          "Tarrou i oddzialy sanitarne",
+          "Ojciec Paneloux i parafie koscielne",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Rambert probowal ucieczki kanałami nielegalnym. Cottard skontaktowal go z Garcią, ten z Raoulem, a Raoul z dwoma mlodymi straznikami — Marcelem i Louisem. Plan wielokrotnie sie komplikowal: spotkania nie dochodziły do skutku, dzielnice byly zamykane, straznikow zmieniano. Ostatecznie Rambert zrezygnowal z ucieczki.",
+      },
+    },
+
+    // ===== DIFFICULTY 2 — CLOSED_MULTIPLE (3) =====
+
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Ktore z ponizszych scen wystepuja w powiesci?",
+      content: {
+        options: [
+          'Spektakl operowy "Orfeusza i Eurydyki", podczas ktorego spiewak pada na scene',
+          "Nocna kapiel Rieux i Tarrou w morzu",
+          "Bunt wiezniow i ich ucieczka z obozu internowania",
+          "Grand mdleje na ulicy w Wigilie i ledwo przetrywa dzume",
+        ],
+      },
+      correctAnswer: [0, 1, 3],
+      metadata: {
+        explanation:
+          "Opera (spiewak pada, publicznosc ucieka), kapiel w morzu (Rieux i Tarrou po nocnej rozmowie) oraz choroba Granda (mdleje pod Boze Narodzenie, cudownie wraca do zdrowia) — to sceny z powiesci. Bunt wiezniow nie wystepuje — sa rozruchy przy bramach miasta, ale nie ucieczka wiezniow.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Uzupelnij zdania, wybierajac poprawne opcje:",
+      content: {
+        textWithGaps:
+          "Tarrou prowadzi (1), w ktorym opisuje zycie miasta. Stary astmatyk mierzy czas za pomoca (2). Grand pracuje nad jednym (3) przez cala powiessc.",
+        gaps: [
+          {
+            id: 1,
+            options: [
+              "oficjalna kronikę dla prefektury",
+              "prywatny notatnik",
+              "dziennik religijny",
+              "pamietnik dla syna",
+            ],
+          },
+          {
+            id: 2,
+            options: [
+              "zegara slonecznego",
+              "dwoch garnkow z grochem",
+              "klepsydry",
+              "kalendarza",
+            ],
+          },
+          {
+            id: 3,
+            options: [
+              "raportem statystycznym",
+              "listem do zony",
+              "zdaniem o amazonce jadacej alejami Lasku Bulonskiego",
+              "przemowieniem dla prefekta",
+            ],
+          },
+        ],
+      },
+      correctAnswer: [1, 1, 2],
+      metadata: {
+        explanation:
+          'Tarrou prowadzi prywatny notatnik (kronikę pisze Rieux). Stary astmatyk odmierza czas przesypujac groch z garnka do garnka. Grand szlifuje zdanie: "W piekny poranek majowy smukla amazonka, siedzac na wspanialej kasztance, jechala kwitnacymi alejami Lasku Bulonskiego".',
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Ktore formy ograniczenia wolnosci dotknely mieszkancow Oranu?",
+      content: {
+        options: [
+          "Zakaz opuszczania miasta — zamkniete bramy strzeżone przez żandarmów",
+          "Ograniczenie korespondencji — listy zabronione, tylko telegramy",
+          "Calkowity zakaz wychodzenia z domow przez caly dzien",
+          "Zaciemnienie i godzina policyjna od jedenastej wieczor",
+        ],
+      },
+      correctAnswer: [0, 1, 3],
+      metadata: {
+        explanation:
+          "Bramy zamknieto, korespondencje ograniczono do telegramow, wprowadzono zaciemnienie i godzine policyjną. Nie bylo calkowitego zakazu wychodzenia — ludzie mogli chodzic po miescie w ciagu dnia, chodzili do kawiarni, kin i restauracji. Ograniczano natomiast poruszanie sie noca.",
+      },
+    },
+
+    // ===== DIFFICULTY 2 — SHORT_ANSWER (3) =====
+
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Opisz krotko rodzine pana Othona wedlug notatek Tarrou.",
+      content: {
+        hints: ["sowa", "czarna mysz", "tresowane psy"],
+      },
+      correctAnswer:
+        'Tarrou opisuje rodzine Othona z ironia: ojciec-sedzia to "dobrze wychowana sowa" — wysoki, chudy, w sztywnym kolnierzyku, z lysym srodkiem czaszki. Zona to "czarna mysz" — drobna i cicha. Dwojka dzieci (chlopiec i dziewczynka) wygladaja jak "tresowane pudle" — ubrane elegancko, karnie siedzace przy stole. Othon recytuje "uprzejme zlosliwosci" pod adresem zony i "zdania o charakterze ostatecznym" do dzieci: "Nicole jest w najwyzszym stopniu antypatyczna!"',
+      metadata: {
+        explanation:
+          "Opis rodziny Othona to jeden z najzabawniejszych fragmentow notatek Tarrou. Sluzy jako kontrast: sztywny, bezduszny sedzia po smierci syna stanie sie postacia wzruszajaca i ludzka.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Kim jest Gonzales i jaka role pelni w watku ucieczki Ramberta?",
+      content: {},
+      correctAnswer:
+        "Gonzales to gracz w pilke nozna (srodkowy napastnik), z ktorym Rambert umawia sie przez posrednikow (Garcię i Raoula). Gonzales zna dwoch mlodych straznikow — Marcela i Louisa — ktorzy moga otworzyc droge przez bramy. Kontakty z Gonzalesem sa wielokrotnie przerywane, bo zamykane sa calye dzielnice. Gonzales kopie kamyki na ulicy, celujac w otwory scieków, i mowi o pilce noznej — to jedyny temat, ktory naprawde go ozywia.",
+      metadata: {
+        explanation:
+          "Gonzales jest postacia epizodyczna, ale wazna fabularnie — to ostatnie ogniwo lancucha kontaktow prowadzacych do ucieczki. Jego pasja do pilki noznej humanizuje swiaty przemytu i kontrabandy.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Dlaczego Rieux odmawia wydania Rambertowi zaswiadczenia o zdrowiu?",
+      content: {},
+      correctAnswer:
+        "Rieux tllumaczy, ze nie moze zaswiadczyc, iz Rambert nie ma dzumy, poniewaz miedzy wizyta w gabinecie a wizyta w prefekturze dziennikarz moze zostac zarazony. Poza tym nawet gdyby wydal zaswiadczenie, nie przydaloby sie ono na nic — w miescie tysiace ludzi jest w tym samym polozeniu, a mimo to nie mozna im pozwolic wyjechac. Rieux nie odmawia ze zlosliwosci, lecz z uczciwosci: nie chce dawac falszywyych gwarancji.",
+      metadata: {
+        explanation:
+          'Scena ta ustanawia postawe Rieux wobec Ramberta: szacunek, ale odmowa robienia wyjatkow. Rieux mowi: "Tu chodzi o dobra wole" — ale system (dzuma) nie uznaje dobrych woli. To zapowiada temat abstrakcji.',
+      },
+    },
+
+    // ===== DIFFICULTY 3 — CLOSED_SINGLE (4) =====
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Jaka ewolucje przechodzi Rambert w ciagu powiesci?",
+      content: {
+        options: [
+          "Zaczyna jako bohater i konczy jako tchorz",
+          "Zaczyna jako indywidualista walczacy o prywatne szczescie, a konczy jako czlonek wspolnoty — rezygnuje z ucieczki i dolacza do formacji sanitarnych",
+          "Zaczyna jako ateista i konczy jako wierzacy pod wplywem Paneloux",
+          "Nie przechodzi zadnej ewolucji — od poczatku walczy z dzuma",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          'Rambert przechodzi od indywidualizmu do solidarnosci. Na poczatku mowi: "Nie jestem stad" i walczy o prywatne szczescie (powrot do zony). Ale po wizycie w szpitalu i rozmowach z Rieux i Tarrou zrozumial: "Moze byc wstyd, ze czlowiek jest sam tylko szczesliwy". Jego ewolucja ilustruje teze Camusa, ze dzuma jest "sprawa nas wszystkich".',
       },
     },
     {
@@ -2299,21 +1728,108 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 2,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
-      question: "Jaka role pelni tajny trybunal, ktory skazuje Konrada?",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Co Tarrou notuje o zachowaniu mieszkancow Oranu w szczycie epidemii?",
       content: {
         options: [
-          "Jest sądem koscielnym (inkwizycja)",
-          "Jest tajna rada 12 zamaskowanych sedziow w podziemiach Malborka, ktorzy karza zbrodnie wladcow Zakonu -- to oni odkrywaja zdrade Konrada",
-          "Jest rada wojenna obradujaca nad strategia bitwy",
-          "Jest fikcyjnym sądem wymyslonym przez Halbana, by nastraszyc Konrada",
+          "Ze ludzie stali sie bardziej pobozni i spedzaja czas w kosciolach",
+          "Ze ludzie pija duzo, trafia sie im w jedzeniu i rozrywkach, zyja na pelnych obrotach — jakby probowali przezywac intensywnie każdy dzien, bo moze byc ostatni",
+          "Ze ludzie z calkowitym spokojem akceptuja swoj los",
+          "Ze ludzie organizuja strajki i demonstracje przeciwko prefekturze",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Tajny trybunal to 12 zamaskowanych sedziow w podziemnym lochu Malborka, ktorzy przysiegli karac zbrodnie wladcow Zakonu. Odkrywaja, ze Konrad nie jest prawdziwym Wallenrodem, mowi po litewsku z pustelnica i zdradza Zakon. Wydaja wyrok: 'biada!' -- trzykrotnie powtorzony przez mury.",
+          'Tarrou opisuje goraczke zycia: "Alkohol zdrowiu sprzyja, zabija bakcyla" — glosi wywieszcka w kawiarni. Ludzie trwonia pieniadze, jedza w drogich restauracjach, pija bez umiaru. Wieczorami tlum wypelnia ulice w poszukiwaniu ciepla ludzkiego. To reakcja na bliskosc smierci — intensywnosc zycia jako bunt wobec zagłady.',
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        'Dlaczego narrator uwaza, ze "dwa i dwa to cztery" jest wazna prawda w kontekscie walki z dzuma?',
+      content: {
+        options: [
+          "Bo lekarze potrzebuja dokladnych obliczen statystycznych",
+          'Bo walka z dzuma to kwestia prostej logiki i uczciwosci — trzeba stwierdzac oczywiste fakty ("to jest dzuma", "trzeba izolowac chorych") nawet gdy inni nie chca ich przyjac do wiadomosci',
+          "Bo Grand jest matematykiem i uczy dzieci w szkole",
+          "Bo prefekt wymaga raportow liczbowych co tydzien",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          'Narrator pisze: "Nie gratuluje sie nauczycielowi, jesli uczy, ze dwa i dwa to cztery". Sens: walka z dzuma to nie heroizm, lecz prosta uczciwosc — stwierdzanie faktow, robienie tego, co oczywiste. Ludzie z formacji sanitarnych "wiedzieli, ze byla to jedyna rzecz do zrobienia: nie wejsc do nich to dopiero byloby niewiarygodne".',
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        'Jaki zabieg kompozycyjny stosuje Camus, umieszczajac akcje w roku "194." bez ostatniej cyfry?',
+      content: {
+        options: [
+          "Jest to blad w rekopisie, ktory wydawca nie poprawil",
+          "Jest to celowe zatarcie daty — sygnal parabolicznosci: historia Oranu mogla wydarzyc sie w kazdym roku i kazdym miejscu, jest uniwersalna",
+          "Oznacza, ze akcja rozgrywa sie w przyszlosci",
+          "Wskazuje na tajnosc dokumentow, z ktorych korzysta narrator",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          'Zatarcie daty to jeden z kluczowych sygnalow parabolicznosci. Razem z mottem z Defoe i uniwersalnoscia postaw bohaterow mówi czytelnikowi: nie chodzi o konkretna epidemie, lecz o kazda forme zła, ktora moze dotknac ludzkość. Podobne zabiegi stosuja inne parabole — np. "Proces" Kafki (nieokreslone miasto i czas).',
+      },
+    },
+
+    // ===== DIFFICULTY 3 — CLOSED_MULTIPLE (3) =====
+
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Polacz bohaterow z ich kluczowymi wypowiedziami:",
+      content: {
+        matchingType: "quotes_to_works",
+        leftColumn: [
+          { id: "A", text: '"Chcialbym nauczyc sie wypowiadac"' },
+          { id: "B", text: '"Mam wstret do wyrokow smierci"' },
+          {
+            id: "C",
+            text: '"Co to jednak znaczy — dzuma? To zycie, ot i wszystko"',
+          },
+          { id: "D", text: '"Nie jestem stad"' },
+        ],
+        rightColumn: [
+          { id: "1", text: "Tarrou — o zrodle swojego buntu" },
+          { id: "2", text: "Rambert — prosze o prawo wyjazdu" },
+          { id: "3", text: "Grand — o trudnosci ze slowami" },
+          { id: "4", text: "Stary astmatyk — filozofia zyciowa" },
+        ],
+      },
+      correctAnswer: [
+        [0, 2],
+        [1, 0],
+        [2, 3],
+        [3, 1],
+      ],
+      metadata: {
+        explanation:
+          'Grand chce "nauczyc sie wypowiadac" — cale jego zycie to walka ze slowami. Tarrou ma "wstret do wyrokow smierci" — to fundament jego postawy. Stary astmatyk rownowazy dzume z zyciem — filozofia biernej akceptacji. Rambert powtarza "nie jestem stad" — argumentujac za prawem do wyjazdu.',
       },
     },
     {
@@ -2321,26 +1837,581 @@ async function seedExercises() {
       category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 2,
-      epoch: "ROMANTICISM",
-      work: "Konrad Wallenrod",
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
       question:
-        "Ktore z ponizszych ofiar sklada Konrad na oltarzu zemsty za ojczyzne?",
+        'Ktore elementy "Dzumy" nawiazuja do doswiadczen II wojny swiatowej?',
       content: {
         options: [
-          "Milosc -- rozstaje sie z Aldona i widuje ja tylko przez krate wiezy",
-          "Honor rycerski -- zamiast walczyc twarzą w twarz, stosuje zdrade i podstep",
-          "Tozsamosc -- zyje pod falszywym imieniem, udajac Niemca",
-          "Wlasne zycie -- konczy samobojstwem, pijac trucizne",
+          "Zamkniecie miasta = okupacja, izolacja ludnosci pod terrorem",
+          "Obozy kwarantanny i internowania = obozy koncentracyjne",
+          "Formacje sanitarne = ruch oporu, walka podziemna ze zlem",
+          "Bitwa morska pod Oranem miedzy flotami francuskaa i brytyjska",
         ],
       },
-      correctAnswer: [0, 1, 2, 3],
+      correctAnswer: [0, 1, 2],
       metadata: {
         explanation:
-          "Konrad poswiecil WSZYSTKO: milosc (Aldona w wiezy), honor (zdrajca i spiskowiec zamiast rycerza), tozsamosc (Walter Alf stal sie Konradem Wallenrodem), zycie (samobojstwo truczizna). To wlasnie sprawia, ze jest bohaterem tragicznym, a nie heroicznym -- cena jest calkowita.",
+          'Camus pisal "Dzume" w latach 1941-1947, w kontekscie okupacji Francji. Zamkniete miasto = okupacja, izolacja = utrata wolnosci, obozy = obozy jenieckie/koncentracyjne, formacje sanitarne = ruch oporu. Bitwa morska pod Oranem (1940, operacja Catapult) nie jest tematem powiesci.',
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Ktore z ponizszych stwierdzen o smierci Tarrou sa prawdziwe?",
+      content: {
+        options: [
+          "Tarrou zachorowal na dzume tuz przed koncem epidemii",
+          "Rieux pielegnował go w swoim domu zamiast w szpitalu",
+          "Tarrou wyzdrowiał dzieki surowicy Castela",
+          "Przy lozku Tarrou czuwala matka Rieux",
+        ],
+      },
+      correctAnswer: [0, 1, 3],
+      metadata: {
+        explanation:
+          'Tarrou zachorowal pod koniec epidemii, Rieux zatrymał go w domu (zamiast szpitalnej izolacji — akt przyjaźni). Matka Rieux czuwala przy łóżku. Tarrou NIE wyzdrowiał — umarl po calej nocy walki z choroba. Rieux pisze: "Tarrou przegral partie".',
       },
     },
 
-    // ======================= KONIEC PYTAN KONRAD WALLENROD ===================//
+    // ===== DIFFICULTY 3 — SHORT_ANSWER (3) =====
+
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Jak ewoluowaly pogrzeby w miare trwania epidemii? Opisz co najmniej trzy etapy.",
+      content: {
+        instruction:
+          "Odwolaj sie do zmian w ceremoniale, transporcie i miejscach pochowku.",
+      },
+      correctAnswer:
+        "Etapy: 1) Poczatek — przyspieszony pogrzeb: cialo umyte, trumna zamknieta, rodzina podpisuje dokumenty, auto wiezie na cmentarz, ksiadz odprawia krotki obrzad. 2) Srodek — trumny wielorazowe: ciala ladowane grupowo, wozzone w ambulansach, opróżniane do dolow, dezynfekcja trumien, krewni usuwani z ceremonii. 3) Szczyt — kremacja: doly przepelnione, wywłaszczono stare groby, uzyto pieca krematoryjnego za miastem. Tramwaje bez pasazerow wozily trupy skalna droga nadmorska. Mieszkancy rzucali kwiaty do srodka przejezdzajacych tramwajow. Dym z pieca unosil sie nad dzielnicami wschodnimi.",
+      metadata: {
+        explanation:
+          "Ewolucja pogrzebow to jeden z najwazniejszych motywow czesci IV. Camus pokazuje, jak system (administracja, skuteczność) stopniowo odbiera smierci ludzkii wymiar — az trupy wozi sie tramwajami jak towary.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Co sie stalo z Josephem Grandem pod Boze Narodzenie?",
+      content: {},
+      correctAnswer:
+        'Grand placze pod sklepem przybranym na swieta — wspomina Jeanne, swoja dawna zone. Rieux znajduje go na ulicy, placzacego i trzesacego sie. Grand mdleje z goraczka — ma objawy dzumy plucnej. Przed utrata przytomnosci blaga, by spalono jego rekopis (szlifowane zdanie). Rieux wrzuca kartki do ognia. Ale wbrew wszelkim regułom Grand wraca do zdrowia nastepnego dnia — co jest jednym z pierwszych znakow cofania sie epidemii. Po wyzdrowieniu mowi: "Nie mialem racji. Ale zaczne na nowo".',
+      metadata: {
+        explanation:
+          'Choroba i cudowne wyzdrowienie Granda to punkt zwrotny powiesci — pierwszy sygnał, ze dzuma slabnie. Spalenie rekopisu jest symboliczne: Grand poswiecił to, co najcenniejsze, ale przeżył i "zaczyna na nowo" — co streszcza przeslanie calej powiesci.',
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 3,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Jaka role pelnia notatki Tarrou w kompozycji powiesci?",
+      content: {},
+      correctAnswer:
+        'Notatki Tarrou stanowia drugie zrodlo narracji obok kroniki Rieux. Pelnia kilka funkcji: 1) Dostarczaja innej perspektywy — Tarrou obserwuje detale, ktore Rieux pomija (mały staruszek z kotami, rodzina Othona, kasjer hotelu). 2) Wprowadzaja ton osobisty — notatki sa subiektywne, ironiczne, czasem poetyckie, podczas gdy Rieux dazy do obiektywnosci. 3) Buduja portret Tarrou jako postaci — pozwalaja poznac jego filozofie zanim sam ja wyjawi. 4) Uzupelniaja fabuły o "historię tego, co nie ma historii" — codzienność podczas epidemii, drobne gesty, absurdy.',
+      metadata: {
+        explanation:
+          'Notatki Tarrou to wazny element kompozycji — tworzą polifonię narracyjna. Na maturze pojawia się pytanie o konstrukcje narracji w "Dzumie" i role roznych zrodel (kronika Rieux, notatki Tarrou, dokumenty, zeznania).',
+      },
+    },
+
+    // ===== DIFFICULTY 3 — SYNTHESIS_NOTE (1) =====
+
+    {
+      type: "SYNTHESIS_NOTE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 3,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Napisz notatke syntetyczna na podany temat:",
+      content: {
+        topic:
+          'Motyw rozlaki i wygnania w "Dzumie" — jak epidemia zmienia psychike rozlaczonych?',
+        requirements: [
+          "Wymien co najmniej trzy przyklady rozlaki (Rieux, Rambert, ogol mieszkancow)",
+          "Opisz etapy psychologiczne: od bolu, przez otepienie, do zobojętnienia",
+          'Wyjasnij, dlaczego narrator mowi o "wygnaniu we wlasnym domu"',
+          "100-150 slow",
+        ],
+        wordLimit: { min: 100, max: 150 },
+      },
+      correctAnswer:
+        'Notatka powinna: Rieux — zona w sanatorium, komunikacja przez depesze, na koncu smierć. Rambert — partnerka w Paryzu, desperacka proba ucieczki, ostatecznie rezygnacja. Ogol — rodziny rozdzielone zamknieciem bram, kontakt przez 10 slow telegramu. Etapy: 1) Ostry bol rozlaki, zylwe wspomnienia. 2) Stopniowe blakniecie pamieci — twarze bliskich staja sie "bezcielesne". 3) Otepienie — ludzie przestaja cierpiec indywidualnie, wchodza w "rytm dzumy". "Wygnanie we wlasnym domu" — bo ludzie sa w swoim miescie, ale odcięci od tego, co stanowilo ich zycie: bliskich, wolnosci, przyszlosci.',
+      metadata: {
+        explanation:
+          "Motyw rozlaki zajmuje znaczna czesc II czesci powiesci. Camus analizuje psychologie rozlaczonych z precyzja kliniczna — od bolu, przez nadzieje, po zobojętnienie.",
+      },
+    },
+
+    // ===== DIFFICULTY 4 — CLOSED_SINGLE (3) =====
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        'Dlaczego Cottard jest jedynym bohaterem, ktoremu dzuma "dogadza"?',
+      content: {
+        options: [
+          "Poniewaz jest lekarzem i zarabia na epidemii",
+          'Poniewaz przed dzuma grozilo mu aresztowanie — w chaosie epidemii policja nie prowadzi dochodzen, a Cottard czuje sie bezpieczny i rowny innym: "wreszcie wszyscy sa w jednym worku"',
+          "Poniewaz jest immiigrantem i chce, by Francuzi cierpieli",
+          "Poniewaz wierzy, ze dzuma jest kara Boza za grzechy innych",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          'Cottard to czlowiek "z ciezarem na sumieniu" — ciazy nad nim stare sledztwo. Dzuma go wyzwala: w zarazonym miescie nikt nie prowadzi dochodzen, a wszyscy boja sie tak jak on bał sie wczescniej. Tarrou pisze: "to czlowiek, ktory rosnie" — Cottard odzywa w chorobie. Gdy epidemia sie konczy, wpada w panike i strzela do ludzi.',
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Jakie znaczenie ma scena finalowa z Cottardem?",
+      content: {
+        options: [
+          "Cottard ucieka z Oranu i nigdy nie zostaje zlappany",
+          'W dniu otwarcia bram Cottard strzela z okna do przechodniow, zostaje pobity i aresztowany — symbolizuje powrot porzadku prawnego i koniec "wolnosci" dawaanej przez dzume',
+          "Cottard przeprasza za swoje czyny i dolacza do formacji sanitarnych",
+          "Cottard popelnia samobojstwo, powtarzajac swoją probe z poczatku powiesci",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Cottard, wiedzac ze koniec dzumy oznacza powrot policji i dochodzen, szaleje — zamyka sie w mieszkaniu i strzela do ludzi na ulicy. Policja go aresztuje, bijac go piescciami. Rieux odwraca wzrok. Scena to kontrast z powszechna radoscia — przypomina, ze nie dla wszystkich wyzwolenie jest szczesliwe.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "LANGUAGE_USE",
+      difficulty: 4,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Jaka funkcje pelni zdanie Granda o amazonce w strukturze powiesci?",
+      content: {
+        options: [
+          "Jest komicznym przerywnikiem bez glebszego sensu",
+          'Symbolizuje dazenie do doskonalosci i poszukiwanie wlasciwego slowa — Grand robi to samo co Camus jako pisarz i co Rieux jako lekarz: probuje "dokladnie oddac obraz" rzeczywistosci, wiedzac, ze nigdy nie bedzie doskonały',
+          "Jest cytatem z innej powiesci, do ktorej Camus nawiazuje",
+          "Sluzy wylacznie charakterystyce Granda jako czlowieka umyslowo chorego",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          'Zdanie o amazonce to metafora pisarstwa samego Camusa i kazdej twórczosci: szlifowanie, poprawianie, poszukiwanie doskonalosci — ktora jest nieosiagalna. Grand pisze tak, jak Rieux leczy: ze swiadomoscia porażki, ale z uporem. Spalenie rekopisu i "zaczynamy na nowo" to najkrótsza formuła egzystencjalizmu.',
+      },
+    },
+
+    // ===== DIFFICULTY 4 — CLOSED_MULTIPLE (2) =====
+
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Ktore z ponizszych stwierdzeen o roli narratora-Rieux sa prawdziwe?",
+      content: {
+        options: [
+          "Rieux mowi o sobie w trzeciej osobie, by zachowac obiektywnosc swiadka",
+          "Korzysta z wielu zrodel: wlasne doswiadczenie, notatki Tarrou, zeznania, dokumenty",
+          "Celowo ukrywa wlasne cierpienia (smierć zony, zmeczenie), by nie przeslonic cierpienia zbiorowego",
+          "Napisal kronike, zeby slaawic wlasne bohaterstwo i domagac sie uznania",
+        ],
+      },
+      correctAnswer: [0, 1, 2],
+      metadata: {
+        explanation:
+          'Rieux-narrator: mowi w 3. osobie (obiektywnosc), zbiera zrodla (wieloglos), ukrywa osobiste cierpienia (pokora). Nie pisze dla slawy — pisze "zeby swiadczyc na korzysc zadzumionych" i "zeby nie nalezec do tych, co milczą". Jego kronika jest aktem solidarnosci, nie promocji osobistej.',
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        'Ktore konteksty historyczne i filozoficzne sa kluczowe dla interpretacji "Dzumy"?',
+      content: {
+        options: [
+          "Doswiadczenie II wojny swiatowej i okupacji Francji (1940-1944)",
+          "Filozofia egzystencjalna Camusa — absurd, bunt, solidarnosc",
+          "Wojna trzydziestoletnia w Europie (1618-1648)",
+          'Filozofia Camusa z "Mitu Syzyfa" — sens zycia wobec absurdu',
+        ],
+      },
+      correctAnswer: [0, 1, 3],
+      metadata: {
+        explanation:
+          'Kluczowe konteksty: II wojna swiatowa (Camus pisal powiessc w 1941-1947, dzuma = metafora okupacji), egzystencjalizm (absurd, wolnosc, odpowiedzialnosc, bunt), "Mit Syzyfa" (Rieux = Syzyf: dziala bez nadziei na ostateczne zwyciestwo). Wojna trzydziestoletnia nie ma zwiazku z "Dzuma".',
+      },
+    },
+
+    // ===== DIFFICULTY 4 — SHORT_ANSWER (3) =====
+
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Porownaj Rieux i Tarrou jako dwa modele walki ze zlem. Czym sie roznia, a co ich laczy?",
+      content: {},
+      correctAnswer:
+        'Lacza ich: obaj walczaa z dzuma czynnie, obaj sa ateistami, obaj odrzucaja heroiczna retoryke, obaj poswiecaja sie bezinteresownie. Roznice: Rieux walczy z obowiazku zawodowego i uczciwosci — "to sprawa, ktora czlowiek taki jak pan potrafi zrozumiec"; to pragmatyk, lekarz. Tarrou walczy z glebokich przekonan filozoficznych — pragnie "swietosci bez Boga", szuka "spokoju wewnetrznego", chce byc "niewinnym morderca". Rieux mowi o "nie konczacej sie klesce"; Tarrou szuka odkupienia za to, ze sam byl kiedys "zadzumiony" (zgadzal sie na kare smierci). Rieux przetrywa, Tarrou ginie — co podkresla tragizm idealizmmu wobec pragmatyzmu.',
+      metadata: {
+        explanation:
+          "Porownanie Rieux-Tarrou to klasyczne pytanie maturalne. Kluczowe: Rieux = uczciwość zawodowa, Tarrou = bunt metafizyczny. Obaj dochodzą do tego samego punktu (solidarność), ale rozna droga.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Wyjasnij, dlaczego smierc dziecka sedziego Othona jest punktem kulminacyjnym powiesci. Jak reaguja na nia rozni bohaterowie?",
+      content: {
+        instruction:
+          "Odwolaj sie do reakcji Rieux, Paneloux, Castela i Tarrou.",
+      },
+      correctAnswer:
+        'Dziecko umiera mimo zastosowania nowego serum Castela — w dlugiej, męczarniowej agonii: konwulsje, krzyk, pot, goraczka. Reakcje: Castel zamknal ksiazke i patrzyl bezradnie. Tarrou otarl dziecku twarz. Paneloux kleczal i modlil sie: "Boze moj, uratuj to dziecko". Rieux wyszedl z sali — nie mogl tego zniesc — i powiedzial do Paneloux: "Ten przynajmniej byl niewinny". Scena jest kulminacyjna, bo konfrontuje wszystkich z problemem cierpienia niewinnych — centralnym pytaniem teodycei. Paneloux nie ma odpowiedzi. Rieux odmawia kochania swiata, ktory torturuje dzieci. To zderzenie stanowi rdzen filozoficzny powiesci.',
+      metadata: {
+        explanation:
+          'Scena smierci dziecka jest jednym z najczesciej analizowanych fragmentow "Dzumy" na maturze. Kluczowe: cierpienie niewinnego podwaza zarowno religijne wyjaśnienie (Paneloux), jak i optymizm medycyny (Castel).',
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 3,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Co Tarrou opowiada Rieux o swoim ojcu i jak to doswiadczenie uformowalo jego postawe zyciowa?",
+      content: {},
+      correctAnswer:
+        'Ojciec Tarrou byl zastepca prokuratora generalnego — "poczciwy czlowiek" z mania rozkladu jazdy Chaixa. Gdy Tarrou mial 17 lat, ojciec zabral go do sadu przysieglych. Tarrou zobaczyl oskarzonego — "rudego czlowieczka" — i zrozumial, ze ojciec zada jego smierci: "ta glowa powinna spasc". Odtad nie mogl patrzec na ojca tak samo. Uciekl z domu. Angażowal sie w politykę po stronie walczacych z systemem, ale odkryl, ze i oni skazuja na smierć. Zrozumial, ze "przez te wszystkie dlugie lata bylm zadzumionym" — ze zgadzal sie posrednio na zabijanie. Odtad postanowil "odrzucic wszystko, co z bliska czy z daleka powoduje smierć lub usprawiedliwia zabojstwo".',
+      metadata: {
+        explanation:
+          'Spowiedz Tarrou (czesc IV, scena na tarasie) to jeden z najdluzszych monologow w powiesci. Wyjasnnia, dlaczego Tarrou pragnie "swietosci bez Boga" — chce zyc "po stronie ofiar", nigdy "po stronie zaraz".',
+      },
+    },
+
+    // ===== DIFFICULTY 4 — SYNTHESIS_NOTE (2) =====
+
+    {
+      type: "SYNTHESIS_NOTE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 4,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Napisz notatke syntetyczna na podany temat:",
+      content: {
+        topic:
+          'Cottard jako anty-bohater "Dzumy" — dlaczego dzuma jest dla niego wyzwoleniem?',
+        requirements: [
+          "Opisz sytuacje Cottarda przed epidemia (proba samobojcza, lęk przed aresztowaniem)",
+          'Wyjasnij, dlaczego w czasie dzumy Cottard "rosnie" i czuje sie dobrze',
+          "Zanalizuj jego zalamanie po koncu epidemii (strzaly z okna, aresztowanie)",
+          "Porownaj postawe Cottarda z postawa Rieux lub Tarrou",
+          "150-200 slow",
+        ],
+        wordLimit: { min: 150, max: 200 },
+      },
+      correctAnswer:
+        'Notatka powinna: Przed dzuma — prooba samobojcza, ciazy nad nim sledztwo, zyje w strachu i izolacji. W czasie dzumy — odzywa: "wreszcie wszyscy sa w jednym sosie". Nie prowadzi sie dochodzen, policja zajeta epidemia, Cottard moze zyc swobodnie. Bogaci sie na kontrabandzie, bywa w restauracjach, jest towarzyski. Mowi: "Dobrze mi z dzuma". Po koncu — zalamanie: powrot porzadku = powrot sledztwa. Strzela z okna do ludzi, zostaje pobity i aresztowany. Porownanie: Rieux i Tarrou walcza Z dzuma, Cottard KORZYSTA na dzumie. Oni definiuja sie przez bunt wobec zla — on przez zgode na zło, ktore chroni go przed innym zlłem (wymiarem sprawiedliwosci). Cottard to "wspolwinowajca" — uosabia postawe ludzi, ktorym chaos sluzy.',
+      metadata: {
+        explanation:
+          'Cottard to fascynujaca postac moralna: jedyny czlowiek, dla ktorego epidemia jest korzystna. Tarrou mowi o nim: "To czlowiek, ktory rosnie". Na maturze pojawia sie w kontekscie postaw wobec zla.',
+      },
+    },
+    {
+      type: "SYNTHESIS_NOTE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 4,
+      points: 4,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Napisz notatke syntetyczna na podany temat:",
+      content: {
+        topic:
+          'Motyw miasta w "Dzumie" — Oran jako przestrzen zamknieta, wiezienie i laboratorium postaw',
+        requirements: [
+          "Opisz, jak Camus kreuje Oran na poczatku (banalnosc, brzydota, brak duszy)",
+          "Wyjasnij, jak zamkniecie bram zmienia przestrzen — miasto jako wiezienie",
+          'Wskazz, dlaczego zamknieta przestrzen sluzy jako "laboratorium" postaw ludzkich',
+          "Porownaj z motywem zamknietej przestrzeni w innym utworze",
+          "150-200 slow",
+        ],
+        wordLimit: { min: 150, max: 200 },
+      },
+      correctAnswer:
+        'Notatka powinna: Oran na poczatku — brzydki, banalny, "bez golębi, bez drzew", zyje handlem, jest "miastem bez podejrzen". Zamkniecie — bramy strzezone, port pusty, tramwaje jako jedyny transport, zaciemnienie noca. Miasto staje sie wiezieniem: "nawet niebo pełne gwiazd stalo sie sufitem celi". Laboratorium — zamknieta przestrzen wymusza konfrontacje z dzumą (złem): nie mozna uciec, trzeba wybrac postawe (walka, rezygnacja, oportunizm). Kazdy bohater definiuje sie wobec zamkniecia: Rambert chce uciec, Rieux walczy, Cottard kwitnie. Porownanie: "Proces" Kafki — Josef K. tez jest "zamkniety" w systemie, ktory nie daje sie zrozumiec; ale u Kafki nie ma solidarnosci (K. jest sam), u Camusa ludzie laczą sie we wspolnocie.',
+      metadata: {
+        explanation:
+          "Motyw zamknietego miasta to topos oblezzonego miasta — czesty temat maturalny (pytania jawne 2026-2028). Kluczowe: Oran = mikrokosmos ludzkosci.",
+      },
+    },
+
+    // ===== DIFFICULTY 4 — ESSAY (1) =====
+
+    {
+      type: "ESSAY",
+      category: "WRITING",
+      difficulty: 4,
+      points: 5,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        'Solidarnosc ludzi w obliczu zagrozenia. Omow zagadnienie, odwolujac sie do "Dzumy" Alberta Camusa i jednego innego tekstu kultury.',
+      content: {
+        requirements: [
+          "Zdefiniuj solidarnosc w kontekscie powiesci (formacje sanitarne, wspolna walka, rezygnacja z egoizmu)",
+          "Przeanalizuj ewolucje Ramberta jako przykład drogi od indywidualizmu do solidarnosci",
+          "Odwolaj sie do roli Tarrou i Granda w budowaniu wspolnoty",
+          'Porownaj z innym tekstem kultury (np. "Kamienie na szaniec", "Inny swiat", "Medaliony")',
+          "Minimum 300 slow",
+        ],
+        wordLimit: { min: 300 },
+      },
+      correctAnswer:
+        'Rozprawka powinna: zdefiniowac solidarnosc u Camusa (nie heroizm, lecz codzienna praca — "dwa i dwa to cztery"), pokazac Ramberta (od "nie jestem stad" do "ta sprawa dotyczy nas wszystkich"), Tarrou (organizator formacji, solidarny z ofiarami), Granda (cichhy bohater, ktory "mial tylko dobre serce"). Porownanie: "Kamienie na szaniec" — solidarnosc mlodziezy w AK (bohaterstwo spektakularne vs. codzienne u Camusa); "Inny swiat" — w łagrze solidarnosc jest rzadsza, ale istnieje (Kostylew); "Medaliony" — brak solidarnosci jako forma zla. Wniosek: solidarnosc u Camusa nie jest sentymentalna — to jedyna etyczna odpowiedz na absurd.',
+      metadata: {
+        explanation:
+          'Solidarnosc w obliczu zagrozenia to jedno z pytan jawnych na mature ustna 2026-2028 dotyczących "Dzumy".',
+      },
+    },
+
+    // ===== DIFFICULTY 5 — CLOSED_SINGLE (2) =====
+
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        'Jak "Dzuma" odpowiada na pytanie: czy mozna byc swietym bez Boga?',
+      content: {
+        options: [
+          "Powiessc potwierdza, ze mozna — Tarrou osiaga swietosc i umiera w pokoju",
+          'Powiessc nie daje jednoznacznej odpowiedzi: Tarrou pragnie swietosci, ale umiera na dzume, nie osiagajac "spokoju"; Rieux mowi, ze woli "byc czlowiekiem" niz swietym — Camus sugeruje, ze swietosc bez Boga moze byc nieosiagalna, ale dazenie do niej nadaje sens zyciu',
+          "Powiessc odrzuca swietosc jako pojecie bez sensu i zastepuje ja hedonizmem",
+          "Powiessc pokazuje, ze tylko wiara religijna (Paneloux) moze dac czlowiekowi swietosc",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          'Pytanie "czy mozna byc swietym bez Boga" to centralne zagadnienie powiesci. Tarrou pragnie swietosci, ale nie dzyje dostatecznie dlugo, by ja osiagnac — umiera na dzume. Rieux mowi: "Nie ide tak daleko. Interesuje mnie zdrowie czlowieka". Camus nie odpowiada "tak" ani "nie" — pokazuje, ze samo dazenie jest wartosce, nawet jesli cel jest nieosiagalny. To logika Syzyfa: szczescliwy mimo absurdu.',
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        "Dlaczego Camus wybral Oran — brzydkie, banalne miasto handlowe — jako miejsce akcji?",
+      content: {
+        options: [
+          "Poniewaz sam mieszkal w Oranie i chcial napisac autobiografie",
+          'Poniewaz banalnosc Oranu podkresla uniwersalnosc paraboli: dzuma (zlo) nie spada na wyjatkowe miasta, lecz na zwyczajne — Oran "bez podejrzen" reprezentuje kazde spoleczenstwo, ktore zyje bez refleksji, az katastrofa zmusi je do zastanowienia',
+          "Poniewaz Oran byl jedynym miastem w Algierii, w ktorym wybuuchla prawdziwa epidemia dzumy w XX wieku",
+          "Poniewaz wydawca zakazal umieszczania akcji w Paryzu ze wzgledow cenzuralnych",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          'Banalnosc Oranu to swiadomy wybor: "miasto bez podejrzen, to znaczy miasto calkowicie nowoczesne". Zwyczajnosc podkresla, ze zlo moze spasc na kazdego — nie potrzeba do tego miejsca wyjatkowego. Camus pisze: "Nasi wspolobywatele nie mysleli nigdy, ze nasze male miasto moze byc miejscem szczegolnie wybranym" — co czyni z Oranu symbol ludzkosci zaskoczonej katastrofa.',
+      },
+    },
+
+    // ===== DIFFICULTY 5 — CLOSED_MULTIPLE (1) =====
+
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 3,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: 'Ktore stwierdzenia o przeslaniu "Dzumy" sa uzasadnione?',
+      content: {
+        options: [
+          '"W ludziach wiecej rzeczy zasługuje na podziw niz na pogarde" — Camus jest ostatecznie humanista wierzacym w ludzi',
+          '"Bakcyl dzumy nigdy nie umiera" — zlo jest stale obecne, a czujnosc moralna musi byc permanentna',
+          "Powiessc naucza, ze czlowiek powinien pogodzic sie ze zlem, bo walka jest bezsensowna",
+          "Sens zycia nadaje sie przez dzialanie i solidarnosc, nie przez wiare w wyzszy porzadek",
+        ],
+      },
+      correctAnswer: [0, 1, 3],
+      metadata: {
+        explanation:
+          'Camus jest humanista ("wiecej podziwu niz pogardy"), ostrzega przed zlym optymizmem ("bakcyl nie umiera"), proponuje sens przez dzialanie (Rieux, Tarrou, Grand). Powiessc NIE naucza pogodzenia ze zlem — wprost przeciwnie: cala jej etyka opiera sie na buncie i odmowie akceptacji cierpienia.',
+      },
+    },
+
+    // ===== DIFFICULTY 5 — SHORT_ANSWER (2) =====
+
+    {
+      type: "SHORT_ANSWER",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 4,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        'Porownaj "Dzume" Camusa z "Antygona" Sofoklesa w kontekscie buntu wobec porzadku swiata. Czym sie rozni bunt Rieux od buntu Antygony?',
+      content: {
+        instruction:
+          "Uwzglednij zrodlo buntu, motywacje, stosunek do transcendencji i konsekwencje.",
+      },
+      correctAnswer:
+        'Antygona buntuje sie wobec prawa ludzkiego (Kreona) w imie prawa boskiego — jej bunt ma oparcie w transcendencji (bogowie, prawo natury). Rieux buntuje sie wobec cierpienia i smierci BEZ oparcia w transcendencji — nie wierzy w Boga, a mimo to walczy. Motywacja Antygony: milosc do brata + obowiazek religijny. Motywacja Rieux: uczciwosc + odmowa akceptacji swiata, gdzie dzieci sa torturowane. Konsekwencje: Antygona ginie, ale wie, ze bogowie sa po jej stronie. Rieux przetrywa, ale nie ma pewnosci co do sensu walki — "zwyciestwa zawsze beda tymczasowe". Roznica fundamentalna: Antygona ma pewnosc metafizyczna (prawo boskie), Rieux nie ma żadnej — jego bunt jest samotny i "absurdalny" w sensie Camusa. Ale wlasnie ta samotnosc nadaje mu wielkosc.',
+      metadata: {
+        explanation:
+          "Porownanie z Antygona to klasyczne zestawienie maturalne: bunt z oparciem metafizycznym (Antygona) vs. bunt bez oparcia (Rieux). Obie postacie sa szlachetne, ale ich bunty maja rozne fundamenty.",
+      },
+    },
+    {
+      type: "SHORT_ANSWER",
+      category: "LANGUAGE_USE",
+      difficulty: 5,
+      points: 4,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        'Wyjasnij, na czym polega styl narracyjny "Dzumy" i dlaczego Camus wybral forme kroniki. Jak wplywa to na odbiór powiesci?',
+      content: {},
+      correctAnswer:
+        'Styl: 1) Kronikarski ton — narracja pozornie obiektywna, sprawozdawcza, bez patosu. Rieux celowo unika emocjonalnych opisow na rzecz faktow, statystyk, relacji. 2) Trzecia osoba — dystans narratora do samego siebie. 3) Wieloglososc — obok kroniki Rieux sa notatki Tarrou (subiektywne, ironiczne), zeznania swiadkow, dokumenty. 4) Brak psychologizmu — bohaterowie sa raczej modelami postaw niz glebokimi postaciami psychologicznymi (cecha paraboli). Forma kroniki: Camus wybral ja, bo kronika udaje dokument — wzmacnia wiarygodnosc paraboli. Czytelnik czyta "relacje", nie "powiessc", co sprawia, ze traktuje historia serio. Efekt: styl suchy, pozornie chlodny — ale wlasnie dlatego momenty emocjonalne (smierc dziecka, smierc Tarrou, Grand placzacy pod sklepem) uderzaja z ogromna sila na tle kroniczarskiej powsciagliwosci.',
+      metadata: {
+        explanation:
+          "Pytanie o styl narracyjny to typowe pytanie LANGUAGE_USE na maturze rozszerzonej. Kluczowe: forma kroniki to swiadomy wybor stylistyczny — pozorna obiektywnosc poteguje emocjonalny efekt.",
+      },
+    },
+
+    // ===== DIFFICULTY 5 — SYNTHESIS_NOTE (1) =====
+
+    {
+      type: "SYNTHESIS_NOTE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 5,
+      points: 5,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question: "Napisz notatke syntetyczna na podany temat:",
+      content: {
+        topic:
+          '"Dzuma" jako manifest nowego humanizmu — jak Camus definiuje czlowieczenstwo po doswiadczeniu II wojny swiatowej?',
+        requirements: [
+          'Wyjasnij, dlaczego "Dzume" okrzyknięto "manifestem nowego humanizmu" po publikacji',
+          "Wskazz, na czym polega humanizm Camusa: solidarnosc, uczciwosc, bunt, odrzucenie heroicznej retoryki",
+          "Porownaj z tradycyjnym humanizmem (wiara w postep, rozum, doskonalenie) — co Camus odrzuca?",
+          "Odwolaj sie do kontkstu II wojny i pytania: czy po Auschwitz mozna byc humanista?",
+          "200-250 slow",
+        ],
+        wordLimit: { min: 200, max: 250 },
+      },
+      correctAnswer:
+        'Notatka powinna: "Dzuma" jako nowy humanizm — nie opiera sie na wierze w postep ani doskonalosc czlowieka, lecz na "prostej ludzkiej solidarnosci i moralnosci, bez patosu i wielkich slow" (jak piszą krytycy). Humanizm Camusa: solidarnosc (formacje sanitarne), uczciwosc ("robic, co nalezy"), bunt (odmowa akceptacji cierpienia), pokora ("nie chodzi o heroizm, chodzi o dwa i dwa to cztery"). Co Camus odrzuca z tradycyjnego humanizmu: optymizm co do natury ludzkiej ("kazdy nosi w sobie dzume"), wiare w postep (epidemia wroci), ideologie ("cale nieszcze ludzi plynie stad, ze nie mowia jasnym jezykiem"). Kontekst II wojny: po Auschwitz wiara w rozum i doskonalosc czlowieka jest nie do utrzymania. Camus proponuje humanizm bez iluzji: "w ludziach wiecej rzeczy zasługuje na podziw niz na pogarde" — ale nie dlatego, ze czlowiek jest z natury dobry, lecz dlatego, ze MOZE dokonywac dobrych wyborow mimo absurdu. To humanizm syzyfowy — szlachetny i tragiczny zarazem.',
+      metadata: {
+        explanation:
+          'Pytanie o "nowy humanizm" to wazny kontekst maturalny. Kluczowe: Camus po Auschwitz nie moze byc naiwnym humanista — proponuje humanizm oparty na buncie i solidarnosci, nie na optymizmie.',
+      },
+    },
+
+    // ===== DIFFICULTY 5 — ESSAY (1) =====
+
+    {
+      type: "ESSAY",
+      category: "WRITING",
+      difficulty: 5,
+      points: 10,
+      epoch: "CONTEMPORARY",
+      work: "Dżuma",
+      question:
+        'Czlowiek wobec cierpienia i smierci. Rozważ problem, odwolujac sie do "Dzumy" Alberta Camusa i jednego innego tekstu kultury.',
+      content: {
+        thesis: "Cierpienie i smierc jako probierz czlowieczenstwa",
+        structure: {
+          introduction:
+            "Przedstaw problem: jak cierpienie odsłania prawde o czlowieku — jego slabosci i wielkosc?",
+          arguments_for:
+            'Podaj przyklady postaw wobec cierpienia w "Dzumie": Rieux (walka), Tarrou (bunt), Paneloux (wiara), Cottard (oportunizm)',
+          arguments_against:
+            'Rozważ, czy cierpienie moze nie miec zadnego sensu — ani ksztalcacego, ani oczyszczajacego (Rieux: "nigdy nie bede kochał tego swiata, gdzie dzieci sa torturowane")',
+          conclusion:
+            "Sformuluj wniosek: czy cierpienie uczy, niszczy, czy obydwa — i jak Camus proponuje reagowac?",
+        },
+        requirements: [
+          "Przeanalizuj scene smierci dziecka Othona jako kulminacje problemu cierpienia",
+          "Odwolaj sie do filozofii absurdu i buntu Camusa",
+          'Porownaj z innym tekstem kultury (np. Ksiega Hioba, "Inny swiat", "Antygona", "Medaliony")',
+          'Sformuluj wlasne stanowisko wobec tezy, ze cierpienie "uszlachetnia"',
+          "Minimum 400 slow",
+        ],
+        wordLimit: { min: 400, max: 600 },
+      },
+      correctAnswer:
+        'Rozprawka powinna: Postawy wobec cierpienia: Rieux — odmowa akceptacji, walka mimo beznadziejnosci; Tarrou — bunt i pragnienie niewinnosci; Paneloux — ewolucja od wyjasnnia (kara Boza) do wiary totalnej; Cottard — ucieczka w oportunizm. Scena smierci dziecka: kulminacja — cierpienie niewinnego podwaza wszelkie racjonalizacje. Rieux krzyczy: "ten przynajmniej byl niewinny". Camus odrzuca ide, ze cierpienie "uszlachetnia" — to zdanie Paneloux z I kazania, ktore sam potem porzuca. Porownanie: Ksiega Hioba — Hiob cierpi niewinnie, Bog odpowiada tajemnicza; u Camusa nie ma Boga, ktory odpowiada. "Inny swiat" — Herling pokazuje, ze cierpienie w łagrze degraduje, ale jednoczesnie wyostrza moralnosc. "Antygona" — cierpienie wynika z konfliktu wartosci, ma sens tragiczny. Stanowisko: cierpienie nie uszlachetnia automatycznie — u Camusa moze zniszczyc (Paneloux umiera) lub obudzic (Rambert zmienia sie). Jedyną wlasciwa odpowiedzia jest bunt i solidarnosc — nie akceptacja.',
+      metadata: {
+        explanation:
+          '"Czlowiek wobec cierpienia i smierci" to jedno z pytan jawnych na mature ustna 2026-2028 dotyczacych "Dzumy". Kluczowe: Camus NIE gloryfikuje cierpienia — odrzuca ide "uszlachetniajacego bolu" na rzecz buntu.',
+      },
+    },
+
+    // ======================= KONIEC PYTAN DZUMA — ZESTAW 2 ===================//
+
+    // ======================= KONIEC PYTAŃ DŻUMA ===================//
   ];
 
   const exercisesWithTags = exercises.map((exercise) => ({
