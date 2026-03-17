@@ -62,7 +62,8 @@ jobs:
             cd ..
             echo "=== Start backend ==="
             pm2 delete maturapolski-backend || true
-            pm2 start /var/www/maturapolski/backend/dist/index.js --name maturapolski-backend -i 1 --cwd /var/www/maturapolski/backend
+            cd /var/www/maturapolski/backend
+            pm2 start dist/index.js --name maturapolski-backend -i 1
             pm2 save
             sleep 3
             echo "=== Status ==="
