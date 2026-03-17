@@ -58,6 +58,8 @@ interface QueryParams {
   search?: string;
   page?: string;
   limit?: string;
+  work?: string;
+  tag?: string;
 }
 
 interface UserPayload {
@@ -80,8 +82,104 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
       } catch {
         return reply.code(401).send({ error: "Unauthorized" });
       }
-    }
+    },
   );
+
+  // GET dostępne opcje filtrów (epoki, dzieła, tagi, kategorie, typy)
+  fastify.get("/exercises/filters", async (_request, reply) => {
+    try {
+      const [epochs, works, tagsRaw, categories, types] =
+        await prisma.$transaction([
+          // Unikalne epoki z liczbą zadań
+          prisma.exercise.groupBy({
+            by: ["epoch"],
+            where: { epoch: { not: null } },
+            _count: { _all: true },
+            orderBy: { epoch: "asc" },
+          }),
+
+          // Unikalne dzieła z epoką i liczbą zadań
+          prisma.exercise.groupBy({
+            by: ["work", "epoch"],
+            where: { work: { not: null } },
+            _count: { _all: true },
+            orderBy: { work: "asc" },
+          }),
+
+          // Wszystkie tagi - trzeba pobrać ręcznie (Prisma nie ma groupBy na tablicach)
+          prisma.exercise.findMany({
+            select: { tags: true },
+            where: { tags: { isEmpty: false } },
+          }),
+
+          // Kategorie z liczbą
+          prisma.exercise.groupBy({
+            by: ["category"],
+            _count: { _all: true },
+            orderBy: { category: "asc" },
+          }),
+
+          // Typy z liczbą
+          prisma.exercise.groupBy({
+            by: ["type"],
+            _count: { _all: true },
+            orderBy: { type: "asc" },
+          }),
+        ]);
+
+      // Spłaszcz i policz tagi
+      const tagCounts: Record<string, number> = {};
+      tagsRaw.forEach((ex) => {
+        ex.tags.forEach((tag) => {
+          tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+        });
+      });
+
+      // Posortuj tagi po częstotliwości (malejąco)
+      const sortedTags = Object.entries(tagCounts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([tag, count]) => ({ tag, count }));
+
+      // Grupuj dzieła po epokach (do kaskadowego filtra)
+      const worksByEpoch: Record<
+        string,
+        Array<{ work: string; count: number }>
+      > = {};
+      works.forEach((w) => {
+        const epochKey = w.epoch || "NONE";
+        if (!worksByEpoch[epochKey]) worksByEpoch[epochKey] = [];
+        worksByEpoch[epochKey].push({
+          work: w.work!,
+          count: w._count._all,
+        });
+      });
+
+      return reply.send({
+        epochs: epochs.map((e) => ({
+          value: e.epoch,
+          count: e._count._all,
+        })),
+        works: works.map((w) => ({
+          value: w.work,
+          epoch: w.epoch,
+          count: w._count._all,
+        })),
+        worksByEpoch,
+        tags: sortedTags,
+        categories: categories.map((c) => ({
+          value: c.category,
+          count: c._count._all,
+        })),
+        types: types.map((t) => ({
+          value: t.type,
+          count: t._count._all,
+        })),
+      });
+    } catch (error) {
+      console.error("Filters error:", error);
+      return reply.code(500).send({ error: "Failed to fetch filters" });
+    }
+  });
 
   // GET wszystkie zadania z filtrowaniem i paginacją
   fastify.get<{ Querystring: QueryParams }>(
@@ -97,11 +195,16 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
         if (query.epoch) where.epoch = query.epoch;
         if (query.difficulty) where.difficulty = parseInt(query.difficulty);
 
+        // ✅ NOWE FILTRY
+        if (query.work) where.work = query.work;
+        if (query.tag) where.tags = { has: query.tag };
+
         // Wyszukiwanie
         if (query.search) {
           where.OR = [
             { question: { contains: query.search, mode: "insensitive" } },
             { tags: { has: query.search } },
+            { work: { contains: query.search, mode: "insensitive" } }, // ✅ Szukaj też po dziele
           ];
         }
 
@@ -140,7 +243,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
         console.error("Database error:", error);
         return reply.code(500).send({ error: "Database connection failed" });
       }
-    }
+    },
   );
 
   // GET statystyki
@@ -203,7 +306,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
           details: error.message,
         });
       }
-    }
+    },
   );
 
   fastify.get("/users/detailed-sessions", async (_request, reply) => {
@@ -281,21 +384,21 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
                     score: ex.score,
                     timestamp: ex.timestamp,
                   };
-                })
+                }),
               );
 
               return {
                 ...session,
                 exerciseDetails: exerciseDetails.filter(Boolean),
               };
-            })
+            }),
           );
 
           return {
             ...user,
             learningSessions: sessionsWithDetails,
           };
-        })
+        }),
       );
 
       return reply.send(detailedUsers);
@@ -362,7 +465,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
           details: error.message,
         });
       }
-    }
+    },
   );
 
   // POST import wielu zadań
@@ -380,8 +483,8 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
                 content: exercise.content || {},
                 metadata: exercise.metadata || {},
               } as any,
-            })
-          )
+            }),
+          ),
         );
 
         return reply.send({
@@ -404,7 +507,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
           details: error.message,
         });
       }
-    }
+    },
   );
 
   // GET wszystkich użytkowników z pełnymi danymi
@@ -515,7 +618,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
           user.submissions.length > 0
             ? user.submissions.reduce(
                 (acc, sub) => acc + (sub.assessment?.totalScore || 0),
-                0
+                0,
               ) / user.submissions.length
             : 0;
 
@@ -524,7 +627,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
             exercises: acc.exercises + day.exercisesCount,
             time: acc.time + day.studyTime,
           }),
-          { exercises: 0, time: 0 }
+          { exercises: 0, time: 0 },
         );
 
         return {
@@ -657,23 +760,26 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
         ]);
 
         // Analiza postępów w epokach
-        const epochProgress = stats[2].reduce((acc, exercise) => {
-          if (exercise.epoch) {
-            if (!acc[exercise.epoch]) {
-              acc[exercise.epoch] = {
-                completed: 0,
-                totalPoints: 0,
-                averageScore: 0,
-                scores: [],
-              };
+        const epochProgress = stats[2].reduce(
+          (acc, exercise) => {
+            if (exercise.epoch) {
+              if (!acc[exercise.epoch]) {
+                acc[exercise.epoch] = {
+                  completed: 0,
+                  totalPoints: 0,
+                  averageScore: 0,
+                  scores: [],
+                };
+              }
+              acc[exercise.epoch].completed += 1;
+              acc[exercise.epoch].totalPoints += exercise.points;
+              const score = exercise.submissions[0]?.score || 0;
+              acc[exercise.epoch].scores.push(score);
             }
-            acc[exercise.epoch].completed += 1;
-            acc[exercise.epoch].totalPoints += exercise.points;
-            const score = exercise.submissions[0]?.score || 0;
-            acc[exercise.epoch].scores.push(score);
-          }
-          return acc;
-        }, {} as Record<string, any>);
+            return acc;
+          },
+          {} as Record<string, any>,
+        );
 
         // Oblicz średnie dla każdej epoki
         Object.keys(epochProgress).forEach((epoch) => {
@@ -695,7 +801,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
         console.error("Error fetching user details:", error);
         return reply.code(500).send({ error: "Failed to fetch user details" });
       }
-    }
+    },
   );
 
   // PUT - Aktualizacja poziomu i punktów użytkownika
@@ -827,7 +933,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
         console.error("Error resetting user progress:", error);
         return reply.code(500).send({ error: "Failed to reset user progress" });
       }
-    }
+    },
   );
 
   // DELETE - Usuń użytkownika
@@ -863,7 +969,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
         console.error("Error deleting user:", error);
         return reply.code(500).send({ error: "Failed to delete user" });
       }
-    }
+    },
   );
 
   // GET statystyki wszystkich użytkowników
@@ -1053,7 +1159,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
                 tx.user.update({
                   where: { id: userId },
                   data: { role: updates.role },
-                })
+                }),
               );
             }
 
@@ -1078,7 +1184,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
                   tx.userProfile.update({
                     where: { userId },
                     data: profileData,
-                  })
+                  }),
                 );
               } else {
                 // Create profile if doesn't exist
@@ -1091,7 +1197,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
                       studyStreak: 0,
                       averageScore: 0,
                     },
-                  })
+                  }),
                 );
               }
             }
@@ -1108,7 +1214,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
                   tx.userLevelProgress.update({
                     where: { userId },
                     data: { unlockedDifficulty: updates.unlockedDifficulty },
-                  })
+                  }),
                 );
               } else {
                 // Create level progress if doesn't exist
@@ -1126,7 +1232,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
                       pointsToUnlock4: 200,
                       pointsToUnlock5: 300,
                     },
-                  })
+                  }),
                 );
               }
             }
@@ -1247,7 +1353,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
         console.error("Error fetching timeline:", error);
         return reply.code(500).send({ error: "Failed to fetch timeline" });
       }
-    }
+    },
   );
 
   // POST grant achievement
@@ -1383,14 +1489,14 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
           .header("Content-Type", "application/json")
           .header(
             "Content-Disposition",
-            `attachment; filename="user-${userId}-export.json"`
+            `attachment; filename="user-${userId}-export.json"`,
           )
           .send(exportData);
       } catch (error) {
         console.error("Error exporting user data:", error);
         return reply.code(500).send({ error: "Failed to export user data" });
       }
-    }
+    },
   );
 
   // Helper function
@@ -1459,7 +1565,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
         console.error("Error fetching subscription:", error);
         return reply.code(500).send({ error: "Failed to fetch subscription" });
       }
-    }
+    },
   );
 
   // PUT update subscription for user
@@ -1530,7 +1636,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
           ) {
             try {
               const stripeSubscription = await stripe.subscriptions.retrieve(
-                subscription.stripeSubscriptionId
+                subscription.stripeSubscriptionId,
               );
 
               if (
@@ -1538,7 +1644,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
                 stripeSubscription.status === "trialing"
               ) {
                 console.log(
-                  `🔄 Admin is converting recurring subscription to one-time for user ${userId}`
+                  `🔄 Admin is converting recurring subscription to one-time for user ${userId}`,
                 );
 
                 // ✅ 1. Anuluj subskrypcję w Stripe (na koniec okresu)
@@ -1546,7 +1652,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
                   subscription.stripeSubscriptionId,
                   {
                     cancel_at_period_end: true,
-                  }
+                  },
                 );
 
                 // ✅ LEPSZE ROZWIĄZANIE: użyj już zapisanego stripeCurrentPeriodEnd
@@ -1562,7 +1668,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
                 }
 
                 console.log(
-                  `✅ Stripe subscription cancelled, will end at: ${endDate}`
+                  `✅ Stripe subscription cancelled, will end at: ${endDate}`,
                 );
 
                 // ✅ 2. Ustaw jednorazowy pakiet który zacznie się po wygaśnięciu
@@ -1586,13 +1692,13 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
                 };
 
                 console.log(
-                  `✅ One-time access scheduled from ${endDate} to ${newEndDate}`
+                  `✅ One-time access scheduled from ${endDate} to ${newEndDate}`,
                 );
               }
             } catch (stripeError) {
               console.error(
                 "Error cancelling Stripe subscription:",
-                stripeError
+                stripeError,
               );
               return reply.code(500).send({
                 error: "Failed to cancel Stripe subscription",
@@ -1613,7 +1719,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
             updateData.metadata = existingMetadata;
 
             console.log(
-              `✅ Converted one-time to recurring for user ${userId}`
+              `✅ Converted one-time to recurring for user ${userId}`,
             );
           }
           // ✅ Standardowa zmiana bez aktywnej subskrypcji Stripe
@@ -1735,6 +1841,6 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
         console.error("Error fetching AI usage:", error);
         return reply.code(500).send({ error: "Failed to fetch AI usage" });
       }
-    }
+    },
   );
 }
