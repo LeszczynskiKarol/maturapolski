@@ -2,6 +2,9 @@
 
 import { prisma } from "../lib/prisma";
 import Stripe from "stripe";
+import { EmailService } from "./emailService";
+
+const emailService = new EmailService();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-08-27.basil",
@@ -324,6 +327,19 @@ export class SubscriptionService {
               console.log(
                 `✅ Activated 30-day access for user ${userId} until ${newEndDate.toISOString()}`,
               );
+              // ✅ Wyślij email potwierdzający zakup 30 dni
+              const monthlyUser = await prisma.user.findUnique({
+                where: { id: userId },
+                select: { email: true, username: true },
+              });
+              if (monthlyUser) {
+                await emailService.sendPurchaseConfirmation(
+                  monthlyUser.email,
+                  monthlyUser.username,
+                  "MONTHLY_ACCESS",
+                  { endDate: newEndDate, amount: 49 },
+                );
+              }
             }
           } else if (session.metadata?.pointsPackage) {
             const pointsAmount = parseInt(session.metadata.pointsAmount || "0");
@@ -354,6 +370,26 @@ export class SubscriptionService {
                 console.log(
                   `✅ Added ${pointsAmount} points to user ${userId}`,
                 );
+                // ✅ Wyślij email potwierdzający zakup punktów
+                const pointsUser = await prisma.user.findUnique({
+                  where: { id: userId },
+                  select: { email: true, username: true },
+                });
+                if (pointsUser) {
+                  const pkgName =
+                    session.metadata?.pointsPackage === "SMALL"
+                      ? "Pakiet Starter (50 pkt)"
+                      : session.metadata?.pointsPackage === "MEDIUM"
+                        ? "Pakiet Standard (150 pkt)"
+                        : "Pakiet Premium (300 pkt)";
+                  await emailService.sendPointsPurchaseConfirmation(
+                    pointsUser.email,
+                    pointsUser.username,
+                    pointsAmount,
+                    pkgName,
+                    (session.amount_total || 0) / 100,
+                  );
+                }
               }
             }
           }
@@ -428,6 +464,19 @@ export class SubscriptionService {
             console.log(
               `✅ Subscription activated immediately for user ${userId}: ${subscriptionId}`,
             );
+            // ✅ Wyślij email potwierdzający zakup subskrypcji
+            const subUser = await prisma.user.findUnique({
+              where: { id: userId },
+              select: { email: true, username: true },
+            });
+            if (subUser) {
+              await emailService.sendPurchaseConfirmation(
+                subUser.email,
+                subUser.username,
+                "SUBSCRIPTION",
+                { amount: 39 },
+              );
+            }
           }
         }
         break;
@@ -530,6 +579,23 @@ export class SubscriptionService {
               status: "ACTIVE",
             },
           });
+        }
+        // ✅ Wyślij email o odnowieniu (ale nie dla pierwszej płatności)
+        if (invoice.billing_reason === "subscription_cycle") {
+          const renewalUser = await prisma.user.findUnique({
+            where: { id: dbSubscription.userId },
+            select: { email: true, username: true },
+          });
+          const updatedSub = await prisma.subscription.findUnique({
+            where: { id: dbSubscription.id },
+          });
+          if (renewalUser && updatedSub?.stripeCurrentPeriodEnd) {
+            await emailService.sendRenewalConfirmation(
+              renewalUser.email,
+              renewalUser.username,
+              updatedSub.stripeCurrentPeriodEnd,
+            );
+          }
         }
 
         console.log(

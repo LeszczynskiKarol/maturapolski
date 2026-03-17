@@ -59,7 +59,7 @@ export class EmailService {
 
   private getVerificationEmailTemplate(
     verificationCode: string, // zmień nazwę parametru
-    username: string
+    username: string,
   ): string {
     const displayName = username.charAt(0).toUpperCase() + username.slice(1);
 
@@ -249,7 +249,7 @@ export class EmailService {
   async sendExpirationWarning7Days(
     to: string,
     username: string,
-    endDate: Date
+    endDate: Date,
   ) {
     const html = this.getExpirationWarning7DaysTemplate(username, endDate);
 
@@ -304,11 +304,367 @@ export class EmailService {
     }
   }
 
+  // 1. POTWIERDZENIE ZAKUPU - subskrypcja lub 30 dni
+  async sendPurchaseConfirmation(
+    to: string,
+    username: string,
+    type: "SUBSCRIPTION" | "MONTHLY_ACCESS",
+    details: { endDate?: Date; amount: number },
+  ) {
+    const html = this.getPurchaseConfirmationTemplate(username, type, details);
+    const subject =
+      type === "SUBSCRIPTION"
+        ? "✅ Subskrypcja Premium aktywowana - MaturaPolski.pl"
+        : "✅ Dostęp Premium na 30 dni aktywowany - MaturaPolski.pl";
+
+    try {
+      const result = await transporter.sendMail({
+        from: `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM}>`,
+        to,
+        subject,
+        html,
+      });
+      console.log("✅ Purchase confirmation email sent:", result.messageId);
+      return result;
+    } catch (error) {
+      console.error("❌ Purchase confirmation email error:", error);
+      return null;
+    }
+  }
+
+  // 2. POTWIERDZENIE ODNOWIENIA subskrypcji
+  async sendRenewalConfirmation(
+    to: string,
+    username: string,
+    nextRenewal: Date,
+  ) {
+    const html = this.getRenewalConfirmationTemplate(username, nextRenewal);
+
+    try {
+      const result = await transporter.sendMail({
+        from: `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM}>`,
+        to,
+        subject: "🔄 Subskrypcja Premium odnowiona - MaturaPolski.pl",
+        html,
+      });
+      console.log("✅ Renewal confirmation email sent:", result.messageId);
+      return result;
+    } catch (error) {
+      console.error("❌ Renewal confirmation email error:", error);
+      return null;
+    }
+  }
+
+  // 3. POTWIERDZENIE ANULOWANIA subskrypcji
+  async sendCancellationConfirmation(
+    to: string,
+    username: string,
+    accessUntil: Date,
+  ) {
+    const html = this.getCancellationConfirmationTemplate(
+      username,
+      accessUntil,
+    );
+
+    try {
+      const result = await transporter.sendMail({
+        from: `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM}>`,
+        to,
+        subject: "⚠️ Subskrypcja Premium anulowana - MaturaPolski.pl",
+        html,
+      });
+      console.log("✅ Cancellation confirmation email sent:", result.messageId);
+      return result;
+    } catch (error) {
+      console.error("❌ Cancellation confirmation email error:", error);
+      return null;
+    }
+  }
+
+  // 4. POTWIERDZENIE ZAKUPU PUNKTÓW
+  async sendPointsPurchaseConfirmation(
+    to: string,
+    username: string,
+    pointsAmount: number,
+    packageName: string,
+    amountPaid: number,
+  ) {
+    const html = this.getPointsPurchaseTemplate(
+      username,
+      pointsAmount,
+      packageName,
+      amountPaid,
+    );
+
+    try {
+      const result = await transporter.sendMail({
+        from: `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM}>`,
+        to,
+        subject: "✅ Punkty AI dodane do konta - MaturaPolski.pl",
+        html,
+      });
+      console.log("✅ Points purchase email sent:", result.messageId);
+      return result;
+    } catch (error) {
+      console.error("❌ Points purchase email error:", error);
+      return null;
+    }
+  }
+
+  // ============================================================
+  // NOWE PRYWATNE SZABLONY - dodaj na końcu klasy
+  // ============================================================
+
+  private getPurchaseConfirmationTemplate(
+    username: string,
+    type: "SUBSCRIPTION" | "MONTHLY_ACCESS",
+    details: { endDate?: Date; amount: number },
+  ): string {
+    const displayName = username.charAt(0).toUpperCase() + username.slice(1);
+    const dashboardUrl = `${process.env.FRONTEND_URL}/dashboard`;
+    const subscriptionUrl = `${process.env.FRONTEND_URL}/subscription`;
+
+    const isSubscription = type === "SUBSCRIPTION";
+    const planName = isSubscription
+      ? "Subskrypcja Premium (39 zł/mies)"
+      : "Dostęp Premium na 30 dni (49 zł)";
+    const endDateStr = details.endDate
+      ? details.endDate.toLocaleDateString("pl-PL", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })
+      : null;
+
+    return `
+    <!DOCTYPE html>
+    <html>
+      <head><meta charset="UTF-8"></head>
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0;">
+        <div style="max-width: 600px; margin: 0 auto; background: #f8f9fa;">
+          <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 40px 30px; text-align: center;">
+            <h1 style="margin: 0; font-size: 28px;">✅ Płatność potwierdzona!</h1>
+          </div>
+          <div style="background: white; padding: 40px 30px;">
+            <h2>Cześć, ${displayName}!</h2>
+            <p>Dziękujemy za zakup! Twój dostęp Premium został aktywowany.</p>
+            
+            <div style="background: #f0fdf4; border: 2px solid #10b981; border-radius: 10px; padding: 20px; margin: 25px 0;">
+              <h3 style="margin: 0 0 15px 0; color: #059669;">Szczegóły zakupu</h3>
+              <table style="width: 100%; font-size: 15px;">
+                <tr>
+                  <td style="padding: 8px 0; color: #6b7280;">Plan:</td>
+                  <td style="padding: 8px 0; font-weight: bold; text-align: right;">${planName}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; color: #6b7280;">Kwota:</td>
+                  <td style="padding: 8px 0; font-weight: bold; text-align: right;">${details.amount} zł</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; color: #6b7280;">Punkty AI:</td>
+                  <td style="padding: 8px 0; font-weight: bold; text-align: right;">200 punktów</td>
+                </tr>
+                ${
+                  isSubscription
+                    ? `<tr>
+                  <td style="padding: 8px 0; color: #6b7280;">Odnowienie:</td>
+                  <td style="padding: 8px 0; font-weight: bold; text-align: right;">Automatyczne co miesiąc</td>
+                </tr>`
+                    : `<tr>
+                  <td style="padding: 8px 0; color: #6b7280;">Ważny do:</td>
+                  <td style="padding: 8px 0; font-weight: bold; text-align: right;">${endDateStr}</td>
+                </tr>`
+                }
+              </table>
+            </div>
+ 
+            <h3>Co możesz teraz zrobić:</h3>
+            <ul style="padding-left: 20px; line-height: 2;">
+              <li>Rozwiązywać zadania otwarte z oceną AI</li>
+              <li>Pisać wypracowania ze szczegółowym feedbackiem</li>
+              <li>Korzystać z notatek syntetyzujących</li>
+              <li>Śledzić swoje postępy</li>
+            </ul>
+ 
+            <center>
+              <a href="${dashboardUrl}" style="display: inline-block; padding: 15px 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0;">
+                Rozpocznij naukę →
+              </a>
+            </center>
+            
+            <hr style="border: none; border-top: 1px solid #e9ecef; margin: 30px 0;">
+            <p style="color: #6c757d; font-size: 13px;">
+              Zarządzaj swoim planem w <a href="${subscriptionUrl}" style="color: #667eea;">panelu subskrypcji</a>.
+            </p>
+          </div>
+          <div style="background: #2d3436; color: #b2bec3; padding: 30px; text-align: center; font-size: 13px;">
+            <p style="margin: 0;">© 2025 MaturaPolski.pl. Wszystkie prawa zastrzeżone.</p>
+          </div>
+        </div>
+      </body>
+    </html>`;
+  }
+
+  private getRenewalConfirmationTemplate(
+    username: string,
+    nextRenewal: Date,
+  ): string {
+    const displayName = username.charAt(0).toUpperCase() + username.slice(1);
+    const nextDate = nextRenewal.toLocaleDateString("pl-PL", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+
+    return `
+    <!DOCTYPE html>
+    <html>
+      <head><meta charset="UTF-8"></head>
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0;">
+        <div style="max-width: 600px; margin: 0 auto; background: #f8f9fa;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 30px; text-align: center;">
+            <h1 style="margin: 0; font-size: 28px;">🔄 Subskrypcja odnowiona</h1>
+          </div>
+          <div style="background: white; padding: 40px 30px;">
+            <h2>Cześć, ${displayName}!</h2>
+            <p>Twoja subskrypcja Premium została automatycznie odnowiona. Punkty AI zostały zresetowane — masz ponownie 200 punktów do wykorzystania!</p>
+            
+            <div style="background: #f0f4ff; border: 2px solid #667eea; border-radius: 10px; padding: 20px; margin: 25px 0; text-align: center;">
+              <p style="margin: 0 0 10px 0; font-size: 16px; color: #6b7280;">Następne odnowienie</p>
+              <p style="margin: 0; font-size: 24px; font-weight: bold; color: #667eea;">${nextDate}</p>
+              <p style="margin: 10px 0 0 0; font-size: 14px; color: #6b7280;">Kwota: 39 zł</p>
+            </div>
+ 
+            <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 15px 20px; margin: 20px 0;">
+              <p style="margin: 0; font-size: 14px;">
+                <strong>✅ Punkty AI zresetowane!</strong> Masz 200 punktów do wykorzystania w tym miesiącu.
+              </p>
+            </div>
+ 
+            <center>
+              <a href="${process.env.FRONTEND_URL}/dashboard" style="display: inline-block; padding: 15px 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0;">
+                Kontynuuj naukę →
+              </a>
+            </center>
+          </div>
+          <div style="background: #2d3436; color: #b2bec3; padding: 30px; text-align: center; font-size: 13px;">
+            <p style="margin: 0 0 10px 0;">© 2025 MaturaPolski.pl</p>
+            <p style="margin: 0;"><a href="${process.env.FRONTEND_URL}/subscription" style="color: #b2bec3;">Zarządzaj subskrypcją</a></p>
+          </div>
+        </div>
+      </body>
+    </html>`;
+  }
+
+  private getCancellationConfirmationTemplate(
+    username: string,
+    accessUntil: Date,
+  ): string {
+    const displayName = username.charAt(0).toUpperCase() + username.slice(1);
+    const untilDate = accessUntil.toLocaleDateString("pl-PL", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+    const subscriptionUrl = `${process.env.FRONTEND_URL}/subscription`;
+
+    return `
+    <!DOCTYPE html>
+    <html>
+      <head><meta charset="UTF-8"></head>
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0;">
+        <div style="max-width: 600px; margin: 0 auto; background: #f8f9fa;">
+          <div style="background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); color: white; padding: 40px 30px; text-align: center;">
+            <h1 style="margin: 0; font-size: 28px;">⚠️ Subskrypcja anulowana</h1>
+          </div>
+          <div style="background: white; padding: 40px 30px;">
+            <h2>Cześć, ${displayName}</h2>
+            <p>Twoja subskrypcja Premium została anulowana. Nie martw się — <strong>nadal masz pełen dostęp</strong> do końca opłaconego okresu!</p>
+            
+            <div style="background: #fff7ed; border: 2px solid #f59e0b; border-radius: 10px; padding: 25px; margin: 25px 0; text-align: center;">
+              <p style="margin: 0 0 10px 0; font-size: 16px;">Dostęp Premium ważny do:</p>
+              <p style="margin: 0; font-size: 28px; font-weight: bold; color: #ea580c;">${untilDate}</p>
+            </div>
+ 
+            <p>Po tym terminie Twoje konto zostanie przełączone na plan Free (20 punktów AI/mies).</p>
+            
+            <div style="background: #f0f9ff; border-left: 4px solid #3b82f6; padding: 15px 20px; margin: 20px 0;">
+              <p style="margin: 0; font-size: 14px;">
+                <strong>💡 Zmiana zdania?</strong> Możesz wznowić subskrypcję w każdej chwili przed datą wygaśnięcia — nie stracisz żadnych danych ani postępów.
+              </p>
+            </div>
+ 
+            <center>
+              <a href="${subscriptionUrl}" style="display: inline-block; padding: 15px 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0;">
+                Wznów subskrypcję
+              </a>
+            </center>
+          </div>
+          <div style="background: #2d3436; color: #b2bec3; padding: 30px; text-align: center; font-size: 13px;">
+            <p style="margin: 0;">© 2025 MaturaPolski.pl</p>
+          </div>
+        </div>
+      </body>
+    </html>`;
+  }
+
+  private getPointsPurchaseTemplate(
+    username: string,
+    pointsAmount: number,
+    packageName: string,
+    amountPaid: number,
+  ): string {
+    const displayName = username.charAt(0).toUpperCase() + username.slice(1);
+
+    return `
+    <!DOCTYPE html>
+    <html>
+      <head><meta charset="UTF-8"></head>
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0;">
+        <div style="max-width: 600px; margin: 0 auto; background: #f8f9fa;">
+          <div style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); color: white; padding: 40px 30px; text-align: center;">
+            <h1 style="margin: 0; font-size: 28px;">✨ Punkty AI dodane!</h1>
+          </div>
+          <div style="background: white; padding: 40px 30px;">
+            <h2>Cześć, ${displayName}!</h2>
+            <p>Twoje punkty AI zostały pomyślnie dodane do konta.</p>
+            
+            <div style="background: #f5f3ff; border: 2px solid #8b5cf6; border-radius: 10px; padding: 25px; margin: 25px 0; text-align: center;">
+              <p style="margin: 0 0 5px 0; font-size: 48px; font-weight: bold; color: #6d28d9;">+${pointsAmount}</p>
+              <p style="margin: 0 0 15px 0; font-size: 18px; color: #6d28d9;">punktów AI</p>
+              <table style="width: 100%; font-size: 14px; color: #6b7280;">
+                <tr>
+                  <td style="padding: 5px 0;">Pakiet:</td>
+                  <td style="padding: 5px 0; text-align: right; font-weight: bold;">${packageName}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 5px 0;">Kwota:</td>
+                  <td style="padding: 5px 0; text-align: right; font-weight: bold;">${amountPaid} zł</td>
+                </tr>
+              </table>
+            </div>
+ 
+            <p>Punkty są dostępne od razu. Wykorzystaj je na ocenę AI dla zadań otwartych i wypracowań.</p>
+ 
+            <center>
+              <a href="${process.env.FRONTEND_URL}/dashboard" style="display: inline-block; padding: 15px 40px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0;">
+                Rozpocznij naukę →
+              </a>
+            </center>
+          </div>
+          <div style="background: #2d3436; color: #b2bec3; padding: 30px; text-align: center; font-size: 13px;">
+            <p style="margin: 0;">© 2025 MaturaPolski.pl</p>
+          </div>
+        </div>
+      </body>
+    </html>`;
+  }
+
   // DODAJ TE TEMPLATE METODY NA KOŃCU KLASY (jako private):
 
   private getExpirationWarning7DaysTemplate(
     username: string,
-    endDate: Date
+    endDate: Date,
   ): string {
     const displayName = username.charAt(0).toUpperCase() + username.slice(1);
     const formattedDate = endDate.toLocaleDateString("pl-PL", {
@@ -442,7 +798,7 @@ export class EmailService {
 
   private getExpirationWarning1DayTemplate(
     username: string,
-    endDate: Date
+    endDate: Date,
   ): string {
     const displayName = username.charAt(0).toUpperCase() + username.slice(1);
     const formattedDate = endDate.toLocaleDateString("pl-PL", {

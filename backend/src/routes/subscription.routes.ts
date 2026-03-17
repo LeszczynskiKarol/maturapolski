@@ -629,6 +629,31 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
 
       try {
         await subscriptionService.cancelSubscription(userId);
+        // ✅ Wyślij email potwierdzający anulowanie
+        const cancelUser = await prisma.user.findUnique({
+          where: { id: userId },
+          select: {
+            email: true,
+            username: true,
+            subscription: {
+              select: { cancelAt: true, stripeCurrentPeriodEnd: true },
+            },
+          },
+        });
+        if (cancelUser?.subscription) {
+          const accessUntil =
+            cancelUser.subscription.cancelAt ||
+            cancelUser.subscription.stripeCurrentPeriodEnd ||
+            new Date();
+          await new (
+            await import("../services/emailService")
+          ).EmailService().sendCancellationConfirmation(
+            cancelUser.email,
+            cancelUser.username,
+            accessUntil,
+          );
+        }
+
         return reply.send({
           success: true,
           message: "Subscription will be canceled at period end",
@@ -644,6 +669,7 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
 
       try {
         await subscriptionService.resumeSubscription(userId);
+
         return reply.send({ success: true, message: "Subscription resumed" });
       } catch (error: any) {
         return reply.code(400).send({ error: error.message });
