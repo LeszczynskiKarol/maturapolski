@@ -61,7 +61,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
   const loadFooterData = async () => {
     try {
       // Pobierz WSZYSTKIE huby z testami
-      const tests = await contentService.getHubsWithTests(10000); // lub duża liczba
+      const tests = await contentService.getTestLandings(100);
       setTestHubs(tests);
 
       // Pobierz WSZYSTKIE huby dla bazy wiedzy
@@ -289,6 +289,14 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
                   >
                     Funkcje
                   </a>
+                </li>
+                <li>
+                  <Link
+                    to="/test"
+                    className="hover:text-white transition-colors"
+                  >
+                    Testy z lektur
+                  </Link>
                 </li>
                 <li>
                   <a

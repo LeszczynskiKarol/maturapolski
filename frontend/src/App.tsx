@@ -21,6 +21,7 @@ import HubListPage from "./features/content/HubListPage";
 import { HubTestLandingPage } from "./features/content/HubTestLandingPage";
 import { PageViewer } from "./features/content/PageViewer";
 import { ExamList } from "./features/exams/ExamList";
+import { TestListPage } from "./features/content/TestListPage";
 import { ExamResults } from "./features/exams/ExamResults";
 import { MatureExamViewer } from "./features/exams/MatureExamViewer";
 import { LearningSession } from "./features/learning/LearningSession";
@@ -147,6 +148,8 @@ export const App: React.FC = () => {
                 path="/baza-wiedzy/:hubSlug/:pageSlug"
                 element={<PageViewer />}
               />
+              <Route path="/test/:hubSlug" element={<HubTestLandingPage />} />
+              <Route path="/test" element={<TestListPage />} />
               <Route path="/test/:hubSlug" element={<HubTestLandingPage />} />
 
               {/* ✅ NOWE: PORADNIK */}

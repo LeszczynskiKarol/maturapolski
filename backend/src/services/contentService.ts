@@ -526,7 +526,7 @@ export class ContentService {
     pageId: string,
     rating: number,
     fingerprintOrIP: string,
-    userId?: string
+    userId?: string,
   ) {
     if (rating < 1 || rating > 5) {
       throw new Error("Rating must be between 1 and 5");
@@ -670,7 +670,7 @@ export class ContentService {
 
       if (existingPage) {
         throw new Error(
-          `Artykuł ze slugiem "${slug}" już istnieje w poradnikach. Użyj innego sluga.`
+          `Artykuł ze slugiem "${slug}" już istnieje w poradnikach. Użyj innego sluga.`,
         );
       }
     }
@@ -714,7 +714,7 @@ export class ContentService {
 
         if (existingPage) {
           throw new Error(
-            `Artykuł ze slugiem "${sanitizedData.slug}" już istnieje w poradnikach.`
+            `Artykuł ze slugiem "${sanitizedData.slug}" już istnieje w poradnikach.`,
           );
         }
       }
@@ -757,7 +757,7 @@ export class ContentService {
       prisma.contentPage.update({
         where: { id: pageId },
         data: { order: index },
-      })
+      }),
     );
 
     await Promise.all(updates);
@@ -863,7 +863,7 @@ export class ContentService {
     // Zbierz unikalne userId (pomijając null)
     const userIds = [
       ...new Set(
-        ratings.map((r) => r.userId).filter((id): id is string => id !== null)
+        ratings.map((r) => r.userId).filter((id): id is string => id !== null),
       ),
     ];
 
@@ -947,7 +947,7 @@ export class ContentService {
   async checkIfUserRated(
     pageId: string,
     fingerprintOrIP: string,
-    userId?: string
+    userId?: string,
   ) {
     let existingRating;
 

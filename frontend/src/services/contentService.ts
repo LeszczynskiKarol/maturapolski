@@ -33,6 +33,16 @@ export const contentService = {
     return response.data;
   },
 
+  async getTestLandings(limit?: number) {
+    const response = await api.get("/api/tests", { params: { limit } });
+    return response.data;
+  },
+
+  async getTestLanding(slug: string) {
+    const response = await api.get(`/api/tests/${slug}`);
+    return response.data;
+  },
+
   // Landing page dla testu
   async getHubTestLandingData(hubSlug: string) {
     const response = await api.get(`/api/content/${hubSlug}/test-landing`);

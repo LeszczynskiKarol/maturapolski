@@ -265,7 +265,7 @@ export const FeaturedSections: React.FC = () => {
                 </div>
               </div>
               <Link
-                to="/testy"
+                to="/test"
                 className="hidden md:flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold transition-colors"
               >
                 Zobacz wszystkie
@@ -302,7 +302,7 @@ export const FeaturedSections: React.FC = () => {
             </div>
 
             <Link
-              to="/testy"
+              to="/test"
               className="md:hidden flex items-center justify-center gap-2 mt-6 text-blue-600 hover:text-blue-700 font-semibold"
             >
               Zobacz wszystkie testy
