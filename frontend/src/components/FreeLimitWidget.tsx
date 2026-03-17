@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Clock, Zap, Lock, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
+import { api } from "../services/api";
 
 interface FreeLimitStatus {
   isPremium: boolean;
@@ -67,48 +68,15 @@ export function FreeLimitWidget({
 
   const fetchStatus = async () => {
     try {
-      // ✅ Użyj tokena z authStore
       if (!token || !isAuthenticated) {
-        console.log("No token or not authenticated, skipping free limit fetch");
         setLoading(false);
         return;
       }
 
-      const response = await fetch("/api/learning/free-limit-status", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await api.get("/api/learning/free-limit-status");
+      setStatus(response.data);
 
-      // Sprawdź Content-Type przed parsowaniem
-      const contentType = response.headers.get("content-type");
-
-      if (!response.ok) {
-        console.error(`Free limit API error: ${response.status}`);
-        setLoading(false);
-        return;
-      }
-
-      if (!contentType || !contentType.includes("application/json")) {
-        console.error("Response is not JSON:", contentType);
-        setLoading(false);
-        return;
-      }
-
-      const text = await response.text();
-
-      // Dodatkowe zabezpieczenie - sprawdź czy text nie jest pusty
-      if (!text || text.trim() === "") {
-        console.error("Empty response from free-limit-status");
-        setLoading(false);
-        return;
-      }
-
-      const data = JSON.parse(text);
-      setStatus(data);
-
-      if (!data.canSolve && onLimitExceeded) {
+      if (!response.data.canSolve && onLimitExceeded) {
         onLimitExceeded();
       }
     } catch (error) {
@@ -255,31 +223,8 @@ export function useFreeLimitStatus() {
         return;
       }
 
-      const response = await fetch("/api/learning/free-limit-status", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      const contentType = response.headers.get("content-type");
-
-      if (!response.ok || !contentType?.includes("application/json")) {
-        console.error("Free limit API error or invalid content type");
-        setLoading(false);
-        return;
-      }
-
-      const text = await response.text();
-
-      if (!text || text.trim() === "") {
-        console.error("Empty response from free-limit-status");
-        setLoading(false);
-        return;
-      }
-
-      const data = JSON.parse(text);
-      setStatus(data);
+      const response = await api.get("/api/learning/free-limit-status");
+      setStatus(response.data);
     } catch (error) {
       console.error("Failed to fetch free limit status:", error);
     } finally {

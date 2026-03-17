@@ -3,6 +3,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import confetti from "canvas-confetti";
 import { SessionSummary } from "./SessionSummary";
+import {
+  FilterDrawer,
+  ActiveFilterChips,
+  useFilterBreakdown,
+} from "./FilterDrawer";
 import { QuestionWithContextLinks } from "../../components/QuestionWithContextLinks";
 import { useFreeLimitStatus } from "../../components/FreeLimitWidget";
 import { AnimatePresence, motion } from "framer-motion";
@@ -339,7 +344,8 @@ export const LearningSession: React.FC = () => {
 
   const [showFeedback, setShowFeedback] = useState(false);
   const [sessionComplete, setSessionComplete] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilterDrawer, setShowFilterDrawer] = useState(false);
+
   const [completedExercises, setCompletedExercises] = useState<
     Array<{ id: string; score: number }>
   >([]);
@@ -678,6 +684,11 @@ export const LearningSession: React.FC = () => {
       return null;
     }
   };
+
+  const { data: filterBreakdown } = useFilterBreakdown(
+    sessionFilters,
+    sessionActive,
+  );
 
   const handleSubmit = async () => {
     if (!currentExercise || answer === null || answer === undefined) return; // ✅ POPRAWIONE
@@ -1548,7 +1559,6 @@ export const LearningSession: React.FC = () => {
             <div className="space-y-3">
               <button
                 onClick={() => {
-                  setShowFilters(true);
                   setNoExercisesError(null);
                 }}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg 
@@ -3057,49 +3067,20 @@ export const LearningSession: React.FC = () => {
             Cel sesji: {sessionStats.completed}/{SESSION_LIMIT} zadań
           </p>
 
-          {/* PRZYCISK DO FILTRÓW - responsive */}
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 
-         hover:text-blue-700 dark:hover:text-blue-300 font-medium 
-         px-3 py-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors
-         whitespace-nowrap"
-          >
-            <Filter className="w-4 h-4 flex-shrink-0" />
-            <span className="hidden xs:inline">
-              {showFilters ? "Ukryj filtry" : "Filtry zadań"}
-            </span>
-            <span className="xs:hidden">
-              {showFilters ? "Ukryj" : "Filtry"}
-            </span>
-            <ChevronDown
-              className={`w-4 h-4 flex-shrink-0 transition-transform ${
-                showFilters ? "rotate-180" : ""
-              }`}
+          <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+            <ActiveFilterChips
+              filters={sessionFilters}
+              onRemove={(key) => {
+                const newFilters = { ...sessionFilters };
+                delete newFilters[key];
+                applyFiltersAndRefresh(newFilters);
+              }}
+              onOpenDrawer={() => setShowFilterDrawer(true)}
+              filterBreakdown={filterBreakdown}
             />
-          </button>
+          </div>
         </div>
       </div>
-
-      {/* SEKCJA FILTRÓW - POKAZYWANA POD NAGŁÓWKIEM */}
-      <AnimatePresence>
-        {showFilters && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mb-6 overflow-hidden"
-          >
-            <InSessionFilters
-              currentFilters={sessionFilters}
-              isPremium={isPremium}
-              onFiltersChange={applyFiltersAndRefresh}
-              isLoading={isLoadingNext}
-              worksStats={worksStats}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Loading state */}
       {isLoadingNext && (
@@ -3221,494 +3202,15 @@ export const LearningSession: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
-  );
-};
-
-const InSessionFilters: React.FC<{
-  currentFilters: SessionFilters;
-  onFiltersChange: (filters: SessionFilters) => void;
-  isLoading: boolean;
-  worksStats?: any;
-  isPremium: boolean; // 🆕 NOWY PROP
-}> = ({
-  currentFilters,
-  onFiltersChange,
-  isLoading,
-  worksStats,
-  isPremium,
-}) => {
-  const [localFilters, setLocalFilters] =
-    useState<SessionFilters>(currentFilters);
-  const [selectedDifficulties, setSelectedDifficulties] = useState<number[]>(
-    currentFilters.difficulty || [],
-  );
-  const [selectedEpochs, setSelectedEpochs] = useState<string[]>(
-    currentFilters.epoch ? [currentFilters.epoch] : [],
-  );
-  const [selectedTypes, setSelectedTypes] = useState<string[]>(
-    currentFilters.type ? [currentFilters.type] : [],
-  );
-  const [
-    selectedCategories,
-    {
-      /*setSelectedCategories*/
-    },
-  ] = useState<string[]>(
-    currentFilters.category ? [currentFilters.category] : [],
-  );
-  const [availableCount, setAvailableCount] = useState<number | null>(null);
-  const [isCountLoading, setIsCountLoading] = useState(false);
-
-  const hasFilters = Object.keys(localFilters).length > 0;
-
-  const { data: levelProgress } = useQuery({
-    queryKey: ["difficulty-progress"],
-    queryFn: () =>
-      api.get("/api/learning/difficulty-progress").then((r) => r.data),
-    refetchInterval: 10000,
-    staleTime: 5000,
-  });
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (levelProgress && selectedDifficulties.length > 0) {
-      const validDifficulties = selectedDifficulties.filter(
-        (d) => d <= levelProgress.currentMaxDifficulty,
-      );
-      if (validDifficulties.length !== selectedDifficulties.length) {
-        setSelectedDifficulties(validDifficulties);
-        setLocalFilters({
-          ...localFilters,
-          difficulty:
-            validDifficulties.length > 0 ? validDifficulties : undefined,
-        });
-      }
-    }
-  }, [levelProgress]);
-
-  const fetchAvailableCount = async (filters: SessionFilters) => {
-    setIsCountLoading(true);
-    try {
-      const response = await api.post("/api/learning/count-available", filters);
-      setAvailableCount(response.data.count);
-    } catch (error) {
-      console.error("Error fetching count:", error);
-      setAvailableCount(null);
-    } finally {
-      setIsCountLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAvailableCount(localFilters);
-  }, [localFilters]);
-
-  const handleEpochToggle = (epochValue: string) => {
-    // 🆕 BLOKADA DLA FREE USERS
-    if (!isPremium) {
-      toast.error("Filtrowanie po epokach dostępne tylko w planie Premium!");
-      return;
-    }
-
-    const newEpochs = selectedEpochs.includes(epochValue)
-      ? selectedEpochs.filter((e) => e !== epochValue)
-      : [...selectedEpochs, epochValue];
-
-    setSelectedEpochs(newEpochs);
-
-    const newFilters = {
-      ...localFilters,
-      epoch: newEpochs.length > 0 ? newEpochs.join(",") : undefined,
-      category:
-        newEpochs.length > 0 ? "HISTORICAL_LITERARY" : localFilters.category,
-    };
-    setLocalFilters(newFilters);
-    onFiltersChange(newFilters);
-  };
-
-  const handleWorkSelect = (workTitle: string) => {
-    // 🆕 BLOKADA DLA FREE USERS
-    if (!isPremium && workTitle) {
-      toast.error("Filtrowanie po lekturach dostępne tylko w planie Premium!");
-      return;
-    }
-
-    const newFilters = {
-      ...localFilters,
-      work: workTitle || undefined,
-    };
-    setLocalFilters(newFilters);
-    onFiltersChange(newFilters);
-  };
-
-  const handleTypeToggle = (typeValue: string) => {
-    const newTypes = selectedTypes.includes(typeValue)
-      ? selectedTypes.filter((t) => t !== typeValue)
-      : [...selectedTypes, typeValue];
-
-    setSelectedTypes(newTypes);
-
-    const newFilters = {
-      ...localFilters,
-      type: newTypes.length > 0 ? newTypes.join(",") : undefined,
-    };
-    setLocalFilters(newFilters);
-    onFiltersChange(newFilters);
-  };
-
-  const handleDifficultyToggle = (level: number) => {
-    if (levelProgress && level > levelProgress.currentMaxDifficulty) {
-      toast.error(`Poziom ${level} jest zablokowany! Zdobądź więcej punktów.`);
-      return;
-    }
-
-    const newDifficulties = selectedDifficulties.includes(level)
-      ? selectedDifficulties.filter((d) => d !== level)
-      : [...selectedDifficulties, level];
-
-    setSelectedDifficulties(newDifficulties);
-    const newFilters = {
-      ...localFilters,
-      difficulty: newDifficulties.length > 0 ? newDifficulties : undefined,
-    };
-    setLocalFilters(newFilters);
-    onFiltersChange(newFilters);
-  };
-
-  const clearFilters = () => {
-    setLocalFilters({});
-    setSelectedDifficulties([]);
-    setSelectedEpochs([]);
-    onFiltersChange({});
-  };
-
-  return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-4">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-            Filtry zadań
-          </h3>
-
-          {isCountLoading || isLoading ? (
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              <span className="inline-block animate-pulse">Ładowanie...</span>
-            </span>
-          ) : availableCount !== null ? (
-            <span
-              className={`text-xs px-2 py-1 rounded-full ${
-                availableCount > 0
-                  ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
-                  : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
-              }`}
-            >
-              {availableCount > 0 ? `` : "Brak ćwiczeń spełniających kryteria"}
-            </span>
-          ) : null}
-        </div>
-        {hasFilters && (
-          <button
-            onClick={clearFilters}
-            className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 
-                     dark:hover:text-gray-200 flex items-center gap-1"
-            disabled={isLoading}
-          >
-            <X className="w-3 h-3" />
-            Wyczyść filtry
-          </button>
-        )}
-      </div>
-
-      {/* 🆕 LEKTURA - Z BLOKADĄ DLA FREE USERS */}
-      {worksStats && Object.keys(worksStats).length > 0 && (
-        <div
-          className={`mb-3 p-3 rounded-lg border relative ${
-            isPremium
-              ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
-              : "bg-gray-100 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600"
-          }`}
-        >
-          {/* 🆕 OVERLAY DLA FREE USERS */}
-          {!isPremium && (
-            <div className="absolute inset-0 bg-gray-900/10 dark:bg-black/30 rounded-lg flex items-center justify-center z-10">
-              <div className="bg-white dark:bg-gray-800 rounded-lg px-4 py-3 shadow-lg text-center max-w-xs">
-                <Lock className="w-6 h-6 text-amber-500 mx-auto mb-2" />
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
-                  Powtórki z lektur tylko w Premium
-                </p>
-                <button
-                  onClick={() => navigate("/subscription")}
-                  className="px-4 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 
-                           text-white rounded-lg text-sm font-medium
-                           hover:from-amber-600 hover:to-orange-600 transition-all"
-                >
-                  Odblokuj Premium
-                </button>
-              </div>
-            </div>
-          )}
-
-          <label
-            className={`block text-xs font-medium mb-2 ${
-              isPremium
-                ? "text-blue-700 dark:text-blue-300"
-                : "text-gray-500 dark:text-gray-400"
-            }`}
-          >
-            📚 Lektura (opcjonalnie)
-          </label>
-          <select
-            value={currentFilters.work || ""}
-            onChange={(e) => handleWorkSelect(e.target.value)}
-            disabled={isLoading || !isPremium}
-            className={`w-full px-3 py-2 border rounded-lg 
-           bg-white dark:bg-gray-800 
-           text-gray-900 dark:text-white
-           border-gray-300 dark:border-gray-600
-           focus:ring-2 focus:ring-blue-500
-           disabled:opacity-50 disabled:cursor-not-allowed`}
-          >
-            <option value="">
-              {selectedEpochs.length > 0
-                ? `Wszystkie lektury z wybranych epok (${
-                    Object.values(worksStats).filter((work: any) =>
-                      selectedEpochs.includes(work.epoch),
-                    ).length
-                  })`
-                : "Wszystkie lektury"}
-            </option>
-            {Object.values(worksStats)
-              .filter(
-                (work: any) =>
-                  selectedEpochs.length === 0 ||
-                  selectedEpochs.includes(work.epoch),
-              )
-              .sort((a: any, b: any) => a.title.localeCompare(b.title, "pl"))
-              .map((work: any) => (
-                <option key={work.id} value={work.title}>
-                  {work.title} ({work.total} pytań)
-                </option>
-              ))}
-          </select>
-          <p
-            className={`text-xs mt-1 ${
-              isPremium
-                ? "text-gray-500 dark:text-gray-400"
-                : "text-gray-400 dark:text-gray-500"
-            }`}
-          >
-            {isPremium
-              ? "Wybierz lekturę do powtórki lub zostaw puste"
-              : "Funkcja dostępna w planie Premium"}
-          </p>
-        </div>
-      )}
-
-      {/* 🆕 EPOKI - Z BLOKADĄ DLA FREE USERS */}
-      {!localFilters.work && (
-        <div
-          className={`mb-3 p-3 rounded-lg border relative ${
-            isPremium
-              ? "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
-              : "bg-gray-100 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600"
-          }`}
-        >
-          {/* 🆕 OVERLAY DLA FREE USERS */}
-          {!isPremium && (
-            <div className="absolute inset-0 bg-gray-900/10 dark:bg-black/30 rounded-lg flex items-center justify-center z-10">
-              <div className="bg-white dark:bg-gray-800 rounded-lg px-4 py-3 shadow-lg text-center max-w-xs">
-                <Lock className="w-6 h-6 text-amber-500 mx-auto mb-2" />
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
-                  Powtórki z epok tylko w Premium
-                </p>
-                <button
-                  onClick={() => navigate("/subscription")}
-                  className="px-4 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 
-                           text-white rounded-lg text-sm font-medium
-                           hover:from-amber-600 hover:to-orange-600 transition-all"
-                >
-                  Odblokuj Premium
-                </button>
-              </div>
-            </div>
-          )}
-
-          <p
-            className={`text-xs font-medium mb-2 ${
-              isPremium
-                ? "text-purple-700 dark:text-purple-300"
-                : "text-gray-500 dark:text-gray-400"
-            }`}
-          >
-            Epoka literacka{" "}
-            {selectedEpochs.length > 0 &&
-              `(${selectedEpochs.length} wybranych)`}
-            :
-          </p>
-          <div className="flex flex-wrap gap-1">
-            {EPOCHS.map((epoch) => (
-              <button
-                key={epoch.value}
-                onClick={() => handleEpochToggle(epoch.value)}
-                disabled={isLoading || !isPremium}
-                className={`px-2 py-1 text-xs rounded transition-colors ${
-                  selectedEpochs.includes(epoch.value)
-                    ? "bg-purple-600 dark:bg-purple-500 text-white"
-                    : isPremium
-                      ? "bg-white dark:bg-gray-700 hover:bg-purple-100 dark:hover:bg-purple-900/40 text-gray-700 dark:text-gray-300"
-                      : "bg-gray-200 dark:bg-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed"
-                } disabled:opacity-50`}
-              >
-                {epoch.label}
-              </button>
-            ))}
-          </div>
-          {!isPremium && (
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-              🔒 W planie darmowym pytania są losowe z różnych epok
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* TYP ZADANIA - bez zmian, ale dla FREE tylko CLOSED types */}
-      <div className="mb-3">
-        <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Typ zadania{" "}
-          {selectedTypes.length > 0 && `(${selectedTypes.length} wybranych)`}:
-        </p>
-        <div className="flex flex-wrap gap-1">
-          {EXERCISE_TYPES.filter((type) => {
-            // Dla FREE users - tylko pytania zamknięte
-            if (!isPremium) {
-              return ["CLOSED_SINGLE", "CLOSED_MULTIPLE"].includes(type.value);
-            }
-
-            // Dla Premium - pełna logika filtrowania
-            if (selectedCategories.length > 0) {
-              const hasWriting = selectedCategories.includes("WRITING");
-              const hasOtherCategories = selectedCategories.some(
-                (cat) => cat !== "WRITING",
-              );
-
-              if (hasWriting && !hasOtherCategories) {
-                return !["CLOSED_SINGLE", "CLOSED_MULTIPLE"].includes(
-                  type.value,
-                );
-              }
-
-              if (hasWriting && hasOtherCategories) {
-                return true;
-              }
-
-              if (!hasWriting && hasOtherCategories) {
-                return !["SYNTHESIS_NOTE", "ESSAY"].includes(type.value);
-              }
-            }
-
-            return true;
-          }).map((type) => (
-            <button
-              key={type.value}
-              onClick={() => handleTypeToggle(type.value)}
-              disabled={isLoading}
-              className={`px-2 py-1 text-xs rounded flex items-center gap-1 transition-colors ${
-                selectedTypes.includes(type.value)
-                  ? "bg-blue-600 dark:bg-blue-500 text-white"
-                  : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
-              } disabled:opacity-50`}
-            >
-              <span>{type.icon}</span>
-              {type.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Info dla FREE users o typach */}
-        {!isPremium && (
-          <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 flex items-center gap-1">
-            <Lock className="w-3 h-3" />
-            Pytania otwarte (notatka, wypracowanie) dostępne w Premium
-          </p>
-        )}
-      </div>
-
-      {/* POZIOM TRUDNOŚCI - bez zmian */}
-      <div>
-        <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Poziom trudności:
-        </p>
-        <div className="flex gap-1">
-          {[1, 2, 3, 4, 5].map((level) => {
-            const isLocked =
-              levelProgress && level > levelProgress.currentMaxDifficulty;
-
-            return (
-              <button
-                key={level}
-                onClick={() => handleDifficultyToggle(level)}
-                disabled={isLoading || isLocked}
-                className={`px-3 py-2 rounded transition-colors relative ${
-                  isLocked
-                    ? "bg-gray-200 dark:bg-gray-700 opacity-50 cursor-not-allowed"
-                    : selectedDifficulties.includes(level)
-                      ? "bg-yellow-100 dark:bg-yellow-900/30 border-yellow-500 dark:border-yellow-400"
-                      : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600"
-                } border`}
-                title={
-                  isLocked
-                    ? `Odblokuj zdobywając ${
-                        levelProgress?.levels[level - 1]?.required || "?"
-                      } pkt`
-                    : undefined
-                }
-              >
-                {isLocked && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-900/10 dark:bg-black/20 rounded">
-                    <Lock className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                  </div>
-                )}
-                <div className={isLocked ? "opacity-30" : ""}>
-                  <span
-                    className={
-                      selectedDifficulties.includes(level)
-                        ? "text-yellow-500 dark:text-yellow-400"
-                        : "text-gray-400 dark:text-gray-500"
-                    }
-                  >
-                    {"⭐".repeat(level)}
-                  </span>
-                  <div className="text-xs mt-1 text-gray-700 dark:text-gray-300">
-                    {level === 1 && "Bardzo łatwe"}
-                    {level === 2 && "Łatwe"}
-                    {level === 3 && "Średnie"}
-                    {level === 4 && "Trudne"}
-                    {level === 5 && "Bardzo trudne"}
-                  </div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* AKTYWNE FILTRY */}
-      {hasFilters && (
-        <div className="mt-3 pt-3 border-t dark:border-gray-700">
-          <div className="flex flex-wrap gap-1">
-            {localFilters.category && (
-              <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs text-gray-700 dark:text-gray-300">
-                {
-                  CATEGORIES.find((c) => c.value === localFilters.category)
-                    ?.label
-                }
-              </span>
-            )}
-          </div>
-        </div>
-      )}
+      <FilterDrawer
+        isOpen={showFilterDrawer}
+        onClose={() => setShowFilterDrawer(false)}
+        currentFilters={sessionFilters}
+        onFiltersChange={applyFiltersAndRefresh}
+        isPremium={isPremium}
+        isLoading={isLoadingNext}
+        worksStats={worksStats}
+      />
     </div>
   );
 };

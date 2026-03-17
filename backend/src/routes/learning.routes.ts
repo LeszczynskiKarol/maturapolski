@@ -1948,6 +1948,121 @@ export async function learningRoutes(fastify: FastifyInstance) {
     });
   });
 
+  fastify.post("/filter-breakdown", async (request, reply) => {
+    try {
+      const filters = request.body as any;
+
+      // Bazowy where dla wszystkich zapytań
+      const baseWhere: any = {};
+
+      // Zastosuj filtry (te same co w getNextExercise)
+      if (filters.work) {
+        baseWhere.work = filters.work;
+      }
+      if (filters.epoch) {
+        const epochs = filters.epoch.split(",").map((e: string) => e.trim());
+        baseWhere.epoch = { in: epochs };
+      }
+      if (filters.category) {
+        const categories = filters.category
+          .split(",")
+          .map((c: string) => c.trim());
+        baseWhere.category = { in: categories };
+      }
+      if (filters.difficulty && Array.isArray(filters.difficulty)) {
+        baseWhere.difficulty = { in: filters.difficulty };
+      }
+      if (filters.type) {
+        const types = filters.type.split(",").map((t: string) => t.trim());
+        baseWhere.type = { in: types };
+      }
+
+      // Równoległe zapytania do bazy
+      const [
+        epochCounts,
+        typeCounts,
+        difficultyCounts,
+        workCounts,
+        totalCount,
+      ] = await Promise.all([
+        // Epoki - uwzględnij filtry BEZ epoch
+        prisma.exercise.groupBy({
+          by: ["epoch"],
+          where: {
+            ...baseWhere,
+            epoch: undefined, // nie filtruj po epoch żeby pokazać wszystkie
+          },
+          _count: { id: true },
+        }),
+
+        // Typy - uwzględnij filtry BEZ type
+        prisma.exercise.groupBy({
+          by: ["type"],
+          where: {
+            ...baseWhere,
+            type: undefined, // nie filtruj po type
+          },
+          _count: { id: true },
+        }),
+
+        // Trudność - uwzględnij filtry BEZ difficulty
+        prisma.exercise.groupBy({
+          by: ["difficulty"],
+          where: {
+            ...baseWhere,
+            difficulty: undefined, // nie filtruj po difficulty
+          },
+          _count: { id: true },
+        }),
+
+        // Lektury - uwzględnij filtry BEZ work
+        prisma.exercise.groupBy({
+          by: ["work"],
+          where: {
+            ...baseWhere,
+            work: { not: null }, // override work filter
+          },
+          _count: { id: true },
+        }),
+
+        // Total z WSZYSTKIMI filtrami
+        prisma.exercise.count({ where: baseWhere }),
+      ]);
+
+      // Przekształć na obiekty
+      const epochs: Record<string, number> = {};
+      epochCounts.forEach((e) => {
+        if (e.epoch) epochs[e.epoch] = e._count.id;
+      });
+
+      const types: Record<string, number> = {};
+      typeCounts.forEach((t) => {
+        types[t.type] = t._count.id;
+      });
+
+      const difficulties: Record<number, number> = {};
+      difficultyCounts.forEach((d) => {
+        difficulties[d.difficulty] = d._count.id;
+      });
+
+      const works: Record<string, number> = {};
+      workCounts.forEach((w) => {
+        if (w.work) works[w.work] = w._count.id;
+      });
+
+      return reply.send({
+        epochs,
+        types,
+        difficulties,
+        works,
+        total: totalCount,
+      });
+    } catch (error: any) {
+      console.error("Filter breakdown error:", error);
+      return reply.status(400).send({ error: error.message });
+    }
+  });
+
   // Statystyki dla epok (dla modułu powtórek)
   fastify.get("/epoch-stats", async (request, reply) => {
     try {
