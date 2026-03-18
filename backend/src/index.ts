@@ -23,6 +23,7 @@ console.log(
 );
 console.log("=================");
 import cors from "@fastify/cors";
+import { testLandingRoutes } from "./routes/testLanding.routes";
 import cron from "node-cron";
 import multipart from "@fastify/multipart";
 import { uploadRoutes } from "./routes/upload.routes";
@@ -170,6 +171,9 @@ console.log("✓ Materials routes registered at /api/materials/*");
 
 fastify.register(contentRoutes, { prefix: "/api/content" });
 console.log("✓ Content routes registered at /api/content/*");
+
+fastify.register(testLandingRoutes, { prefix: "/api/tests" });
+console.log("✓ Test landing routes registered at /api/tests/*");
 
 // Error handler
 fastify.setErrorHandler(async (error) => {
