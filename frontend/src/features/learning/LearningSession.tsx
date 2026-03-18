@@ -686,6 +686,13 @@ export const LearningSession: React.FC = () => {
     }
   };
 
+  const activeFilterCount = [
+    sessionFilters.work,
+    sessionFilters.epoch,
+    sessionFilters.type,
+    sessionFilters.difficulty?.length,
+  ].filter(Boolean).length;
+
   const { data: filterBreakdown } = useFilterBreakdown(
     sessionFilters,
     sessionActive,
@@ -3212,6 +3219,26 @@ export const LearningSession: React.FC = () => {
         isLoading={isLoadingNext}
         worksStats={worksStats}
       />
+      {sessionActive && !showFeedback && (
+        <button
+          onClick={() => setShowFilterDrawer(true)}
+          className="fixed bottom-6 right-6 z-30 flex items-center gap-2
+               px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white 
+               rounded-full shadow-lg hover:shadow-xl
+               transition-all hover:scale-105"
+        >
+          <Filter className="w-5 h-5" />
+
+          {activeFilterCount > 0 && (
+            <span
+              className="w-5 h-5 bg-white text-blue-600 text-xs font-bold 
+                       rounded-full flex items-center justify-center"
+            >
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
+      )}
     </div>
   );
 };
