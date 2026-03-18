@@ -206,7 +206,10 @@ const start = async () => {
 
     await fastify.listen({ port, host });
 
+    if (process.send) process.send("ready");
+
     console.log(`🚀 Server running on http://${host}:${port}`);
+
     console.log(`📊 Health: http://${host}:${port}/health`);
     console.log(`🔐 Login: http://${host}:${port}/api/auth/login`);
     console.log(`📚 Study Plan: http://${host}:${port}/api/study/*`);

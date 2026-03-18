@@ -59,11 +59,9 @@ jobs:
             npm ci
             npm run build
 
-            echo "=== Restart backend (downtime: ~2s) ==="
+            echo "=== Zero-downtime reload ==="
             cd /var/www/maturapolski/backend
-            pm2 delete maturapolski-backend || true
-            rm -f /home/ubuntu/.pm2/dump.pm2
-            pm2 start dist/index.js --name maturapolski-backend
+            pm2 reload ecosystem.config.cjs
             pm2 save
 
             sleep 3
