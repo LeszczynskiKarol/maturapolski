@@ -9,6 +9,9 @@ stop-app.ps1
 maturapolski-key*
 maturapolski-key.pub*
 
+moja-aplikacja-key-pair.ppk*
+moja-aplikacja-key-pair.pem*
+
 # Environment variables
 .env
 .env.local
