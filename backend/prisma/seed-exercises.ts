@@ -13,20 +13,20 @@ async function seedExercises() {
       difficulty: 1,
       points: 1,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question: "Kto jest autorką \u201EMedalionów\u201D?",
+      work: "Inny świat",
+      question: "Kto jest autorem \u201EInnego świata\u201D?",
       content: {
         options: [
-          "Zofia Nałkowska",
-          "Hanna Krall",
-          "Maria Dąbrowska",
-          "Wisława Szymborska",
+          "Gustaw Herling-Grudziński",
+          "Tadeusz Borowski",
+          "Aleksander Sołżenicyn",
+          "Primo Levi",
         ],
       },
       correctAnswer: 0,
       metadata: {
         explanation:
-          "\u201EMedaliony\u201D to zbiór opowiadań Zofii Nałkowskiej, wydany w 1946 roku. Autorka napisała je na podstawie pracy w Głównej Komisji Badania Zbrodni Hitlerowskich w Polsce.",
+          "\u201EInny świat\u201D to dzieło Gustawa Herlinga-Grudzińskiego, oparte na jego osobistych doświadczeniach z sowieckiego łagru w Jercewie. Książka powstała w latach 1949\u20131950.",
       },
     },
     {
@@ -35,20 +35,43 @@ async function seedExercises() {
       difficulty: 1,
       points: 1,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question: "Jakie motto poprzedza zbiór \u201EMedalionów\u201D?",
+      work: "Inny świat",
+      question: "W jakim obozie przebywał narrator \u201EInnego świata\u201D?",
       content: {
         options: [
-          "\u201ENie zabijaj\u201D",
-          "\u201ELudzie ludziom zgotowali ten los\u201D",
-          "\u201ECzłowiek jest mocny\u201D",
-          "\u201ERzeczywistość jest do zniesienia\u201D",
+          "W Oświęcimiu",
+          "Na Kołymie",
+          "W łagrze w Jercewie pod Archangielskiem",
+          "W Dachau",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Narrator trafił do sowieckiego łagru (obozu pracy przymusowej) w Jercewie, w obwodzie archangielskim, na północy Rosji. To tam rozgrywa się większość akcji utworu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Inny świat",
+      question:
+        "Skąd pochodzi motto \u201EInnego świata\u201D, zaczynające się od słów: \u201ETu otwierał się inny, odrębny świat, do niczego niepodobny\u2026\u201D?",
+      content: {
+        options: [
+          "Z \u201EArchipelagu Gułag\u201D Aleksandra Sołżenicyna",
+          "Z \u201EZapisków z martwego domu\u201D Fiodora Dostojewskiego",
+          "Z \u201EBraci Karamazow\u201D Fiodora Dostojewskiego",
+          "Z \u201EZbrodni i kary\u201D Fiodora Dostojewskiego",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Motto \u201ELudzie ludziom zgotowali ten los\u201D pochodzi z \u201EDzienników czasów wojny\u201D Nałkowskiej. Podkreśla, że zbrodnie wojenne są dziełem ludzi — nie sił nadprzyrodzonych, nie żywiołów, lecz świadomych ludzkich decyzji.",
+          "Motto pochodzi z \u201EZapisków z martwego domu\u201D Dostojewskiego, który opisywał pobyt na carskiej katordze. Grudziński świadomie nawiązuje do tradycji rosyjskiej literatury więziennej, ukazując ciągłość systemu represji.",
       },
     },
     {
@@ -57,37 +80,20 @@ async function seedExercises() {
       difficulty: 1,
       points: 1,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question: "Ile opowiadań zawiera zbiór \u201EMedaliony\u201D?",
-      content: {
-        options: ["Pięć", "Sześć", "Osiem", "Dwanaście"],
-      },
-      correctAnswer: 2,
-      metadata: {
-        explanation:
-          "Zbiór zawiera osiem opowiadań: \u201EProfesor Spanner\u201D, \u201EDno\u201D, \u201EKobieta cmentarna\u201D, \u201EPrzy torze kolejowym\u201D, \u201EDwojra Zielona\u201D, \u201EWiza\u201D, \u201ECzłowiek jest mocny\u201D oraz \u201EDorośli i dzieci w Oświęcimiu\u201D.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 1,
-      points: 1,
-      epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question: "Czym zajmował się profesor Spanner w Instytucie Anatomicznym?",
+      work: "Inny świat",
+      question: "Za co narrator został aresztowany przez NKWD?",
       content: {
         options: [
-          "Prowadził eksperymenty z odżywianiem więźniów",
-          "Preparował kwiaty i rośliny lecznicze",
-          "Leczył rannych żołnierzy niemieckich",
-          "Produkował mydło z ludzkiego tłuszczu i gromadził ludzkie ciała",
+          "Za udział w powstaniu warszawskim",
+          "Za działalność w Armii Krajowej",
+          "Za kradzież dokumentów wojskowych",
+          "Za próbę przekroczenia granicy sowiecko-litewskiej — oskarżono go o szpiegostwo",
         ],
       },
       correctAnswer: 3,
       metadata: {
         explanation:
-          "Profesor Spanner kierował Instytutem Anatomicznym we Wrzeszczu pod Gdańskiem. Gromadził setki ludzkich ciał i kierował produkcją mydła z ludzkiego tłuszczu w tzw. Palarni — czerwonym domku na terenie Instytutu.",
+          "Herling-Grudziński został aresztowany w marcu 1940 roku przy próbie przekroczenia granicy sowiecko-litewskiej. Postawiono mu absurdalny zarzut szpiegostwa — m.in. dlatego, że miał wysokie buty, które skojarzono z obuwiem oficerskim.",
       },
     },
     {
@@ -96,20 +102,21 @@ async function seedExercises() {
       difficulty: 1,
       points: 1,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question: "W jakim obozie koncentracyjnym przebywała Dwojra Zielona?",
+      work: "Inny świat",
+      question:
+        "Jak nazywał się więzień, który celowo przypalał sobie rękę w ogniu, by nie pracować dla systemu sowieckiego?",
       content: {
         options: [
-          "W Oświęcimiu",
-          "W Ravensbrück",
-          "Na Majdanku",
-          "W Treblince",
+          "Gorcew",
+          "Kowal",
+          "Michaił Aleksiejewicz Kostylew",
+          "Rusto Karinen",
         ],
       },
       correctAnswer: 2,
       metadata: {
         explanation:
-          "Dwojra Zielona trafiła na Majdanek, a następnie do fabryki amunicji w Skarżysku-Kamiennej, później do Częstochowy. Straciła oko podczas \u201Ezabawy\u201D Niemców w Sylwestra 1943 roku w Międzyrzecu.",
+          "Kostylew to młody Rosjanin, wychowany w kulcie komunizmu, który po rozczarowaniu systemem buntował się przez samookaleczenie — przypalał rękę, by uniknąć pracy. Jego historii poświęcony jest rozdział \u201ERęka w ogniu\u201D.",
       },
     },
     {
@@ -118,43 +125,44 @@ async function seedExercises() {
       difficulty: 1,
       points: 1,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "Jak nazywa się bohater opowiadania \u201ECzłowiek jest mocny\u201D?",
+        "Do jakiego gatunku literackiego należy \u201EInny świat\u201D?",
       content: {
         options: [
-          "Jakub Zielony",
-          "Michał P.",
-          "Von Bergen",
-          "Doktor Mansfeld",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Michał P. to młody Żyd atletycznej budowy, który pracował przy kopaniu masowych grobów w Lesie Rzuchowskim koło Chełmna. Rozpoznał tam zwłoki swojej żony i dzieci.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 1,
-      points: 1,
-      epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question: "Do jakiego gatunku literackiego należą \u201EMedaliony\u201D?",
-      content: {
-        options: [
-          "Literatura faktu — opowiadania o charakterze reportażu",
-          "Dramat wojenny",
-          "Powieść historyczna",
-          "Pamiętnik autobiograficzny",
+          "Literatura faktu — powieść autobiograficzna łącząca cechy pamiętnika, reportażu i eseju",
+          "Dramat psychologiczny",
+          "Powieść przygodowa",
+          "Powieść fantasy",
         ],
       },
       correctAnswer: 0,
       metadata: {
         explanation:
-          "\u201EMedaliony\u201D to literatura faktu — opowiadania bliskie reportażowi i sprawozdaniu sądowemu. Oparte są na autentycznych relacjach świadków, zeznaniach przed komisją i osobistych obserwacjach autorki.",
+          "\u201EInny świat\u201D to wypowiedź wielogatunkowa: łączy elementy pamiętnika (osobiste doświadczenia), reportażu (dokumentalność), autobiografii i eseju historyczno-filozoficznego. Należy do literatury łagrowej/obozowej.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 1,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Inny świat",
+      question:
+        "Dzięki jakiemu wydarzeniu historycznemu narrator odzyskał wolność?",
+      content: {
+        options: [
+          "Dzięki ucieczce z obozu",
+          "Dzięki amnestii dla Polaków po pakcie Sikorski-Majski",
+          "Dzięki zakończeniu II wojny światowej",
+          "Dzięki interwencji Czerwonego Krzyża",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Po podpisaniu paktu Sikorski-Majski (lipiec 1941) ogłoszono amnestię dla polskich więźniów w ZSRR. Narrator został zwolniony 20 stycznia 1942 roku i dołączył do armii gen. Andersa.",
       },
     },
 
@@ -166,20 +174,20 @@ async function seedExercises() {
       difficulty: 1,
       points: 1,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question: "Które opowiadania wchodzą w skład \u201EMedalionów\u201D?",
+      work: "Inny świat",
+      question: "Które postacie pojawiają się w \u201EInnym świecie\u201D?",
       content: {
         options: [
-          "\u201EProfesor Spanner\u201D",
-          "\u201EPrzy torze kolejowym\u201D",
-          "\u201EProszę państwa do gazu\u201D",
-          "\u201EWiza\u201D",
+          "Michaił Kostylew — więzień, który przypalał sobie rękę",
+          "Marusia — ofiara zbiorowego gwałtu urków",
+          "Tadek — narrator-kapo z Oświęcimia",
+          "Natalia Lwowna — kobieta, która pożyczyła narratorowi \u201EZapiski z martwego domu\u201D",
         ],
       },
       correctAnswer: [0, 1, 3],
       metadata: {
         explanation:
-          "\u201EProfesor Spanner\u201D, \u201EPrzy torze kolejowym\u201D i \u201EWiza\u201D to opowiadania Nałkowskiej. \u201EProszę państwa do gazu\u201D to opowiadanie Tadeusza Borowskiego — nie należy do \u201EMedalionów\u201D.",
+          "Kostylew, Marusia i Natalia Lwowna to postacie z \u201EInnego świata\u201D. Tadek to narrator \u201EOpowiadań\u201D Tadeusza Borowskiego — nie występuje u Grudzińskiego.",
       },
     },
     {
@@ -188,32 +196,41 @@ async function seedExercises() {
       difficulty: 1,
       points: 1,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question: "Połącz opowiadania z ich bohaterkami/bohaterami:",
+      work: "Inny świat",
+      question: "Połącz postacie z ich historiami:",
       content: {
-        matchingType: "stories_to_characters",
+        matchingType: "characters_to_stories",
         leftColumn: [
-          { id: "A", text: "\u201EDno\u201D" },
-          { id: "B", text: "\u201EDwojra Zielona\u201D" },
-          { id: "C", text: "\u201ECzłowiek jest mocny\u201D" },
-          { id: "D", text: "\u201EWiza\u201D" },
+          { id: "A", text: "Kostylew" },
+          { id: "B", text: "Gorcew" },
+          { id: "C", text: "Dimka" },
+          { id: "D", text: "Pamfiłow" },
         ],
         rightColumn: [
-          { id: "1", text: "Młoda kobieta na kulach, chrześcijanka" },
-          { id: "2", text: "Michał P., Żyd atletycznej budowy" },
-          { id: "3", text: "Kobieta z Ravensbrück, matka dwojga dzieci" },
-          { id: "4", text: "Kobieta z czarną przepaską na oku" },
+          { id: "1", text: "Były pop, odrąbał sobie stopę" },
+          {
+            id: "2",
+            text: "Stracił wolę życia, gdy syn się od niego odwrócił",
+          },
+          {
+            id: "3",
+            text: "Przypalał rękę w ogniu, popełnił samobójstwo wrzątkiem",
+          },
+          {
+            id: "4",
+            text: "Były enkawudzista, \u201Ezabity pracą\u201D przez współwięźniów",
+          },
         ],
       },
       correctAnswer: [
         [0, 2],
         [1, 3],
-        [2, 1],
-        [3, 0],
+        [2, 0],
+        [3, 1],
       ],
       metadata: {
         explanation:
-          "\u201EDno\u201D — siwa kobieta, matka szukająca dzieci, więźniarka Ravensbrück. \u201EDwojra Zielona\u201D — kobieta z przepaską na oku, straciła je od strzału. \u201ECzłowiek jest mocny\u201D — Michał P. \u201EWiza\u201D — młoda kobieta na kulach, chrześcijanka z obozu.",
+          "Kostylew — przypalał rękę, oblał się wrzątkiem. Gorcew — rozpoznany jako były NKWD, \u201Ezabity pracą\u201D (zamarznięty). Dimka — były pop, odrąbał sobie stopę. Pamfiłow — Kozak, stracił wolę życia po odcięciu się syna Saszy.",
       },
     },
     {
@@ -222,21 +239,21 @@ async function seedExercises() {
       difficulty: 1,
       points: 1,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "Które miejsca pojawiają się w \u201EMedalionach\u201D jako miejsca zbrodni?",
+        "Które miejsca w łagrze Jercew pełniły szczególną rolę w życiu więźniów?",
       content: {
         options: [
-          "Instytut Anatomiczny we Wrzeszczu pod Gdańskiem",
-          "Las Rzuchowski koło Chełmna",
-          "Obóz w Oświęcimiu-Brzezince",
-          "Berlin — siedziba Gestapo",
+          "Trupiarnia — barak dla nieuleczalnie chorych, skazanych na śmierć z głodu",
+          "Dom Swidanij — barak, w którym więźniowie mogli spotkać się z rodziną",
+          "Szpital — jedyne miejsce z czystym łóżkiem i większą racją jedzenia",
+          "Biblioteka uniwersytecka — z bogatym księgozbiorem europejskim",
         ],
       },
       correctAnswer: [0, 1, 2],
       metadata: {
         explanation:
-          "Instytut Anatomiczny (mydło z ludzi), Las Rzuchowski (masowe groby), Oświęcim (komory gazowe) to miejsca zbrodni opisane w zbiorze. Berlin jako siedziba Gestapo nie jest miejscem akcji żadnego opowiadania.",
+          "Trupiarnia, Dom Swidanij i szpital to kluczowe miejsca łagru. Trupiarnia = \u201Eemerytura\u201D (śmierć). Dom Swidanij = rzadkie widzenia z rodziną. Szpital = jedyna \u201Eoaza\u201D. Biblioteki uniwersyteckiej w łagrze nie było.",
       },
     },
 
@@ -250,23 +267,20 @@ async function seedExercises() {
       difficulty: 2,
       points: 1,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question:
-        "W opowiadaniu \u201EProfesor Spanner\u201D preparator zeznaje przed Komisją. Co mówi, zapytany, czy ktoś powiedział mu, że produkcja mydła z ludzkiego tłuszczu jest przestępstwem?",
+      work: "Inny świat",
+      question: "Co to były \u201Enocne łowy\u201D w łagrze?",
       content: {
-        context:
-          "Preparator zeznaje przed Komisją Badania Zbrodni. Na pytanie o świadomość przestępstwa odpowiada z \u201Ezupełną szczerością\u201D.",
         options: [
-          "\u201ETak, Spanner nas ostrzegał, ale kazał kontynuować\u201D",
-          "\u201ENie mieliśmy z tym nic wspólnego, to robili tylko studenci\u201D",
-          "\u201EWiedzieliśmy, ale baliśmy się sprzeciwić\u201D",
-          "\u201ETego nikt nie powiedział\u201D",
+          "Nocne polowania na zwierzynę w lesie przez więźniów",
+          "Potajemne handlowanie żywnością",
+          "Nocne ucieczki z obozu",
+          "Zbiorowy gwałt urków (więźniów kryminalnych) na kobietach wychodzących po zmroku z baraku",
         ],
       },
       correctAnswer: 3,
       metadata: {
         explanation:
-          "Preparator odpowiada: \u201ETego nikt nie powiedział\u201D — z zupełną szczerością, bez poczucia winy. To kluczowy moment opowiadania: zbrodnia stała się \u201Enormalną\u201D czynnością, nikt nie wskazał jej jako przestępstwa. Świadczy to o całkowitym zatarciu granic moralnych.",
+          "\u201ENocne łowy\u201D to eufemizm na zbiorowy gwałt. W rozdziale o tym tytule urkowie pod wodzą Kowala napadli na Marusię, młodą więźniarkę, która po zmroku wyszła z baraku. To jeden z najbardziej drastycznych epizodów ukazujących degenerację moralną w łagrze.",
       },
     },
     {
@@ -275,68 +289,20 @@ async function seedExercises() {
       difficulty: 2,
       points: 1,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question:
-        "Jak jeden z profesorów-kolegów Spannera tłumaczy, dlaczego mógł przypuścić, że Spanner produkuje mydło z ciał ludzkich?",
-      content: {
-        context:
-          "Po wizycie w Instytucie dwóch starszych profesorów-lekarzy zeznaje oddzielnie przed Komisją. Jeden z nich — tęgi i dobroduszny — po namyśle odpowiada na pytanie, czy mógł przypuścić, że Spanner wytwarza mydło z ciał.",
-        options: [
-          "\u201EBo Spanner był znany z okrucieństwa\u201D",
-          "\u201EBo Niemcy przeżywały wielki brak tłuszczów, więc wzgląd na dobro państwa mógł go do tego skłonić\u201D",
-          "\u201EBo Spanner już wcześniej łamał prawo medyczne\u201D",
-          "\u201ENie, nigdy bym tego nie przypuścił\u201D",
-        ],
-      },
-      correctAnswer: 1,
-      metadata: {
-        explanation:
-          "Profesor tłumaczy zbrodnię pragmatycznie — brakiem tłuszczów w Rzeszy i \u201Edobrem państwa\u201D. To przerażający przykład racjonalizacji zła: masowe morderstwo sprowadzone do ekonomicznej kalkulacji. Drugi profesor podaje inny powód — posłuszeństwo partyjne.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question: "Co robi kobieta cmentarna, gdy opowiada o zagładzie getta?",
+      work: "Inny świat",
+      question: "Kim był Gorcew i jaki był jego los w obozie?",
       content: {
         options: [
-          "Uśmiecha się z ulgą, bo Żydzi jej nie lubili",
-          "Odmawia mówienia o tym temacie",
-          "Płacze, mówi przyciszonym głosem, wyciera łzy drżącymi rękami — ale powtarza antysemicką propagandę, że Żydzi chcą wszystkich wymordować",
-          "Opowiada spokojnie, bez emocji",
-        ],
-      },
-      correctAnswer: 2,
-      metadata: {
-        explanation:
-          "Kobieta cmentarna jest rozdarta: autentycznie współczuje (płacze, mówi \u201Eto także przecież ludzie\u201D), ale jednocześnie powtarza antysemicką propagandę (\u201EŻydzi wezmą i nas wszystkich wymordują\u201D). To przykład, jak propaganda przenika nawet do ludzi współczujących.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question:
-        "Co się dzieje z ranną kobietą w opowiadaniu \u201EPrzy torze kolejowym\u201D?",
-      content: {
-        options: [
-          "Leży cały dzień przy torze, nikt jej nie pomaga; wieczorem nieznajomy młody mężczyzna strzela do niej z rewolweru policjanta",
-          "Zostaje zabrana do szpitala przez okolicznych mieszkańców",
-          "Umiera sama z wykrwawienia w nocy",
-          "Policjanci zabierają ją na posterunek i udzielają pomocy",
+          "Byłym funkcjonariuszem NKWD, który został rozpoznany przez współwięźniów — dokonali na nim samosądu, \u201Ezabijając go pracą\u201D, aż zamarł w zaspie",
+          "Nauczycielem, który uczył więźniów czytać — zginął przy próbie ucieczki",
+          "Lekarzem obozowym, który pomagał więźniom — zmarł na tyfus",
+          "Polskim oficerem, który zorganizował bunt — rozstrzelany",
         ],
       },
       correctAnswer: 0,
       metadata: {
         explanation:
-          "Ranna kobieta leży cały dzień przy torze. Ludzie podchodzą, patrzą, odchodzą — nikt nie zabiera jej do domu ani do szpitala. Tylko stara kobieta przynosi mleko i chleb. Wieczorem policjant oddaje rewolwer młodemu mężczyźnie, który do niej strzela. Opowiadający mówi: \u201EDlaczego on do niej strzelił, to nie jest jasne\u201D.",
+          "Gorcew to były enkawudzista o \u201Etępej twarzy fanatyka\u201D. Został rozpoznany w obozie jako dawny kat. Więźniowie \u201Ezabili go pracą\u201D — przydzielano mu najcięższą robotę, najgorszy kocioł, aż osłabiony zamarł w lesie. Grudziński komentuje: \u201Erzucono lwa na pożarcie niewolnikom\u201D.",
       },
     },
     {
@@ -345,45 +311,22 @@ async function seedExercises() {
       difficulty: 2,
       points: 1,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question: "Dlaczego Dwojra Zielona chciała przeżyć wojnę?",
+      work: "Inny świat",
+      question: "Dlaczego Kostylew rozczarował się komunizmem?",
       content: {
         context:
-          "Dwojra mówi poufnie narratorce o swojej motywacji do życia, mimo utraty oka, rodziny i wolności.",
+          "Kostylew wychowywał się w ślepej wierze w system sowiecki, wpojonej przez ojca. Na studiach w Akademii Morskiej we Władywostoku przypadkiem trafił do prywatnej wypożyczalni książek.",
         options: [
-          "Żeby odnaleźć męża",
-          "Żeby się zemścić na Niemcach",
-          "Żeby wyemigrować do Ameryki",
-          "Żeby opowiedzieć światu prawdę o zbrodniach: \u201ENiech świat o tym wie, co oni robili\u201D",
-        ],
-      },
-      correctAnswer: 3,
-      metadata: {
-        explanation:
-          "Dwojra mówi: \u201Eja chciałam żyć [...] po to, żeby powiedzieć wszystko tak, jak pani teraz mówię. Niech świat o tym wie, co oni robili\u201D. Chciała być świadkiem — przeżyć, by dać świadectwo. To nadaje jej cierpieniu sens i cel.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question:
-        "W jaki sposób Dwojra Zielona zdobywała jedzenie w Skarżysku-Kamiennej?",
-      content: {
-        options: [
-          "Kradła z magazynu obozowego",
-          "Dostawała paczki od rodziny",
-          "Wyrywała sobie złote zęby i sprzedawała je za chleb",
-          "Handlowała ubraniami",
+          "Bo zobaczył bogactwo zachodnich dyplomatów",
+          "Bo jego ojciec zdradził ideały partii",
+          "Bo dzięki lekturze literatury francuskiej (Balzac, Stendhal, Flaubert) odkrył istnienie innego świata — zrozumiał, że partia ukrywała przed nim prawdę o Zachodzie",
+          "Bo został pobity przez strażników obozowych",
         ],
       },
       correctAnswer: 2,
       metadata: {
         explanation:
-          "Dwojra opowiada: \u201ESama wyrwałam sobie złote zęby\u201D — ruszała je kilka dni, aż dawały się wyciągnąć. Za jeden ząb dostawała 80-85 złotych i kupowała sobie chleb. To drastyczny obraz desperacji i woli przeżycia.",
+          "Kostylew przez lekturę literatury francuskiej poznał świat, o którym nie wiedział. Zrozumiał, że \u201Eukrywano przed nim całą prawdę\u201D. W dyskusji z kolegami wykrzyknął hasło \u201EWyzwolić Zachód!\u201D — za co został aresztowany i skazany na 10 lat łagru.",
       },
     },
     {
@@ -392,45 +335,20 @@ async function seedExercises() {
       difficulty: 2,
       points: 1,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question:
-        "Co Michał P. zrobił, gdy rozpoznał w masowym grobie zwłoki swojej żony i dzieci?",
-      content: {
-        context:
-          "Michał P. pracował przy kopaniu masowych grobów w Lesie Rzuchowskim. Pewnego dnia z trzeciego samochodu wyrzucono zwłoki jego rodziny.",
-        options: [
-          "Położył się na zwłokach żony i prosił, żeby go zastrzelili — Niemiec odmówił, mówiąc, że \u201Eczłowiek jest mocny, może jeszcze dobrze popracować\u201D",
-          "Uciekł natychmiast z obozu",
-          "Zemdlał i odwieziono go do szpitala",
-          "Potajemnie pochował ich osobno w lesie",
-        ],
-      },
-      correctAnswer: 0,
-      metadata: {
-        explanation:
-          "Michał P. zeznaje: \u201EWtedy położyłem się na zwłokach mojej żony i powiedziałem, żeby mnie zastrzelili. [...] Niemiec powiedział: Człowiek jest mocny, może jeszcze dobrze popracować\u201D. Tytuł opowiadania pochodzi od tych słów kata — cyniczne uznanie siły ofiary jako narzędzia pracy.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question: "Co to jest \u201Ewiza\u201D w opowiadaniu o tym tytule?",
+      work: "Inny świat",
+      question: "W jaki sposób Kostylew popełnił samobójstwo?",
       content: {
         options: [
-          "Dokument pozwalający na wyjazd z obozu",
-          "Łąka pod lasem, na którą wyganiano kobiety z bloków na cały dzień, bez jedzenia, na zimnie",
-          "Specjalny barak szpitalny",
-          "Kara polegająca na staniu w lodowatej wodzie",
+          "Powiesił się w baraku",
+          "Oblał się wrzątkiem w łaźni, gdy dowiedział się o przeniesieniu na Kołymę",
+          "Uciekł z obozu i zamarzł w lesie",
+          "Odmówił jedzenia i umarł z głodu",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Bohaterka wyjaśnia: \u201EA wiza to jest łąka pod samym lasem, pod drzewami. Stały tam na zimnie przez cały dzień bez jedzenia i bez żadnej roboty\u201D. Wyganiano tam kobiety z bloków na czas sprzątania, aż do selekcji.",
+          "Kostylew dowiedział się, że ma zostać przeniesiony na Kołymę — co oznaczało pewną śmierć. Nie mógł się też spotkać z ukochaną matką, która właśnie jechała na widzenie. Oblał się wrzątkiem i zmarł w ogromnym cierpieniu. Narrator chciał go zastąpić, ale mu odmówiono.",
       },
     },
     {
@@ -439,21 +357,110 @@ async function seedExercises() {
       difficulty: 2,
       points: 1,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question:
-        "Co zrobiły dzieci w Oświęcimiu, przeznaczone do komory gazowej, gdy dowiedziały się o swoim losie?",
+      work: "Inny świat",
+      question: "Czym była \u201ETrupiarnia\u201D w łagrze?",
       content: {
         options: [
-          "Spokojnie szły do komory",
-          "Nic nie wiedziały do ostatniej chwili",
-          "Próbowały uciekać przez druty",
-          "Rozbiegały się po obozie i chowały, płakały i wołały: \u201EMy nie chcemy do gazu! My chcemy żyć!\u201D",
+          "Kostnicą dla zmarłych więźniów",
+          "Miejscem, gdzie palono ciała zmarłych",
+          "Izbą karną, w której katowano za przewinienia",
+          "Barakiem dla więźniów zbyt słabych do pracy — teoretycznie mieli odpocząć, ale z powodu obciętych racji żywnościowych najczęściej umierali",
         ],
       },
       correctAnswer: 3,
       metadata: {
         explanation:
-          "Nałkowska pisze w \u201EDorośli i dzieci w Oświęcimiu\u201D: \u201EOkoło 600 dzieci, przeznaczonych do uduszenia, trzymano w zamknięciu [...] Rozbiegały się po obozie i chowały [...] Słychać było z daleka, jak płakały i wołały o ratunek\u201D.",
+          "Trupiarnia to barak dla niepracujących więźniów — chorych, wycieńczonych. Ironicznie nazywana \u201Eemeryturą\u201D. Obcinano im racje żywnościowe, więc zamiast wyzdrowieć — umierali. Sam narrator trafił tam po proteście głodowym.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Inny świat",
+      question:
+        "Kim była Natalia Lwowna i jaką rolę odegrała w życiu narratora?",
+      content: {
+        options: [
+          "Kobietą pracującą w biurze rachmistrzów, o niezwykłej wrażliwości na sztukę — pożyczyła narratorowi \u201EZapiski z martwego domu\u201D Dostojewskiego",
+          "Strażniczką obozową, która pomagała więźniom potajemnie",
+          "Żoną komendanta obozu",
+          "Lekarką, która leczyła narratora w szpitalu",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "Natalia Lwowna to postać o przeciętnej urodzie, ale niezwykłej wrażliwości. Pożyczyła narratorowi \u201EZapiski z martwego domu\u201D — lektura ta wstrząsnęła Grudzińskim. Natalia czerpała siłę z przekonania, że może wybrać własną śmierć. Próbowała popełnić samobójstwo podczas koncertu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Inny świat",
+      question:
+        "Dlaczego narrator podjął protest głodowy pod koniec pobytu w łagrze?",
+      content: {
+        options: [
+          "Bo chciał lepsze jedzenie",
+          "Bo ukarał go komendant za nieposłuszeństwo",
+          "Bo po ogłoszeniu amnestii dla Polaków (pakt Sikorski-Majski) kilku Polaków, w tym narratora, pominięto przy zwalnianiu — głodówka była desperackim protestem",
+          "Bo inni więźniowie go do tego namówili",
+        ],
+      },
+      correctAnswer: 2,
+      metadata: {
+        explanation:
+          "Po pakcie Sikorski-Majski zwolniono większość Polaków, ale kilku pominięto. Narrator wraz z pozostałymi podjął protest głodowy. Opuchnięty z głodu trafił do szpitala, a potem do Trupiarni. Ostatecznie został zwolniony 20 stycznia 1942 roku.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Inny świat",
+      question: "Co stało się z Ponomarenką w dniu zakończenia jego wyroku?",
+      content: {
+        options: [
+          "Został zwolniony i wrócił do rodziny",
+          "Uciekł z obozu przed świtem",
+          "Przeniesiono go do innego łagru",
+          "Otrzymał wiadomość o bezterminowym przedłużeniu pobytu — położył się na pryczy i zmarł na zawał serca",
+        ],
+      },
+      correctAnswer: 3,
+      metadata: {
+        explanation:
+          "Ponomarenko to jeden z najbardziej wstrząsających epizodów. W dniu, gdy miał wyjść na wolność, poinformowano go o przedłużeniu wyroku bezterminowo. Położył się na pryczy i zmarł na zawał. To obraz totalnego bezprawia systemu.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Inny świat",
+      question: "Kim byli \u201Eurkowie\u201D w łagrze?",
+      content: {
+        options: [
+          "Więźniami politycznymi, którzy organizowali opór",
+          "Więźniami kryminalnymi — złodziejami, mordercami — którzy tworzyli obozową mafię i terroryzowali pozostałych",
+          "Strażnikami obozowymi niskiego szczebla",
+          "Lekarzami obozowymi",
+        ],
+      },
+      correctAnswer: 1,
+      metadata: {
+        explanation:
+          "Urkowie to więźniowie kryminalni, którzy w hierarchii łagrowej stali wyżej od więźniów politycznych. Tworzyli mafijne struktury, kradli, dokonywali gwałtów (\u201Enocne łowy\u201D), grali w karty o cudzą odzież (np. płaszcz Szkłowskiego). System celowo wykorzystywał ich do terroryzowania politycznych.",
       },
     },
 
@@ -465,79 +472,24 @@ async function seedExercises() {
       difficulty: 2,
       points: 1,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question:
-        "Uzupełnij zdania dotyczące opowiadania \u201EProfesor Spanner\u201D:",
+      work: "Inny świat",
+      question: "Uzupełnij zdania o kompozycji \u201EInnego świata\u201D:",
       content: {
         textWithGaps:
-          "W piwnicy Instytutu Anatomicznego leżało (1) trupów zamiast wystarczających czternastu. Produkcja mydła odbywała się w budynku zwanym (2). Profesor Spanner zabronił mówić o mydle nawet (3).",
+          "Narracja jest prowadzona w (1) osobie. Kompozycja utworu jest (2) — rozpoczyna się i kończy sceną poza obozem. Styl łączy (3) obozowy ze stylem wysokim, eseistycznym.",
         gaps: [
-          {
-            id: 1,
-            options: [
-              "pięćdziesiąt",
-              "sto pięćdziesiąt",
-              "trzysta pięćdziesiąt",
-              "tysiąc",
-            ],
-          },
+          { id: 1, options: ["pierwszej", "trzeciej", "drugiej", "mieszanej"] },
           {
             id: 2,
-            options: ["Laboratorium", "Palarnia", "Krematorium", "Szklarnia"],
+            options: ["linearna", "klamrowa", "szkatułkowa", "retrospektywna"],
           },
-          { id: 3, options: ["żonie", "studentom", "policji", "rektorowi"] },
-        ],
-      },
-      correctAnswer: [2, 1, 1],
-      metadata: {
-        explanation:
-          "W piwnicy było 350 trupów (zamiast potrzebnych 14), produkcja odbywała się w Palarni (czerwony domek), a Spanner zabronił mówić o mydle nawet studentom.",
-      },
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question:
-        "Które stwierdzenia o opowiadaniu \u201EDno\u201D są prawdziwe?",
-      content: {
-        options: [
-          "Narratorka to kobieta, która straciła męża i dwoje dzieci",
-          "Opisuje transport bydlęcymi wagonami, w których kobiety jechały siedem dni na stojąco",
-          "Kobiety w fabryce amunicji pracowały po 6 godzin dziennie",
-          "Więźniarki zamykane w bunkrach jadły mięso z trupów współwięźniarek",
-        ],
-      },
-      correctAnswer: [0, 1, 3],
-      metadata: {
-        explanation:
-          "Narratorka straciła rodzinę, jechała 7 dni w zaplombowanym wagonie na stojąco, a więźniarki w bunkrach jadły mięso z trupów (choć surowo za to karano). Praca trwała 12 godzin — nie 6.",
-      },
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 2,
-      points: 1,
-      epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question:
-        "Które stwierdzenia o Michale P. z opowiadania \u201ECzłowiek jest mocny\u201D są prawdziwe?",
-      content: {
-        options: [
-          "Sam zaprowadził swoich rodziców, siostrę z dziećmi i brata z rodziną do samochodu jadącego do Chełmna",
-          "Pracował przy kopaniu masowych grobów w Lesie Rzuchowskim",
-          "Udało mu się uciec, rozcinając nożem płachtę samochodu",
-          "Był starszym człowiekiem, drobnej budowy",
+          { id: 3, options: ["żargon", "humor", "slang", "dialekt"] },
         ],
       },
       correctAnswer: [0, 1, 2],
       metadata: {
         explanation:
-          "Michał P. sam zaprowadził rodzinę do samochodu, pracował przy grobach i uciekł, rozcinając płachtę. NIE był drobny — był \u201Emłody, wielki Żyd atletycznej budowy, o małej głowie\u201D.",
+          "Narracja pierwszoosobowa (narrator = autor). Kompozycja klamrowa — więzienie w Witebsku na początku, spotkanie z byłym więźniem w Rzymie na końcu. Styl łączy slang obozowy (zona, lesopował, łagpunkt) z poetyckim językiem refleksji.",
       },
     },
     {
@@ -546,21 +498,64 @@ async function seedExercises() {
       difficulty: 2,
       points: 1,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question:
-        "Które cechy stylu narracyjnego \u201EMedalionów\u201D są prawdziwe?",
+      work: "Inny świat",
+      question: "Które stwierdzenia o systemie pracy w łagrze są prawdziwe?",
       content: {
         options: [
-          "Styl jest zwięzły, surowy, reportażowy — pozbawiony emocjonalnego komentarza autorki",
-          "Opowiadania oparte są na autentycznych relacjach świadków i zeznaniach przed Komisją",
-          "Nałkowska obszernie komentuje i ocenia zachowania bohaterów",
-          "Celowe przemilczenia i niedopowiedzenia są ważnym elementem narracji",
+          "Wielkość racji żywnościowej zależała od wykonanej normy pracy — im mniej pracowałeś, tym mniej jadłeś",
+          "Więźniowie pracowali głównie przy wyrębie lasu (lesopowale)",
+          "Praca trwała zwykle 4 godziny dziennie",
+          "System \u201Ekotłów\u201D (I, II, III kocioł) dzielił więźniów na kategorie według wydajności",
         ],
       },
       correctAnswer: [0, 1, 3],
       metadata: {
         explanation:
-          "Narracja jest zwięzła, reportażowa, oparta na autentycznych zeznaniach, z celowymi przemilczeniami. Nałkowska NIE komentuje obszernie — jej komentarz jest ograniczony do minimum, a czytelnik sam wyciąga wnioski.",
+          "Racja żywności zależała od normy (system \u201Ekotłów\u201D — I najgorszy, III najlepszy). Główna praca to wyrąb lasu. Praca trwała cały dzień (pobudka 5:30, powrót po zmroku), NIE 4 godziny.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Inny świat",
+      question: "Które formy buntu lub oporu wobec systemu opisuje Grudziński?",
+      content: {
+        options: [
+          "Samookaleczenie — Kostylew przypalał rękę, Dimka odrąbał sobie stopę",
+          "Decyzja o własnej śmierci — Natalia Lwowna, która czerpała siłę z przekonania, że może wybrać samobójstwo",
+          "Zbrojna rewolta więźniów, która zakończyła się sukcesem",
+          "Protest głodowy — narrator i inni Polacy po amnestii",
+        ],
+      },
+      correctAnswer: [0, 1, 3],
+      metadata: {
+        explanation:
+          "Grudziński opisuje różne formy buntu: samookaleczenie (Kostylew, Dimka), decyzja o samobójstwie jako akt wolności (Natalia), protest głodowy (narrator). Zbrojnej rewolty NIE było — ucieczki kończyły się złapaniem lub śmiercią.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 2,
+      points: 1,
+      epoch: "CONTEMPORARY",
+      work: "Inny świat",
+      question: "Które stwierdzenia o losach Marusi są prawdziwe?",
+      content: {
+        options: [
+          "Została zgwałcona zbiorowo przez urków pod wodzą Kowala",
+          "Po gwałcie wróciła do baraku urków i została \u201Edziewczyną\u201D Kowala",
+          "Kowal ostatecznie ją ocalił i pomógł uciec z łagru",
+          "Po ponownym oddaniu przez Kowala całej ósemce urków, poprosiła o przeniesienie do innego obozu",
+        ],
+      },
+      correctAnswer: [0, 1, 3],
+      metadata: {
+        explanation:
+          "Marusia wróciła do Kowala z własnej woli po gwałcie, co chroniło ją przed innymi urkami. Gdy jednak Kowal, pod presją towarzyszy, ponownie ją im oddał — Marusia po trzech dniach poprosiła o przeniesienie. Kowal jej NIE ocalił.",
       },
     },
 
@@ -572,17 +567,17 @@ async function seedExercises() {
       difficulty: 2,
       points: 1,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "Wyjaśnij znaczenie tytułu zbioru \u201EMedaliony\u201D. Skąd pochodzi to słowo w kontekście utworu?",
+        "Wyjaśnij znaczenie tytułu \u201EInny świat\u201D. Dlaczego łagier to \u201Einny świat\u201D?",
       content: {
-        hints: ["architektura nagrobna", "portret zmarłego", "pamięć"],
+        hints: ["motto z Dostojewskiego", "odwrócony dekalog", "inne prawa"],
       },
       correctAnswer:
-        "Medalion w architekturze to owalny element z wizerunkiem zmarłej osoby, umieszczany na nagrobkach i fasadach. Nałkowska używa tego słowa jako metafory: każde opowiadanie jest literackim \u201Emedalikiem\u201D — portretem ofiary ocalonym od zapomnienia. Słowo \u201Emedalion\u201D pojawia się wprost w opowiadaniu \u201EKobieta cmentarna\u201D, gdy mowa o potłuczonych posągach i medalionach nagrobnych.",
+        "Tytuł nawiązuje do motta z Dostojewskiego: \u201ETu otwierał się inny, odrębny świat, do niczego niepodobny\u201D. Łagier to \u201Einny świat\u201D, bo obowiązują w nim inne zasady moralne — \u201Eodwrócony dekalog\u201D: kradzież, donos, przemoc są normą, a litość i solidarność — słabością. To rzeczywistość, w której normalne ludzkie odruchy ulegają degeneracji pod wpływem głodu, strachu i terroru.",
       metadata: {
         explanation:
-          "Tytuł łączy pamięć o zmarłych (medalion nagrobny) z literackim upamiętnieniem. Każde opowiadanie to \u201Emedalion\u201D — wizerunek konkretnego człowieka, ocalonego od całkowitego zapomnienia.",
+          "Tytuł ma wymiar filozoficzny — łagier to osobny mikrokosmos z własnymi prawami, które zaprzeczają cywilizowanym normom. Grudziński pisze: \u201ENas chcieli przyzwyczaić do innego świata\u201D.",
       },
     },
     {
@@ -591,15 +586,15 @@ async function seedExercises() {
       difficulty: 2,
       points: 1,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "Opisz, jak wyglądała ucieczka z pociągu w opowiadaniu \u201EPrzy torze kolejowym\u201D.",
+        "Opisz historię \u201Ezabójcy Stalina\u201D z obozu w Jercewie.",
       content: {},
       correctAnswer:
-        "Więźniowie w ciasnocie wyrywali deski z podłogi wagonu. Trzeba było wypełznąć przez wąską szczelinę ponad łomotem i zgrzytem żelastwa, dopaść osi i przepełznąć do miejsca, skąd skok dawałby szansę ratunku. Ludzie ginęli pod kołami, od uderzeń w słupy i kamienie. Kobieta z opowiadania była trzecią, która zstąpiła w otwór — po niej strzelano z dachu wagonu.",
+        "Więzień trafił do łagru, bo przyjaciel doniósł na niego, że strzelał do obrazu/portretu Stalina. W obozie zachorował na kurzą ślepotę, a potem zwariował — zaczął wierzyć, że naprawdę zabił Stalina. Przed śmiercią krzyczał: \u201EJa zabiłem Stalina!\u201D. Grudziński interpretuje to jako wzięcie na siebie winy, za którą został skazany — system zdołał go złamać do tego stopnia, że zaakceptował absurdalny zarzut.",
       metadata: {
         explanation:
-          "Opis ucieczki jest jednym z najbardziej dramatycznych fragmentów zbioru. Podkreśla desperację ludzi jadących na pewną śmierć i fizyczne ryzyko ucieczki.",
+          "Ta historia to przykład, jak system sowiecki niszczył psychikę: torturami i izolacją doprowadzano ludzi do uwierzenia w własną \u201Ewinę\u201D, nawet gdy zarzut był absurdalny.",
       },
     },
 
@@ -613,26 +608,23 @@ async function seedExercises() {
       difficulty: 3,
       points: 2,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "W opowiadaniu \u201EKobieta cmentarna\u201D Nałkowska dwukrotnie powtarza pewne zdanie. Jaką funkcję ono pełni?",
+        "Grudziński formułuje w rozdziale \u201EGłód\u201D zdanie uważane za kluczowe przesłanie książki. Jak ono brzmi i co oznacza?",
       content: {
-        sourceText: {
-          author: "Zofia Nałkowska",
-          title: "Kobieta cmentarna",
-          text: "Rzeczywistość jest do wytrzymania, gdyż niecała dana jest w doświadczeniu. Albo dana niejednocześnie. Dociera do nas w ułamkach zdarzeń, w strzępach relacji.",
-        },
+        context:
+          "W rozdziale \u201EGłód\u201D narrator analizuje wpływ ekstremalnych warunków na naturę ludzką. Formułuje zdanie: \u201ECzłowiek jest ludzki w ludzkich warunkach\u201D (w innym wariancie: \u201ENie wolno człowiekowi tworzyć nieludzkich warunków, bo człowiek jest ludzki tylko w ludzkich warunkach\u201D).",
         options: [
-          "Wyraża mechanizm obronny ludzkiej psychiki — ludzie mogą znieść rzeczywistość tylko dlatego, że nigdy nie poznają jej w pełni, a tylko we fragmentach",
-          "Jest ironicznym komentarzem do zachowania Niemców",
-          "Opisuje techniczne trudności pracy Komisji Badawczej",
-          "Jest cytatem z dziennika Nałkowskiej, niezwiązanym z treścią opowiadania",
+          "Oznacza, że w nieludzkich warunkach (głód, terror, przemoc) człowiek traci zdolność do zachowań moralnych — nie dlatego, że jest z natury zły, lecz dlatego, że system celowo niszczy w nim człowieczeństwo",
+          "Oznacza, że ludzie z natury są dobrzy i nic nie może ich zmienić",
+          "Oznacza, że tylko silni mogą zachować moralność",
+          "Jest pochwałą systemu obozowego jako szkoły przetrwania",
         ],
       },
       correctAnswer: 0,
       metadata: {
         explanation:
-          "To kluczowe zdanie całego zbioru. Nałkowska formułuje tu mechanizm psychologiczny: ludzie przetrwali, bo nie wiedzieli wszystkiego naraz. Rzeczywistość Holocaustu jest \u201Edo zniesienia\u201D, bo dociera we fragmentach — \u201Ew ułamkach zdarzeń, w strzępach relacji\u201D. Powtórzenie podkreśla jego wagę.",
+          "To centralne przesłanie \u201EInnego świata\u201D: system łagrowy celowo tworzył warunki, w których moralność była \u201Eluksusem\u201D. Grudziński nie potępia ofiar za ich upadki — potępia system, który te upadki wymuszał. Odpowiedzialność spoczywa na twórcach \u201Enieludzkich warunków\u201D.",
       },
     },
     {
@@ -641,23 +633,21 @@ async function seedExercises() {
       difficulty: 3,
       points: 2,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "W opowiadaniu \u201EWiza\u201D bohaterka opowiada o myszach znalezionych w ziemniaku. Co ta historia mówi o jej stanie psychicznym?",
+        "Jaką funkcję pełni \u201EZapiski z martwego domu\u201D Dostojewskiego w strukturze \u201EInnego świata\u201D?",
       content: {
-        context:
-          "Bohaterka — chrześcijanka, więźniarka obozu — opowiada, że nie pozwoliła dać myszy kotowi, bo \u201Epowstała we mnie taka myśl: A jak on będzie, ten kot, jadł te myszy?\u201D. Dodaje: \u201EByła we mnie taka ciekawość jak w gestapowcu\u201D.",
         options: [
-          "Pokazuje, że obóz zniszczył jej zdolność empatii wobec zwierząt",
-          "To zwykła anegdota, nieistotna dla opowiadania",
-          "Ujawnia, że obóz zaszczepił w niej sadystyczną ciekawość (\u201Ejak w gestapowcu\u201D), ale jednocześnie zachowała współczucie — schowała myszy. Wojna zniekształciła jej psychikę, nie niszcząc jej do końca",
-          "Symbolizuje pragnienie zemsty na Niemcach",
+          "Jest luźnym nawiązaniem, bez znaczenia dla fabuły",
+          "Jest ironicznym kontrapunktem — pokazuje, że w carskiej Rosji było lepiej",
+          "Stanowi lustro, w którym narrator widzi ciągłość rosyjskiego systemu represji — od carskiej katorgi po sowiecki łagier. Lektura Dostojewskiego wstrząsnęła narratorem, ukazując mu, że cierpienie się powtarza przez pokolenia",
+          "Służy wyłącznie jako źródło motta",
         ],
       },
       correctAnswer: 2,
       metadata: {
         explanation:
-          "Bohaterka rozpoznaje w sobie sadystyczną ciekawość (\u201Ejak w gestapowcu\u201D), ale jednocześnie zachowuje ludzki odruch — ratuje myszy. To poruszający obraz wewnętrznej walki: obóz zaszczepił w niej impuls agresji, ale jej moralność przetrwała. Schowała myszy \u201Emoże matka je znajdzie i jakoś się uratują\u201D.",
+          "Dostojewski to nie tylko motto, ale klucz interpretacyjny. Narrator, czytając \u201EZapiski\u201D pożyczone od Natalii Lwownej, widzi z przerażającą jasnością ciągłość represji: od cara do Stalina te same mechanizmy. Natalia Lwowna komentuje: \u201Enie było przerwy między upodleniem Dostojewskiego a Rosjan żyjących w komunizmie\u201D.",
       },
     },
     {
@@ -666,21 +656,21 @@ async function seedExercises() {
       difficulty: 3,
       points: 2,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "Jaką funkcję pełni opis przyrody w opowiadaniu \u201EKobieta cmentarna\u201D?",
+        "Czym jest \u201Eodwrócony dekalog\u201D w \u201EInnym świecie\u201D?",
       content: {
         options: [
-          "Jest neutralnym tłem, bez znaczenia symbolicznego",
-          "Tworzy kontrast między pięknem natury a okrucieństwem zagłady — kwitną konwalie, woła wilga, a tymczasem nad gettem wznoszą się kłęby dymu i płomienie",
-          "Symbolizuje nadzieję na rychły koniec wojny",
-          "Służy wyłącznie oddaniu nastroju spokojnego cmentarza",
+          "Modlitwą więźniów odmawianą nocą w baraku",
+          "Metaforą opisującą system wartości łagru, w którym tradycyjne zasady moralne zostały odwrócone — kradzież, donos, egoizm stały się normą przetrwania, a litość i solidarność — niebezpieczną słabością",
+          "Spisem reguł obozowych zawieszonym w baraku",
+          "Tytułem rozdziału o religii w obozie",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Piękno przyrody (konwalie, bratki, wilga, myszka polna) zestawione jest z dymami pożarów getta i odgłosami upadających ciał (\u201Eplask, plask\u201D). Ten kontrast podkreśla absurd zagłady — natura trwa obojętnie wobec ludzkiego cierpienia.",
+          "\u201EOdwrócony dekalog\u201D to metafora opisująca moralność łagru: nie kradnij → kradnij, by przeżyć; nie składaj fałszywego świadectwa → donoś, by zyskać lepszy kocioł; kochaj bliźniego → myśl tylko o sobie. System celowo wytwarzał warunki, w których jedynym priorytetem było przetrwanie za wszelką cenę.",
       },
     },
     {
@@ -689,23 +679,46 @@ async function seedExercises() {
       difficulty: 3,
       points: 2,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "Co oznacza zdanie Nałkowskiej z \u201EDorośli i dzieci w Oświęcimiu\u201D: \u201ETa stała dywidenda płynęła z ludzkiej męczarni\u201D?",
+        "Jaki ekonomiczny cel spełniały łagry sowieckie według Grudzińskiego?",
       content: {
-        context:
-          "Nałkowska w eseistycznym opowiadaniu \u201EDorośli i dzieci w Oświęcimiu\u201D analizuje ekonomiczną stronę systemu obozów: utylizacja kości, tłuszczu, skóry, włosów, a także konfiskata mienia ofiar.",
         options: [
-          "Opisuje dobroczynność Czerwonego Krzyża wobec więźniów",
-          "Więźniowie płacili za pobyt w obozie",
-          "Żołnierze niemieccy nie dostawali żołdu",
-          "Obóz zagłady był przedsięwzięciem ekonomicznym — Rzesza czerpała ciągłe zyski z pracy niewolniczej i mienia zamordowanych, co stanowiło \u201Eekonomiczną rację całej imprezy\u201D",
+          "Były miejscem reedukacji ideologicznej, bez celu ekonomicznego",
+          "Produkowały towary eksportowe dla zachodnich rynków",
+          "Służyły wyłącznie karaniu wrogów politycznych",
+          "Były kluczowym elementem ekonomicznym ZSRR — więźniowie jako niewolnicy budowali infrastrukturę Północy, wycinali lasy, pracowali w kopalniach. Oficjalna propaganda o \u201Ereedukacji\u201D była kłamstwem",
         ],
       },
       correctAnswer: 3,
       metadata: {
         explanation:
-          "Nałkowska odsłania ekonomiczny wymiar zagłady: obozy przynosiły zyski z pracy niewolniczej, konfiskaty mienia, utylizacji ciał (mydło, nawóz, materace). Ideologia rasowa służyła jako \u201Eusprawiedliwienie\u201D tego ekonomicznego celu.",
+          "Grudziński demaskuje kłamstwo o \u201Ereedukacji\u201D: łagry to ekonomiczny filar ZSRR. Więźniowie byli darmową siłą roboczą — wycinali lasy, budowali drogi, pracowali w kopalniach. Celem nie było nawrócenie, lecz eksploatacja do śmierci i zastąpienie następnymi.",
+      },
+    },
+    {
+      type: "CLOSED_SINGLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Inny świat",
+      question:
+        "Grudziński opisuje sposób, w jaki system \u201Epreparował\u201D więźniów. Na czym to polegało?",
+      content: {
+        context:
+          "Narrator opisuje, jak łagier metodycznie łamał psychikę więźniów: \u201EUczucia i myśli obluzowują się\u201D, \u201Epomiędzy skojarzeniami powstają luki\u201D — człowiek popadał w stan tępoty i posłuszeństwa.",
+        options: [
+          "Na celowym niszczeniu woli, tożsamości i uczuć więźnia przez głód, wycieńczenie i terror — aż do stanu tępej uległości, w którym człowiek przestawał myśleć i czuć",
+          "Na fizycznym wzmacnianiu więźniów do ciężkiej pracy",
+          "Na szkoleniu więźniów w nowych zawodach",
+          "Na izolowaniu więźniów od siebie, by nie mogli rozmawiać",
+        ],
+      },
+      correctAnswer: 0,
+      metadata: {
+        explanation:
+          "\u201EPreparowanie\u201D to systematyczne łamanie woli: głód, brak snu, praca ponad siły, terror — aż człowiek tracił zdolność do myślenia i czucia. Stawał się posłusznym narzędziem. To nie efekt uboczny, lecz celowy mechanizm systemu łagrowego.",
       },
     },
     {
@@ -714,44 +727,21 @@ async function seedExercises() {
       difficulty: 3,
       points: 2,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "Jaki efekt osiąga Nałkowska przez \u201Ecelowe przemilczenia\u201D w narracji?",
+        "Jaki styl narracji stosuje Grudziński w \u201EInnym świecie\u201D i dlaczego?",
       content: {
         options: [
-          "Zmusza czytelnika do samodzielnego wyciągania wniosków i domyślania się tego, co bohater nie potrafi lub nie chce powiedzieć — niewypowiedziane jest często straszniejsze niż to, co zostało powiedziane",
-          "Oszczędza miejsce — opowiadania są krótkie z powodów wydawniczych",
-          "Ukrywa tożsamość bohaterów ze względów prawnych",
-          "Pomija mniej ważne wątki fabularne",
-        ],
-      },
-      correctAnswer: 0,
-      metadata: {
-        explanation:
-          "Przemilczenia są celowe i artystycznie znaczące. Np. w \u201EDnie\u201D narratorka mówi: \u201EMnie tak nie męczyli, tyle tylko, że mnie bardzo bili\u201D — to \u201Etyle tylko\u201D kryje w sobie dramat. To, czego nie mówi, jest gorsze od tego, co mówi.",
-      },
-    },
-    {
-      type: "CLOSED_SINGLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 3,
-      points: 2,
-      epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question:
-        "Jakie zachowanie ludzi wobec rannej kobiety w \u201EPrzy torze kolejowym\u201D ujawnia o kondycji moralnej społeczeństwa?",
-      content: {
-        options: [
-          "Ludzie byli odważni i natychmiast pomagali uciekinierom",
-          "Ludzie współczuli, ale nikt nie podjął ryzyka pomocy — strach przed karą śmierci sparaliżował odruch solidarności, ranna została \u201Eodgrodzona od nich pierścieniem przerażenia\u201D",
-          "Ludzie byli obojętni, ponieważ nie widzieli, co się stało",
-          "Wszyscy zostali siłą odciągnięci przez policję",
+          "Sentymentalny i emocjonalny — by wzbudzić litość czytelnika",
+          "Powściągliwy, rzeczowy, łączący dokumentalną precyzję ze stylem eseistycznym i poetyckim — surowość opisu podkreśla grozę faktów, a refleksja nadaje im wymiar filozoficzny",
+          "Humorystyczny — by złagodzić ciężar tematu",
+          "Chaotyczny i urywany — bo pisał z pamięci, bez notatek",
         ],
       },
       correctAnswer: 1,
       metadata: {
         explanation:
-          "Nałkowska pisze: \u201ENieprzeparta była ta siła, która odgradzała ją od nich wszystkich pierścieniem przerażenia\u201D. Ludzie podchodzili, patrzyli, odchodzili — współczuli, ale bali się kary śmierci za pomoc. Tylko stara kobieta przyniosła mleko. Terror zniszczył tkankę solidarności.",
+          "Styl Grudzińskiego łączy trzy płaszczyzny: biograficzną (fakty), psychologiczną (analiza zachowań) i filozoficzną (refleksja o człowieczeństwie). Powściągliwość jest świadomym wyborem — Grudziński \u201Eopisuje nieludzkie cierpienia tak, jak gdyby stanowiły tylko naturalną część ludzkiego losu\u201D (to jego komentarz o Dostojewskim, ale dotyczy też jego samego).",
       },
     },
 
@@ -763,20 +753,21 @@ async function seedExercises() {
       difficulty: 3,
       points: 2,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question: "Które motywy literackie są obecne w \u201EMedalionach\u201D?",
+      work: "Inny świat",
+      question:
+        "Które motywy literackie są kluczowe w \u201EInnym świecie\u201D?",
       content: {
         options: [
-          "Motyw dehumanizacji — sprowadzenia człowieka do surowca (mydło, nawóz, materace)",
-          "Motyw obojętności świadków wobec cierpienia ofiar",
-          "Motyw romantycznego buntu jednostki przeciw systemowi",
-          "Motyw woli przetrwania — pragnienia życia nawet w ekstremalnych warunkach (Dwojra, Michał P.)",
+          "Motyw dehumanizacji — sprowadzania człowieka do narzędzia pracy",
+          "Motyw buntu jako obrony godności — nawet gdy bunt jest daremny (Kostylew, Dimka, protest głodowy)",
+          "Motyw miłości romantycznej jako drogi do szczęścia",
+          "Motyw \u201Eodwróconego dekalogu\u201D — załamania moralności w ekstremalnych warunkach",
         ],
       },
       correctAnswer: [0, 1, 3],
       metadata: {
         explanation:
-          "W \u201EMedalionach\u201D obecne są motywy: dehumanizacji (ciała ludzkie jako surowiec), obojętności świadków (\u201EPrzy torze kolejowym\u201D) i woli przetrwania (Dwojra: \u201Eja chciałam żyć\u201D). Bunt romantyczny NIE jest motywem tego zbioru — to literatura faktu, nie romantyzm.",
+          "Kluczowe motywy: dehumanizacja (praca niewolnicza), bunt (Kostylew, Dimka, głodówka), odwrócony dekalog. Miłość romantyczna NIE jest motywem — relacje w łagrze (Marusia, Fiodorowna) pokazują raczej degradację uczuć niż romantyzm.",
       },
     },
     {
@@ -785,21 +776,68 @@ async function seedExercises() {
       difficulty: 3,
       points: 2,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
+      question: "Uzupełnij zdania dotyczące Domu Swidanij (domu widzeń):",
+      content: {
+        textWithGaps:
+          "Widzenia z rodziną były możliwe (1). Warunkiem dostępu było (2). Przed spotkaniem więzień musiał podpisać (3).",
+        gaps: [
+          {
+            id: 1,
+            options: [
+              "co tydzień",
+              "raz na rok lub rzadziej",
+              "codziennie",
+              "co miesiąc",
+            ],
+          },
+          {
+            id: 2,
+            options: [
+              "dobre zachowanie i 100% normy",
+              "opłacenie strażnika",
+              "przynależność do partii",
+              "znajomość z komendantem",
+            ],
+          },
+          {
+            id: 3,
+            options: [
+              "akt oskarżenia",
+              "deklarację milczenia o warunkach w obozie",
+              "prośbę o amnestię",
+              "list do rodziny",
+            ],
+          },
+        ],
+      },
+      correctAnswer: [1, 0, 1],
+      metadata: {
+        explanation:
+          "Widzenia bardzo rzadkie (raz na rok lub rzadziej). Wymagały nienagannej normy (100%), czystej kartoteki politycznej. Przed spotkaniem podpisywano deklarację milczenia — nie wolno było mówić o warunkach w obozie. Niektóre rodziny odcinały się od \u201Ewroga ludu\u201D.",
+      },
+    },
+    {
+      type: "CLOSED_MULTIPLE",
+      category: "HISTORICAL_LITERARY",
+      difficulty: 3,
+      points: 2,
+      epoch: "CONTEMPORARY",
+      work: "Inny świat",
       question:
-        "Które stwierdzenia o opowiadaniu \u201EDorośli i dzieci w Oświęcimiu\u201D są prawdziwe?",
+        "Które stwierdzenia o absurdalności zarzutów w systemie sowieckim są zgodne z \u201EInnym światem\u201D?",
       content: {
         options: [
-          "Jest jedynym opowiadaniem o charakterze eseistycznym, z szeroką analizą systemu obozów",
-          "Zawiera historię dwóch chłopców, którzy uciekli z samochodu jadącego do komory gazowej i zostali ukryci przez lekarza",
-          "Opisuje scenę, w której dzieci prostowały się na palcach, by przejść pod prętem i uniknąć selekcji do gazu",
-          "Jest najkrótszym opowiadaniem zbioru, składającym się z dwóch akapitów",
+          "Narratora oskarżono o szpiegostwo, bo miał wysokie buty — skojarzono je z obuwiem oficerskim",
+          "Żydowski szewc z Witebska trafił do więzienia za odmowę użycia skrawków skóry do zelowania butów",
+          "Kostylewa skazano za wykrzyknięcie \u201EWyzwolić Zachód!\u201D i czytanie literatury francuskiej",
+          "Wszyscy więźniowie mieli rzetelne procesy z obrońcami",
         ],
       },
       correctAnswer: [0, 1, 2],
       metadata: {
         explanation:
-          "\u201EDorośli i dzieci\u201D to najdłuższe i najbardziej analityczne opowiadanie — esej, nie reportaż. Zawiera historię chłopców ukrytych przez lekarza i scenę selekcji pod prętem (120 cm). NIE jest najkrótsze.",
+          "Absurdalność zarzutów to stały motyw: buty = szpiegostwo, odmowa zelowania = sabotaż, czytanie Balzaca = zdrada. System NIE zapewniał rzetelnych procesów — wyroki wydawano masowo, na podstawie sfabrykowanych dowodów i wymuszonych zeznań.",
       },
     },
     {
@@ -808,59 +846,21 @@ async function seedExercises() {
       difficulty: 3,
       points: 2,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "Uzupełnij zdania o opowiadaniu \u201ECzłowiek jest mocny\u201D:",
-      content: {
-        textWithGaps:
-          "Michał P. pracował w obozie zagłady w (1). Ludzi duszono w samochodach (2). Ciała układano w rowie na przemian, (3).",
-        gaps: [
-          {
-            id: 1,
-            options: ["Oświęcimiu", "Chełmnie", "Treblince", "Majdanku"],
-          },
-          {
-            id: 2,
-            options: ["ciężarowych", "gazowych", "osobowych", "kolejowych"],
-          },
-          {
-            id: 3,
-            options: [
-              "jednego obok drugiego",
-              "głową przy nogach drugiego, twarzą do dołu",
-              "w pozycji stojącej",
-              "w trumnach",
-            ],
-          },
-        ],
-      },
-      correctAnswer: [1, 1, 1],
-      metadata: {
-        explanation:
-          "Michał P. pracował w Chełmnie (nie Oświęcimiu). Ludzi duszono w samochodach gazowych. Ciała układano \u201Ena przemian, jednego głową przy nogach drugiego, bardzo ciasno\u201D, twarzą do dołu.",
-      },
-    },
-    {
-      type: "CLOSED_MULTIPLE",
-      category: "HISTORICAL_LITERARY",
-      difficulty: 3,
-      points: 2,
-      epoch: "CONTEMPORARY",
-      work: "Medaliony",
-      question:
-        "W jakim sensie \u201EMedaliony\u201D łączą perspektywę \u201Ewidzenia bliskiego\u201D i \u201Ewidzenia dalekiego\u201D?",
+        "Które trzy płaszczyzny narracyjne wyróżnia się w \u201EInnym świecie\u201D?",
       content: {
         options: [
-          "\u201EWidzenie bliskie\u201D to perspektywa indywidualnych bohaterów — fragmentaryczna, ograniczona do własnego doświadczenia",
-          "\u201EWidzenie dalekie\u201D to scalona panorama zbrodni w \u201EDorośli i dzieci w Oświęcimiu\u201D — analityczna, eseistyczna",
-          "Oba opowiadania kończą się optymistyczną refleksją",
-          "Dopiero zestawienie obu perspektyw daje pełny obraz rzeczywistości — fragmenty składają się w przerażającą całość",
+          "Biograficzna — opis autentycznych wydarzeń z życia autora",
+          "Psychologiczna — analiza zachowań i motywacji więźniów",
+          "Komediowa — humorystyczne anegdoty z życia obozowego",
+          "Filozoficzna — refleksja nad kondycją człowieka i naturą totalitaryzmu",
         ],
       },
       correctAnswer: [0, 1, 3],
       metadata: {
         explanation:
-          "Pierwsze siedem opowiadań to \u201Ewidzenie bliskie\u201D — prywatne perspektywy ofiar i świadków. Ostatnie opowiadanie to \u201Ewidzenie dalekie\u201D — synteza. Razem tworzą pełny, straszny obraz. Optymistycznej refleksji NIE ma.",
+          "Trzy płaszczyzny: biograficzna (fakty, wydarzenia), psychologiczna (analiza zachowań — dlaczego Kostylew się okalecza? dlaczego Marusia wraca do Kowala?), filozoficzna (\u201ECzłowiek jest ludzki w ludzkich warunkach\u201D). Płaszczyzny komediowej NIE ma.",
       },
     },
 
@@ -872,18 +872,18 @@ async function seedExercises() {
       difficulty: 3,
       points: 2,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "W opowiadaniu \u201EWiza\u201D bohaterka opisuje, jak Greczynki na łące (wizie) śpiewały hymn. Zacytuj kontekst i wyjaśnij, dlaczego ta scena jest tak poruszająca.",
+        "Na czym polega symbolika tytułu rozdziału \u201ERęka w ogniu\u201D? Jak Kostylew przez samookaleczenie wyraża bunt?",
       content: {
         context:
-          "Bohaterka opowiada: \u201ETego dnia właśnie Greczynki śpiewały hymn narodowy. Nie po grecku. One śpiewały po hebrajsku żydowski hymn\u2026 Śpiewały w tym słońcu bardzo pięknie, głośno i mocno, jakby były zdrowe\u201D. Dodaje: \u201ETo nie była fizyczna siła, proszę pani, bo przecież one właśnie były najsłabsze. To była siła tęsknoty i pragnienia\u201D.",
+          "Kostylew co wieczór wsuwał prawą rękę do ognia, by nie pracować dla systemu, który go oszukał. Grudziński odkrył ten sekret przypadkiem i obiecał go nie zdradzać.",
       },
       correctAnswer:
-        "Scena jest poruszająca, bo najsłabsze fizycznie kobiety — Greczynki w najgorszym stanie — śpiewają żydowski hymn (Hatikvę) głośno i mocno, jakby zdrowe. Bohaterka podkreśla, że to nie siła fizyczna, ale \u201Esiła tęsknoty i pragnienia\u201D — duch ludzki wykraczający ponad zniszczone ciało. To akt oporu i godności w obliczu zagłady.",
+        "Ręka w ogniu to dosłowny gest i zarazem symbol: Kostylew niszczy narzędzie pracy (rękę), by odmówić udziału w systemie. Nie chce swoją pracą wspierać łagru, który go zniewolił. To desperacki akt wolności — jedyne, co mu pozostało, to decyzja o własnym ciele. Samookaleczenie jest buntem bardziej radykalnym niż ucieczka, bo odrzuca samą zasadę systemu: \u201Epracuj albo umrzyj\u201D. Kostylew wybiera trzecią drogę: \u201Enie pracuję, nawet za cenę cierpienia\u201D.",
       metadata: {
         explanation:
-          "Śpiew Greczyniek to moment transcendencji — duch ludzki zwycięża nad fizyczną degradacją. Następnego dnia była selekcja i \u201Ewiza była pusta\u201D — wszystkie zginęły. Piękno śpiewu i śmierć następnego dnia tworzą wstrząsający kontrast.",
+          "Kostylew to postać symbolizująca wewnętrzne wyzwolenie. Jego bunt jest daremny (zostaje przeniesiony na Kołymę i ginie), ale ważny — udowadnia, że nawet w totalnym zniewoleniu istnieje wolna wola.",
       },
     },
     {
@@ -892,19 +892,15 @@ async function seedExercises() {
       difficulty: 3,
       points: 2,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "Jaką rolę pełni \u201Efioletowa zasłona\u201D w opowiadaniu \u201EProfesor Spanner\u201D?",
-      content: {
-        context:
-          "Preparator opisuje uroczystość poświęcenia gilotyny w więzieniu. Mówi o fioletowej zasłonie oddzielającej katownię od widowni. Narratorka następnie pisze: \u201EMogło się zdawać, że i tu rozwieszona jest między nami a nim jakaś fioletowa zasłona. Nie było na niego sposobu\u201D.",
-        hints: ["symbol", "bariera moralna", "dwie warstwy znaczenia"],
-      },
+        "Opisz los Gorcewa. Dlaczego Grudziński nazywa jego śmierć \u201Ezabiciem pracą\u201D?",
+      content: {},
       correctAnswer:
-        "\u201EFioletowa zasłona\u201D ma dwa znaczenia: dosłowne (oddzielała salę egzekucji od widzów w więzieniu) i metaforyczne (oddziela Komisję od preparatora — jest barierą moralną między nimi). Preparator nie rozumie, że robienie mydła z ciał ludzkich jest zbrodnią. \u201ENie było na niego sposobu\u201D — zasłona symbolizuje niemożność przebicia się do sumienia człowieka, który zatracił poczucie zła.",
+        "Gorcew to były enkawudzista, który trafił do łagru i początkowo zachowywał się wyniośle. Został rozpoznany przez współwięźnia jako dawny kat NKWD. Od tej chwili więźniowie dokonali na nim samosądu: przydzielali najcięższą pracę, najgorszy kocioł, nikt mu nie pomagał. Osłabiony zamarł w zaspie. Grudziński nazywa to \u201Ezabiciem pracą\u201D, bo śmierć Gorcewa nie była bezpośrednim mordem — wykorzystano mechanizm obozowy (pracę i głód) jako narzędzie zemsty. Komentuje: \u201Erzucono lwa na pożarcie niewolnikom\u201D — ci, którzy byli jego ofiarami, stali się jego katami.",
       metadata: {
         explanation:
-          "To jeden z najsubtelniejszych symboli zbioru. Fioletowa zasłona w więzieniu odgradza od widoku śmierci; metaforyczna zasłona odgradza preparatora od rozumienia zbrodni. Obie mają tę samą funkcję: ukrywają rzeczywistość.",
+          "Historia Gorcewa pokazuje odwrócenie ról kat-ofiara oraz moralne ambiwalencje łagru: czy zemsta na byłym oprawcy jest sprawiedliwością czy kolejną zbrodnią?",
       },
     },
     {
@@ -913,18 +909,15 @@ async function seedExercises() {
       difficulty: 3,
       points: 2,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "W ostatnim opowiadaniu profesor Epstein spotyka dwoje małych dzieci w Oświęcimiu. Przytocz tę scenę i wyjaśnij, dlaczego jest tak wstrząsająca.",
-      content: {
-        context:
-          "Nałkowska pisze: \u201EDoktor Epstein, profesor z Pragi, przechodząc ulicą między blokami oświęcimskiego obozu w pogodny poranek letni, zobaczył dwoje małych dzieci — jeszcze żywych. Siedziały w piasku drogi i przesuwały po nim jakieś patyczki. Zatrzymał się przy nich i zapytał: Co tu robicie, dzieci? I otrzymał odpowiedź: My się bawimy w palenie Żydów\u201D.",
-      },
+        "Jaką rolę pełni szpital w łagrze Jercew? Dlaczego więźniowie się do niego celowo okaleczali?",
+      content: {},
       correctAnswer:
-        "Scena jest wstrząsająca, bo dzieci przejęły zbrodniczą rzeczywistość jako normę — włączyły ją do zabawy. \u201EBawimy się w palenie Żydów\u201D — to nie okrucieństwo, lecz adaptacja: dla tych dzieci krematorium jest tak naturalne jak plac zabaw. Zbrodnia zniszczyła nie tylko dorosłych, ale i niewinność dzieci. To celowa puenta całego zbioru.",
+        "Szpital był jedynym miejscem w łagrze, gdzie więźniowie mogli odpocząć: czyste łóżko, większa racja żywności, zwolnienie z pracy. Dlatego więźniowie celowo się okaleczali, by tam trafić — sam narrator wystawił się nago na wielki mróz, żeby go przyjęto. Szpital był \u201Eoazą normalności\u201D, ale zarazem tragedią: fakt, że jedyną ucieczką od łagru było samookaleczenie, ujawniał destrukcyjność systemu. Ci, którym szpital nie pomógł, trafiali do Trupiarni — z obciętymi racjami, co oznaczało śmierć.",
       metadata: {
         explanation:
-          "Ta scena zamyka \u201EMedaliony\u201D i jest ich najsilniejszym akcentem. Dzieci odtwarzają w zabawie to, co widzą — zabijanie stało się \u201Enormalne\u201D. To skrajny przejaw dehumanizacji: zbrodnia zatruwa nawet dziecięcą zabawę.",
+          "Szpital symbolizuje paradoks łagru: jedyne miejsce \u201Eludzkie\u201D jest dostępne za cenę destrukcji własnego ciała. Leczenie jest złudzeniem — system nie chce wyleczyć więźnia, lecz wycisnąć z niego ostatni wysiłek.",
       },
     },
 
@@ -936,24 +929,24 @@ async function seedExercises() {
       difficulty: 3,
       points: 3,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question: "Napisz notatkę syntetyczną na podany temat:",
       content: {
         topic:
-          "Portrety oprawców w \u201EMedalionach\u201D — jak Nałkowska przedstawia ludzi odpowiedzialnych za zbrodnie?",
+          "Formy buntu w \u201EInnym świecie\u201D — jak więźniowie próbują bronić godności?",
         requirements: [
-          "Omów co najmniej 3 postacie oprawców lub współsprawców (Spanner, preparator, profesorowie, August Glass, esmanki)",
-          "Wskaż, jakie mechanizmy umożliwiły im uczestnictwo w zbrodniach",
-          "Odnieś się do motta \u201ELudzie ludziom zgotowali ten los\u201D",
+          "Omów co najmniej 4 formy buntu/oporu (samookaleczenie, decyzja o samobójstwie, protest głodowy, ucieczka, wiara)",
+          "Podaj konkretne przykłady postaci",
+          "Ocena: czy te formy buntu były skuteczne?",
           "100-150 słów",
         ],
         wordLimit: { min: 100, max: 150 },
       },
       correctAnswer:
-        "Notatka powinna zawierać: Spanner — naukowiec, członek SS, traktujący zbrodnię jako projekt naukowy; preparator — wykonawca bez refleksji moralnej (\u201ETego nikt nie powiedział\u201D); profesorowie — racjonalizujący zło brakiem tłuszczów lub posłuszeństwem partyjnym; August Glass — sadysta bijący w nerki bez śladów; esmanki — śmiejące się z umierających kobiet. Mechanizmy: posłuszeństwo, racjonalizacja, ideologia, sadyzm rozbudzony systemem wychowawczym. Motto potwierdza: to nie demony, lecz ludzie.",
+        "Samookaleczenie: Kostylew (ręka w ogniu), Dimka (odrąbana stopa) — odmowa pracy jako akt wolności. Decyzja o śmierci: Natalia Lwowna czerpała siłę z przekonania, że może wybrać samobójstwo; Kostylew oblał się wrzątkiem. Protest głodowy: narrator i Polacy po amnestii. Ucieczka: Rusto Karinen — nieudana, złapany. Wiara: Dimka (początkowo), siostry zakonne. Żadna z form nie daje wolności — ale Grudziński podkreśla, że są ważne, bo dowodzą, że człowiek nie poddał się do końca: \u201ELepiej umrzeć stojąc niż na kolanach\u201D.",
       metadata: {
         explanation:
-          "Nałkowska nie demonizuje oprawców — pokazuje ich jako ludzi, co jest straszniejsze. Jeden tłumaczy zbrodnię ekonomią, drugi lojalnością, trzeci po prostu nie rozumie. To \u201Ebanalność zła\u201D avant la lettre.",
+          "Grudziński nie heroizuje buntu — pokazuje, że jest daremny, ale etycznie konieczny. Każda próba obrony godności jest ważna sama w sobie, nawet gdy kończy się śmiercią.",
       },
     },
     {
@@ -962,24 +955,24 @@ async function seedExercises() {
       difficulty: 3,
       points: 3,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question: "Napisz notatkę syntetyczną na podany temat:",
       content: {
         topic:
-          "Wola przeżycia w \u201EMedalionach\u201D — porównaj postawy Dwojry Zielonej i Michała P.",
+          "Kobiety w \u201EInnym świecie\u201D — jak Grudziński ukazuje sytuację kobiet w łagrze?",
         requirements: [
-          "Omów motywacje obu bohaterów do przeżycia",
-          "Wskaż podobieństwa i różnice",
-          "Odnieś się do tytułu opowiadania \u201ECzłowiek jest mocny\u201D",
+          "Omów losy co najmniej 3 postaci kobiecych (Marusia, Natalia Lwowna, Jewgienija Fiodorowna, \u201Egeneralska doczka\u201D)",
+          "Wskaż mechanizmy opresji specyficzne dla kobiet",
+          "Odnieś się do motywu \u201Enocnych łowów\u201D",
           "100-150 słów",
         ],
         wordLimit: { min: 100, max: 150 },
       },
       correctAnswer:
-        "Dwojra chce żyć, \u201Eby powiedzieć światu prawdę\u201D — jej motywacją jest dawanie świadectwa. Michał P. chce umrzeć (kładzie się na zwłokach żony), ale zostaje zmuszony do życia przez oprawcę: \u201ECzłowiek jest mocny\u201D. Podobieństwo: oboje tracą rodzinę i wszystko. Różnica: Dwojra odnajduje sens w przetrwaniu, Michał — nie. Tytuł \u201ECzłowiek jest mocny\u201D jest tragicznie ironiczny: to kat mówi do ofiary, że jej siła fizyczna jest jeszcze przydatna do pracy.",
+        "Marusia — ofiara \u201Enocnych łowów\u201D (zbiorowy gwałt urków), potem \u201Ewłasność\u201D Kowala; Natalia Lwowna — intelektualistka, wrażliwa na sztukę, szukała godności w decyzji o samobójstwie; Jewgienija Fiodorowna — pielęgniarka, kochała więźnia, zmarła przy porodzie; \u201Egeneralska doczka\u201D — córka polskiego oficera, zmuszona do prostytucji. Kobiety były szczególnie narażone: gwałty, prostytucja, traktowanie jako \u201Emateriał\u201D. \u201ENocne łowy\u201D to eufemizm — język kamufluje zbrodnię.",
       metadata: {
         explanation:
-          "Zestawienie tych dwóch postaw ukazuje spektrum ludzkiego doświadczenia w obliczu Zagłady: od aktywnej woli przeżycia (Dwojra) do pragnienia śmierci (Michał), któremu odmówiono nawet prawa do umierania.",
+          "Grudziński nie unika tematów tabu — opisuje gwałty, prostytucję i degradację kobiet bez sentymentalizmu, ale z wyraźnym moralnym sprzeciwem.",
       },
     },
 
@@ -993,21 +986,23 @@ async function seedExercises() {
       difficulty: 4,
       points: 2,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "Dlaczego Nałkowska minimalizuje komentarz autorski w \u201EMedalionach\u201D, pozwalając mówić samym bohaterom?",
+        "Dlaczego Grudziński opisuje historię Gorcewa jako \u201Esprzęgnięcie katów i ofiar\u201D? Co to mówi o naturze systemu?",
       content: {
+        context:
+          "Gorcew, były enkawudzista, zostaje rozpoznany w łagrze i \u201Ezabity pracą\u201D przez współwięźniów. Grudziński komentuje: \u201Erzucono lwa na pożarcie niewolnikom\u201D.",
         options: [
-          "Bo nie miała własnego zdania na temat opisywanych zbrodni",
-          "Bo pisała na zlecenie Komisji i nie wolno jej było komentować",
-          "Bo behawiorystyczna, zewnętrzna narracja jest straszniejsza niż emocjonalny komentarz — brak komentarza zmusza czytelnika do samodzielnej konfrontacji z faktami, a suche zeznania odsłaniają grozę skuteczniej niż patetyczny lament",
-          "Bo chciała napisać czysto historyczny dokument, bez literackich ambicji",
+          "System chronił byłych funkcjonariuszy NKWD",
+          "Gorcew zasłużył na karę i więźniowie wymierzyli sprawiedliwość",
+          "System celowo mieszał katów i ofiary w jednym łagrze, tworząc sytuację, w której ofiary stawały się katami — co zacierało granicę moralną i niszczyło solidarność więźniów",
+          "Grudziński wyraża czyste współczucie wobec Gorcewa",
         ],
       },
       correctAnswer: 2,
       metadata: {
         explanation:
-          "Nałkowska świadomie rezygnuje z emocjonalnego komentarza — to strategia artystyczna. Behawiorystyczna narracja (opis z zewnątrz, bez psychologizowania) sprawia, że fakty działają mocniej. Preparator Spannera mówi o mydle spokojnie — i to jest przerażające. Gdyby narratorka krzyczała ze zgrozą, efekt byłby słabszy.",
+          "System celowo umieszczał byłych katów wśród ofiar — nie by ich karać, lecz by zdestabilizować relacje między więźniami. Zemsta na Gorcewie, choć \u201Ezrozumiała\u201D, czyniła z ofiar katów. Grudziński ukazuje tu perwersyjny mechanizm: system zmusza ofiary do moralnego upadku, co jeszcze bardziej je degeneruje.",
       },
     },
     {
@@ -1016,23 +1011,23 @@ async function seedExercises() {
       difficulty: 4,
       points: 2,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "Jak \u201EMedaliony\u201D realizują postulat Hannah Arendt o \u201Ebanalności zła\u201D (choć powstały wcześniej niż jej koncepcja)?",
+        "Czym różni się spojrzenie Grudzińskiego na obóz od perspektywy Borowskiego w \u201EOpowiadaniach\u201D?",
       content: {
         context:
-          "Hannah Arendt w książce \u201EEichmann w Jerozolimie\u201D (1963) sformułowała pojęcie \u201Ebanalności zła\u201D — zło nie wymaga demonicznych natury, lecz bywa dziełem zwykłych, przeciętnych ludzi, działających bez refleksji moralnej.",
+          "Tadeusz Borowski (1922-1951) opisuje obóz w Oświęcimiu z perspektywy narratora Tadka — więźnia uprzywilejowanego, który jest częścią systemu obozowego. Borowski pisze o \u201Eczłowieku złagrowanym\u201D — zdemoralizowanym przez obóz na zawsze.",
         options: [
-          "Nałkowska pokazuje oprawców jako potwory i demony, co zaprzecza banalności zła",
-          "Nałkowska prezentuje wyłącznie ofiary jako banalne, a oprawców jako wyjątkowych",
-          "Nałkowska nie zajmuje się oprawcami, tylko ofiarami",
-          "Nałkowska ukazuje oprawców i współsprawców jako ludzi \u201Enormalnych\u201D — preparator spokojnie zeznaje o mydle, profesor tłumaczy zbrodnię brakiem tłuszczów, esmanki śmieją się z umierających. Zło jest tu biurokratyczne, codzienne i pozbawione poczucia winy",
+          "Obaj mają identyczną perspektywę — nihilizm i brak nadziei",
+          "Grudziński pisze satyrę, a Borowski — tragedię",
+          "Borowski opisuje łagier sowiecki, a Grudziński — obóz niemiecki",
+          "Grudziński zachowuje wiarę w możliwość obrony godności, mimo że bunt jest daremny; Borowski ukazuje totalną degradację moralną bez nadziei. Grudziński to \u201Eczłowiek zlagrowany\u201D (zraniony, ale walczący), Borowski — \u201Eczłowiek złagrowany\u201D (zniszczony wewnętrznie)",
         ],
       },
       correctAnswer: 3,
       metadata: {
         explanation:
-          "\u201EMedaliony\u201D (1946) antycypują Arendt (1963). Preparator Spannera mówi o mydle bez winy, profesor tłumaczy zbrodnię ekonomią, esmanki traktują śmierć więźniarek jako codzienność. Zło jest tu \u201Ebanalne\u201D — nie wymaga demonów, wystarczy brak refleksji i posłuszna rutyna.",
+          "Kluczowa różnica: Grudziński wierzy, że godność można bronić (Kostylew, narrator, protest głodowy), choć bunt jest daremny. Borowski jest radykalniejszy: obóz niszczy nieodwracalnie, nawet ocalali są \u201Eskażeni\u201D. Grudziński = zlagrowany (zraniony); Borowski = złagrowany (zniszczony).",
       },
     },
 
@@ -1044,15 +1039,15 @@ async function seedExercises() {
       difficulty: 4,
       points: 3,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "Porównaj sposób, w jaki Nałkowska opisuje kobieta cmentarną z \u201EKobiety cmentarnej\u201D i preparatora z \u201EProfesora Spannera\u201D. Co mają ze sobą wspólnego jako świadkowie?",
+        "Dlaczego Grudziński poświęca tak dużo miejsca historii Kostylewa? Jakie uniwersalne przesłanie niesie ta postać?",
       content: {},
       correctAnswer:
-        "Oboje są świadkami zbrodni, ale nie sprawcami. Preparator uczestniczy w zbrodni fizycznie (robi mydło), nie rozumiejąc jej moralnego wymiaru — \u201ETego nikt nie powiedział\u201D. Kobieta cmentarna obserwuje zagładę getta z drugiej strony muru — współczuje (\u201Eto też ludzie\u201D), ale propagandowe kłamstwa zatruwają jej współczucie. Wspólne: oboje widzieli zbrodnie z bliska, oboje mają zniekształcone postrzeganie rzeczywistości (on przez brak moralnej refleksji, ona przez propagandę). Żadne z nich nie jest w pełni świadome prawdy.",
+        "Kostylew jest centralną postacią symboliczną, bo jego historia ilustruje pełny cykl: od ślepej wiary (wychowany w kulcie komunizmu) → przez wyzwolenie umysłu (literatura francuska) → rozczarowanie i bunt (ręka w ogniu) → tragiczną śmierć (wrzątek). Kostylew uosabia \u201Edorastanie do wewnętrznej wolności\u201D — nawet w systemie, który go zniewolił, odnalazł w sobie siłę do odmowy. Jego bunt jest daremny (ginie), ale ważny — udowadnia, że człowiek może powiedzieć \u201Enie\u201D nawet w totalnym zniewoleniu. To uniwersalne przesłanie: wolność wewnętrzna jest ostatnią twierdzą, którą system może zniszczyć tylko zabijając człowieka.",
       metadata: {
         explanation:
-          "Zestawienie tych postaci ukazuje różne formy \u201Ewidzenia i niewidzenia\u201D — centralny temat zbioru. Preparator nie widzi zła w tym, co robi; kobieta cmentarna widzi cierpienie, ale interpretuje je przez pryzmat propagandy.",
+          "Kostylew to najbardziej rozbudowana historia w książce. Grudziński widzi w nim odzwierciedlenie własnych pytań: czy można zachować wolność w niewoli? Odpowiedź brzmi: tak, za cenę życia.",
       },
     },
 
@@ -1064,24 +1059,25 @@ async function seedExercises() {
       difficulty: 4,
       points: 4,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question: "Napisz notatkę syntetyczną na podany temat:",
       content: {
         topic:
-          "Ciało ludzkie jako surowiec w \u201EMedalionach\u201D — jak Nałkowska pokazuje skrajną dehumanizację?",
+          "\u201EInny świat\u201D jako dzieło wielogatunkowe — jak forma służy treści?",
         requirements: [
-          "Omów przykłady z co najmniej 2 opowiadań (np. \u201EProfesor Spanner\u201D, \u201ECzłowiek jest mocny\u201D, \u201EDorośli i dzieci\u201D)",
-          "Wyjaśnij, na czym polega proces dehumanizacji — sprowadzenia człowieka do rzeczy",
-          "Odnieś się do ekonomicznego wymiaru zbrodni",
-          "Sformułuj wniosek — 120-180 słów",
+          "Omów elementy pamiętnika, reportażu, eseju i autobiografii w utworze",
+          "Wyjaśnij, dlaczego Grudziński nie poprzestał na jednym gatunku",
+          "Podaj przykłady każdego z elementów",
+          "Odnieś się do stylu narracji (powściągliwość + poetyckość + slang obozowy)",
+          "120-180 słów",
         ],
         wordLimit: { min: 120, max: 180 },
       },
       correctAnswer:
-        "Notatka powinna zawierać: \u201EProfesor Spanner\u201D — ciała przerabiane na mydło, skóra garbowana, kości na kościotrupy; \u201ECzłowiek jest mocny\u201D — trupy rewidowane (złote zęby, zegarki, pieniądze), układane w masowych grobach; \u201EDorośli i dzieci\u201D — utylizacja kości na nawóz, włosów na materace, tłuszczu na mydło. Dehumanizacja: człowiek zredukowany do surowca, z którego można wyciągnąć wartość ekonomiczną. Ekonomiczny wymiar zbrodni to \u201Edywidenda płynąca z ludzkiej męczarni\u201D. Wniosek: system obozów przekształcił ludzi w towar — proces zaplanowany, zracjonalizowany i dochodowy.",
+        "Pamiętnik: chronologiczna relacja z osobistych doświadczeń (aresztowanie → więzienie → łagier → wolność). Reportaż: dokumentalna precyzja, opisy mechanizmów obozowych (system kotłów, normy, trupiarnia). Autobiografia: narrator = autor, pierwszoosobowa narracja. Esej: filozoficzne refleksje (\u201ECzłowiek jest ludzki w ludzkich warunkach\u201D, analiza totalitaryzmu). Grudziński łączy gatunki, bo żaden pojedynczy nie wystarczy — pamiętnik daje fakty, reportaż daje precyzję, esej daje sens, autobiografia daje wiarygodność. Styl łączy slang obozowy (zona, łagpunkt, lesopował) z poetyckimi obrazami i chłodną analizą — ta wielopoziomowość oddaje złożoność doświadczenia.",
       metadata: {
         explanation:
-          "Nałkowska wielokrotnie pokazuje ciało ludzkie jako przedmiot przetwarzania — to najbardziej przerażający wymiar Zagłady. Człowiek nie jest tu nawet ofiarą — jest surowcem.",
+          "Wielogatunkowość jest świadomym wyborem — doświadczenie łagru wymaga nowej formy, tak jak Zagłada wymagała nowej formy od Nałkowskiej.",
       },
     },
 
@@ -1093,35 +1089,35 @@ async function seedExercises() {
       difficulty: 4,
       points: 5,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "\u201ELudzie ludziom zgotowali ten los\u201D — jak Nałkowska w \u201EMedalionach\u201D ukazuje wizerunek ofiary i kata? Rozważ na podstawie wybranych opowiadań.",
+        "\u201ECzłowiek jest ludzki w ludzkich warunkach\u201D — jak Grudziński w \u201EInnym świecie\u201D ukazuje wpływ systemu totalitarnego na moralność człowieka? Rozważ na podstawie losów wybranych bohaterów.",
       content: {
         thesis:
-          "Wizerunek ofiary i kata w \u201EMedalionach\u201D w świetle motta zbioru",
+          "Wpływ totalitaryzmu na moralność w świetle przesłania Grudzińskiego",
         structure: {
           introduction:
-            "Przedstaw motto i wyjaśnij jego znaczenie — podkreślenie ludzkiego sprawstwa zbrodni",
+            "Przedstaw kluczowe zdanie i jego znaczenie — odpowiedzialność za degenerację moralną spada na system, nie na ofiary",
           arguments_for:
-            "Analiza postaci katów: Spanner, preparator, profesorowie, August Glass — jakie mechanizmy nimi kierują (posłuszeństwo, brak refleksji, sadyzm, racjonalizacja)?",
+            "Przykłady upadku moralnego: urkowie, Marusia, kradzieże, donosy, \u201Eodwrócony dekalog\u201D. Jak system wytwarzał te zachowania?",
           arguments_against:
-            "Analiza postaci ofiar: Dwojra, Michał P., ranna kobieta, dzieci — jak zachowują człowieczeństwo lub je tracą? Czy istnieje granica między katem a ofiarą (kobieta cmentarna)?",
+            "Przykłady obrony godności: Kostylew, Dimka, narrator, Natalia Lwowna. Czy ich bunt dowodzi, że człowiek MOŻE być ludzki nawet w nieludzkich warunkach?",
           conclusion:
-            "Wniosek: jak motto \u201Eludzie ludziom\u201D podkreśla, że zarówno kat, jak i ofiara są ludźmi — i to jest najbardziej przerażające",
+            "Wniosek: co przesłanie Grudzińskiego mówi o naturze człowieka — pesymizm czy ostrożna nadzieja?",
         },
         requirements: [
           "Minimum 300 słów",
-          "Odwołanie do co najmniej 3 opowiadań",
-          "Analiza motta jako klucza interpretacyjnego",
+          "Odwołanie do co najmniej 3 postaci",
+          "Analiza mechanizmów łagrowych",
           "Poprawna struktura rozprawki",
         ],
         wordLimit: { min: 300, max: 500 },
       },
       correctAnswer:
-        "Wypracowanie powinno zawierać: analizę motta (nie siły nadprzyrodzone, lecz ludzie). Kaci: Spanner — naukowiec; preparator — bez refleksji; profesor — racjonalizacja; Glass — sadyzm. Ofiary: Dwojra — wola życia; Michał — zmuszony do życia; ranna kobieta — porzucona przez społeczeństwo. Granica: kobieta cmentarna — współczucie i propaganda. Wniosek: przerażające jest nie to, że to demony, lecz że to ludzie.",
+        "Upadek: system kotłów (głód jako narzędzie kontroli), donosicielstwo (Machapetian), nocne łowy (degradacja urków), Gorcew (ofiary stają się katami). Obrona: Kostylew (ręka w ogniu — odmowa pracy), Dimka (odrąbana stopa — akt woli), narrator (głodówka), Natalia (wybór śmierci jako wolność). Wniosek: Grudziński nie jest ani optymistą, ani pesymistą — stwierdza fakt: system niszczył ludzi, ale nie wszystkich do końca. Ci, którzy się bronili, ginęli — ale ich bunt ma wartość sam w sobie.",
       metadata: {
         explanation:
-          "Temat wymaga połączenia analizy postaci z refleksją nad mottem. Kluczowe: zrozumienie, że Nałkowska nie demonizuje katów ani nie heroizuje ofiar — pokazuje ich jako ludzi, co jest najgłębszym przesłaniem zbioru.",
+          "Temat wymaga zrozumienia, że Grudziński NIE potępia ofiar za ich upadki. Potępia system. Ale zarazem pokazuje, że nawet w tym systemie byli ludzie, którzy się nie poddali.",
       },
     },
 
@@ -1135,21 +1131,23 @@ async function seedExercises() {
       difficulty: 5,
       points: 3,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "Jak \u201EMedaliony\u201D wpisują się w problem \u201Ereprezentacji Holocaustu\u201D — pytania, czy i jak można literacko opisać Zagładę?",
+        "Jak \u201EInny świat\u201D wpisuje się w tradycję \u201Eliteratury świadectwa\u201D i czym różni się od \u201EArchipelagu Gułag\u201D Sołżenicyna?",
       content: {
+        context:
+          "Aleksander Sołżenicyn (1918-2008) w \u201EArchipelagu Gułag\u201D (1973) stworzył monumentalny opis systemu łagrów na podstawie relacji setek świadków i własnych doświadczeń. Dzieło ma charakter historyczno-dokumentalny i obejmuje cały system.",
         options: [
-          "Nałkowska odpowiada na ten problem formą: rezygnuje z tradycyjnej literackości (metafor, psychologizacji, emocji) na rzecz surowego reportażu, w którym mówią sami świadkowie — uznaje, że Holocaust przekracza możliwości tradycyjnej narracji i wymaga nowej formy",
-          "Nałkowska uważa, że literatura nie powinna zajmować się Holocaustem",
-          "Nałkowska stosuje typowe techniki powieści realistycznej z XIX wieku",
-          "Nałkowska pisze wyłącznie poetycko, unikając realiów",
+          "Nie ma między nimi żadnych różnic — oba dzieła są identyczne w formie i treści",
+          "Grudziński pisze z perspektywy jednego człowieka (osobiste świadectwo), koncentrując się na kondycji ludzkiej i psychologii. Sołżenicyn tworzy panoramę systemu — historię, geografię, statystykę. Grudziński to \u201Emedalion\u201D, Sołżenicyn to \u201Eencyklopedia\u201D",
+          "Sołżenicyn był więźniem, a Grudziński — obserwatorem z zewnątrz",
+          "Grudziński pisze fikcję, Sołżenicyn — dokument",
         ],
       },
-      correctAnswer: 0,
+      correctAnswer: 1,
       metadata: {
         explanation:
-          "Nałkowska rozwiązuje dylemat Theodora Adorna (czy po Auschwitz można pisać wiersze?) przez stworzenie nowej formy literackiej: surowej, reportażowej, bez komentarza. Daje głos ofiarom, a nie autorce. Forma jest odpowiedzią na bezprecedensowy charakter Zagłady.",
+          "Grudziński (1951) wyprzedził Sołżenicyna (1973) o dwie dekady. Różnica w skali: Grudziński daje intymne świadectwo jednego więźnia, filozoficzną refleksję o człowieku. Sołżenicyn — panoramę systemu z setkami świadectw, statystykami, mapami. Oba dzieła uzupełniają się.",
       },
     },
     {
@@ -1158,23 +1156,23 @@ async function seedExercises() {
       difficulty: 5,
       points: 3,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "Porównaj \u201EMedaliony\u201D z \u201EOpowiadaniami\u201D Tadeusza Borowskiego. Co je łączy, a co różni?",
+        "Jak klamrowa kompozycja \u201EInnego świata\u201D (epilog w Rzymie) zmienia perspektywę na całe dzieło?",
       content: {
         context:
-          "Tadeusz Borowski (1922-1951) w \u201EOpowiadaniach\u201D (\u201EProszę państwa do gazu\u201D, \u201EU nas w Auschwitzu\u201D) opisuje obóz koncentracyjny z perspektywy więźnia-narratora Tadka, który jest częścią obozowego systemu i sam uczestniczy w funkcjonowaniu machiny zagłady.",
+          "W epilogu narrator spotyka w Rzymie byłego współwięźnia z łagru. Spotkanie to zamyka kompozycję klamrową — narrator wraca myślami do doświadczenia obozowego, już z perspektywy wolnego człowieka.",
         options: [
-          "Oba dzieła łączy ten sam narrator i ten sam styl",
-          "Łączy je temat (zbrodnie hitlerowskie) i przynależność do literatury obozowej. Różni perspektywa: Nałkowska patrzy z zewnątrz (Komisja), Borowski — z wewnątrz (więzień-współuczestnik). Nałkowska zachowuje dystans reporterski, Borowski buduje obraz totalnej degradacji moralnej",
-          "Borowski pisze wyłącznie o Oświęcimiu, Nałkowska — wyłącznie o Ravensbrück",
-          "Różnią się epoką literacką — Borowski to romantyk, Nałkowska to pozytywistka",
+          "Epilog ukazuje, że doświadczenie łagru NIE kończy się z wyjściem na wolność — rany pozostają, a pamięć jest zarówno ciężarem, jak i obowiązkiem moralnym. Rzym (symbol cywilizacji zachodniej) kontrastuje z Jercewem — ale oba światy współistnieją w psychice ocalałego",
+          "Epilog jest nieistotny — to tylko geograficzny dodatek",
+          "Epilog ma charakter humorystyczny — narrator żartuje z byłym więźniem",
+          "Epilog jest pochwałą Zachodu i krytyką Wschodu",
         ],
       },
-      correctAnswer: 1,
+      correctAnswer: 0,
       metadata: {
         explanation:
-          "Oba dzieła to literatura obozowa, ale z różnych perspektyw. Nałkowska jest \u201Ena zewnątrz\u201D — zbiera zeznania, obserwuje. Borowski jest \u201Ew środku\u201D — narrator Tadek jest częścią systemu, co daje bardziej wstrząsający, ale i bardziej moralnie ambiwalentny obraz.",
+          "Klamra Rzym-Jercew podkreśla, że łagier nie jest zamkniętym epizodem, lecz trwałą raną. Spotkanie z byłym więźniem w \u201Enormalnym\u201D świecie ukazuje przepaść między doświadczeniem a codziennością wolnych ludzi. Narrator niesie w sobie \u201Einny świat\u201D na zawsze.",
       },
     },
 
@@ -1186,21 +1184,21 @@ async function seedExercises() {
       difficulty: 5,
       points: 3,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "Które stwierdzenia o \u201EMedalionach\u201D jako dziele literackim są trafne?",
+        "Które stwierdzenia o \u201EInnym świecie\u201D jako dziele literackim i historycznym są trafne?",
       content: {
         options: [
-          "Zbiór łączy cechy reportażu, zeznania sądowego i prozy literackiej — jest gatunkiem pogranicznym",
-          "Behawiorystyczna narracja (obserwacja z zewnątrz, bez wglądu w psychikę) służy ukazaniu zbrodni bez patosu i sentymentalizmu",
-          "Celowe przemilczenia, powtórzenia i symbolika (fioletowa zasłona, medalion, wiza) nadają zbiorowi walor artystyczny, mimo pozornej surowej dokumentalności",
-          "Zbiór jest pozbawiony jakichkolwiek wartości artystycznych — to wyłącznie suchy dokument",
+          "Pierwsze wydanie ukazało się po angielsku (1951) z przedmową Bertranda Russella — w Polsce było zakazane do 1988 roku, co świadczy o sile politycznej tego świadectwa",
+          "Grudziński wyprzedził Sołżenicyna o ponad 20 lat jako świadek systemu łagrowego w literaturze światowej",
+          "Utwór łączy dokumentalność z uniwersalną refleksją o kondycji człowieka — nie jest tylko świadectwem historycznym, ale filozoficznym pytaniem o granice ludzkiej natury",
+          "Dzieło zostało entuzjastycznie przyjęte w PRL i wydane masowym nakładem w latach 50.",
         ],
       },
       correctAnswer: [0, 1, 2],
       metadata: {
         explanation:
-          "\u201EMedaliony\u201D to dzieło pogranicza: reportaż, zeznanie i literatura zarazem. Behawioryzm narracyjny, przemilczenia i symbolika (fioletowa zasłona, wiza) to świadome zabiegi artystyczne. Zbiór NIE jest suchym dokumentem — jego pozorna prostota jest wyrafinowaną strategią literacką.",
+          "Wydanie angielskie 1951, polskie (Londyn) 1953, w PRL zakazane do 1988. Russell napisał przedmowę. Grudziński wyprzedził Sołżenicyna. Dzieło łączy dokument z filozofią. W PRL NIE było entuzjastycznie przyjęte — było zakazane.",
       },
     },
 
@@ -1212,18 +1210,18 @@ async function seedExercises() {
       difficulty: 5,
       points: 4,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "Nałkowska pisze w \u201EDorośli i dzieci w Oświęcimiu\u201D: \u201EZawczasu jednak uczyniono wszystko, by wydobyć z nich i uruchomić te siły, które drzemią w podświadomości człowieka i które — niezbudzone — mogłyby nigdy nie dojść do głosu\u201D. Zinterpretuj to zdanie w kontekście całego zbioru.",
+        "Grudziński przytacza w \u201EInnym świecie\u201D zdanie Dostojewskiego o tym, że ten \u201Epotrafił opisać nieludzkie cierpienia tak, jak gdyby stanowiły tylko naturalną część ludzkiego losu\u201D. Jak to zdanie odnosi się do stylu samego Grudzińskiego?",
       content: {
         context:
-          "Zdanie pochodzi z fragmentu, w którym Nałkowska analizuje, jak system wychowawczy partii hitlerowskiej szkolił oprawców — werbując przestępców, organizując kursy sadyzmu i chroniąc ich ustawą zabraniającą ujawniania przeszłości.",
+          "Narrator czyta \u201EZapiski z martwego domu\u201D pożyczone od Natalii Lwownej. Komentuje styl Dostojewskiego, widząc w nim pokrewieństwo z własnym sposobem pisania o łagrze.",
       },
       correctAnswer:
-        "Nałkowska stwierdza, że sadystyczne instynkty \u201Edrzemią w podświadomości człowieka\u201D — każdy je potencjalnie ma, ale nie u każdego \u201Edochodzą do głosu\u201D. System nazistowski celowo je rozbudził: werbował przestępców, szkolił młodzież w okrucieństwie, otaczał instynkty \u201Eszczególną pieczą\u201D. To odnosi się do motta \u201Eludzie ludziom\u201D: zło nie wymaga demonów — wymaga systemu, który uwalnia to, co w człowieku najgorsze. \u201EMedaliony\u201D jako całość pokazują efekty tego procesu: preparator bez sumienia, esmanki śmiejące się ze śmierci, dzieci bawiące się w palenie Żydów.",
+        "Zdanie o Dostojewskim jest autokomentarzem: Grudziński sam opisuje nieludzkie cierpienia \u201Ejak naturalną część losu\u201D — powściągliwie, bez sentymentalizmu, z chłodną precyzją. Ta strategia sprawia, że groza przebija nie przez emocjonalne wzmocnienia, lecz przez sam opis faktów. Narrator nie krzyczy — i właśnie dlatego jest bardziej wstrząsający. To świadomy wybór estetyczny i etyczny: patos byłby fałszywy wobec doświadczenia, które przekracza wszelkie konwencje opisu. Grudziński kontynuuje tradycję Dostojewskiego — pisze o \u201Einnym świecie\u201D tych samych Rosji, 100 lat później, tym samym stylem powściągliwej precyzji.",
       metadata: {
         explanation:
-          "To zdanie jest filozoficznym kluczem do \u201EMedalionów\u201D: Nałkowska nie demonizuje zła, lecz je humanizuje — co jest straszniejsze. Zło to ludzki potencjał, który system może uruchomić.",
+          "To kluczowy metaliteracki moment: Grudziński, komentując Dostojewskiego, definiuje własną poetykę. Obu łączy powściągliwość jako wyraz szacunku dla cierpienia — krzyk byłby banalizacją.",
       },
     },
 
@@ -1235,36 +1233,35 @@ async function seedExercises() {
       difficulty: 5,
       points: 10,
       epoch: "CONTEMPORARY",
-      work: "Medaliony",
+      work: "Inny świat",
       question:
-        "W \u201EKobiecie cmentarnej\u201D Nałkowska pisze: \u201ERzeczywistość jest do wytrzymania, gdyż niecała dana jest w doświadczeniu\u201D. Rozważ, jak literatura świadectwa (Nałkowska, Borowski, Krall lub inni autorzy) próbuje przełamać tę fragmentaryczność i oddać pełnię doświadczenia Zagłady.",
+        "Porównaj obraz obozu w \u201EInnym świecie\u201D Herlinga-Grudzińskiego i w \u201EOpowiadaniach\u201D Tadeusza Borowskiego. Jak różne perspektywy narracyjne kształtują różne wizje człowieczeństwa w ekstremalnych warunkach?",
       content: {
-        thesis:
-          "Fragmentaryczność doświadczenia a zadanie literatury świadectwa",
+        thesis: "Dwie perspektywy na obóz — dwie wizje człowieka",
         structure: {
           introduction:
-            "Wyjaśnij zdanie Nałkowskiej i zarysuj problem: czy literatura może dać pełny obraz Zagłady?",
+            "Zarysuj kontekst: oba dzieła to literatura obozowa, ale dotyczą różnych systemów (sowiecki łagier vs. nazistowski KZ) i stosują różne strategie narracyjne",
           arguments_for:
-            "Analiza \u201EMedalionów\u201D: mozaika głosów, dwie perspektywy (bliskie i dalekie widzenie), celowe przemilczenia — jak Nałkowska \u201Eskłada\u201D fragmenty w całość?",
+            "Grudziński: narrator-obserwator, dystans, refleksja filozoficzna. Zachowuje wiarę w możliwość obrony godności (\u201Eczłowiek zlagrowany\u201D — zraniony, ale walczący). Przykłady: Kostylew, Dimka, protest głodowy",
           arguments_against:
-            "Porównanie z innym utworem (np. Borowski, Krall \u201EZdążyć przed Panem Bogiem\u201D, Szymborska wiersze) — jak inni autorzy mierzą się z tym samym problemem?",
+            "Borowski: narrator-uczestnik (Tadek), cynizm, behawioryzm. Ukazuje totalną degradację moralną (\u201Eczłowiek złagrowany\u201D — zniszczony wewnętrznie). Przykłady: kapo Tadek, \u201EProszę państwa do gazu\u201D",
           conclusion:
-            "Wniosek: czy literatura może oddać pełnię doświadczenia Zagłady, czy z natury skazana jest na fragmentaryczność?",
+            "Wniosek: czy te dwie wizje się wykluczają, czy uzupełniają? Co mówią o granicach ludzkiego doświadczenia?",
         },
         requirements: [
           "Minimum 400 słów",
-          "Szczegółowa analiza cytatu z \u201EKobiety cmentarnej\u201D",
-          "Porównanie z co najmniej jednym innym dziełem",
-          "Refleksja nad możliwościami i granicami literatury świadectwa",
+          "Analiza narracji i perspektywy w obu dziełach",
+          "Porównanie wizji człowieka: Grudziński vs. Borowski",
+          "Kontekst historyczny (łagier sowiecki vs. KZ nazistowski)",
           "Poprawna struktura rozprawki",
         ],
         wordLimit: { min: 400, max: 600 },
       },
       correctAnswer:
-        "Wypracowanie powinno zawierać: interpretację cytatu (ludzie przetrwali, bo wiedzieli nie wszystko), analizę struktury \u201EMedalionów\u201D jako próby złożenia fragmentów (7 opowiadań = widzenie bliskie + 1 esej = widzenie dalekie), porównanie z Borowskim (radykalny narrator-uczestnik) lub Krall (jeden głos ocalałego). Wniosek: literatura z natury jest fragmentaryczna — ale właśnie dlatego jest wierna doświadczeniu Zagłady, które też było fragmentaryczne. Nałkowska nie udaje, że daje pełny obraz — i ta uczciwość jest jej siłą.",
+        "Grudziński: narrator z dystansem, analizuje, refleksyjny, powściągliwy — zachowuje wiarę w godność (Kostylew buntuje się, narrator głoduje). Borowski: narrator bez dystansu, cyniczny, behawiorystyczny — ukazuje totalną degradację (Tadek jest częścią systemu). Grudziński potępia system i broni ofiar; Borowski potępia system I pokazuje, że ofiary same stają się współwinne. Oba uzupełniają się: Grudziński daje nadzieję, Borowski ostrzega, że nadzieja może być iluzją. Razem dają pełniejszy obraz: człowiek MOŻE się bronić (Grudziński), ale system MOŻE go zniszczyć całkowicie (Borowski).",
       metadata: {
         explanation:
-          "Temat łączy analizę konkretnego cytatu, interpretację struktury zbioru i porównanie międzytekstowe z refleksją nad naturą literatury świadectwa. Wymaga samodzielnego myślenia i dojrzałości intelektualnej.",
+          "To klasyczne porównanie maturalne. Kluczowe: nie wartościować, które dzieło jest \u201Elepsze\u201D, lecz pokazać, jak różne doświadczenia (łagier vs. KZ) generują różne perspektywy na tę samą kwestię ludzkiej natury.",
       },
     },
   ];
