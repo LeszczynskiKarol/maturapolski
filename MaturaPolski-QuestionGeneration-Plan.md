@@ -113,7 +113,7 @@ ROMANTICISM, POSITIVISM, YOUNG_POLAND, INTERWAR, CONTEMPORARY
 4. **Precyzja:** Każde pytanie ma JEDNĄ jednoznaczną poprawną odpowiedź (lub zestaw w CLOSED_MULTIPLE).
 5. **Brak duplikatów:** Żadne dwa pytania nie mogą pytać o to samo innymi słowami.
 6. **Brak podchwytliwości:** Pytania testują wiedzę, nie zdolność do rozszyfrowywania pułapek.
-7. **BARDZO WAŻNE!!!:** Escapuj poslkie cudzysłowy w treści JSONÓW, tak żeby polskie cudzysłowy NIE PSUŁY pliku json.
+7. **BARDZO WAŻNE!!!:** Escapuj poslkie cudzysłowy w treści JSONÓW, tak żeby polskie cudzysłowy NIE PSUŁY pliku json. ale TYLKO cudzysłowy - polskich znaków masz używać NORMALNIE
 
 ### 3.2 Zasady per typ
 
