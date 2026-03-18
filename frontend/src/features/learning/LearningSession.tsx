@@ -18,7 +18,6 @@ import {
   AlertTriangle,
   Award,
   CheckCircle,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Clock,
@@ -68,13 +67,15 @@ const EPOCHS = [
   { value: "CONTEMPORARY", label: "Współczesność" },
 ];
 
-const EXERCISE_TYPES = [
+{
+  /*const EXERCISE_TYPES = [
   { value: "CLOSED_SINGLE", label: "Jednokrotny wybór", icon: "○" },
   { value: "CLOSED_MULTIPLE", label: "Wielokrotny wybór", icon: "☐" },
   { value: "SHORT_ANSWER", label: "Krótka odpowiedź", icon: "✍" },
   { value: "SYNTHESIS_NOTE", label: "Notatka syntetyczna", icon: "📝" },
   { value: "ESSAY", label: "Wypracowanie", icon: "📄" },
-];
+];*/
+}
 
 const CATEGORIES = [
   { value: "LANGUAGE_USE", label: "Język w użyciu", color: "blue" },
