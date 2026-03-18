@@ -205,21 +205,19 @@ const idsToDelete = [
 ];
 
 async function deleteOldExercises() {
-  console.log(
-    `🗑️  Deleting ${idsToDelete.length} old exercises without Polish diacritical marks...`,
-  );
+  console.log(`🗑️  Deleting ${idsToDelete.length} old exercises...`);
 
+  // 1. Najpierw usuń powiązane ExerciseUsage
+  const usageResult = await prisma.exerciseUsage.deleteMany({
+    where: { exerciseId: { in: idsToDelete } },
+  });
+  console.log(`✅ Deleted ${usageResult.count} ExerciseUsage records.`);
+
+  // 2. Teraz usuń same Exercise
   const result = await prisma.exercise.deleteMany({
     where: { id: { in: idsToDelete } },
   });
-
   console.log(`✅ Deleted ${result.count} exercises.`);
-
-  if (result.count !== idsToDelete.length) {
-    console.warn(
-      `⚠️  Expected ${idsToDelete.length}, got ${result.count}. Some IDs may not exist in the database.`,
-    );
-  }
 }
 
 deleteOldExercises()

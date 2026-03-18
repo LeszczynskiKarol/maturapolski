@@ -38,41 +38,35 @@ jobs:
           command_timeout: 300s
           script: |
             cd /var/www/maturapolski
-            echo "=== Node info ==="
-            which node && node --version
-            echo "=== Stop backend ==="
-            pm2 stop maturapolski-backend || true
+
             echo "=== Git pull ==="
             git fetch origin main
             git reset --hard origin/main
-            echo "=== Backend ==="
+
+            echo "=== Backend build ==="
             cd backend
             rm -rf node_modules
             npm ci
             npm run build
             npx prisma migrate deploy
+
             echo "=== Verify dotenv ==="
             node -e "import('dotenv').then(() => console.log('dotenv OK')).catch(e => { console.error('FAIL', e.message); process.exit(1) })"
-            cd ..
-            echo "=== Frontend ==="
-            cd frontend
+
+            echo "=== Frontend build ==="
+            cd ../frontend
             rm -rf node_modules
             npm ci
             npm run build
-            cd ..
-            echo "=== Start backend ==="
-            pm2 delete maturapolski-backend || true
-            echo "=== Clear PM2 dump ==="
-            rm -f /home/ubuntu/.pm2/dump.pm2
-            echo "=== Current dir before pm2 start ==="
+
+            echo "=== Restart backend (downtime: ~2s) ==="
             cd /var/www/maturapolski/backend
-            pwd
-            ls dist/index.js
-            echo "=== Starting PM2 ==="
-            pm2 start /var/www/maturapolski/backend/dist/index.js --name maturapolski-backend
+            pm2 delete maturapolski-backend || true
+            rm -f /home/ubuntu/.pm2/dump.pm2
+            pm2 start dist/index.js --name maturapolski-backend
             pm2 save
+
             sleep 3
-            echo "=== Status ==="
             pm2 list
             pm2 logs maturapolski-backend --lines 5 --nostream
       - name: Close SSH
