@@ -788,8 +788,13 @@ export async function learningRoutes(fastify: FastifyInstance) {
           }
         }
 
-        if (filters.work && isWorkReview) {
-          baseWhere.work = filters.work;
+        if (filters.work) {
+          const works = filters.work.split(",").map((w: string) => w.trim());
+          if (works.length === 1) {
+            baseWhere.work = works[0];
+          } else {
+            baseWhere.work = { in: works };
+          }
         }
 
         let targetDifficulty: number[];

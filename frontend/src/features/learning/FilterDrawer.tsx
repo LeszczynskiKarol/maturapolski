@@ -153,7 +153,11 @@ export const ActiveFilterChips: React.FC<{
       <AnimatePresence>
         {filters.work && (
           <FilterChip
-            label={`📚 ${filters.work}`}
+            label={`📚 ${
+              filters.work.split(",").length > 1
+                ? `${filters.work.split(",").length} lektury`
+                : filters.work
+            }`}
             onRemove={() => onRemove("work")}
           />
         )}
@@ -266,6 +270,10 @@ export const FilterDrawer: React.FC<FilterDrawerProps> = ({
     () => (localFilters.epoch ? localFilters.epoch.split(",") : []),
     [localFilters.epoch],
   );
+  const selectedWorks = useMemo(
+    () => (localFilters.work ? localFilters.work.split(",") : []),
+    [localFilters.work],
+  );
   const selectedTypes = useMemo(
     () => (localFilters.type ? localFilters.type.split(",") : []),
     [localFilters.type],
@@ -276,10 +284,10 @@ export const FilterDrawer: React.FC<FilterDrawerProps> = ({
   );
 
   const activeCount = [
-    localFilters.work,
-    localFilters.epoch,
-    localFilters.type,
-    localFilters.difficulty?.length,
+    selectedWorks.length > 0,
+    selectedEpochs.length > 0,
+    selectedTypes.length > 0,
+    selectedDifficulties.length > 0,
   ].filter(Boolean).length;
 
   // ==========================================
@@ -330,14 +338,17 @@ export const FilterDrawer: React.FC<FilterDrawerProps> = ({
     });
   };
 
-  const selectWork = (workTitle: string) => {
-    if (!isPremium && workTitle) {
+  const toggleWork = (workTitle: string) => {
+    if (!isPremium) {
       toast.error("Filtrowanie po lekturach dostępne tylko w Premium!");
       return;
     }
+    const next = selectedWorks.includes(workTitle)
+      ? selectedWorks.filter((w) => w !== workTitle)
+      : [...selectedWorks, workTitle];
     applyFilter({
       ...localFilters,
-      work: workTitle || undefined,
+      work: next.length > 0 ? next.join(",") : undefined,
     });
   };
 
@@ -433,15 +444,16 @@ export const FilterDrawer: React.FC<FilterDrawerProps> = ({
             {/* Scrollable content */}
             <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
               {/* ==========================================
-                  LEKTURA
-                  ========================================== */}
+    LEKTURA (multi-select)
+    ========================================== */}
               <FilterSection
                 title="Lektura"
                 icon="📚"
                 locked={!isPremium}
                 onUpgrade={() => navigate("/subscription")}
+                count={selectedWorks.length}
               >
-                <div className="relative">
+                <div className="relative mb-2">
                   <input
                     type="text"
                     placeholder="Szukaj lektury..."
@@ -449,33 +461,48 @@ export const FilterDrawer: React.FC<FilterDrawerProps> = ({
                     onChange={(e) => setWorkSearch(e.target.value)}
                     disabled={!isPremium}
                     className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 
-                               rounded-lg bg-white dark:bg-gray-800 
-                               text-gray-900 dark:text-white
-                               placeholder-gray-400 dark:placeholder-gray-500
-                               focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                               disabled:opacity-50 disabled:cursor-not-allowed"
+                 rounded-lg bg-white dark:bg-gray-800 
+                 text-gray-900 dark:text-white
+                 placeholder-gray-400 dark:placeholder-gray-500
+                 focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                 disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
-                {localFilters.work && (
-                  <div
-                    className="flex items-center justify-between p-2 bg-blue-50 dark:bg-blue-900/30 
-                                  rounded-lg border border-blue-200 dark:border-blue-700 mt-2"
-                  >
-                    <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                      {localFilters.work}
-                    </span>
+                {/* Zaznaczone lektury */}
+                {selectedWorks.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {selectedWorks.map((w) => (
+                      <span
+                        key={w}
+                        className="inline-flex items-center gap-1 px-2.5 py-1
+                     bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300
+                     border border-blue-200 dark:border-blue-700
+                     rounded-lg text-xs font-medium"
+                      >
+                        <span className="max-w-[120px] truncate">{w}</span>
+                        <button
+                          onClick={() => toggleWork(w)}
+                          className="w-4 h-4 flex items-center justify-center rounded-full
+                       hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    ))}
                     <button
-                      onClick={() => selectWork("")}
-                      className="text-blue-500 hover:text-blue-700"
+                      onClick={() =>
+                        applyFilter({ ...localFilters, work: undefined })
+                      }
+                      className="text-xs text-red-500 hover:text-red-700 px-2 py-1"
                     >
-                      <X className="w-4 h-4" />
+                      Wyczyść
                     </button>
                   </div>
                 )}
 
-                {worksStats && !localFilters.work && (
-                  <div className="max-h-48 overflow-y-auto mt-2 space-y-1">
+                {worksStats && (
+                  <div className="max-h-48 overflow-y-auto space-y-1">
                     {Object.values(worksStats)
                       .filter(
                         (w: any) =>
@@ -493,25 +520,31 @@ export const FilterDrawer: React.FC<FilterDrawerProps> = ({
                         a.title.localeCompare(b.title, "pl"),
                       )
                       .map((work: any) => {
+                        const isSelected = selectedWorks.includes(work.title);
                         const count =
                           breakdown?.works?.[work.title] ?? work.total;
                         return (
                           <button
                             key={work.id}
-                            onClick={() => selectWork(work.title)}
+                            onClick={() => toggleWork(work.title)}
                             disabled={!isPremium}
-                            className="w-full flex items-center justify-between px-3 py-2 rounded-lg
-                                       text-sm text-left transition-all
-                                       hover:bg-gray-50 dark:hover:bg-gray-800
-                                       disabled:opacity-50 disabled:cursor-not-allowed"
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg
+                         text-sm text-left transition-all
+                         disabled:opacity-50 disabled:cursor-not-allowed
+                         ${
+                           isSelected
+                             ? "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 ring-2 ring-blue-400 dark:ring-blue-600"
+                             : "hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-200"
+                         }`}
                           >
-                            <span className="text-gray-800 dark:text-gray-200 truncate mr-2">
-                              {work.title}
-                            </span>
+                            <span className="truncate mr-2">{work.title}</span>
                             <span
-                              className="flex-shrink-0 text-xs font-semibold px-2 py-0.5 
-                                             bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 
-                                             rounded-full tabular-nums"
+                              className={`flex-shrink-0 text-xs font-bold tabular-nums px-2 py-0.5 rounded-full
+                  ${
+                    isSelected
+                      ? "bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200"
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+                  }`}
                             >
                               {count}
                             </span>
