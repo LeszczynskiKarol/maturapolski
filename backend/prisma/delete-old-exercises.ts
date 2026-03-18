@@ -207,17 +207,50 @@ const idsToDelete = [
 async function deleteOldExercises() {
   console.log(`🗑️  Deleting ${idsToDelete.length} old exercises...`);
 
-  // 1. Najpierw usuń powiązane ExerciseUsage
-  const usageResult = await prisma.exerciseUsage.deleteMany({
+  // 1. ExerciseUsage
+  const r1 = await prisma.exerciseUsage.deleteMany({
     where: { exerciseId: { in: idsToDelete } },
   });
-  console.log(`✅ Deleted ${usageResult.count} ExerciseUsage records.`);
+  console.log(`  ExerciseUsage: ${r1.count}`);
 
-  // 2. Teraz usuń same Exercise
+  // 2. SpacedRepetition
+  const r2 = await prisma.spacedRepetition.deleteMany({
+    where: { exerciseId: { in: idsToDelete } },
+  });
+  console.log(`  SpacedRepetition: ${r2.count}`);
+
+  // 3. Submission -> Assessment (assessment zależy od submission)
+  const submissions = await prisma.submission.findMany({
+    where: { exerciseId: { in: idsToDelete } },
+    select: { id: true },
+  });
+  const subIds = submissions.map((s) => s.id);
+  const r3a = await prisma.assessment.deleteMany({
+    where: { submissionId: { in: subIds } },
+  });
+  console.log(`  Assessment: ${r3a.count}`);
+  const r3 = await prisma.submission.deleteMany({
+    where: { exerciseId: { in: idsToDelete } },
+  });
+  console.log(`  Submission: ${r3.count}`);
+
+  // 4. ExamQuestion
+  const r4 = await prisma.examQuestion.deleteMany({
+    where: { exerciseId: { in: idsToDelete } },
+  });
+  console.log(`  ExamQuestion: ${r4.count}`);
+
+  // 5. AiUsage
+  const r5 = await prisma.aiUsage.deleteMany({
+    where: { exerciseId: { in: idsToDelete } },
+  });
+  console.log(`  AiUsage: ${r5.count}`);
+
+  // 6. Teraz usuń same Exercise
   const result = await prisma.exercise.deleteMany({
     where: { id: { in: idsToDelete } },
   });
-  console.log(`✅ Deleted ${result.count} exercises.`);
+  console.log(`\n✅ Deleted ${result.count} exercises.`);
 }
 
 deleteOldExercises()

@@ -3,6 +3,14 @@
 import dotenv from "dotenv";
 dotenv.config();
 console.log("=== ENV DEBUG ===");
+console.log(
+  "GOOGLE_SEARCH_ENGINE_ID:",
+  process.env.GOOGLE_SEARCH_ENGINE_ID ? "✅ SET" : "❌ MISSING",
+);
+console.log(
+  "GOOGLE_SEARCH_API_KEY:",
+  process.env.GOOGLE_SEARCH_API_KEY ? "✅ SET" : "❌ MISSING",
+);
 console.log("AWS_REGION:", process.env.AWS_REGION);
 console.log("AWS_BUCKET_NAME:", process.env.AWS_BUCKET_NAME);
 console.log(
