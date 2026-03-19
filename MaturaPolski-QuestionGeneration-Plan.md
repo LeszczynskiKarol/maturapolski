@@ -114,6 +114,7 @@ ROMANTICISM, POSITIVISM, YOUNG_POLAND, INTERWAR, CONTEMPORARY
 5. **Brak duplikatów:** Żadne dwa pytania nie mogą pytać o to samo innymi słowami.
 6. **Brak podchwytliwości:** Pytania testują wiedzę, nie zdolność do rozszyfrowywania pułapek.
 7. **BARDZO WAŻNE!!!:** Escapuj poslkie cudzysłowy w treści JSONÓW, tak żeby polskie cudzysłowy NIE PSUŁY pliku json. ale TYLKO cudzysłowy - polskich znaków masz używać NORMALNIE
+8. **BARDZO WAŻNE!!!**: jeżeli powołujesz się na czyjeś słowa lub odnosisz się do jakiegoś fragmentu czy cytatu, MUSISZ JE/GO PRZYWOŁAĆ BEZPOŚREDNIO JAKO KONTEKST!! user musi dokładnie wiedzieć, do czego się odnosić.
 
 ### 3.2 Zasady per typ
 
@@ -151,13 +152,13 @@ ROMANTICISM, POSITIVISM, YOUNG_POLAND, INTERWAR, CONTEMPORARY
 
 ### 3.3 Progresja trudności — co testuje każdy poziom
 
-| Difficulty | Testuje                                                           | Przykład                                                                       |
-| ---------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| 1          | Pamięć faktów: kto, co, gdzie, kiedy                              | "Kto jest autorem...?", "Jak nazywa się...?"                                   |
-| 2          | Rozumienie fabuły i relacji między postaciami                     | "Co stało się z X?", "Jaki był związek między X i Y?"                          |
-| 3          | Interpretacja motywów, symboliki, przyczyn                        | "Dlaczego X postąpił tak, a nie inaczej?", "Jakie motywy obecne są w utworze?" |
-| 4          | Analiza struktury, porównania wewnątrztekstowe, ocena postaci     | "Jaką funkcję pełni scena X?", "Porównaj dwie postawy..."                      |
-| 5          | Synteza, porównania międzytekstowe, kontekst epoki, analiza formy | "Jak utwór realizuje idee pozytywizmu?", "Porównaj z innym dziełem..."         |
+| Difficulty | Testuje                                                           | Przykład                                                                                                                                  |
+| ---------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| 1          | Pamięć faktów: kto, co, gdzie, kiedy                              | "Kto jest autorem...?", "Jak nazywa się...?"                                                                                              |
+| 2          | Rozumienie fabuły i relacji między postaciami                     | "Co stało się z X?", "Jaki był związek między X i Y?"                                                                                     |
+| 3          | Interpretacja motywów, symboliki, przyczyn                        | "Dlaczego X postąpił tak, a nie inaczej?", "Jakie motywy obecne są w utworze?", praca z fragmentem tekstu (wskaż środki stylistyczne)     |
+| 4          | Analiza struktury, porównania wewnątrztekstowe, ocena postaci     | "Jaką funkcję pełni scena X?", "Porównaj dwie postawy...", analiza fragmentu z interpretacją symboliki                                    |
+| 5          | Synteza, porównania międzytekstowe, kontekst epoki, analiza formy | "Jak utwór realizuje idee pozytywizmu?", "Porównaj z innym dziełem...", analiza fragmentu w kontekście epoki i porównanie z innym dziełem |
 
 ### 3.4 Tematyka pytań — checklist na 50 pytań
 
@@ -176,6 +177,7 @@ Każdy zestaw 50 pytań powinien pokrywać:
 - [ ] Środki artystyczne / narracja / kompozycja (min. 2-3 pytania)
 - [ ] Porównanie z innym utworem (min. 1 pytanie)
 - [ ] Sceny kluczowe / obowiązkowe fragmenty (min. 2-3 pytania)
+- [ ] Praca z tekstem źródłowym (min. 2-3 pytania text_analysis z autentycznymi fragmentami)
 
 ---
 
@@ -911,21 +913,125 @@ Frontend obsługuje kilka wariantów SHORT_ANSWER. Wszystkie mają `type: "SHORT
 
 ### 11.7 Podsumowanie — które pola content aktywują które sub-formaty
 
-| type            | Pole w content                                      | Sub-format         | UI                                           |
-| --------------- | --------------------------------------------------- | ------------------ | -------------------------------------------- |
-| CLOSED_MULTIPLE | `matchingType` + `leftColumn` + `rightColumn`       | **Matching**       | Dwie kolumny, klik-łączenie, kolorowe pary   |
-| CLOSED_MULTIPLE | `textWithGaps` + `gaps`                             | **Gap-fill**       | Tekst z lukami, radio per luka               |
-| CLOSED_MULTIPLE | `options` (bez powyższych)                          | **Standard**       | Checkboxy                                    |
-| CLOSED_SINGLE   | `sourceText` / `sentence` / `context` / `technique` | **Rozszerzony**    | Dodatkowe panele + standardowe radio         |
-| SHORT_ANSWER    | `steps`                                             | **Multi-step**     | Oddzielne textarea per krok                  |
-| SHORT_ANSWER    | `words`                                             | **Words-to-use**   | Zielone badge z wyrazami + textarea          |
-| SHORT_ANSWER    | `phrase`                                            | **Frazeologizm**   | Amber badge z frazeologizmem + textarea      |
-| SHORT_ANSWER    | `transformation` + `originalSentence`               | **Transformacja**  | Blue panel z poleceniem + textarea           |
-| SHORT_ANSWER    | `slogan`                                            | **Hasło epoki**    | Purple badge z hasłem + textarea             |
-| SHORT_ANSWER    | `instruction`                                       | **Instrukcja**     | Blue panel z instrukcją + textarea           |
-| SHORT_ANSWER    | `hints`                                             | **Ze wskazówkami** | Yellow panel z hintami + textarea            |
-| SYNTHESIS_NOTE  | `topic` + `requirements`                            | **Standard**       | Topic badge + checklist + textarea           |
-| ESSAY           | `thesis` + `structure` + `requirements`             | **Standard**       | Thesis + structure + requirements + textarea |
+| type            | Pole w content                                      | Sub-format         | UI                                                  |
+| --------------- | --------------------------------------------------- | ------------------ | --------------------------------------------------- |
+| CLOSED_MULTIPLE | `matchingType` + `leftColumn` + `rightColumn`       | **Matching**       | Dwie kolumny, klik-łączenie, kolorowe pary          |
+| CLOSED_MULTIPLE | `textWithGaps` + `gaps`                             | **Gap-fill**       | Tekst z lukami, radio per luka                      |
+| CLOSED_MULTIPLE | `options` (bez powyższych)                          | **Standard**       | Checkboxy                                           |
+| CLOSED_SINGLE   | `sourceText` / `sentence` / `context` / `technique` | **Rozszerzony**    | Dodatkowe panele + standardowe radio                |
+| SHORT_ANSWER    | `steps`                                             | **Multi-step**     | Oddzielne textarea per krok                         |
+| SHORT_ANSWER    | `words`                                             | **Words-to-use**   | Zielone badge z wyrazami + textarea                 |
+| SHORT_ANSWER    | `phrase`                                            | **Frazeologizm**   | Amber badge z frazeologizmem + textarea             |
+| SHORT_ANSWER    | `transformation` + `originalSentence`               | **Transformacja**  | Blue panel z poleceniem + textarea                  |
+| SHORT_ANSWER    | `slogan`                                            | **Hasło epoki**    | Purple badge z hasłem + textarea                    |
+| SHORT_ANSWER    | `variant: "text_analysis"` + `sourceText` + `tasks` | **Text analysis**  | Duży blok tekstu + textarea per task                |
+| SYNTHESIS_NOTE  | `variant: "text_analysis"` + `sourceText` + `tasks` | **Text analysis**  | Duży blok tekstu + textarea per task + requirements |
+| SHORT_ANSWER    | `instruction`                                       | **Instrukcja**     | Blue panel z instrukcją + textarea                  |
+| SHORT_ANSWER    | `hints`                                             | **Ze wskazówkami** | Yellow panel z hintami + textarea                   |
+| SYNTHESIS_NOTE  | `topic` + `requirements`                            | **Standard**       | Topic badge + checklist + textarea                  |
+| ESSAY           | `thesis` + `structure` + `requirements`             | **Standard**       | Thesis + structure + requirements + textarea        |
+
+### 11.8 SHORT_ANSWER / SYNTHESIS_NOTE — sub-format: TEXT_ANALYSIS (praca z tekstem)
+
+Frontend wykrywa po: `content.variant === "text_analysis"` + `content.sourceText` + `content.tasks`.
+UI: duży blok z tekstem źródłowym (scrollowalny), pod spodem osobne textarea per task. Claude przy ocenie dostaje tekst źródłowy bezpośrednio — bez web research. Prisma type = `SHORT_ANSWER` (dla 1-2 tasków) lub `SYNTHESIS_NOTE` (dla 2-3 tasków wymagających dłuższej analizy).
+
+#### Przykład SHORT_ANSWER text_analysis (difficulty 3)
+
+{
+type: "SHORT_ANSWER",
+category: "LANGUAGE_USE",
+difficulty: 3,
+points: 2,
+epoch: "POSITIVISM",
+work: "Nad Niemnem",
+question: "Przeczytaj fragment i wykonaj polecenia:",
+content: {
+variant: "text_analysis",
+sourceText: {
+author: "Eliza Orzeszkowa",
+title: "Nad Niemnem",
+text: "Niemen płynął cicho, jakby uśpiony, a nad nim wisiała mgła biała jak całun. Na brzegach rosły olchy pochylone ku wodzie, jakby chciały się w niej przejrzeć. Cisza była tak głęboka, że słychać było bicie własnego serca.",
+bookReference: "Tom I, rozdział III",
+},
+tasks: [
+{
+id: 1,
+instruction: "Wskaż dwa środki stylistyczne obecne w tym fragmencie i nazwij je.",
+minWords: 15,
+maxPoints: 1,
+},
+{
+id: 2,
+instruction: "Wyjaśnij, jaką funkcję pełni opis przyrody w kontekście fabuły powieści.",
+minWords: 30,
+maxPoints: 1,
+},
+],
+},
+correctAnswer: "1) Personifikacja (Niemen płynął, olchy chciały się przejrzeć) i porównanie (biała jak całun, jakby uśpiony). 2) Przyroda odzwierciedla stan emocjonalny bohaterów — cisza i mgła tworzą nastrój tajemnicy i melancholii, zapowiadając wewnętrzne rozterki Justyny.",
+metadata: {
+explanation: "Fragment łączy personifikację z porównaniem. Opis natury u Orzeszkowej pełni funkcję psychologiczną — jest zwierciadłem uczuć bohaterów.",
+},
+},
+
+#### Przykład SYNTHESIS_NOTE text_analysis (difficulty 4)
+
+{
+type: "SYNTHESIS_NOTE",
+category: "HISTORICAL_LITERARY",
+difficulty: 4,
+points: 4,
+epoch: "POSITIVISM",
+work: "Nad Niemnem",
+question: "Przeczytaj fragment i napisz notatkę analityczną:",
+content: {
+variant: "text_analysis",
+sourceText: {
+author: "Eliza Orzeszkowa",
+title: "Nad Niemnem",
+text: "[dłuższy fragment 300-800 znaków — np. scena przy mogile powstańczej]",
+bookReference: "Tom II, rozdział VIII",
+},
+tasks: [
+{
+id: 1,
+instruction: "Określ, jaką rolę pełni mogiła w tym fragmencie — dosłowną i symboliczną.",
+minWords: 40,
+maxPoints: 2,
+},
+{
+id: 2,
+instruction: "Wyjaśnij, dlaczego autorka nie używa słowa „powstanie". Odwołaj się do kontekstu historycznego.",
+minWords: 40,
+maxPoints: 2,
+},
+],
+requirements: [
+"Odwołaj się bezpośrednio do cytowanego fragmentu",
+"Łącznie 100-150 słów",
+],
+wordLimit: { min: 100, max: 150 },
+},
+correctAnswer: "1) Mogiła dosłownie jest zbiorowym grobem powstańców, symbolicznie — miejscem pamięci łączącym dwór z zaściankiem. 2) Cenzura carska zabraniała wspominania powstania — Orzeszkowa stosuje mowę ezopową.",
+metadata: {
+explanation: "Scena przy mogile to kluczowy moment powieści. Mogiła łączy wątki pamięci, patriotyzmu i jedności stanowej.",
+},
+},
+
+**Zasady TEXT_ANALYSIS:**
+
+- `variant: "text_analysis"` — WYMAGANE, aktywuje dedykowany layout
+- `sourceText` — WYMAGANE: `{ author, title, text, bookReference? }`
+- `sourceText.text` — fragment 100-800 znaków (dłuższy = scrollowalny)
+- `tasks` — WYMAGANE: tablica 1-3 obiektów `{ id, instruction, minWords, maxPoints }`
+- Suma `maxPoints` ze wszystkich tasków = `points` pytania
+- `correctAnswer` — wzorcowe odpowiedzi na WSZYSTKIE taski (jako string, numerowane)
+- Difficulty: 2-5 (nie ma sensu dla poziomu 1 — wymaga analizy, nie pamięci)
+- Dla SHORT_ANSWER: 1-2 taski, łącznie 30-80 słów odpowiedzi
+- Dla SYNTHESIS_NOTE: 2-3 taski, łącznie 80-150 słów, dodaj `requirements` i `wordLimit`
+- **Tekst źródłowy MUSI być autentycznym fragmentem lektury** (nie streszczeniem)
+- Taski MUSZĄ wymagać pracy z tekstem (nie da się odpowiedzieć bez czytania fragmentu)
 
 ---
 
@@ -977,12 +1083,13 @@ Dla urozmaicenia sesji nauki, zalecany mix sub-formatów wewnątrz 50 pytań:
 | ------------------------------------------------- | ----- | --------------------- |
 | CLOSED_SINGLE standard                            | 14-16 | CS (20 total)         |
 | CLOSED_SINGLE z sourceText/sentence               | 4-6   | CS                    |
-| CLOSED_MULTIPLE standard (checkboxy)              | 6-8   | CM (12 total)         |
+| CLOSED_MULTIPLE standard (checkboxy)              | 4-6   | CM (12 total)         |
 | CLOSED_MULTIPLE matching                          | 2-3   | CM                    |
 | CLOSED_MULTIPLE gap-fill                          | 2-3   | CM                    |
-| SHORT_ANSWER standard                             | 6-8   | SA (12 total)         |
+| SHORT_ANSWER standard                             | 4-6   | SA (12 total)         |
 | SHORT_ANSWER z words/phrase/slogan/transformation | 3-4   | SA                    |
 | SHORT_ANSWER multi-step                           | 1-2   | SA                    |
+| SYNTHESIS_NOTE text_analysis                      | 1-2   | SN                    |
 | SYNTHESIS_NOTE z topic+requirements               | 4     | SN (4 total)          |
 | ESSAY z thesis+structure                          | 2     | ES (2 total)          |
 
@@ -1028,6 +1135,10 @@ Dla urozmaicenia sesji nauki, zalecany mix sub-formatów wewnątrz 50 pytań:
 - [ ] CLOSED_MULTIPLE matching: `content.matchingType` + `leftColumn` + `rightColumn` (obiekty z id+text), correctAnswer = tablica par
 - [ ] CLOSED_MULTIPLE gap-fill: `content.textWithGaps` + `content.gaps`, correctAnswer = tablica indexów
 - [ ] ESSAY: category === "WRITING", difficulty >= 4
+- [ ] TEXT_ANALYSIS: `content.variant === "text_analysis"` + `sourceText.text` niepusty + `tasks` tablica 1-3 elementów
+- [ ] TEXT_ANALYSIS: suma `tasks[].maxPoints` === `points` pytania
+- [ ] TEXT_ANALYSIS: `sourceText.text` to autentyczny fragment lektury (nie streszczenie)
+- [ ] TEXT_ANALYSIS: difficulty >= 2
 
 ### Walidacja merytoryczna
 

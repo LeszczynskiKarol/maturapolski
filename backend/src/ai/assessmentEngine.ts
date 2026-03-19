@@ -34,7 +34,7 @@ const DetailedAssessmentSchema = z.object({
         type: z.string(),
         quality: z.enum(["excellent", "good", "fair", "poor"]),
         feedback: z.string(),
-      })
+      }),
     ),
   }),
   language: z.object({
@@ -46,7 +46,7 @@ const DetailedAssessmentSchema = z.object({
         type: z.string(),
         location: z.string(),
         correction: z.string(),
-      })
+      }),
     ),
     styleFigures: z.array(z.string()),
   }),
@@ -70,7 +70,7 @@ export class EnhancedAssessmentEngine {
   async assessEssay(
     text: string,
     topic: string,
-    requirements: any
+    requirements: any,
   ): Promise<z.infer<typeof DetailedAssessmentSchema>> {
     const wordCount = text.split(/\s+/).length;
     const sentences = text.split(/[.!?]+/).filter(Boolean);
@@ -79,7 +79,7 @@ export class EnhancedAssessmentEngine {
     const prompt = this.buildDetailedPrompt(text, topic, requirements);
 
     const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-5-20250929",
+      model: "claude-sonnet-4-6",
       max_tokens: 3000,
       temperature: 0.3,
       messages: [
@@ -115,7 +115,7 @@ export class EnhancedAssessmentEngine {
   private buildDetailedPrompt(
     text: string,
     topic: string,
-    requirements: any
+    requirements: any,
   ): string {
     return `
 Jesteś ekspertem egzaminatorem maturalnym CKE. Oceń szczegółowo wypracowanie według oficjalnych kryteriów.
@@ -189,8 +189,8 @@ Zwróć szczegółową analizę w formacie JSON z wszystkimi elementami oceny, b
       0,
       Math.min(
         100,
-        206.835 - 1.015 * avgWordsPerSentence - 84.6 * avgSyllablesPerWord
-      )
+        206.835 - 1.015 * avgWordsPerSentence - 84.6 * avgSyllablesPerWord,
+      ),
     );
   }
 

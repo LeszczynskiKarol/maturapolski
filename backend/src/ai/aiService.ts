@@ -37,7 +37,7 @@ export async function assessWithWebResearch(
   additionalContext?: {
     requirements?: string[];
     minWords?: number;
-  }
+  },
 ): Promise<any> {
   if (!anthropic) {
     throw new Error("AI service not initialized");
@@ -66,7 +66,7 @@ export async function assessWithWebResearch(
     const searchQuery = await googleSearchService.generateSearchQuery(
       question,
       userAnswer,
-      workTitle
+      workTitle,
     );
 
     console.log(`✅ Generated query: "${searchQuery}"`);
@@ -83,7 +83,7 @@ export async function assessWithWebResearch(
 
     const searchResults = await googleSearchService.searchLiteratureSources(
       searchQuery,
-      5
+      5,
     );
 
     console.log(`\n📊 SEARCH RESULTS: ${searchResults.length} sources found`);
@@ -95,7 +95,7 @@ export async function assessWithWebResearch(
 
     if (searchResults.length === 0) {
       console.log(
-        "\n⚠️  NO SEARCH RESULTS - FALLING BACK TO STANDARD ASSESSMENT"
+        "\n⚠️  NO SEARCH RESULTS - FALLING BACK TO STANDARD ASSESSMENT",
       );
       console.log("─".repeat(80) + "\n");
 
@@ -111,7 +111,7 @@ export async function assessWithWebResearch(
           userAnswer,
           question,
           additionalContext?.requirements,
-          maxPoints
+          maxPoints,
         );
       }
     }
@@ -135,7 +135,7 @@ export async function assessWithWebResearch(
     scrapedResults.forEach((result, i) => {
       if (result.success) {
         console.log(
-          `   ✅ [${i + 1}] ${result.url} - ${result.text.length} chars`
+          `   ✅ [${i + 1}] ${result.url} - ${result.text.length} chars`,
         );
       } else {
         console.log(`   ❌ [${i + 1}] ${result.url} - ERROR: ${result.error}`);
@@ -152,11 +152,11 @@ export async function assessWithWebResearch(
 
     const sourceContent = webScrapperService.aggregateScrapedContent(
       scrapedResults,
-      20000
+      20000,
     );
 
     console.log(
-      `📊 Aggregation result: ${sourceContent.length} total characters`
+      `📊 Aggregation result: ${sourceContent.length} total characters`,
     );
 
     if (!sourceContent || sourceContent.length < 100) {
@@ -175,14 +175,14 @@ export async function assessWithWebResearch(
           userAnswer,
           question,
           additionalContext?.requirements,
-          maxPoints
+          maxPoints,
         );
       }
     }
 
     console.log("✅ Source content ready for AI assessment");
     console.log(
-      `   Preview (first 200 chars): ${sourceContent.substring(0, 200)}...`
+      `   Preview (first 200 chars): ${sourceContent.substring(0, 200)}...`,
     );
     console.log("─".repeat(80) + "\n");
 
@@ -199,7 +199,7 @@ export async function assessWithWebResearch(
       sourceContent,
       exerciseType,
       maxPoints,
-      workTitle
+      workTitle,
     );
 
     // Dodaj linki źródłowe do wyniku
@@ -222,7 +222,7 @@ export async function assessWithWebResearch(
     console.error("Error:", error);
     console.error(
       "Stack:",
-      error instanceof Error ? error.stack : "No stack trace"
+      error instanceof Error ? error.stack : "No stack trace",
     );
     console.error("=".repeat(80) + "\n");
 
@@ -240,9 +240,198 @@ export async function assessWithWebResearch(
         userAnswer,
         question,
         additionalContext?.requirements,
-        maxPoints
+        maxPoints,
       );
     }
+  }
+}
+
+/**
+ * Ocena TEXT_ANALYSIS — odpowiedzi na taski NA PODSTAWIE tekstu źródłowego
+ * BEZ web research — tekst jest dostarczony bezpośrednio z content ćwiczenia
+ */
+export async function assessTextAnalysis(
+  userAnswers: string[],
+  tasks: Array<{
+    id: number;
+    instruction: string;
+    minWords?: number;
+    maxPoints: number;
+  }>,
+  sourceText: string,
+  totalMaxPoints: number,
+  sourceAuthor?: string,
+  sourceTitle?: string,
+  bookReference?: string,
+): Promise<any> {
+  if (!anthropic) {
+    throw new Error("AI service not initialized");
+  }
+
+  const totalWords = userAnswers.reduce(
+    (sum, a) => sum + (a || "").split(/\s+/).filter(Boolean).length,
+    0,
+  );
+
+  console.log("\n" + "=".repeat(80));
+  console.log("📖 TEXT ANALYSIS ASSESSMENT");
+  console.log("=".repeat(80));
+  console.log(`Tasks: ${tasks.length}`);
+  console.log(`Total max points: ${totalMaxPoints}`);
+  console.log(`Source text length: ${sourceText.length} chars`);
+  console.log(`User total words: ${totalWords}`);
+  console.log("=".repeat(80) + "\n");
+
+  const prompt = `
+Jesteś ekspertem egzaminatorem maturalnym. Oceń odpowiedzi ucznia NA PODSTAWIE poniższego tekstu źródłowego.
+
+=== TEKST ŹRÓDŁOWY ===
+${sourceAuthor ? `Autor: ${sourceAuthor}` : ""}
+${sourceTitle ? `Tytuł: „${sourceTitle}"` : ""}
+${bookReference ? `Źródło: ${bookReference}` : ""}
+
+${sourceText}
+=== KONIEC TEKSTU ŹRÓDŁOWEGO ===
+
+${tasks
+  .map(
+    (task, i) => `
+ZADANIE ${task.id || i + 1} (max ${task.maxPoints} pkt): ${task.instruction}
+${task.minWords ? `(minimum ${task.minWords} słów)` : ""}
+ODPOWIEDŹ UCZNIA: ${userAnswers[i] || "(brak odpowiedzi)"}
+`,
+  )
+  .join("\n")}
+
+INSTRUKCJE OCENY:
+1. Oceń KAŻDE zadanie OSOBNO
+2. Bazuj WYŁĄCZNIE na tekście źródłowym — nie używaj wiedzy spoza tekstu
+3. Sprawdź czy odpowiedź DOTYCZY pytania i ODWOŁUJE SIĘ do tekstu
+4. Przyznaj punkty częściowe za częściowo poprawne odpowiedzi
+5. Jeśli uczeń nie odwołuje się do tekstu źródłowego — odejmij punkty
+
+**KRYTYCZNE - JĘZYK FEEDBACKU:**
+- Pisz NATURALNIE, nie akademicko
+- Bądź KONKRETNY — wskaż co dobrze, co źle, czego brakuje
+- Odwołuj się do FRAGMENTÓW tekstu źródłowego
+
+ŁĄCZNA MAKSYMALNA LICZBA PUNKTÓW: ${totalMaxPoints}
+
+Format JSON:
+{
+  "score": 0,
+  "maxScore": ${totalMaxPoints},
+  "isCorrect": false,
+  "isPartiallyCorrect": false,
+  "overallAssessment": "Krótka ocena ogólna",
+  "taskResults": [
+    ${tasks
+      .map(
+        (task) => `{
+      "taskId": ${task.id},
+      "score": 0,
+      "maxScore": ${task.maxPoints},
+      "feedback": "Feedback do tego konkretnego zadania",
+      "correctElements": [],
+      "missingElements": []
+    }`,
+      )
+      .join(",\n    ")}
+  ],
+  "feedback": "Ogólny feedback do całości — 2-3 zdania",
+  "correctAnswer": "Wzorcowa odpowiedź na wszystkie zadania łącznie",
+  "correctElements": [],
+  "missingElements": [],
+  "suggestions": []
+}
+
+**WAŻNE:**
+- score = SUMA score z taskResults
+- Jeśli score == maxScore: correctAnswer i suggestions MUSZĄ BYĆ PUSTE ("" i [])
+- taskResults MUSI mieć dokładnie ${tasks.length} elementów
+
+KRYTYCZNE: Zwróć TYLKO czysty JSON bez żadnych dodatkowych znaków, komentarzy czy formatowania.
+`;
+
+  try {
+    const response = await anthropic.messages.create({
+      model: "claude-sonnet-4-6",
+      max_tokens: 4096,
+      temperature: 0.2,
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    const messageContent = response.content[0];
+    if (messageContent.type === "text") {
+      let textContent = messageContent.text.trim();
+
+      const jsonMatch = textContent.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        console.error("❌ NO JSON FOUND IN TEXT ANALYSIS RESPONSE");
+        throw new Error("No JSON found in response");
+      }
+
+      let jsonString = jsonMatch[0]
+        .replace(/[\r\n\t]/g, " ")
+        .replace(/\s{2,}/g, " ")
+        .replace(/"\s+:/g, '":')
+        .replace(/:\s+"/g, ':"')
+        .replace(/,\s+"/g, ',"')
+        .replace(/\[\s+/g, "[")
+        .replace(/\s+\]/g, "]")
+        .replace(/\{\s+/g, "{")
+        .replace(/\s+\}/g, "}");
+
+      const result = JSON.parse(jsonString);
+
+      // Normalizacja
+      result.score = Number(result.score) || 0;
+      result.maxScore = Number(result.maxScore || totalMaxPoints);
+      result.isCorrect = result.score >= totalMaxPoints;
+      result.isPartiallyCorrect =
+        result.score > 0 && result.score < totalMaxPoints;
+      result.feedback = String(result.feedback || "Odpowiedź oceniona.");
+      result.correctAnswer = String(result.correctAnswer || "");
+      result.missingElements = Array.isArray(result.missingElements)
+        ? result.missingElements
+        : [];
+      result.correctElements = Array.isArray(result.correctElements)
+        ? result.correctElements
+        : [];
+      result.suggestions = Array.isArray(result.suggestions)
+        ? result.suggestions
+        : [];
+      result.taskResults = Array.isArray(result.taskResults)
+        ? result.taskResults
+        : [];
+
+      console.log("✅ TEXT ANALYSIS RESULT:", JSON.stringify(result, null, 2));
+      return result;
+    }
+
+    throw new Error("Invalid response format from AI");
+  } catch (error) {
+    console.error("❌ TEXT ANALYSIS ASSESSMENT ERROR:", error);
+    return {
+      score: 0,
+      maxScore: totalMaxPoints,
+      isCorrect: false,
+      isPartiallyCorrect: false,
+      overallAssessment: "Nie udało się ocenić odpowiedzi",
+      feedback: "Wystąpił błąd podczas oceny. Spróbuj ponownie.",
+      correctAnswer: "",
+      correctElements: [],
+      missingElements: [],
+      suggestions: ["Spróbuj ponownie później"],
+      taskResults: tasks.map((t) => ({
+        taskId: t.id,
+        score: 0,
+        maxScore: t.maxPoints,
+        feedback: "Błąd oceny",
+        correctElements: [],
+        missingElements: [],
+      })),
+    };
   }
 }
 
@@ -250,7 +439,7 @@ export async function assessShortAnswerWithAI(
   userAnswer: string,
   question: string,
   expectedConcepts?: string[], // ✅ BEZ sourceContent!
-  maxPoints: number = 2
+  maxPoints: number = 2,
 ): Promise<any> {
   if (!anthropic) {
     throw new Error("AI service not initialized");
@@ -316,13 +505,13 @@ NIE używaj znaków nowej linii wewnątrz wartości string.
   console.log("─".repeat(80));
   console.log(`Prompt length: ${prompt.length} chars`);
   console.log(
-    `Prompt preview (first 500 chars):\n${prompt.substring(0, 500)}...`
+    `Prompt preview (first 500 chars):\n${prompt.substring(0, 500)}...`,
   );
   console.log("─".repeat(80) + "\n");
 
   try {
     const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-5-20250929",
+      model: "claude-sonnet-4-6",
       max_tokens: 4096,
       temperature: 0.2,
       messages: [{ role: "user", content: prompt }],
@@ -340,7 +529,7 @@ NIE używaj znaków nowej linii wewnątrz wartości string.
       let textContent = messageContent.text.trim();
 
       console.log(
-        `\nRaw response (first 1000 chars):\n${textContent.substring(0, 1000)}`
+        `\nRaw response (first 1000 chars):\n${textContent.substring(0, 1000)}`,
       );
       console.log("─".repeat(80) + "\n");
 
@@ -376,10 +565,10 @@ NIE używaj znaków nowej linii wewnątrz wartości string.
       result.isCorrect = Boolean(result.isCorrect);
       result.isPartiallyCorrect = Boolean(result.isPartiallyCorrect);
       result.feedback = String(
-        result.feedback || "Odpowiedź została oceniona."
+        result.feedback || "Odpowiedź została oceniona.",
       );
       result.correctAnswer = String(
-        result.correctAnswer || "Brak przykładowej odpowiedzi."
+        result.correctAnswer || "Brak przykładowej odpowiedzi.",
       );
       result.missingElements = Array.isArray(result.missingElements)
         ? result.missingElements
@@ -419,7 +608,7 @@ NIE używaj znaków nowej linii wewnątrz wartości string.
 export async function assessEssayWithAI(
   content: string,
   topic: string,
-  requirements: any
+  requirements: any,
 ): Promise<any> {
   if (!anthropic) {
     throw new Error("AI service not initialized");
@@ -472,13 +661,13 @@ Format JSON:
   console.log("─".repeat(80));
   console.log(`Prompt length: ${prompt.length} chars`);
   console.log(
-    `Prompt preview (first 800 chars):\n${prompt.substring(0, 800)}...`
+    `Prompt preview (first 800 chars):\n${prompt.substring(0, 800)}...`,
   );
   console.log("─".repeat(80) + "\n");
 
   try {
     const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-5-20250929",
+      model: "claude-sonnet-4-6",
       max_tokens: 4096,
       temperature: 0.3,
       messages: [{ role: "user", content: prompt }],
@@ -496,7 +685,7 @@ Format JSON:
       let textContent = messageContent.text.trim();
 
       console.log(
-        `\nRaw response (first 1000 chars):\n${textContent.substring(0, 1000)}`
+        `\nRaw response (first 1000 chars):\n${textContent.substring(0, 1000)}`,
       );
       console.log("─".repeat(80) + "\n");
 
@@ -542,15 +731,15 @@ Format JSON:
       result.formalScore = Math.max(0, Math.min(1, result.formalScore || 0));
       result.literaryScore = Math.max(
         0,
-        Math.min(16, result.literaryScore || 0)
+        Math.min(16, result.literaryScore || 0),
       );
       result.compositionScore = Math.max(
         0,
-        Math.min(7, result.compositionScore || 0)
+        Math.min(7, result.compositionScore || 0),
       );
       result.languageScore = Math.max(
         0,
-        Math.min(11, result.languageScore || 0)
+        Math.min(11, result.languageScore || 0),
       );
 
       console.log("\nFinal validated result:", JSON.stringify(result, null, 2));
@@ -611,7 +800,7 @@ export async function generateSessionSummary(
     categoryStrengths: Record<string, number>;
     improvementAreas: string[];
   },
-  userName: string = "Uczniu"
+  userName: string = "Uczniu",
 ): Promise<any> {
   if (!anthropic) {
     throw new Error("AI service not initialized");
@@ -645,7 +834,7 @@ ${sessionData.exercises
     (e) =>
       `- Poziom ${e.difficulty}, ${e.category}: ${
         e.score > 0 ? "poprawne" : "błędne"
-      }`
+      }`,
   )
   .join("\n")}
 
@@ -659,7 +848,7 @@ Ostatnie 5 sesji:
 ${userHistory.recentSessions
   .map(
     (s, i) =>
-      `Sesja ${i + 1}: ${s.correct}/${s.completed} poprawnych, ${s.points} pkt`
+      `Sesja ${i + 1}: ${s.correct}/${s.completed} poprawnych, ${s.points} pkt`,
   )
   .join("\n")}
 
@@ -763,7 +952,7 @@ SŁABA SESJA (accuracy < 50%):
   } poprawnie (${accuracy}%). Materiał wymaga dokładniejszej analizy.",
   "highlights": [
     "Poświęciłeś ${Math.round(
-      sessionData.timeSpent / 60
+      sessionData.timeSpent / 60,
     )} minut na naukę - to się liczy!"
   ],
   "improvements": [
@@ -795,7 +984,7 @@ SŁABA SESJA (accuracy < 50%):
     console.log(`Prompt length: ${prompt.length} chars`);
 
     const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-5-20250929",
+      model: "claude-sonnet-4-6",
       max_tokens: 2048,
       temperature: 0.7,
       messages: [{ role: "user", content: prompt }],
@@ -903,7 +1092,7 @@ async function assessWithSourceContext(
   sourceContent: string,
   exerciseType: string,
   maxPoints: number,
-  workTitle?: string
+  workTitle?: string,
 ): Promise<any> {
   if (!anthropic) {
     throw new Error("AI service not initialized");
@@ -978,13 +1167,13 @@ KRYTYCZNE: Zwróć TYLKO czysty JSON w jednej linii, bez żadnych dodatkowych zn
   console.log("📤 SENDING TO CLAUDE:");
   console.log(`   Total prompt length: ${prompt.length} chars`);
   console.log(
-    `   Prompt preview (first 1000 chars):\n${prompt.substring(0, 1000)}...`
+    `   Prompt preview (first 1000 chars):\n${prompt.substring(0, 1000)}...`,
   );
   console.log("─".repeat(80) + "\n");
 
   try {
     const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-5-20250929",
+      model: "claude-sonnet-4-6",
       max_tokens: 4096,
       temperature: 0.2,
       messages: [{ role: "user", content: prompt }],
@@ -1001,7 +1190,7 @@ KRYTYCZNE: Zwróć TYLKO czysty JSON w jednej linii, bez żadnych dodatkowych zn
       let textContent = messageContent.text.trim();
 
       console.log(
-        `\nRaw response (first 1500 chars):\n${textContent.substring(0, 1500)}`
+        `\nRaw response (first 1500 chars):\n${textContent.substring(0, 1500)}`,
       );
       console.log("─".repeat(80) + "\n");
 

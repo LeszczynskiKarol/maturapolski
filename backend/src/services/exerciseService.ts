@@ -4,6 +4,7 @@ import {
   assessWithWebResearch,
   assessShortAnswerWithAI,
   assessEssayWithAI,
+  assessTextAnalysis,
 } from "../ai/aiService";
 import { prisma } from "../lib/prisma";
 import { subscriptionService } from "./subscriptionService";
@@ -76,6 +77,110 @@ export class ExerciseService {
       exercise.type === "ESSAY"
     ) {
       try {
+        const exerciseContent = exercise.content as any;
+
+        // ✅ TEXT ANALYSIS — osobna ścieżka oceny (bez web research)
+        if (
+          exerciseContent?.variant === "text_analysis" &&
+          exerciseContent?.sourceText?.text &&
+          exerciseContent?.tasks?.length > 0
+        ) {
+          console.log(`\n=== 📖 TEXT ANALYSIS ASSESSMENT ===`);
+          console.log("Exercise ID:", exerciseId);
+          console.log("Tasks:", exerciseContent.tasks.length);
+
+          const userAnswers: string[] = Array.isArray(answer)
+            ? answer
+            : [answer];
+
+          const aiAssessment = await assessTextAnalysis(
+            userAnswers,
+            exerciseContent.tasks,
+            exerciseContent.sourceText.text,
+            exercise.points,
+            exerciseContent.sourceText.author,
+            exerciseContent.sourceText.title,
+            exerciseContent.sourceText.bookReference,
+          );
+
+          const finalScore = Math.min(
+            Math.max(0, Math.round((aiAssessment.score || 0) * 10) / 10),
+            exercise.points,
+          );
+
+          await prisma.submission.update({
+            where: { id: submission.id },
+            data: {
+              score: finalScore,
+              assessedBy: "AI",
+              feedback: aiAssessment,
+            },
+          });
+
+          await prisma.assessment.create({
+            data: {
+              submissionId: submission.id,
+              userId,
+              totalScore: finalScore,
+              detailedFeedback: {
+                aiResponse: aiAssessment,
+                feedback: aiAssessment.feedback,
+                correctAnswer: aiAssessment.correctAnswer,
+                missingElements: aiAssessment.missingElements,
+                correctElements: aiAssessment.correctElements,
+                taskResults: aiAssessment.taskResults,
+              },
+              improvements: aiAssessment.suggestions || [],
+            },
+          });
+
+          const estimatedTokens = {
+            input: Math.ceil(
+              (exercise.question.length +
+                exerciseContent.sourceText.text.length +
+                userAnswers.join("").length) /
+                4,
+            ),
+            output: Math.ceil(JSON.stringify(aiAssessment).length / 4),
+          };
+
+          await subscriptionService.useAiPoints(
+            userId,
+            exerciseId,
+            exercise.type,
+            pointsCost,
+            estimatedTokens,
+          );
+
+          const isCorrect = finalScore >= exercise.points * 0.6;
+          const isPartiallyCorrect =
+            !isCorrect && finalScore > 0 && finalScore < exercise.points * 0.6;
+
+          return {
+            ...submission,
+            score: finalScore,
+            assessment: aiAssessment,
+            message: isCorrect
+              ? `Świetnie! Zdobyłeś ${finalScore} z ${exercise.points} punktów!`
+              : isPartiallyCorrect
+                ? `Częściowo poprawna odpowiedź. Zdobyłeś ${finalScore} z ${exercise.points} punktów.`
+                : "Odpowiedź wymaga poprawy",
+            feedback: {
+              isCorrect,
+              isPartiallyCorrect,
+              score: finalScore,
+              maxScore: exercise.points,
+              overallAssessment: aiAssessment.overallAssessment,
+              feedback: aiAssessment.feedback,
+              correctAnswer: aiAssessment.correctAnswer,
+              missingElements: aiAssessment.missingElements,
+              correctElements: aiAssessment.correctElements,
+              suggestions: aiAssessment.suggestions,
+              taskResults: aiAssessment.taskResults,
+            },
+          };
+        }
+
         // ✅ TYLKO dla SYNTHESIS_NOTE i ESSAY używaj web research
         if (exercise.type === "SYNTHESIS_NOTE" || exercise.type === "ESSAY") {
           console.log(

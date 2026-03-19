@@ -61,7 +61,7 @@ export async function examRoutes(fastify: FastifyInstance) {
       const totalPoints = exam.sections.reduce(
         (sum, section) =>
           sum + section.questions.reduce((sSum, q) => sSum + q.points, 0),
-        0
+        0,
       );
 
       // Dla dynamicznych egzaminów bez pytań - ustaw domyślne punkty
@@ -141,15 +141,14 @@ export async function examRoutes(fastify: FastifyInstance) {
     }
 
     // ZAWSZE GENERUJ DYNAMICZNIE!
-    const { IntelligentExamService } = await import(
-      "../services/intelligentExamService"
-    );
+    const { IntelligentExamService } =
+      await import("../services/intelligentExamService");
     const intelligentService = new IntelligentExamService();
 
     // Dobierz pytania z tabeli Exercise
     const selectedQuestions = await intelligentService.selectQuestionsForExam(
       userId,
-      exam.type as "PODSTAWOWY" | "ROZSZERZONY"
+      exam.type as "PODSTAWOWY" | "ROZSZERZONY",
     );
 
     // Przygotuj metadane
@@ -255,7 +254,7 @@ export async function examRoutes(fastify: FastifyInstance) {
     const elapsedMinutes = differenceInMinutes(new Date(), session.startedAt);
     const remainingMinutes = Math.max(
       0,
-      session.exam.duration - elapsedMinutes
+      session.exam.duration - elapsedMinutes,
     );
 
     // Sprawdź timeout
@@ -414,7 +413,7 @@ export async function examRoutes(fastify: FastifyInstance) {
           answerText,
           questionText,
           undefined,
-          question.points
+          question.points,
         );
         score = aiResult.score;
         feedback = aiResult;
@@ -457,7 +456,7 @@ export async function examRoutes(fastify: FastifyInstance) {
     const maxScore = session.exam.sections.reduce(
       (sum, section) =>
         sum + section.questions.reduce((sSum, q) => sSum + q.points, 0),
-      0
+      0,
     );
     const percentScore = Math.round((totalScore / maxScore) * 100);
 
@@ -501,7 +500,7 @@ export async function examRoutes(fastify: FastifyInstance) {
           });
         }
         console.log(
-          `Marked ${metadata.length} exam questions as USED after completion`
+          `Marked ${metadata.length} exam questions as USED after completion`,
         );
       }
     }

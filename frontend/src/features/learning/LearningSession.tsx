@@ -510,6 +510,23 @@ export const LearningSession: React.FC = () => {
     if (!currentExercise || answer === null || answer === undefined)
       return false;
 
+    // Text analysis — sprawdź czy wszystkie taski mają odpowiedź
+    if (
+      currentExercise.content?.variant === "text_analysis" &&
+      currentExercise.content?.tasks
+    ) {
+      const tasks = currentExercise.content.tasks;
+      return (
+        Array.isArray(answer) &&
+        answer.length === tasks.length &&
+        answer.every((a: string, i: number) => {
+          const minWords = tasks[i]?.minWords || 10;
+          const wordCount = (a || "").split(/\s+/).filter(Boolean).length;
+          return wordCount >= minWords;
+        })
+      );
+    }
+
     switch (currentExercise.type) {
       case "CLOSED_SINGLE":
         return answer !== null && answer !== undefined;
@@ -2113,247 +2130,365 @@ export const LearningSession: React.FC = () => {
                   )}
 
                 {/* SHORT ANSWER */}
-                {currentExercise.type === "SHORT_ANSWER" && (
-                  <>
-                    {/* DZIEŁO LITERACKIE */}
-                    {currentExercise.content?.work && (
-                      <div className="mb-4 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-                        <p className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-1">
-                          📚 Dzieło literackie:
-                        </p>
-                        <p className="text-lg font-semibold text-purple-900 dark:text-purple-100">
-                          {currentExercise.content.work}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* ✅ NOWE - WYRAZY DO WYKORZYSTANIA */}
-                    {currentExercise.content?.words &&
-                      currentExercise.content.words.length > 0 && (
-                        <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                          <p className="text-sm font-medium text-green-700 dark:text-green-300 mb-2">
-                            📝 Użyj wszystkich tych wyrazów:
+                {/* TEXT ANALYSIS — praca z tekstem */}
+                {(currentExercise.type === "SHORT_ANSWER" ||
+                  currentExercise.type === "SYNTHESIS_NOTE") &&
+                  currentExercise.content?.variant === "text_analysis" &&
+                  currentExercise.content?.sourceText &&
+                  currentExercise.content?.tasks && (
+                    <div className="space-y-4">
+                      {/* Tekst źródłowy */}
+                      <div className="p-5 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
+                        <div className="mb-3 pb-2 border-b border-gray-200 dark:border-gray-600">
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            {currentExercise.content.sourceText.author && (
+                              <span className="font-medium">
+                                {currentExercise.content.sourceText.author}
+                              </span>
+                            )}
+                            {currentExercise.content.sourceText.title && (
+                              <span className="italic">
+                                {currentExercise.content.sourceText.author &&
+                                  " — "}
+                                „{currentExercise.content.sourceText.title}"
+                              </span>
+                            )}
+                            {currentExercise.content.sourceText
+                              .bookReference && (
+                              <span className="text-xs ml-2 text-gray-500">
+                                (
+                                {
+                                  currentExercise.content.sourceText
+                                    .bookReference
+                                }
+                                )
+                              </span>
+                            )}
                           </p>
-                          <div className="flex flex-wrap gap-2">
-                            {currentExercise.content.words.map(
-                              (word: string, idx: number) => (
-                                <span
-                                  key={idx}
-                                  className="px-3 py-1.5 bg-white dark:bg-gray-800 
+                        </div>
+                        <div className="max-h-64 overflow-y-auto">
+                          <p className="whitespace-pre-wrap text-gray-900 dark:text-gray-100 italic leading-relaxed">
+                            {currentExercise.content.sourceText.text}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Wymagania (opcjonalne, dla SYNTHESIS_NOTE) */}
+                      {currentExercise.content.requirements &&
+                        currentExercise.content.requirements.length > 0 && (
+                          <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                            <p className="font-medium text-sm text-green-700 dark:text-green-300 mb-2">
+                              ✅ Wymagania:
+                            </p>
+                            <ul className="space-y-1.5">
+                              {currentExercise.content.requirements.map(
+                                (req: string, idx: number) => (
+                                  <li
+                                    key={idx}
+                                    className="flex items-start gap-2 text-sm text-green-800 dark:text-green-200"
+                                  >
+                                    <span className="text-green-600 dark:text-green-400 mt-0.5">
+                                      •
+                                    </span>
+                                    <span>{req}</span>
+                                  </li>
+                                ),
+                              )}
+                            </ul>
+                          </div>
+                        )}
+
+                      {/* Taski */}
+                      {currentExercise.content.tasks.map(
+                        (task: any, index: number) => (
+                          <div key={task.id || index} className="space-y-2">
+                            <label className="block">
+                              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Zadanie {task.id || index + 1} ({task.maxPoints}{" "}
+                                pkt): {task.instruction}
+                              </span>
+                              <textarea
+                                value={answer?.[index] || ""}
+                                onChange={(e) => {
+                                  const newAnswer = [
+                                    ...(answer ||
+                                      Array(
+                                        currentExercise.content.tasks.length,
+                                      ).fill("")),
+                                  ];
+                                  newAnswer[index] = e.target.value;
+                                  setAnswer(newAnswer);
+                                }}
+                                className="mt-2 w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
+                rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
+                bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
+                placeholder-gray-500 dark:placeholder-gray-400"
+                                rows={4}
+                                placeholder={`Odpowiedź na zadanie ${task.id || index + 1}...`}
+                              />
+                              <WordCounter
+                                text={answer?.[index] || ""}
+                                minWords={task.minWords}
+                              />
+                            </label>
+                          </div>
+                        ),
+                      )}
+
+                      {/* Łączna liczba słów */}
+                      {currentExercise.content.wordLimit && (
+                        <WordCounter
+                          text={(answer || []).join(" ")}
+                          minWords={currentExercise.content.wordLimit.min}
+                          showAlways={true}
+                        />
+                      )}
+                    </div>
+                  )}
+                {currentExercise.type === "SHORT_ANSWER" &&
+                  currentExercise.content?.variant !== "text_analysis" && (
+                    <>
+                      {/* DZIEŁO LITERACKIE */}
+                      {currentExercise.content?.work && (
+                        <div className="mb-4 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-1">
+                            📚 Dzieło literackie:
+                          </p>
+                          <p className="text-lg font-semibold text-purple-900 dark:text-purple-100">
+                            {currentExercise.content.work}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* ✅ NOWE - WYRAZY DO WYKORZYSTANIA */}
+                      {currentExercise.content?.words &&
+                        currentExercise.content.words.length > 0 && (
+                          <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                            <p className="text-sm font-medium text-green-700 dark:text-green-300 mb-2">
+                              📝 Użyj wszystkich tych wyrazów:
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              {currentExercise.content.words.map(
+                                (word: string, idx: number) => (
+                                  <span
+                                    key={idx}
+                                    className="px-3 py-1.5 bg-white dark:bg-gray-800 
                        text-green-800 dark:text-green-200 
                        border-2 border-green-300 dark:border-green-700
                        rounded-lg font-semibold text-sm"
-                                >
-                                  {word}
-                                </span>
-                              ),
-                            )}
+                                  >
+                                    {word}
+                                  </span>
+                                ),
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                      {/* FRAZEOLOGIZM / PHRASE */}
+                      {currentExercise.content?.phrase && (
+                        <div className="mb-4 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                          <p className="text-sm font-medium text-amber-700 dark:text-amber-300 mb-1">
+                            💬 Frazeologizm:
+                          </p>
+                          <p className="text-xl font-bold text-amber-900 dark:text-amber-100">
+                            "{currentExercise.content.phrase}"
+                          </p>
+                        </div>
+                      )}
+
+                      {/* INSTRUKCJA */}
+                      {currentExercise.content?.instruction && (
+                        <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                          <p className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-2">
+                            📝 Polecenie:
+                          </p>
+                          <div className="text-blue-900 dark:text-blue-100 whitespace-pre-wrap">
+                            {currentExercise.content.instruction}
                           </div>
                         </div>
                       )}
 
-                    {/* FRAZEOLOGIZM / PHRASE */}
-                    {currentExercise.content?.phrase && (
-                      <div className="mb-4 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-                        <p className="text-sm font-medium text-amber-700 dark:text-amber-300 mb-1">
-                          💬 Frazeologizm:
-                        </p>
-                        <p className="text-xl font-bold text-amber-900 dark:text-amber-100">
-                          "{currentExercise.content.phrase}"
-                        </p>
-                      </div>
-                    )}
-
-                    {/* INSTRUKCJA */}
-                    {currentExercise.content?.instruction && (
-                      <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                        <p className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-2">
-                          📝 Polecenie:
-                        </p>
-                        <div className="text-blue-900 dark:text-blue-100 whitespace-pre-wrap">
-                          {currentExercise.content.instruction}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Wyświetl dodatkowe informacje jeśli istnieją */}
-                    {currentExercise.content?.originalSentence && (
-                      <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                        <p className="font-medium text-sm text-gray-700 dark:text-gray-300 mb-2">
-                          Zdanie wyjściowe:
-                        </p>
-                        <p className="text-gray-900 dark:text-gray-100">
-                          {currentExercise.content.originalSentence}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Hasło epoki (slogan) */}
-                    {currentExercise.content?.slogan && (
-                      <div className="mb-4 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-                        <p className="font-medium text-sm text-purple-700 dark:text-purple-300 mb-1">
-                          📚 Hasło epoki:
-                        </p>
-                        <p className="text-lg font-semibold text-purple-900 dark:text-purple-100">
-                          "{currentExercise.content.slogan}"
-                        </p>
-                      </div>
-                    )}
-
-                    {currentExercise.content?.transformation && (
-                      <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                        <p className="font-medium text-sm text-blue-700 dark:text-blue-300 mb-1">
-                          Polecenie transformacji:
-                        </p>
-                        <p className="text-blue-900 dark:text-blue-100">
-                          {currentExercise.content.transformation}
-                        </p>
-                      </div>
-                    )}
-
-                    {/*  Obsługa zadań wieloetapowych */}
-                    {currentExercise.content?.steps &&
-                    currentExercise.content.steps.length > 0 ? (
-                      <div className="space-y-4">
-                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                          Odpowiedz na każdy z poniższych kroków:
-                        </p>
-                        {currentExercise.content.steps.map(
-                          (step: any, index: number) => (
-                            <div key={step.id || index} className="space-y-2">
-                              <label className="block">
-                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                  Krok {step.id || index + 1}:{" "}
-                                  {step.instruction || step.task}
-                                </span>
-                                <textarea
-                                  value={answer?.[index] || ""}
-                                  onChange={(e) => {
-                                    const newAnswer = [
-                                      ...(answer ||
-                                        Array(
-                                          currentExercise.content.steps.length,
-                                        ).fill("")),
-                                    ];
-                                    newAnswer[index] = e.target.value;
-                                    setAnswer(newAnswer);
-                                  }}
-                                  className="mt-2 w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
-          rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
-          bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
-          placeholder-gray-500 dark:placeholder-gray-400"
-                                  rows={2}
-                                  placeholder={`Odpowiedź na krok ${
-                                    step.id || index + 1
-                                  }...`}
-                                />
-                                <WordCounter
-                                  text={answer || ""}
-                                  minWords={getMinWords(currentExercise)}
-                                />
-                              </label>
-                            </div>
-                          ),
-                        )}
-                      </div>
-                    ) : (
-                      // Standardowe pojedyncze pole tekstowe dla zwykłych SHORT_ANSWER
-                      <>
-                        {currentExercise.content?.hints &&
-                          currentExercise.content.hints.length > 0 && (
-                            <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-                              <p className="font-medium text-sm text-yellow-700 dark:text-yellow-300 mb-1">
-                                💡 Wskazówki:
-                              </p>
-                              <div className="text-sm text-yellow-800 dark:text-yellow-200">
-                                {currentExercise.content.hints.map(
-                                  (hint: string, idx: number) => (
-                                    <span key={idx} className="mr-3">
-                                      • {hint}
-                                    </span>
-                                  ),
-                                )}
-                              </div>
-                            </div>
-                          )}
-
-                        <textarea
-                          value={answer || ""}
-                          onChange={(e) => setAnswer(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
-    rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
-    bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
-    placeholder-gray-500 dark:placeholder-gray-400"
-                          rows={4}
-                          placeholder="Wpisz swoją odpowiedź..."
-                        />
-                      </>
-                    )}
-                    <WordCounter
-                      text={answer || ""}
-                      minWords={getMinWords(currentExercise)}
-                    />
-                  </>
-                )}
-
-                {/* SYNTHESIS NOTE */}
-                {currentExercise.type === "SYNTHESIS_NOTE" && (
-                  <div className="space-y-4">
-                    {/* Temat notatki */}
-                    {currentExercise.content?.topic && (
-                      <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-200 dark:border-indigo-800">
-                        <p className="font-medium text-sm text-indigo-700 dark:text-indigo-300 mb-1">
-                          📝 Temat do omówienia:
-                        </p>
-                        <p className="text-lg font-semibold text-indigo-900 dark:text-indigo-100">
-                          {currentExercise.content.topic}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Wymagania */}
-                    {currentExercise.content?.requirements &&
-                      currentExercise.content.requirements.length > 0 && (
-                        <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                          <p className="font-medium text-sm text-green-700 dark:text-green-300 mb-2">
-                            ✅ Wymagania - uwzględnij w notatce:
+                      {/* Wyświetl dodatkowe informacje jeśli istnieją */}
+                      {currentExercise.content?.originalSentence && (
+                        <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                          <p className="font-medium text-sm text-gray-700 dark:text-gray-300 mb-2">
+                            Zdanie wyjściowe:
                           </p>
-                          <ul className="space-y-1.5">
-                            {currentExercise.content.requirements.map(
-                              (req: string, idx: number) => (
-                                <li
-                                  key={idx}
-                                  className="flex items-start gap-2 text-sm text-green-800 dark:text-green-200"
-                                >
-                                  <span className="text-green-600 dark:text-green-400 mt-0.5">
-                                    •
-                                  </span>
-                                  <span>{req}</span>
-                                </li>
-                              ),
-                            )}
-                          </ul>
+                          <p className="text-gray-900 dark:text-gray-100">
+                            {currentExercise.content.originalSentence}
+                          </p>
                         </div>
                       )}
 
-                    {/* Pole tekstowe */}
-                    <textarea
-                      value={answer || ""}
-                      onChange={(e) => setAnswer(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
+                      {/* Hasło epoki (slogan) */}
+                      {currentExercise.content?.slogan && (
+                        <div className="mb-4 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                          <p className="font-medium text-sm text-purple-700 dark:text-purple-300 mb-1">
+                            📚 Hasło epoki:
+                          </p>
+                          <p className="text-lg font-semibold text-purple-900 dark:text-purple-100">
+                            "{currentExercise.content.slogan}"
+                          </p>
+                        </div>
+                      )}
+
+                      {currentExercise.content?.transformation && (
+                        <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                          <p className="font-medium text-sm text-blue-700 dark:text-blue-300 mb-1">
+                            Polecenie transformacji:
+                          </p>
+                          <p className="text-blue-900 dark:text-blue-100">
+                            {currentExercise.content.transformation}
+                          </p>
+                        </div>
+                      )}
+
+                      {/*  Obsługa zadań wieloetapowych */}
+                      {currentExercise.content?.steps &&
+                      currentExercise.content.steps.length > 0 ? (
+                        <div className="space-y-4">
+                          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                            Odpowiedz na każdy z poniższych kroków:
+                          </p>
+                          {currentExercise.content.steps.map(
+                            (step: any, index: number) => (
+                              <div key={step.id || index} className="space-y-2">
+                                <label className="block">
+                                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Krok {step.id || index + 1}:{" "}
+                                    {step.instruction || step.task}
+                                  </span>
+                                  <textarea
+                                    value={answer?.[index] || ""}
+                                    onChange={(e) => {
+                                      const newAnswer = [
+                                        ...(answer ||
+                                          Array(
+                                            currentExercise.content.steps
+                                              .length,
+                                          ).fill("")),
+                                      ];
+                                      newAnswer[index] = e.target.value;
+                                      setAnswer(newAnswer);
+                                    }}
+                                    className="mt-2 w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
+          rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
+          bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
+          placeholder-gray-500 dark:placeholder-gray-400"
+                                    rows={2}
+                                    placeholder={`Odpowiedź na krok ${
+                                      step.id || index + 1
+                                    }...`}
+                                  />
+                                  <WordCounter
+                                    text={answer || ""}
+                                    minWords={getMinWords(currentExercise)}
+                                  />
+                                </label>
+                              </div>
+                            ),
+                          )}
+                        </div>
+                      ) : (
+                        // Standardowe pojedyncze pole tekstowe dla zwykłych SHORT_ANSWER
+                        <>
+                          {currentExercise.content?.hints &&
+                            currentExercise.content.hints.length > 0 && (
+                              <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                                <p className="font-medium text-sm text-yellow-700 dark:text-yellow-300 mb-1">
+                                  💡 Wskazówki:
+                                </p>
+                                <div className="text-sm text-yellow-800 dark:text-yellow-200">
+                                  {currentExercise.content.hints.map(
+                                    (hint: string, idx: number) => (
+                                      <span key={idx} className="mr-3">
+                                        • {hint}
+                                      </span>
+                                    ),
+                                  )}
+                                </div>
+                              </div>
+                            )}
+
+                          <textarea
+                            value={answer || ""}
+                            onChange={(e) => setAnswer(e.target.value)}
+                            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
+    rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
+    bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
+    placeholder-gray-500 dark:placeholder-gray-400"
+                            rows={4}
+                            placeholder="Wpisz swoją odpowiedź..."
+                          />
+                        </>
+                      )}
+                      <WordCounter
+                        text={answer || ""}
+                        minWords={getMinWords(currentExercise)}
+                      />
+                    </>
+                  )}
+
+                {/* SYNTHESIS NOTE */}
+                {currentExercise.type === "SYNTHESIS_NOTE" &&
+                  currentExercise.content?.variant !== "text_analysis" && (
+                    <div className="space-y-4">
+                      {/* Temat notatki */}
+                      {currentExercise.content?.topic && (
+                        <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-200 dark:border-indigo-800">
+                          <p className="font-medium text-sm text-indigo-700 dark:text-indigo-300 mb-1">
+                            📝 Temat do omówienia:
+                          </p>
+                          <p className="text-lg font-semibold text-indigo-900 dark:text-indigo-100">
+                            {currentExercise.content.topic}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Wymagania */}
+                      {currentExercise.content?.requirements &&
+                        currentExercise.content.requirements.length > 0 && (
+                          <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                            <p className="font-medium text-sm text-green-700 dark:text-green-300 mb-2">
+                              ✅ Wymagania - uwzględnij w notatce:
+                            </p>
+                            <ul className="space-y-1.5">
+                              {currentExercise.content.requirements.map(
+                                (req: string, idx: number) => (
+                                  <li
+                                    key={idx}
+                                    className="flex items-start gap-2 text-sm text-green-800 dark:text-green-200"
+                                  >
+                                    <span className="text-green-600 dark:text-green-400 mt-0.5">
+                                      •
+                                    </span>
+                                    <span>{req}</span>
+                                  </li>
+                                ),
+                              )}
+                            </ul>
+                          </div>
+                        )}
+
+                      {/* Pole tekstowe */}
+                      <textarea
+                        value={answer || ""}
+                        onChange={(e) => setAnswer(e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 
                rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
                bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
                placeholder-gray-500 dark:placeholder-gray-400"
-                      rows={8}
-                      placeholder="Napisz notatkę syntetyzującą zgodnie z wymaganiami..."
-                    />
+                        rows={8}
+                        placeholder="Napisz notatkę syntetyzującą zgodnie z wymaganiami..."
+                      />
 
-                    <WordCounter
-                      text={answer || ""}
-                      minWords={getMinWords(currentExercise)}
-                    />
-                  </div>
-                )}
+                      <WordCounter
+                        text={answer || ""}
+                        minWords={getMinWords(currentExercise)}
+                      />
+                    </div>
+                  )}
 
                 {/* ESSAY */}
                 {currentExercise.type === "ESSAY" && (
@@ -2783,6 +2918,43 @@ export const LearningSession: React.FC = () => {
                                   ),
                                 )}
                               </ul>
+                            </div>
+                          )}
+
+                        {/* Per-task feedback (text_analysis) */}
+                        {aiData.taskResults &&
+                          aiData.taskResults.length > 0 && (
+                            <div className="space-y-3 mb-3">
+                              {aiData.taskResults.map(
+                                (taskResult: any, idx: number) => (
+                                  <div
+                                    key={idx}
+                                    className="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+                                  >
+                                    <div className="flex items-center justify-between mb-1">
+                                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Zadanie {taskResult.taskId || idx + 1}
+                                      </span>
+                                      <span
+                                        className={`text-sm font-bold ${
+                                          taskResult.score >=
+                                          taskResult.maxScore
+                                            ? "text-green-600 dark:text-green-400"
+                                            : taskResult.score > 0
+                                              ? "text-yellow-600 dark:text-yellow-400"
+                                              : "text-red-600 dark:text-red-400"
+                                        }`}
+                                      >
+                                        {taskResult.score}/{taskResult.maxScore}{" "}
+                                        pkt
+                                      </span>
+                                    </div>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                      {taskResult.feedback}
+                                    </p>
+                                  </div>
+                                ),
+                              )}
                             </div>
                           )}
 
