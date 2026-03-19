@@ -7309,7 +7309,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_MULTIPLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 2,
       points: 2,
       epoch: "INTERWAR",
@@ -7334,7 +7334,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_MULTIPLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 2,
       points: 2,
       epoch: "INTERWAR",
@@ -7359,7 +7359,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_MULTIPLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 2,
       points: 2,
       epoch: "INTERWAR",
@@ -7384,7 +7384,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_MULTIPLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 2,
       points: 2,
       epoch: "INTERWAR",
@@ -7403,7 +7403,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_MULTIPLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 2,
       points: 2,
       epoch: "INTERWAR",
@@ -7430,7 +7430,7 @@ async function seedExercises() {
 
     {
       type: "SHORT_ANSWER",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 2,
       points: 3,
       epoch: "INTERWAR",
@@ -7453,7 +7453,7 @@ async function seedExercises() {
 
     {
       type: "SHORT_ANSWER",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 2,
       points: 3,
       epoch: "INTERWAR",
@@ -7478,7 +7478,7 @@ async function seedExercises() {
 
     {
       type: "SYNTHESIS_NOTE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 2,
       points: 4,
       epoch: "INTERWAR",
@@ -7500,7 +7500,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_SINGLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 1,
       epoch: "INTERWAR",
@@ -7524,7 +7524,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_SINGLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 1,
       epoch: "INTERWAR",
@@ -7548,7 +7548,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_SINGLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 1,
       epoch: "INTERWAR",
@@ -7572,7 +7572,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_SINGLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 1,
       epoch: "INTERWAR",
@@ -7595,7 +7595,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_SINGLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 1,
       epoch: "INTERWAR",
@@ -7619,7 +7619,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_SINGLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 1,
       epoch: "INTERWAR",
@@ -7643,7 +7643,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_SINGLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 1,
       epoch: "INTERWAR",
@@ -7667,7 +7667,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_SINGLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 1,
       epoch: "INTERWAR",
@@ -7693,7 +7693,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_MULTIPLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 2,
       epoch: "INTERWAR",
@@ -7718,7 +7718,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_MULTIPLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 2,
       epoch: "INTERWAR",
@@ -7743,7 +7743,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_MULTIPLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 2,
       epoch: "INTERWAR",
@@ -7767,7 +7767,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_MULTIPLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 2,
       epoch: "INTERWAR",
@@ -7794,7 +7794,7 @@ async function seedExercises() {
 
     {
       type: "SHORT_ANSWER",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 3,
       epoch: "INTERWAR",
@@ -7817,7 +7817,7 @@ async function seedExercises() {
 
     {
       type: "SHORT_ANSWER",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 3,
       epoch: "INTERWAR",
@@ -7840,7 +7840,7 @@ async function seedExercises() {
 
     {
       type: "SHORT_ANSWER",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 3,
       epoch: "INTERWAR",
@@ -7863,7 +7863,7 @@ async function seedExercises() {
 
     {
       type: "SYNTHESIS_NOTE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 4,
       epoch: "INTERWAR",
@@ -7883,7 +7883,7 @@ async function seedExercises() {
 
     {
       type: "SYNTHESIS_NOTE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 3,
       points: 4,
       epoch: "INTERWAR",
@@ -7905,7 +7905,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_SINGLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 4,
       points: 1,
       epoch: "INTERWAR",
@@ -7929,7 +7929,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_SINGLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 4,
       points: 1,
       epoch: "INTERWAR",
@@ -7955,7 +7955,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_MULTIPLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 4,
       points: 2,
       epoch: "INTERWAR",
@@ -7982,7 +7982,7 @@ async function seedExercises() {
 
     {
       type: "SHORT_ANSWER",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 4,
       points: 3,
       epoch: "INTERWAR",
@@ -8005,7 +8005,7 @@ async function seedExercises() {
 
     {
       type: "SYNTHESIS_NOTE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 4,
       points: 4,
       epoch: "INTERWAR",
@@ -8027,7 +8027,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_SINGLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 5,
       points: 1,
       epoch: "INTERWAR",
@@ -8051,7 +8051,7 @@ async function seedExercises() {
 
     {
       type: "CLOSED_SINGLE",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 5,
       points: 1,
       epoch: "INTERWAR",
@@ -8077,7 +8077,7 @@ async function seedExercises() {
 
     {
       type: "SHORT_ANSWER",
-      category: "ANALYTICAL",
+      category: "HISTORICAL_LITERARY",
       difficulty: 5,
       points: 3,
       epoch: "INTERWAR",
