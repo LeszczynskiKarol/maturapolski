@@ -111,7 +111,7 @@ export function TestListPage() {
 
   // Grupowanie po epokach
   const groupedByEpoch = useMemo(() => {
-    if (selectedEpoch || searchQuery.trim()) return null; // Nie grupuj przy filtrach
+    if (selectedEpoch || searchQuery.trim()) return null;
 
     const groups: Record<string, TestLandingItem[]> = {};
     filteredTests.forEach((t) => {
@@ -120,9 +120,17 @@ export function TestListPage() {
       groups[epoch].push(t);
     });
 
-    return epochOrder
-      .filter((e) => groups[e] && groups[e].length > 0)
-      .map((e) => ({ epoch: e, label: epochLabels[e] || e, tests: groups[e] }));
+    // Epoki w kolejności + "OTHER" na końcu
+    const orderedKeys = [
+      ...epochOrder.filter((e) => groups[e] && groups[e].length > 0),
+      ...(groups["OTHER"] ? ["OTHER"] : []),
+    ];
+
+    return orderedKeys.map((e) => ({
+      epoch: e,
+      label: e === "OTHER" ? "Inne" : epochLabels[e] || e,
+      tests: groups[e],
+    }));
   }, [filteredTests, selectedEpoch, searchQuery]);
 
   // Statystyki
@@ -131,7 +139,7 @@ export function TestListPage() {
 
   // SEO
   const seoTitle =
-    "Testy z Lektur Online - Quizy i Sprawdziany na Maturę z Polskiego | MaturaPolski.pl";
+    "Wszystkie lektury - lista testów z lektur obowiązkowych na maturę z polskiego";
   const seoDescription = `✓ ${tests.length} testów z lektur obowiązkowych i uzupełniających ✓ ${totalQuestions}+ pytań ✓ Pytania zamknięte, otwarte i wypracowania ✓ Ocena AI w 30 sekund ✓ Przygotuj się do matury 2025/2026!`;
   const seoKeywords =
     "testy z lektur, quiz z lektury online, test maturalny z polskiego, sprawdzian z lektury, pytania z lektur matura, testy maturalne polski";

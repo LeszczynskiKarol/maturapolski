@@ -358,19 +358,31 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
             </div>
 
             {/* Testy z lektur */}
+            {/* Testy z lektur */}
             <div>
               <h4 className="font-bold mb-4 text-lg">Testy z lektur</h4>
               <ul className="space-y-3 text-gray-400">
-                {testHubs.map((hub) => (
-                  <li key={hub.id}>
-                    <a
-                      href={`/test/${hub.slug}`}
-                      className="hover:text-white transition-colors"
-                    >
-                      {hub.title}
-                    </a>
-                  </li>
-                ))}
+                {testHubs
+                  .filter((hub) => hub.isRequired) // tylko obowiązkowe
+                  .slice(0, 12)
+                  .map((hub) => (
+                    <li key={hub.id}>
+                      <a
+                        href={`/test/${hub.slug}`}
+                        className="hover:text-white transition-colors"
+                      >
+                        {hub.title}
+                      </a>
+                    </li>
+                  ))}
+                <li>
+                  <Link
+                    to="/test"
+                    className="text-blue-400 hover:text-blue-300 transition-colors font-medium"
+                  >
+                    Zobacz wszystkie →
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>

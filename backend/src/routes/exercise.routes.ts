@@ -8,6 +8,7 @@ import { TestLandingService } from "../services/testLandingService";
 
 const exerciseService = new ExerciseService();
 const levelProgress = new LevelProgressService();
+const testLandingService = new TestLandingService();
 
 export async function exerciseRoutes(fastify: FastifyInstance) {
   // Middleware - verify JWT

@@ -15,6 +15,7 @@ export class TestLandingService {
         title: true,
         work: true,
         author: true,
+        epoch: true,
         isRequired: true,
       },
     });
