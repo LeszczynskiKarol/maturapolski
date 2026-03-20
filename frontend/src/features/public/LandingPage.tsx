@@ -1,6 +1,7 @@
 // frontend/src/features/public/LandingPage.tsx
 import { PublicLayout } from "../../components/PublicLayout";
 import { FeaturedTestsSection } from "../../components/FeaturedTestsSection";
+import { FeaturedEpochsSection } from "../../components/FeaturedEpochsSection";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -357,6 +358,7 @@ export const LandingPage: React.FC = () => {
         </section>
 
         <FeaturedTestsSection />
+        <FeaturedEpochsSection />
 
         {/* Core Features - Detailed */}
         <section id="funkcje" className="py-20 px-4 bg-white">
