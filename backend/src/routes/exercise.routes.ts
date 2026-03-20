@@ -4,6 +4,7 @@ import { FastifyInstance } from "fastify";
 import { ExerciseService } from "../services/exerciseService";
 import { LevelProgressService } from "../services/levelProgressService";
 import { prisma } from "../lib/prisma";
+import { TestLandingService } from "../services/testLandingService";
 
 const exerciseService = new ExerciseService();
 const levelProgress = new LevelProgressService();
@@ -84,6 +85,14 @@ export async function exerciseRoutes(fastify: FastifyInstance) {
     console.log("User ID:", userId);
 
     const result = await exerciseService.submitAnswer(userId, id, answer);
+
+    const exercise = await prisma.exercise.findUnique({
+      where: { id },
+      select: { work: true },
+    });
+    if (exercise?.work) {
+      testLandingService.ensureLandingExists(exercise.work).catch(() => {});
+    }
 
     console.log("Submit result score:", result.score);
 

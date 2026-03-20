@@ -1,7 +1,9 @@
 // backend/prisma/seed-exercises.ts
 import { PrismaClient } from "@prisma/client";
+import { TestLandingService } from "../src/services/testLandingService";
 
 const prisma = new PrismaClient();
+const testLandingService = new TestLandingService();
 
 async function seedExercises() {
   console.log("🌱 Seeding exercises...");
@@ -3185,7 +3187,12 @@ async function seedExercises() {
       ...((exercise as any).tags || []),
     ].filter((tag): tag is string => tag !== null),
   }));
-
+  const uniqueWorks = [
+    ...new Set(exercises.map((e) => e.work).filter(Boolean)),
+  ];
+  for (const work of uniqueWorks) {
+    await testLandingService.ensureLandingExists(work as string);
+  }
   for (const exercise of exercisesWithTags) {
     try {
       await prisma.exercise.create({

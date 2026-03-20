@@ -4,7 +4,9 @@ import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../lib/prisma";
 import { z } from "zod";
 import Stripe from "stripe";
+import { TestLandingService } from "../services/testLandingService";
 
+const testLandingService = new TestLandingService();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-08-27.basil",
 });
@@ -290,6 +292,9 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
             metadata: data.metadata || {},
           } as any,
         });
+        if (data.work) {
+          testLandingService.ensureLandingExists(data.work).catch(() => {});
+        }
 
         return reply.send(exercise);
       } catch (error: any) {
@@ -428,6 +433,9 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
           metadata: data.metadata || {},
         } as any,
       });
+      if (data.work) {
+        testLandingService.ensureLandingExists(data.work).catch(() => {});
+      }
 
       return reply.send(exercise);
     } catch (error: any) {
@@ -487,6 +495,12 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
             }),
           ),
         );
+        const uniqueWorks = [
+          ...new Set(exercises.map((e) => e.work).filter(Boolean)),
+        ] as string[];
+        for (const work of uniqueWorks) {
+          testLandingService.ensureLandingExists(work).catch(() => {});
+        }
 
         return reply.send({
           success: true,

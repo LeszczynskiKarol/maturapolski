@@ -1,12 +1,18 @@
 // backend/src/services/adminService.ts
 
 import { prisma } from "../lib/prisma";
+import { TestLandingService } from "./testLandingService";
+
+const testLandingService = new TestLandingService();
 
 export class AdminService {
   async createExercise(data: any) {
     const exercise = await prisma.exercise.create({
       data,
     });
+    if (data.work) {
+      testLandingService.ensureLandingExists(data.work).catch(() => {});
+    }
 
     return exercise;
   }
@@ -28,8 +34,14 @@ export class AdminService {
 
   async bulkCreateExercises(exercises: any[]) {
     const created = await prisma.$transaction(
-      exercises.map((exercise) => prisma.exercise.create({ data: exercise }))
+      exercises.map((exercise) => prisma.exercise.create({ data: exercise })),
     );
+    const uniqueWorks = [
+      ...new Set(exercises.map((e: any) => e.work).filter(Boolean)),
+    ] as string[];
+    for (const work of uniqueWorks) {
+      testLandingService.ensureLandingExists(work).catch(() => {});
+    }
 
     return created;
   }

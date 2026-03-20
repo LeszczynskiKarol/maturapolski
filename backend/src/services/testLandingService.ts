@@ -35,6 +35,69 @@ export class TestLandingService {
     }));
   }
 
+  async ensureLandingExists(work: string): Promise<void> {
+    if (!work || work.trim() === "") return;
+
+    const existing = await prisma.testLanding.findFirst({ where: { work } });
+    if (existing) return;
+
+    const exerciseCount = await prisma.exercise.count({ where: { work } });
+    if (exerciseCount < 50) return; // ← PRÓG 50 PYTAŃ
+
+    // Wzbogać danymi z ContentHub jeśli dostępne
+    const hub = await prisma.contentHub.findFirst({
+      where: { title: work, type: "LITERARY_WORK", isPublished: true },
+      select: {
+        author: true,
+        epoch: true,
+        isRequired: true,
+        description: true,
+        imageUrl: true,
+      },
+    });
+
+    const slug = this.generateSlug(work);
+
+    // Sprawdź unikalność sluga
+    const slugExists = await prisma.testLanding.findUnique({
+      where: { slug },
+    });
+
+    const finalSlug = slugExists ? `${slug}-test` : slug;
+
+    try {
+      await prisma.testLanding.create({
+        data: {
+          slug: finalSlug,
+          work,
+          title: work,
+          author: hub?.author || null,
+          epoch: hub?.epoch || null,
+          isRequired: hub?.isRequired || false,
+          description: hub?.description || null,
+          imageUrl: hub?.imageUrl || null,
+          metaTitle: `Test z lektury: ${work} | MaturaPolski.pl`,
+          metaDescription: `Sprawdź swoją wiedzę z "${work}" - ${exerciseCount} pytań testowych. Przygotuj się do matury z polskiego!`,
+        },
+      });
+      console.log(
+        `✅ Auto-created TestLanding for "${work}" → /test/${finalSlug}`,
+      );
+    } catch (err: any) {
+      // Unique constraint violation = ktoś inny zdążył pierwszy (race condition)
+      if (err.code === "P2002") {
+        console.log(
+          `TestLanding for "${work}" already exists (race condition)`,
+        );
+        return;
+      }
+      console.error(
+        `❌ Failed to auto-create TestLanding for "${work}":`,
+        err.message,
+      );
+    }
+  }
+
   // Pojedynczy test landing page
   async getTestLanding(slug: string) {
     const landing = await prisma.testLanding.findUnique({
