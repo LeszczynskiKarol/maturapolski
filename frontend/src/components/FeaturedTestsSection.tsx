@@ -56,7 +56,6 @@ export const FeaturedTestsSection: React.FC = () => {
 
   if (loading || tests.length === 0) return null;
 
-  const totalQuestions = tests.reduce((sum, t) => sum + t.exerciseCount, 0);
   const requiredTests = tests.filter((t) => t.isRequired);
   const supplementaryTests = tests.filter((t) => !t.isRequired);
 
@@ -72,9 +71,7 @@ export const FeaturedTestsSection: React.FC = () => {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full mb-5">
             <BookOpen className="w-4 h-4" />
-            <span className="text-sm font-semibold">
-              {tests.length} lektur · {totalQuestions}+ pytań
-            </span>
+            <span className="text-sm font-semibold">{tests.length} lektur</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">

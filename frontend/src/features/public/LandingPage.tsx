@@ -41,9 +41,77 @@ import { motion } from "framer-motion";
 
 export const LandingPage: React.FC = () => {
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
+  // JSON-LD structured data — tylko na landing page
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    name: "MaturaPolski.pl",
+    description:
+      "Platforma do nauki języka polskiego i przygotowania do egzaminu maturalnego",
+    url: "https://www.maturapolski.pl",
+    logo: "https://www.maturapolski.pl/logo.png",
+    sameAs: [
+      "https://facebook.com/maturapolski",
+      "https://instagram.com/maturapolski",
+    ],
+    areaServed: "PL",
+    availableLanguage: "pl",
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "MaturaPolski.pl",
+    url: "https://www.maturapolski.pl",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://www.maturapolski.pl/szukaj?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  const courseSchema = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: "Testy Maturalne z Języka Polskiego",
+    description:
+      "Kompleksowe kursy maturalne online z polskiego - testy, sprawdziany i interaktywna nauka lektur",
+    provider: {
+      "@type": "EducationalOrganization",
+      name: "MaturaPolski.pl",
+      url: "https://www.maturapolski.pl",
+    },
+    educationalLevel: "Liceum",
+    inLanguage: "pl",
+    availableLanguage: "pl",
+    hasCourseInstance: {
+      "@type": "CourseInstance",
+      courseMode: "online",
+      courseWorkload: "PT50H",
+    },
+  };
 
   return (
     <PublicLayout>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organizationSchema),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(websiteSchema),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(courseSchema),
+        }}
+      />
+
       <div className="min-h-screen bg-white">
         {/* Hero Section */}
         <section className="pt-32 pb-20 px-4 bg-gradient-to-b from-blue-50 via-purple-50 to-white">

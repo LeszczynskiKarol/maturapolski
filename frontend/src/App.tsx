@@ -14,6 +14,8 @@ import { UserSessionsTable } from "./features/admin/UserSessionsTable";
 import { CheckEmailPage } from "./features/auth/CheckEmailPage";
 import { ForgotPasswordPage } from "./features/auth/ForgotPasswordPage";
 import { ResendVerificationPage } from "./features/auth/ResendVerificationPage";
+import { EpochListPage } from "./features/content/EpochListPage";
+import { EpochLandingPage } from "./features/content/EpochLandingPage";
 import { ResetPasswordPage } from "./features/auth/ResetPasswordPage";
 import { VerifyEmailCodePage } from "./features/auth/VerifyEmailCodePage";
 import { HubDetailPage } from "./features/content/HubDetailPage";
@@ -136,6 +138,8 @@ export const App: React.FC = () => {
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/check-email" element={<CheckEmailPage />} />
+              <Route path="/epoki" element={<EpochListPage />} />
+              <Route path="/epoki/:slug" element={<EpochLandingPage />} />
               <Route
                 path="/resend-verification"
                 element={<ResendVerificationPage />}

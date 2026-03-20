@@ -12,38 +12,12 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Primary Meta Tags -->
-    <title>
-      Testy Maturalne z Języka Polskiego Online - Kursy i Sprawdziany Wiedzy na
-      Maturę
-    </title>
-    <meta
-      name="title"
-      content="Testy Maturalne z Języka Polskiego Online - Kursy i Sprawdziany Wiedzy na Maturę"
-    />
-    <meta
-      name="description"
-      content="✓ Testy maturalne z języka polskiego online ✓ Kursy maturalne z polskiego ✓ Sprawdziany wiedzy ✓ Interaktywna nauka lektur ✓ Przygotuj się do matury 2025/2026!"
-    />
-    <meta
-      name="keywords"
-      content="testy maturalne z polskiego, testy na maturę z języka polskiego, kursy maturalne online z polskiego, sprawdziany maturalne z polskiego, testy z lektur, matura z polskiego online, przygotowanie do matury polski, testy z polskiego matura, egzamin maturalny polski"
-    />
+    <!-- Statyczne meta - NIE zarządzane przez Helmet -->
     <meta name="author" content="MaturaPolski.pl" />
     <meta name="robots" content="index, follow" />
     <meta name="language" content="Polish" />
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.maturapolski.pl/" />
-    <meta
-      property="og:title"
-      content="Testy Maturalne z Polskiego Online | MaturaPolski.pl"
-    />
-    <meta
-      property="og:description"
-      content="Najlepsze testy maturalne z języka polskiego online. Kursy, sprawdziany i interaktywna nauka lektur. Przygotuj się do matury 2025/2026!"
-    />
+    <!-- OG statyczne (nie zmieniane per-page) -->
     <meta
       property="og:image"
       content="https://www.maturapolski.pl/og-image.png"
@@ -51,89 +25,39 @@
     <meta property="og:site_name" content="MaturaPolski.pl" />
     <meta property="og:locale" content="pl_PL" />
 
-    <!-- Twitter -->
+    <!-- Twitter statyczne -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://www.maturapolski.pl/" />
-    <meta
-      property="twitter:title"
-      content="Testy Maturalne z Polskiego Online | MaturaPolski.pl"
-    />
-    <meta
-      property="twitter:description"
-      content="Najlepsze testy maturalne z języka polskiego online. Kursy, sprawdziany i interaktywna nauka lektur."
-    />
     <meta
       property="twitter:image"
       content="https://www.maturapolski.pl/og-image.png"
     />
 
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://www.maturapolski.pl/" />
-
-    <!-- Structured Data - Schema.org -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "EducationalOrganization",
-        "name": "MaturaPolski.pl",
-        "description": "Platforma do nauki języka polskiego i przygotowania do egzaminu maturalnego",
-        "url": "https://www.maturapolski.pl",
-        "logo": "https://www.maturapolski.pl/logo.png",
-        "sameAs": [
-          "https://facebook.com/maturapolski",
-          "https://instagram.com/maturapolski"
-        ],
-        "areaServed": "PL",
-        "availableLanguage": "pl"
-      }
-    </script>
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "MaturaPolski.pl",
-        "url": "https://www.maturapolski.pl",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "https://www.maturapolski.pl/szukaj?q={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
-      }
-    </script>
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Course",
-        "name": "Testy Maturalne z Języka Polskiego",
-        "description": "Kompleksowe kursy maturalne online z polskiego - testy, sprawdziany i interaktywna nauka lektur",
-        "provider": {
-          "@type": "EducationalOrganization",
-          "name": "MaturaPolski.pl",
-          "url": "https://www.maturapolski.pl"
-        },
-        "educationalLevel": "Liceum",
-        "inLanguage": "pl",
-        "availableLanguage": "pl",
-        "hasCourseInstance": {
-          "@type": "CourseInstance",
-          "courseMode": "online",
-          "courseWorkload": "PT50H"
-        }
-      }
-    </script>
-
     <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <meta
-      name="google-signin-client_id"
-      content="YOUR_CLIENT_ID.apps.googleusercontent.com"
-    />
 
     <!-- Preconnect dla szybszego ładowania -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://accounts.google.com" />
+
+    <!--
+      UWAGA: Wszystkie poniższe tagi są WYŁĄCZNIE zarządzane przez react-helmet-async:
+      - <title>
+      - <meta name="title">
+      - <meta name="description">
+      - <meta name="keywords">
+      - <link rel="canonical">
+      - <meta property="og:title">
+      - <meta property="og:description">
+      - <meta property="og:url">
+      - <meta property="og:type">
+      - <meta property="twitter:url">
+      - <meta property="twitter:title">
+      - <meta property="twitter:description">
+      - <script type="application/ld+json"> (structured data)
+
+      NIE DODAWAJ ICH TUTAJ — Helmet wstrzykuje je dynamicznie per-page.
+      Duplikaty powodują konflikt canonical i OG, co szkodzi SEO.
+    -->
   </head>
   <body>
     <div id="root"></div>

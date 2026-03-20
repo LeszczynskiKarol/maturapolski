@@ -299,6 +299,14 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
                   </Link>
                 </li>
                 <li>
+                  <Link
+                    to="/epoki"
+                    className="hover:text-white transition-colors"
+                  >
+                    Epoki literackie
+                  </Link>
+                </li>
+                <li>
                   <a
                     href="/#cennik"
                     className="hover:text-white transition-colors"
@@ -357,7 +365,6 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
               </ul>
             </div>
 
-            {/* Testy z lektur */}
             {/* Testy z lektur */}
             <div>
               <h4 className="font-bold mb-4 text-lg">Testy z lektur</h4>
