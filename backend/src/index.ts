@@ -33,7 +33,17 @@ import Fastify from "fastify";
 import { initializeAI } from "./ai/aiService";
 import { adminRoutes } from "./routes/admin.routes";
 import { checkExpiredAccess } from "./jobs/checkExpiredAccess";
+import { adminEmailAnalyticsRoutes } from "./routes/admin-email-analytics.routes";
+import { emailWebhookRoutes } from "./routes/emailWebhook.routes";
 import { examStructureRoutes } from "./routes/examStructure.routes";
+import { unsubscribeRoutes } from "./routes/unsubscribe.routes";
+import { adminEmailRoutes } from "./routes/admin-email.routes";
+import {
+  runMorningEmailJobs,
+  runEveningEmailJobs,
+  runWeeklyEmailJobs,
+  runMonthlyEmailJobs,
+} from "./jobs/engagementMailerJob";
 import { subscriptionRoutes } from "./routes/subscription.routes";
 import { authRoutes } from "./routes/auth.routes";
 import { exerciseRoutes } from "./routes/exercise.routes";
@@ -53,6 +63,35 @@ cron.schedule("0 0 * * *", async () => {
     await checkExpiredAccess();
   } catch (error) {
     console.error("Error in expired access check:", error);
+  }
+});
+
+cron.schedule("0 10 * * *", async () => {
+  try {
+    await runMorningEmailJobs();
+  } catch (e) {
+    console.error(e);
+  }
+});
+cron.schedule("0 19 * * *", async () => {
+  try {
+    await runEveningEmailJobs();
+  } catch (e) {
+    console.error(e);
+  }
+});
+cron.schedule("0 8 * * 1", async () => {
+  try {
+    await runWeeklyEmailJobs();
+  } catch (e) {
+    console.error(e);
+  }
+});
+cron.schedule("0 9 1 * *", async () => {
+  try {
+    await runMonthlyEmailJobs();
+  } catch (e) {
+    console.error(e);
   }
 });
 
@@ -80,6 +119,38 @@ fastify.addContentTypeParser(
     } catch (err: any) {
       err.statusCode = 400;
       done(err, undefined);
+    }
+  },
+);
+
+// Istniejący parser dla Stripe (application/json) — zostaw jak jest
+fastify.addContentTypeParser(
+  "application/json",
+  { parseAs: "buffer" },
+  function (req, body, done) {
+    if (req.url === "/api/subscription/webhook") {
+      req.rawBody = Buffer.isBuffer(body) ? body : Buffer.from(body);
+    }
+    try {
+      const json = JSON.parse(body.toString());
+      done(null, json);
+    } catch (err: any) {
+      err.statusCode = 400;
+      done(err, undefined);
+    }
+  },
+);
+
+// SNS wysyła JSON ale z Content-Type: text/plain
+fastify.addContentTypeParser(
+  "text/plain",
+  { parseAs: "string" },
+  function (_req, body, done) {
+    try {
+      const json = JSON.parse(body as string);
+      done(null, json);
+    } catch (err) {
+      done(null, body);
     }
   },
 );
@@ -136,6 +207,11 @@ console.log("✓ Auth routes registered at /api/auth/*");
 fastify.register(adminRoutes, { prefix: "/api/admin" });
 console.log("✓ Admin routes registered at /api/admin/*");
 
+fastify.register(adminEmailRoutes, { prefix: "/api/admin/email" });
+fastify.register(adminEmailAnalyticsRoutes, {
+  prefix: "/api/admin/email-analytics",
+});
+
 // upload routes
 fastify.register(uploadRoutes, { prefix: "/api/upload" });
 console.log("✓ Upload routes registered at /api/upload/*");
@@ -175,6 +251,10 @@ console.log("✓ Learning routes registered at /api/learning/*");
 // Trasy publiczne
 fastify.register(materialsRoutes, { prefix: "/api/materials" });
 console.log("✓ Materials routes registered at /api/materials/*");
+
+fastify.register(unsubscribeRoutes, { prefix: "/api/email" });
+
+fastify.register(emailWebhookRoutes, { prefix: "/api/email" });
 
 fastify.register(contentRoutes, { prefix: "/api/content" });
 console.log("✓ Content routes registered at /api/content/*");

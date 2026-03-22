@@ -9,5 +9,12 @@ export const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER!,
     pass: process.env.SMTP_PASSWORD!,
   },
-  debug: true,
 });
+
+// Override — dodaje Configuration Set header do KAŻDEGO emaila
+const originalSendMail = transporter.sendMail.bind(transporter);
+transporter.sendMail = function (mailOptions: any) {
+  if (!mailOptions.headers) mailOptions.headers = {};
+  mailOptions.headers["X-SES-CONFIGURATION-SET"] = "maturapolski-tracking";
+  return originalSendMail(mailOptions);
+};

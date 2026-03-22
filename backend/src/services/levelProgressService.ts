@@ -1,6 +1,7 @@
 // backend/src/services/levelProgressService.ts
 
 import { prisma } from "../lib/prisma";
+import { engagementMailer } from "./engagementMailerService";
 
 export class LevelProgressService {
   // Sprawdź czy użytkownik ma odblokowany poziom
@@ -176,6 +177,10 @@ export class LevelProgressService {
           },
         });
       }
+
+      engagementMailer
+        .sendLevelUnlockEmail(userId, newDifficulty)
+        .catch(console.error);
 
       return { unlocked: true, newLevel: newDifficulty };
     }

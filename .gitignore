@@ -63,3 +63,4 @@ backend/package-lock.json
 coverage/
 .nyc_output/
 
+backend/prisma/seed-exercises.ts

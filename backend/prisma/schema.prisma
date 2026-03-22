@@ -52,6 +52,7 @@ model User {
   exerciseUsage ExerciseUsage[]
   learningSessions LearningSession[]
   subscription    Subscription?
+  emailPreference  EmailPreference?
 }
 
 model TestLanding {
@@ -930,4 +931,106 @@ enum LiteraryEpoch {
 enum AssessmentType {
   SYSTEM
   AI
+}
+
+model EmailPreference {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id])
+  
+  // Token do wypisania się BEZ logowania
+  unsubscribeToken  String   @unique @default(cuid())
+  
+  // Kategorie mailingowe
+  streakReminders    Boolean  @default(true)   // "Twoja passa zagrożona"
+  weeklySummary      Boolean  @default(true)   // Poniedziałkowe podsumowanie
+  reengagement       Boolean  @default(true)   // "Dawno Cię nie było"
+  promotions         Boolean  @default(true)   // Konwersja FREE→PREMIUM
+  achievements       Boolean  @default(true)   // Nowy poziom, milestone
+  examCountdown      Boolean  @default(true)   // Odliczanie do matury
+  newContent         Boolean  @default(true)   // Nowe zadania w bazie
+  
+  // Globalny opt-out
+  allEmails          Boolean  @default(true)
+  
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model EmailLog {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // np. STREAK_REMINDER, WEEKLY_SUMMARY, REENGAGEMENT_7D...
+  metadata  Json?    // dodatkowe dane (np. streak count)
+  
+  sentAt    DateTime @default(now())
+  
+  @@index([userId, type])
+  @@index([userId, sentAt])
+  @@index([sentAt])
+}
+
+
+model EmailEvent {
+  id            String   @id @default(cuid())
+  
+  // Powiązanie z logiem wysyłki (opcjonalne — nie każdy event ma match)
+  emailLogId    String?
+  
+  // Odbiorca
+  recipientEmail String
+  userId         String?
+  
+  // Typ zdarzenia
+  eventType     EmailEventType
+  
+  // Szczegóły
+  bounceType    String?    // "Permanent" | "Transient"
+  bounceSubType String?    // "General" | "NoEmail" | "Suppressed" | "MailboxFull" itd.
+  complaintType String?    // "abuse" | "not-spam" itd.
+  
+  // Surowe dane z SES/SNS
+  rawData       Json?
+  
+  // SES Message ID (do matchowania z EmailLog)
+  sesMessageId  String?
+  
+  createdAt     DateTime  @default(now())
+  
+  @@index([recipientEmail])
+  @@index([userId])
+  @@index([eventType])
+  @@index([createdAt])
+  @@index([sesMessageId])
+}
+
+// Lista zablokowanych adresów email (hard bounce / complaint)
+model EmailSuppression {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  reason        EmailSuppressionReason
+  
+  // Ile razy bounce/complaint
+  occurrences   Int      @default(1)
+  
+  // Dane
+  lastEventAt   DateTime @default(now())
+  createdAt     DateTime @default(now())
+  
+  @@index([email])
+}
+
+enum EmailEventType {
+  DELIVERY
+  BOUNCE
+  COMPLAINT
+  OPEN
+  CLICK
+  REJECT
+}
+
+enum EmailSuppressionReason {
+  HARD_BOUNCE
+  COMPLAINT
+  MANUAL
 }

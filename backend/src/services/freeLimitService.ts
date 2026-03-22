@@ -1,6 +1,7 @@
 // backend/src/services/freeLimitService.ts
 
 import { prisma } from "../lib/prisma";
+import { engagementMailer } from "./engagementMailerService";
 
 const FREE_DAILY_LIMIT = 5;
 const ALLOWED_FREE_TYPES = ["CLOSED_SINGLE", "CLOSED_MULTIPLE"];
@@ -96,6 +97,10 @@ export class FreeLimitService {
       const used = todayCount;
       const remaining = Math.max(0, FREE_DAILY_LIMIT - used);
       const canSolve = remaining > 0;
+
+      if (!canSolve) {
+        engagementMailer.sendFreeLimitHitEmail(userId).catch(console.error);
+      }
 
       return {
         isPremium: false,

@@ -18,6 +18,7 @@ import { EpochListPage } from "./features/content/EpochListPage";
 import { EpochLandingPage } from "./features/content/EpochLandingPage";
 import { ResetPasswordPage } from "./features/auth/ResetPasswordPage";
 import { VerifyEmailCodePage } from "./features/auth/VerifyEmailCodePage";
+import { UnsubscribePage } from "./features/public/UnsubscribePage";
 import { HubDetailPage } from "./features/content/HubDetailPage";
 import HubListPage from "./features/content/HubListPage";
 import { HubTestLandingPage } from "./features/content/HubTestLandingPage";
@@ -140,6 +141,7 @@ export const App: React.FC = () => {
               <Route path="/check-email" element={<CheckEmailPage />} />
               <Route path="/epoki" element={<EpochListPage />} />
               <Route path="/epoki/:slug" element={<EpochLandingPage />} />
+              <Route path="/wypisz-sie" element={<UnsubscribePage />} />
               <Route
                 path="/resend-verification"
                 element={<ResendVerificationPage />}

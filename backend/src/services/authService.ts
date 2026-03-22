@@ -5,6 +5,7 @@ import { GoogleAuthService } from "./googleAuthService";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { EmailService } from "./emailService";
+import { emailPreferenceService } from "./emailPreferenceService";
 
 export class AuthService {
   private emailResendCache = new Map<string, number>();
@@ -41,7 +42,7 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const verificationToken = Math.floor(
-      100000 + Math.random() * 900000
+      100000 + Math.random() * 900000,
     ).toString(); // 6-cyfrowy kod
     const verificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
@@ -55,11 +56,13 @@ export class AuthService {
       },
     });
 
+    await emailPreferenceService.getOrCreatePreference(user.id);
+
     // Wyślij email weryfikacyjny
     await this.emailService.sendVerificationEmail(
       user.email,
       verificationToken,
-      user.username
+      user.username,
     );
 
     return {
@@ -93,6 +96,8 @@ export class AuthService {
         emailVerificationExpiry: null,
       },
     });
+
+    await emailPreferenceService.getOrCreatePreference(user.id);
 
     // 3. Wyślij email powitalny
     try {
@@ -151,7 +156,7 @@ export class AuthService {
 
     // Wygeneruj nowy token
     const verificationToken = Math.floor(
-      100000 + Math.random() * 900000
+      100000 + Math.random() * 900000,
     ).toString(); // 6-cyfrowy kod
 
     const verificationExpiry = new Date();
@@ -169,7 +174,7 @@ export class AuthService {
     await this.emailService.sendVerificationEmail(
       user.email,
       verificationToken,
-      user.username
+      user.username,
     );
 
     // ✅ Zapisz timestamp
@@ -354,7 +359,7 @@ export class AuthService {
         role: user.role,
       },
       this.JWT_SECRET,
-      { expiresIn: "24h" }
+      { expiresIn: "24h" },
     );
   }
 
@@ -365,7 +370,7 @@ export class AuthService {
         type: "refresh",
       },
       this.JWT_REFRESH_SECRET,
-      { expiresIn: "30d" }
+      { expiresIn: "30d" },
     );
   }
 
@@ -391,9 +396,8 @@ export class AuthService {
   }
   async loginWithGoogle(googleIdToken: string) {
     // 1. Zweryfikuj token Google
-    const googleUser = await this.googleAuthService.verifyIdToken(
-      googleIdToken
-    );
+    const googleUser =
+      await this.googleAuthService.verifyIdToken(googleIdToken);
 
     // 2. Sprawdź czy użytkownik już istnieje
     let user = await prisma.user.findUnique({
@@ -437,6 +441,8 @@ export class AuthService {
           picture: googleUser.picture,
         },
       });
+
+      await emailPreferenceService.getOrCreatePreference(user.id);
 
       // Wyślij email powitalny
       try {
