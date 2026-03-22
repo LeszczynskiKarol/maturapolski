@@ -16,6 +16,7 @@ import { ForgotPasswordPage } from "./features/auth/ForgotPasswordPage";
 import { ResendVerificationPage } from "./features/auth/ResendVerificationPage";
 import { EpochListPage } from "./features/content/EpochListPage";
 import { EpochLandingPage } from "./features/content/EpochLandingPage";
+import EmailDashboard from "./features/admin/EmailDashboard";
 import { ResetPasswordPage } from "./features/auth/ResetPasswordPage";
 import { VerifyEmailCodePage } from "./features/auth/VerifyEmailCodePage";
 import { UnsubscribePage } from "./features/public/UnsubscribePage";
@@ -187,6 +188,7 @@ export const App: React.FC = () => {
                 <Route path="users" element={<UserManager />} />
                 <Route path="content" element={<ContentManager />} />
                 <Route path="materials" element={<AdminMaterialsEditor />} />
+                <Route path="email" element={<EmailDashboard />} />
                 <Route path="exams" element={<ExamStructureManager />} />
                 <Route path="user-sessions" element={<UserSessionsTable />} />
               </Route>

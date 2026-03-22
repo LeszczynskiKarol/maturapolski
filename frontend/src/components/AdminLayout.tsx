@@ -9,7 +9,7 @@ import {
   Users,
   Eye,
   BarChart3,
-  FileText,
+  Mail,
   Menu,
   X,
   BrainCircuit,
@@ -19,7 +19,7 @@ import {
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: BarChart3 },
   { name: "Zadania", href: "/admin/exercises", icon: BookOpen },
-  { name: "Egzaminy", href: "/admin/exams", icon: FileText },
+  { name: "Email & Mailing", href: "/admin/email", icon: Mail }, // ← DODAJ
   { name: "Użytkownicy", href: "/admin/users", icon: Users },
   { name: "Baza wiedzy", href: "/admin/content", icon: BrainCircuit },
   { name: "Sesje użytkowników", href: "/admin/user-sessions", icon: Eye },
