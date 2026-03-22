@@ -18,6 +18,27 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
 
+// ==========================================
+// MAPOWANIE ENUM → POLSKIE NAZWY
+// ==========================================
+
+const CATEGORY_LABELS: Record<string, string> = {
+  LANGUAGE_USE: "Język w użyciu",
+  HISTORICAL_LITERARY: "Test historycznoliteracki",
+  WRITING: "Pisanie",
+};
+
+const TYPE_LABELS: Record<string, string> = {
+  CLOSED_SINGLE: "Jednokrotny wybór",
+  CLOSED_MULTIPLE: "Wielokrotny wybór",
+  SHORT_ANSWER: "Krótka odpowiedź",
+  SYNTHESIS_NOTE: "Notatka syntetyczna",
+  ESSAY: "Wypracowanie",
+};
+
+const pl = (map: Record<string, string>, key: string): string =>
+  map[key] || key;
+
 export const SessionHistory: React.FC = () => {
   const navigate = useNavigate();
 
@@ -26,7 +47,7 @@ export const SessionHistory: React.FC = () => {
   const { data, isLoading } = useQuery({
     queryKey: ["all-sessions"], // ✅ Bez currentPage
     queryFn: () => api.get("/api/learning/sessions/all").then((r) => r.data),
-    staleTime: 0, // ✅ Zawsze odświeżaj
+    staleTime: 0,
   });
 
   const formatUserAnswer = (submission: any) => {
@@ -168,8 +189,8 @@ export const SessionHistory: React.FC = () => {
               ? Math.round(
                   data.completed.reduce(
                     (acc: number, s: any) => acc + s.averageScore,
-                    0
-                  ) / data.completed.length
+                    0,
+                  ) / data.completed.length,
                 )
               : 0}
             %
@@ -184,7 +205,7 @@ export const SessionHistory: React.FC = () => {
           <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
             {data?.completed?.reduce(
               (acc: number, s: any) => acc + s.exercisesCount,
-              0
+              0,
             ) || 0}
           </p>
         </div>
@@ -198,8 +219,8 @@ export const SessionHistory: React.FC = () => {
             {Math.round(
               (data?.completed?.reduce(
                 (acc: number, s: any) => acc + s.studyTime,
-                0
-              ) || 0) / 60
+                0,
+              ) || 0) / 60,
             )}
             h
           </p>
@@ -272,7 +293,7 @@ export const SessionHistory: React.FC = () => {
                     transition-colors cursor-pointer"
                 onClick={() =>
                   setExpandedSession(
-                    expandedSession === session.id ? null : session.id
+                    expandedSession === session.id ? null : session.id,
                   )
                 }
               >
@@ -360,8 +381,8 @@ export const SessionHistory: React.FC = () => {
                               session.averageScore >= 80
                                 ? "bg-green-500 dark:bg-green-400"
                                 : session.averageScore >= 60
-                                ? "bg-yellow-500 dark:bg-yellow-400"
-                                : "bg-red-500 dark:bg-red-400"
+                                  ? "bg-yellow-500 dark:bg-yellow-400"
+                                  : "bg-red-500 dark:bg-red-400"
                             }`}
                             style={{ width: `${session.averageScore}%` }}
                           />
@@ -415,10 +436,12 @@ export const SessionHistory: React.FC = () => {
                                   </p>
                                   <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
                                     <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded">
-                                      {sub.category}
+                                      {pl(CATEGORY_LABELS, sub.category)}
                                     </span>
                                     <span>Poziom {sub.difficulty}</span>
-                                    <span>{sub.type}</span>
+                                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded">
+                                      {pl(TYPE_LABELS, sub.type)}
+                                    </span>
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -493,7 +516,7 @@ export const SessionHistory: React.FC = () => {
                                 </div>
                               )}
                             </div>
-                          )
+                          ),
                         )}
                       </div>
                     </div>

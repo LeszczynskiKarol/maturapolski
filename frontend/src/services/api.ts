@@ -44,6 +44,12 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // ← DODAJ TO: nie przechwytuj 401 z endpointów auth (login, register, itp.)
+    const isAuthEndpoint = originalRequest?.url?.includes("/api/auth/");
+    if (isAuthEndpoint) {
+      return Promise.reject(error);
+    }
+
     // Jeśli błąd 401 i to nie jest retry
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {

@@ -5,6 +5,20 @@ import Anthropic from "@anthropic-ai/sdk";
 
 let anthropic: Anthropic;
 
+// ==========================================
+// MAPOWANIE ENUM → POLSKIE NAZWY (do promptów AI)
+// ==========================================
+
+const CATEGORY_LABELS: Record<string, string> = {
+  LANGUAGE_USE: "Język w użyciu",
+  HISTORICAL_LITERARY: "Test historycznoliteracki",
+  WRITING: "Pisanie",
+};
+
+/** Zamienia kod enum na polską nazwę, fallback = sam kod */
+const pl = (map: Record<string, string>, key: string): string =>
+  map[key] || key;
+
 export function initializeAI() {
   if (!process.env.ANTHROPIC_API_KEY) {
     console.error("ANTHROPIC_API_KEY is not set");
@@ -832,7 +846,7 @@ Trudność zadań w sesji:
 ${sessionData.exercises
   .map(
     (e) =>
-      `- Poziom ${e.difficulty}, ${e.category}: ${
+      `- Poziom ${e.difficulty}, ${pl(CATEGORY_LABELS, e.category)}: ${
         e.score > 0 ? "poprawne" : "błędne"
       }`,
   )
@@ -854,7 +868,10 @@ ${userHistory.recentSessions
 
 Mocne strony ucznia (kategorie):
 ${Object.entries(userHistory.categoryStrengths)
-  .map(([cat, score]) => `- ${cat}: ${Math.round(score as number)}%`)
+  .map(
+    ([cat, score]) =>
+      `- ${pl(CATEGORY_LABELS, cat)}: ${Math.round(score as number)}%`,
+  )
   .join("\n")}
 
 Obszary do poprawy:

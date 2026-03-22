@@ -1428,24 +1428,58 @@ export const LearningSession: React.FC = () => {
   const applyFiltersAndRefresh = async (newFilters: SessionFilters) => {
     setSessionFilters(newFilters);
     setIsLoadingNext(true);
+    setNoExercisesError(null);
 
     try {
-      // Ustaw filtry na backendzie
       await api.post("/api/learning/session/filters", newFilters);
-
-      // Pobierz nowe zadanie z filtrami
       const response = await api.get("/api/learning/next");
       const data = response.data;
 
-      if (data) {
+      if (data?.error === "FREE_LIMIT_EXCEEDED") {
+        setShowLimitModal(true);
+        return;
+      }
+
+      if (data?.error === "NO_EXERCISES" || data?.error) {
+        setNoExercisesError(
+          data.message ||
+            "Brak ćwiczeń spełniających wybrane kryteria filtrów. Zmień filtry lub wyczyść je, aby kontynuować naukę.",
+        );
+        setCurrentExercise(null);
+        setAnswer(null);
+        setShowFeedback(false);
+        return;
+      }
+
+      if (data && data.id) {
         setCurrentExercise(data);
         setAnswer(null);
         setShowFeedback(false);
+        setNoExercisesError(null);
       } else {
-        console.log("No exercises matching current filters");
+        // API zwróciło coś, ale bez id → brak ćwiczeń
+        setNoExercisesError(
+          "Brak ćwiczeń spełniających wybrane kryteria filtrów. Zmień filtry lub wyczyść je, aby kontynuować naukę.",
+        );
+        setCurrentExercise(null);
+        setAnswer(null);
+        setShowFeedback(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error applying filters:", error);
+
+      if (error.response?.data?.error === "FREE_LIMIT_EXCEEDED") {
+        setShowLimitModal(true);
+        return;
+      }
+
+      setNoExercisesError(
+        error.response?.data?.message ||
+          "Brak ćwiczeń spełniających wybrane kryteria filtrów. Zmień filtry lub wyczyść je, aby kontynuować naukę.",
+      );
+      setCurrentExercise(null);
+      setAnswer(null);
+      setShowFeedback(false);
     } finally {
       setIsLoadingNext(false);
     }
