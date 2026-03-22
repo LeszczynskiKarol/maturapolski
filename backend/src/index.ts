@@ -28,6 +28,7 @@ import cron from "node-cron";
 import multipart from "@fastify/multipart";
 import { uploadRoutes } from "./routes/upload.routes";
 import jwt from "@fastify/jwt";
+import { registerActivityTracker } from "./middleware/activityTracker";
 import Fastify from "fastify";
 import { initializeAI } from "./ai/aiService";
 import { adminRoutes } from "./routes/admin.routes";
@@ -102,6 +103,8 @@ if (process.env.ENABLE_CORS !== "false") {
 fastify.register(jwt, {
   secret: process.env.JWT_SECRET || "your-jwt-secret-change-in-production",
 });
+
+registerActivityTracker(fastify);
 
 // Health check
 fastify.get("/health", async () => {

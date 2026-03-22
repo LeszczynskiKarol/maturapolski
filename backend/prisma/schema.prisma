@@ -23,6 +23,7 @@ model User {
   
   refreshToken  String?
   lastLogin     DateTime?
+  lastActiveAt  DateTime?
 
   // Email verification
   emailVerified           Boolean   @default(false)

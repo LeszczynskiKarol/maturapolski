@@ -1875,4 +1875,72 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
       }
     },
   );
+  // GET aktywni dziś + online teraz
+  fastify.get("/users/activity-status", async (_request, reply) => {
+    try {
+      const now = new Date();
+      const todayStart = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+      );
+      const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
+
+      const [onlineNow, activeToday] = await prisma.$transaction([
+        prisma.user.findMany({
+          where: { lastActiveAt: { gte: fiveMinutesAgo } },
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            role: true,
+            lastActiveAt: true,
+            profile: { select: { level: true, totalPoints: true } },
+            subscription: { select: { plan: true } },
+          },
+          orderBy: { lastActiveAt: "desc" },
+        }),
+        prisma.user.findMany({
+          where: { lastActiveAt: { gte: todayStart } },
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            role: true,
+            lastActiveAt: true,
+            profile: { select: { level: true, totalPoints: true } },
+            subscription: { select: { plan: true } },
+          },
+          orderBy: { lastActiveAt: "desc" },
+        }),
+      ]);
+
+      const todaySubmissions = await prisma.submission.groupBy({
+        by: ["userId"],
+        where: { createdAt: { gte: todayStart } },
+        _count: { _all: true },
+      });
+
+      const submissionMap = new Map(
+        todaySubmissions.map((s) => [s.userId, s._count._all]),
+      );
+
+      const activeTodayEnriched = activeToday.map((user) => ({
+        ...user,
+        todaySubmissions: submissionMap.get(user.id) || 0,
+        isOnline: user.lastActiveAt && user.lastActiveAt >= fiveMinutesAgo,
+      }));
+
+      return reply.send({
+        online: onlineNow,
+        onlineCount: onlineNow.length,
+        activeToday: activeTodayEnriched,
+        activeTodayCount: activeTodayEnriched.length,
+        timestamp: now.toISOString(),
+      });
+    } catch (error) {
+      console.error("Error fetching activity status:", error);
+      return reply.code(500).send({ error: "Failed to fetch activity status" });
+    }
+  });
 }
