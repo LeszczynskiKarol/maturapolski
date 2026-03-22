@@ -24,6 +24,7 @@ console.log(
 console.log("=================");
 import cors from "@fastify/cors";
 import { testLandingRoutes } from "./routes/testLanding.routes";
+import formbody from "@fastify/formbody";
 import cron from "node-cron";
 import multipart from "@fastify/multipart";
 import { uploadRoutes } from "./routes/upload.routes";
@@ -173,6 +174,7 @@ fastify.get("/health", async () => {
 
 // Register API routes
 console.log("Registering routes...");
+fastify.register(formbody);
 
 fastify.register(multipart, {
   limits: {

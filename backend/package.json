@@ -17,6 +17,7 @@
     "@aws-sdk/client-s3": "^3.901.0",
     "@aws-sdk/client-sesv2": "^3.901.0",
     "@fastify/cors": "^10.1.0",
+    "@fastify/formbody": "^8.0.2",
     "@fastify/jwt": "^9.1.0",
     "@fastify/multipart": "^9.2.1",
     "@prisma/client": "^6.17.1",
