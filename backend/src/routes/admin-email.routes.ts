@@ -30,25 +30,25 @@ export async function adminEmailRoutes(fastify: FastifyInstance) {
   });
 
   // Ręcznie uruchom morning jobs
-  fastify.post("/trigger/morning", async (request, reply) => {
+  fastify.post("/trigger/morning", async (_request, reply) => {
     await runMorningEmailJobs();
     return reply.send({ success: true, message: "Morning jobs executed" });
   });
 
   // Ręcznie uruchom evening jobs
-  fastify.post("/trigger/evening", async (request, reply) => {
+  fastify.post("/trigger/evening", async (_request, reply) => {
     await runEveningEmailJobs();
     return reply.send({ success: true, message: "Evening jobs executed" });
   });
 
   // Ręcznie uruchom weekly jobs
-  fastify.post("/trigger/weekly", async (request, reply) => {
+  fastify.post("/trigger/weekly", async (_request, reply) => {
     await runWeeklyEmailJobs();
     return reply.send({ success: true, message: "Weekly jobs executed" });
   });
 
   // Ręcznie uruchom monthly jobs
-  fastify.post("/trigger/monthly", async (request, reply) => {
+  fastify.post("/trigger/monthly", async (_request, reply) => {
     await runMonthlyEmailJobs();
     return reply.send({ success: true, message: "Monthly jobs executed" });
   });
@@ -76,20 +76,24 @@ export async function adminEmailRoutes(fastify: FastifyInstance) {
   });
 
   // Statystyki wysyłki
-  fastify.get("/stats", async (request, reply) => {
+  fastify.get("/stats", async (_request, reply) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     const [todayCount, weekCount, totalCount, byType] = await Promise.all([
       prisma.emailLog.count({ where: { sentAt: { gte: today } } }),
       prisma.emailLog.count({
-        where: { sentAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } },
+        where: {
+          sentAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+        },
       }),
       prisma.emailLog.count(),
       prisma.emailLog.groupBy({
         by: ["type"],
         _count: { id: true },
-        where: { sentAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } },
+        where: {
+          sentAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+        },
         orderBy: { _count: { id: "desc" } },
       }),
     ]);
@@ -110,7 +114,10 @@ export async function adminEmailRoutes(fastify: FastifyInstance) {
       preferences: {
         total: totalPrefs,
         optedOutAll: optedOut,
-        optInRate: totalPrefs > 0 ? Math.round(((totalPrefs - optedOut) / totalPrefs) * 100) : 100,
+        optInRate:
+          totalPrefs > 0
+            ? Math.round(((totalPrefs - optedOut) / totalPrefs) * 100)
+            : 100,
       },
     });
   });
