@@ -3,6 +3,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { BookOpen, Users, FileText, Award } from "lucide-react";
+import { LiveActivityPanel } from "./LiveActivityPanel";
 
 export const AdminDashboard: React.FC = () => {
   return (
@@ -60,6 +61,10 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="mb-8">
+        <LiveActivityPanel />
       </div>
 
       {/* Quick Links */}
