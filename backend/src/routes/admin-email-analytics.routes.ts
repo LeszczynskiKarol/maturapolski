@@ -9,12 +9,8 @@ export async function adminEmailAnalyticsRoutes(fastify: FastifyInstance) {
   fastify.addHook("onRequest", async (request, reply) => {
     try {
       await request.jwtVerify();
-      const userId = (request.user as any).userId;
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { email: true },
-      });
-      if (user?.email !== "kontakt@ecopywriting.pl") {
+      const user = request.user as any;
+      if (user.role !== "ADMIN") {
         return reply.code(403).send({ error: "Admin only" });
       }
     } catch (err) {
@@ -116,13 +112,27 @@ export async function adminEmailAnalyticsRoutes(fastify: FastifyInstance) {
 
       // Opt-out per category
       Promise.all([
-        prisma.emailPreference.count({ where: { streakReminders: false, allEmails: true } }),
-        prisma.emailPreference.count({ where: { weeklySummary: false, allEmails: true } }),
-        prisma.emailPreference.count({ where: { reengagement: false, allEmails: true } }),
-        prisma.emailPreference.count({ where: { promotions: false, allEmails: true } }),
-        prisma.emailPreference.count({ where: { achievements: false, allEmails: true } }),
-        prisma.emailPreference.count({ where: { examCountdown: false, allEmails: true } }),
-        prisma.emailPreference.count({ where: { newContent: false, allEmails: true } }),
+        prisma.emailPreference.count({
+          where: { streakReminders: false, allEmails: true },
+        }),
+        prisma.emailPreference.count({
+          where: { weeklySummary: false, allEmails: true },
+        }),
+        prisma.emailPreference.count({
+          where: { reengagement: false, allEmails: true },
+        }),
+        prisma.emailPreference.count({
+          where: { promotions: false, allEmails: true },
+        }),
+        prisma.emailPreference.count({
+          where: { achievements: false, allEmails: true },
+        }),
+        prisma.emailPreference.count({
+          where: { examCountdown: false, allEmails: true },
+        }),
+        prisma.emailPreference.count({
+          where: { newContent: false, allEmails: true },
+        }),
       ]),
 
       // --- Daily trends ---
@@ -145,19 +155,25 @@ export async function adminEmailAnalyticsRoutes(fastify: FastifyInstance) {
 
     // Oblicz wskaźniki
     const deliveryRate =
-      totalSent > 0 ? Math.round((totalDeliveries / totalSent) * 10000) / 100 : 0;
+      totalSent > 0
+        ? Math.round((totalDeliveries / totalSent) * 10000) / 100
+        : 0;
     const bounceRate =
       totalSent > 0 ? Math.round((totalBounces / totalSent) * 10000) / 100 : 0;
     const complaintRate =
-      totalSent > 0 ? Math.round((totalComplaints / totalSent) * 10000) / 100 : 0;
+      totalSent > 0
+        ? Math.round((totalComplaints / totalSent) * 10000) / 100
+        : 0;
     const openRate =
-      totalDeliveries > 0 ? Math.round((totalOpens / totalDeliveries) * 10000) / 100 : 0;
+      totalDeliveries > 0
+        ? Math.round((totalOpens / totalDeliveries) * 10000) / 100
+        : 0;
     const clickRate =
       totalOpens > 0 ? Math.round((totalClicks / totalOpens) * 10000) / 100 : 0;
 
     // SES limity bezpieczeństwa
     const bounceWarning = bounceRate > 2; // ostrzegaj powyżej 2%
-    const bounceDanger = bounceRate > 5;  // SES blokuje powyżej 5%
+    const bounceDanger = bounceRate > 5; // SES blokuje powyżej 5%
     const complaintWarning = complaintRate > 0.05;
     const complaintDanger = complaintRate > 0.1; // SES blokuje powyżej 0.1%
 
@@ -224,10 +240,18 @@ export async function adminEmailAnalyticsRoutes(fastify: FastifyInstance) {
 
       // Alerty zdrowia SES
       health: {
-        bounceStatus: bounceDanger ? "DANGER" : bounceWarning ? "WARNING" : "OK",
+        bounceStatus: bounceDanger
+          ? "DANGER"
+          : bounceWarning
+            ? "WARNING"
+            : "OK",
         bounceRate,
         bounceLimit: 5,
-        complaintStatus: complaintDanger ? "DANGER" : complaintWarning ? "WARNING" : "OK",
+        complaintStatus: complaintDanger
+          ? "DANGER"
+          : complaintWarning
+            ? "WARNING"
+            : "OK",
         complaintRate,
         complaintLimit: 0.1,
         message: bounceDanger
@@ -332,7 +356,9 @@ export async function adminEmailAnalyticsRoutes(fastify: FastifyInstance) {
         message: `Usunięto ${email} z suppression list`,
       });
     } catch (error) {
-      return reply.code(404).send({ error: "Email not found in suppression list" });
+      return reply
+        .code(404)
+        .send({ error: "Email not found in suppression list" });
     }
   });
 
@@ -379,7 +405,11 @@ export async function adminEmailAnalyticsRoutes(fastify: FastifyInstance) {
       prisma.emailEvent.count({ where }),
     ]);
 
-    return reply.send({ events, total, hasMore: Number(offset) + Number(limit) < total });
+    return reply.send({
+      events,
+      total,
+      hasMore: Number(offset) + Number(limit) < total,
+    });
   });
 
   // ================================================================

@@ -16,12 +16,8 @@ export async function adminEmailRoutes(fastify: FastifyInstance) {
   fastify.addHook("onRequest", async (request, reply) => {
     try {
       await request.jwtVerify();
-      const userId = (request.user as any).userId;
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { email: true },
-      });
-      if (user?.email !== "kontakt@ecopywriting.pl") {
+      const user = request.user as any;
+      if (user.role !== "ADMIN") {
         return reply.code(403).send({ error: "Admin only" });
       }
     } catch (err) {
