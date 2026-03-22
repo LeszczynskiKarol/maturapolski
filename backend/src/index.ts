@@ -123,24 +123,6 @@ fastify.addContentTypeParser(
   },
 );
 
-// Istniejący parser dla Stripe (application/json) — zostaw jak jest
-fastify.addContentTypeParser(
-  "application/json",
-  { parseAs: "buffer" },
-  function (req, body, done) {
-    if (req.url === "/api/subscription/webhook") {
-      req.rawBody = Buffer.isBuffer(body) ? body : Buffer.from(body);
-    }
-    try {
-      const json = JSON.parse(body.toString());
-      done(null, json);
-    } catch (err: any) {
-      err.statusCode = 400;
-      done(err, undefined);
-    }
-  },
-);
-
 // SNS wysyła JSON ale z Content-Type: text/plain
 fastify.addContentTypeParser(
   "text/plain",
