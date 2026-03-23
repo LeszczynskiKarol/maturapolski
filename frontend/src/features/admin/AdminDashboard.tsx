@@ -12,63 +12,12 @@ export const AdminDashboard: React.FC = () => {
         Panel Administracyjny
       </h1>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center">
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <Users className="w-6 h-6 text-blue-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm text-gray-600">Użytkownicy</p>
-              <p className="text-2xl font-semibold">1,234</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center">
-            <div className="p-3 bg-green-100 rounded-lg">
-              <BookOpen className="w-6 h-6 text-green-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm text-gray-600">Zadania</p>
-              <p className="text-2xl font-semibold">456</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center">
-            <div className="p-3 bg-purple-100 rounded-lg">
-              <FileText className="w-6 h-6 text-purple-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm text-gray-600">Wypracowania</p>
-              <p className="text-2xl font-semibold">789</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center">
-            <div className="p-3 bg-yellow-100 rounded-lg">
-              <Award className="w-6 h-6 text-yellow-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm text-gray-600">Osiągnięcia</p>
-              <p className="text-2xl font-semibold">32</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="mb-8">
         <LiveActivityPanel />
       </div>
 
       {/* Quick Links */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Link
           to="/admin/exercises"
           className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
@@ -77,17 +26,6 @@ export const AdminDashboard: React.FC = () => {
           <h3 className="text-lg font-semibold">Zarządzaj zadaniami</h3>
           <p className="text-sm text-gray-600 mt-2">
             Dodawaj i edytuj zadania maturalne
-          </p>
-        </Link>
-
-        <Link
-          to="/admin/materials"
-          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
-        >
-          <FileText className="w-8 h-8 text-purple-600 mb-4" />
-          <h3 className="text-lg font-semibold">Materiały edukacyjne</h3>
-          <p className="text-sm text-gray-600 mt-2">
-            Zarządzaj materiałami i lekturami
           </p>
         </Link>
 
