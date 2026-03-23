@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Users, FileText, Award } from "lucide-react";
+import { BookOpen, Users } from "lucide-react";
 import { LiveActivityPanel } from "./LiveActivityPanel";
 
 export const AdminDashboard: React.FC = () => {
