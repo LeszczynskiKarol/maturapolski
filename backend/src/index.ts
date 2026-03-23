@@ -34,6 +34,7 @@ import Fastify from "fastify";
 import { initializeAI } from "./ai/aiService";
 import { adminRoutes } from "./routes/admin.routes";
 import { checkExpiredAccess } from "./jobs/checkExpiredAccess";
+import { adminSubscriptionRoutes } from "./routes/adminSubscription.routes";
 import { adminEmailAnalyticsRoutes } from "./routes/admin-email-analytics.routes";
 import { emailWebhookRoutes } from "./routes/emailWebhook.routes";
 import { examStructureRoutes } from "./routes/examStructure.routes";
@@ -190,6 +191,9 @@ console.log("✓ Auth routes registered at /api/auth/*");
 // admin routes
 fastify.register(adminRoutes, { prefix: "/api/admin" });
 console.log("✓ Admin routes registered at /api/admin/*");
+
+fastify.register(adminSubscriptionRoutes, { prefix: "/api/admin" });
+console.log("✓ Admin Subscription Routes registered at /api/admin/*");
 
 fastify.register(adminEmailRoutes, { prefix: "/api/admin/email" });
 fastify.register(adminEmailAnalyticsRoutes, {

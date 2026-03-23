@@ -20,6 +20,7 @@ import EmailDashboard from "./features/admin/EmailDashboard";
 import { ResetPasswordPage } from "./features/auth/ResetPasswordPage";
 import { VerifyEmailCodePage } from "./features/auth/VerifyEmailCodePage";
 import { UnsubscribePage } from "./features/public/UnsubscribePage";
+import { SubscriptionManager } from "./features/admin/SubscriptionManager";
 import { HubDetailPage } from "./features/content/HubDetailPage";
 import HubListPage from "./features/content/HubListPage";
 import { HubTestLandingPage } from "./features/content/HubTestLandingPage";
@@ -186,6 +187,7 @@ export const App: React.FC = () => {
                 <Route index element={<AdminDashboard />} />
                 <Route path="exercises" element={<ExerciseManager />} />
                 <Route path="users" element={<UserManager />} />
+                <Route path="subscriptions" element={<SubscriptionManager />} />
                 <Route path="content" element={<ContentManager />} />
                 <Route path="materials" element={<AdminMaterialsEditor />} />
                 <Route path="email" element={<EmailDashboard />} />

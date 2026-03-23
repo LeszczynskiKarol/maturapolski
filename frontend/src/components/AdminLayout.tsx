@@ -10,6 +10,7 @@ import {
   Eye,
   BarChart3,
   Mail,
+  CreditCard,
   Menu,
   X,
   BrainCircuit,
@@ -19,8 +20,9 @@ import {
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: BarChart3 },
   { name: "Zadania", href: "/admin/exercises", icon: BookOpen },
-  { name: "Email & Mailing", href: "/admin/email", icon: Mail }, // ← DODAJ
+  { name: "Email & Mailing", href: "/admin/email", icon: Mail },
   { name: "Użytkownicy", href: "/admin/users", icon: Users },
+  { name: "Subskrypcje", href: "/admin/subscriptions", icon: CreditCard },
   { name: "Baza wiedzy", href: "/admin/content", icon: BrainCircuit },
   { name: "Sesje użytkowników", href: "/admin/user-sessions", icon: Eye },
 ];
