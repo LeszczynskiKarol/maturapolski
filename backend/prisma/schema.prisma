@@ -962,7 +962,8 @@ model EmailLog {
   userId    String
   type      String   // np. STREAK_REMINDER, WEEKLY_SUMMARY, REENGAGEMENT_7D...
   metadata  Json?    // dodatkowe dane (np. streak count)
-  
+  html      String?  @db.Text
+  subject   String?             
   sentAt    DateTime @default(now())
   
   @@index([userId, type])

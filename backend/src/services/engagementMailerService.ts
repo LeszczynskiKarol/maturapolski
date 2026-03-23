@@ -101,7 +101,6 @@ class EngagementMailerService {
     metadata?: any,
   ): Promise<boolean> {
     try {
-      // Sprawdź suppression list
       const suppressed = await prisma.emailSuppression.findUnique({
         where: { email: email.toLowerCase() },
       });
@@ -111,6 +110,7 @@ class EngagementMailerService {
         );
         return false;
       }
+
       await transporter.sendMail({
         from: FROM,
         to: email,
@@ -123,6 +123,8 @@ class EngagementMailerService {
           userId,
           type: emailType,
           metadata: metadata || {},
+          subject,
+          html,
         },
       });
 

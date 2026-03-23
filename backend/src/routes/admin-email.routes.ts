@@ -125,15 +125,64 @@ export async function adminEmailRoutes(fastify: FastifyInstance) {
     const logs = await prisma.emailLog.findMany({
       orderBy: { sentAt: "desc" },
       take: Number(limit),
+      select: {
+        id: true,
+        userId: true,
+        type: true,
+        subject: true,
+        metadata: true,
+        sentAt: true,
+        // NIE zwracaj html w liście — za duże
+      },
     });
 
-    return reply.send(logs);
+    // Dociągnij emaile userów
+    const userIds = [...new Set(logs.map((l) => l.userId))];
+    const users = await prisma.user.findMany({
+      where: { id: { in: userIds } },
+      select: { id: true, email: true, username: true },
+    });
+    const userMap = new Map(users.map((u) => [u.id, u]));
+
+    return reply.send(
+      logs.map((log) => ({
+        ...log,
+        userEmail: userMap.get(log.userId)?.email || "—",
+        userName: userMap.get(log.userId)?.username || "—",
+      })),
+    );
+  });
+
+  // NOWY: Podgląd treści konkretnego maila
+  fastify.get("/preview/:id", async (request, reply) => {
+    const { id } = request.params as { id: string };
+
+    const log = await prisma.emailLog.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        userId: true,
+        type: true,
+        subject: true,
+        html: true,
+        metadata: true,
+        sentAt: true,
+      },
+    });
+
+    if (!log) {
+      return reply.code(404).send({ error: "Email not found" });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: log.userId },
+      select: { email: true, username: true },
+    });
+
+    return reply.send({
+      ...log,
+      userEmail: user?.email || "—",
+      userName: user?.username || "—",
+    });
   });
 }
-
-// ============================================================
-// REJESTRACJA W index.ts:
-// ============================================================
-// import { adminEmailRoutes } from "./routes/admin-email.routes";
-// fastify.register(adminEmailRoutes, { prefix: "/api/admin/email" });
-// console.log("✓ Admin email routes registered at /api/admin/email/*");

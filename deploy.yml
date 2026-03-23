@@ -49,7 +49,8 @@ jobs:
             npm ci
             npm run build
             npx prisma migrate deploy
-
+            npx prisma db push
+            npx prisma generate
             echo "=== Verify dotenv ==="
             node -e "import('dotenv').then(() => console.log('dotenv OK')).catch(e => { console.error('FAIL', e.message); process.exit(1) })"
 

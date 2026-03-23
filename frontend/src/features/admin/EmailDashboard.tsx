@@ -90,8 +90,7 @@ export const EmailDashboard: React.FC = () => {
   const [days, setDays] = useState(30);
   const [eventFilter, setEventFilter] = useState<string>("");
   const [emailSearch, setEmailSearch] = useState("");
-
-  // ---- QUERIES ----
+  const [previewId, setPreviewId] = useState<string | null>(null);
 
   const {
     data: analytics,
@@ -105,6 +104,15 @@ export const EmailDashboard: React.FC = () => {
       );
       return res.data;
     },
+  });
+
+  const { data: previewData } = useQuery({
+    queryKey: ["email-preview", previewId],
+    queryFn: async () => {
+      const res = await api.get(`/api/admin/email/preview/${previewId}`);
+      return res.data;
+    },
+    enabled: !!previewId,
   });
 
   const { data: emailStats, refetch: refetchStats } = useQuery({
@@ -556,13 +564,16 @@ export const EmailDashboard: React.FC = () => {
                       Typ
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      User ID
+                      Odbiorca
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Temat
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Kiedy
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Metadata
+                      Podgląd
                     </th>
                   </tr>
                 </thead>
@@ -574,19 +585,33 @@ export const EmailDashboard: React.FC = () => {
                           {CAMPAIGN_LABELS[log.type] || log.type}
                         </span>
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs text-gray-500">
-                        {log.userId?.slice(-8)}
+                      <td className="px-4 py-3">
+                        <div>
+                          <p className="font-medium text-gray-900 text-xs">
+                            {log.userEmail}
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            {log.userName}
+                          </p>
+                        </div>
                       </td>
-                      <td className="px-4 py-3 text-gray-500">
+                      <td className="px-4 py-3 text-xs text-gray-600 max-w-xs truncate">
+                        {log.subject || "—"}
+                      </td>
+                      <td className="px-4 py-3 text-gray-500 text-xs">
                         {formatDistanceToNow(new Date(log.sentAt), {
                           addSuffix: true,
                           locale: pl,
                         })}
                       </td>
-                      <td className="px-4 py-3 text-xs text-gray-400 max-w-xs truncate">
-                        {log.metadata
-                          ? JSON.stringify(log.metadata).slice(0, 80)
-                          : "—"}
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={() => setPreviewId(log.id)}
+                          className="p-1.5 text-blue-500 hover:bg-blue-50 rounded"
+                          title="Podgląd treści"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -883,6 +908,60 @@ export const EmailDashboard: React.FC = () => {
               </div>
             </div>
           )}
+        </div>
+      )}
+      {/* Email Preview Modal */}
+      {previewId && previewData && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
+              <div>
+                <h3 className="font-semibold text-gray-900">Podgląd emaila</h3>
+                <div className="flex items-center gap-3 mt-1 text-sm text-gray-500">
+                  <span>{previewData.userEmail}</span>
+                  <span>•</span>
+                  <span>
+                    {CAMPAIGN_LABELS[previewData.type] || previewData.type}
+                  </span>
+                  <span>•</span>
+                  <span>
+                    {format(new Date(previewData.sentAt), "dd.MM.yyyy HH:mm")}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setPreviewId(null)}
+                className="p-2 hover:bg-gray-200 rounded-lg"
+              >
+                <XCircle className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+            {/* Subject */}
+            {previewData.subject && (
+              <div className="px-6 py-3 border-b border-gray-100 bg-gray-50">
+                <p className="text-sm">
+                  <span className="text-gray-500">Temat:</span>{" "}
+                  <span className="font-medium">{previewData.subject}</span>
+                </p>
+              </div>
+            )}
+            {/* HTML Preview */}
+            <div className="flex-1 overflow-auto">
+              {previewData.html ? (
+                <iframe
+                  srcDoc={previewData.html}
+                  className="w-full h-full min-h-[500px] border-0"
+                  title="Email preview"
+                  sandbox=""
+                />
+              ) : (
+                <div className="p-12 text-center text-gray-400">
+                  Brak treści HTML (stary mail sprzed wdrożenia)
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
