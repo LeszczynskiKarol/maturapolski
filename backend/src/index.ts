@@ -3,6 +3,7 @@
 import dotenv from "dotenv";
 
 dotenv.config();
+
 console.log("=== ENV DEBUG ===");
 console.log("AWS_REGION:", process.env.AWS_REGION);
 console.log("AWS_BUCKET_NAME:", process.env.AWS_BUCKET_NAME);
