@@ -18,7 +18,6 @@ jobs:
           fi
           echo "ipv4=$PUBLIC_IP" >> "$GITHUB_OUTPUT"
           echo "Runner IP: $PUBLIC_IP"
-
       - name: Open SSH
         run: |
           aws ec2 authorize-security-group-ingress \
@@ -40,45 +39,47 @@ jobs:
           script: |
             cd /var/www/maturapolski
 
-            echo "=== Node info ==="
-            which node && node --version
-
-            echo "=== Stop backend ==="
-            pm2 stop maturapolski-backend || true
-
             echo "=== Git pull ==="
             git fetch origin main
             git reset --hard origin/main
 
-            echo "=== Backend ==="
+            echo "=== Backend build ==="
             cd backend
             rm -rf node_modules
             npm ci
             npm run build
             npx prisma migrate deploy
+            npx prisma db push
+            npx prisma generate
             echo "=== Verify dotenv ==="
             node -e "import('dotenv').then(() => console.log('dotenv OK')).catch(e => { console.error('FAIL', e.message); process.exit(1) })"
-            cd ..
-
-            echo "=== Frontend ==="
-            cd frontend
+            echo "=== Frontend build ==="
+            cd ../frontend
             rm -rf node_modules
             npm ci
             npm run build
-            cd ..
 
-            echo "=== Start backend ==="
-            pm2 delete maturapolski-backend || true
-            rm -f /home/ubuntu/.pm2/dump.pm2
+            echo "=== Zero-downtime reload ==="
             cd /var/www/maturapolski/backend
-            pm2 start /var/www/maturapolski/backend/dist/index.js --name maturapolski-backend
+            pm2 reload ecosystem.config.cjs
             pm2 save
 
             sleep 3
-            echo "=== Status ==="
             pm2 list
             pm2 logs maturapolski-backend --lines 5 --nostream
-
+      - name: Notify Google Indexing
+        if: success()
+        run: |
+          aws lambda invoke --function-name google-indexing-notifier \
+            --payload '{"siteUrl":"https://www.maturapolski.pl","sitemapPath":"/sitemap_index.xml"}' \
+            --cli-binary-format raw-in-base64-out \
+            --invocation-type Event \
+            --region eu-central-1 /tmp/indexing.json
+          cat /tmp/indexing.json
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: eu-central-1
       - name: Close SSH
         if: always()
         run: |
