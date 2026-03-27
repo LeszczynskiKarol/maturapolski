@@ -1,6 +1,7 @@
 // backend/src/index.ts
 
 import dotenv from "dotenv";
+
 dotenv.config();
 console.log("=== ENV DEBUG ===");
 console.log("AWS_REGION:", process.env.AWS_REGION);
