@@ -35,6 +35,7 @@ import { initializeAI } from "./ai/aiService";
 import { adminRoutes } from "./routes/admin.routes";
 import { checkExpiredAccess } from "./jobs/checkExpiredAccess";
 import { adminSubscriptionRoutes } from "./routes/adminSubscription.routes";
+import { sitemapRoutes } from "./routes/sitemap.routes";
 import { adminEmailAnalyticsRoutes } from "./routes/admin-email-analytics.routes";
 import { emailWebhookRoutes } from "./routes/emailWebhook.routes";
 import { examStructureRoutes } from "./routes/examStructure.routes";
@@ -241,6 +242,8 @@ fastify.register(materialsRoutes, { prefix: "/api/materials" });
 console.log("✓ Materials routes registered at /api/materials/*");
 
 fastify.register(unsubscribeRoutes, { prefix: "/api/email" });
+
+fastify.register(sitemapRoutes);
 
 fastify.register(emailWebhookRoutes, { prefix: "/api/email" });
 
