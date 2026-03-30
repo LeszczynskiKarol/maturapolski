@@ -185,4 +185,13 @@ export async function adminEmailRoutes(fastify: FastifyInstance) {
       userName: user?.username || "—",
     });
   });
+
+  fastify.post("/trigger/reset-streaks", async (_request, reply) => {
+    const { resetStaleStreaks } = await import("../jobs/resetStaleStreaks");
+    const count = await resetStaleStreaks();
+    return reply.send({
+      success: true,
+      message: `Reset ${count} stale streaks`,
+    });
+  });
 }

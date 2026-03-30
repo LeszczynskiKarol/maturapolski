@@ -847,6 +847,12 @@ export const EmailDashboard: React.FC = () => {
                 desc: "Miesięczne raporty",
                 icon: "📅",
               },
+              {
+                id: "reset-streaks",
+                label: "Reset stale streaks",
+                desc: "Resetuj passę userów nieaktywnych od wczoraj",
+                icon: "🔄",
+              },
             ].map((job) => (
               <div
                 key={job.id}

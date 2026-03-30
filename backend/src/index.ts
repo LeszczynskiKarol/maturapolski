@@ -34,6 +34,7 @@ import jwt from "@fastify/jwt";
 import { registerActivityTracker } from "./middleware/activityTracker";
 import Fastify from "fastify";
 import { initializeAI } from "./ai/aiService";
+import { resetStaleStreaks } from "./jobs/resetStaleStreaks";
 import { adminRoutes } from "./routes/admin.routes";
 import { checkExpiredAccess } from "./jobs/checkExpiredAccess";
 import { adminSubscriptionRoutes } from "./routes/adminSubscription.routes";
@@ -97,6 +98,14 @@ cron.schedule("0 9 1 * *", async () => {
     await runMonthlyEmailJobs();
   } catch (e) {
     console.error(e);
+  }
+});
+cron.schedule("5 0 * * *", async () => {
+  console.log("⏰ Running daily job: reset stale streaks");
+  try {
+    await resetStaleStreaks();
+  } catch (error) {
+    console.error("Error in stale streak reset:", error);
   }
 });
 

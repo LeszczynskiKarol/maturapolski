@@ -169,6 +169,31 @@ class EngagementMailerService {
     for (const profile of usersWithStreak) {
       if (!profile.user.emailVerified) continue;
 
+      //  Sprawdź czy passa jest AKTUALNA (user ćwiczył wczoraj)
+      const yesterday = new Date();
+      yesterday.setHours(0, 0, 0, 0);
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      const yesterdayActivity = await prisma.dailyProgress.findFirst({
+        where: {
+          userId: profile.userId,
+          date: { gte: yesterday, lt: today },
+          exercisesCount: { gt: 0 },
+        },
+      });
+
+      if (!yesterdayActivity) {
+        // User nie ćwiczył wczoraj — passa jest nieaktualna, resetuj ją
+        console.log(
+          `  ⚠️ Skipping ${profile.user.email}: streak=${profile.studyStreak} but no activity yesterday — resetting`,
+        );
+        await prisma.userProfile.update({
+          where: { userId: profile.userId },
+          data: { studyStreak: 0 },
+        });
+        continue;
+      }
+
       // Sprawdź czy dziś już ćwiczył
       const todayProgress = await prisma.dailyProgress.findUnique({
         where: {
