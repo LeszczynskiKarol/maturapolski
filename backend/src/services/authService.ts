@@ -404,6 +404,8 @@ export class AuthService {
       where: { email: googleUser.email.toLowerCase() },
     });
 
+    let isNewUser = false;
+
     if (user) {
       // Użytkownik istnieje - zaloguj go
       await prisma.user.update({
@@ -420,6 +422,7 @@ export class AuthService {
         .replace(/[^a-z0-9]/g, "_");
 
       let username = baseUsername;
+      isNewUser = true;
       let counter = 1;
 
       while (await prisma.user.findUnique({ where: { username } })) {
@@ -473,6 +476,7 @@ export class AuthService {
       },
       token,
       refreshToken,
+      isNewUser,
     };
   }
 }

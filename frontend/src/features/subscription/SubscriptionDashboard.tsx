@@ -77,6 +77,26 @@ export const SubscriptionDashboard: React.FC = () => {
         .get(`/api/subscription/verify-session/${sessionId}`)
         .then(() => {
           toast.success("Płatność zakończona pomyślnie!");
+          // GA4 purchase
+          try {
+            const ga4Key = `mp_ga4_purchase_${sessionId}`;
+            if (!sessionStorage.getItem(ga4Key)) {
+              window.gtag?.("event", "purchase", {
+                transaction_id: sessionId,
+                currency: "PLN",
+                value: 39,
+                items: [
+                  {
+                    item_id: "subscription",
+                    item_name: "Subskrypcja Premium",
+                    price: 39,
+                    quantity: 1,
+                  },
+                ],
+              });
+              sessionStorage.setItem(ga4Key, "1");
+            }
+          } catch {}
           refetch();
           refetchAiUsage();
           navigate("/subscription", { replace: true });
@@ -87,8 +107,25 @@ export const SubscriptionDashboard: React.FC = () => {
         });
     } else if (pointsAdded) {
       toast.success("Punkty AI zostały doładowane!");
+      // GA4 purchase — points
+      try {
+        window.gtag?.("event", "purchase", {
+          transaction_id: "points_" + Date.now(),
+          currency: "PLN",
+          items: [
+            { item_id: "points", item_name: "Pakiet punktów AI", quantity: 1 },
+          ],
+        });
+      } catch {}
       refetch();
       navigate("/subscription", { replace: true });
+    }
+
+    // GA4 checkout cancel
+    if (searchParams.get("canceled")) {
+      try {
+        window.gtag?.("event", "checkout_cancel");
+      } catch {}
     }
   }, [searchParams]);
 
@@ -128,7 +165,7 @@ export const SubscriptionDashboard: React.FC = () => {
     },
     onError: (error: any) => {
       toast.error(
-        error.response?.data?.error || "Błąd podczas anulowania subskrypcji"
+        error.response?.data?.error || "Błąd podczas anulowania subskrypcji",
       );
     },
   });
@@ -142,7 +179,7 @@ export const SubscriptionDashboard: React.FC = () => {
     },
     onError: (error: any) => {
       toast.error(
-        error.response?.data?.error || "Błąd podczas tworzenia płatności"
+        error.response?.data?.error || "Błąd podczas tworzenia płatności",
       );
     },
   });
@@ -163,6 +200,21 @@ export const SubscriptionDashboard: React.FC = () => {
 
       // Standardowy flow - przekieruj od razu
       if (result.url) {
+        // GA4 begin_checkout
+        try {
+          window.gtag?.("event", "begin_checkout", {
+            currency: "PLN",
+            value: 39,
+            items: [
+              {
+                item_id: "subscription",
+                item_name: "Subskrypcja Premium",
+                price: 39,
+                quantity: 1,
+              },
+            ],
+          });
+        } catch {}
         window.location.href = result.url;
       }
     } catch (error) {
@@ -184,6 +236,21 @@ export const SubscriptionDashboard: React.FC = () => {
 
       // Standardowy flow - przekieruj od razu
       if (data.url) {
+        // GA4 begin_checkout
+        try {
+          window.gtag?.("event", "begin_checkout", {
+            currency: "PLN",
+            value: 49,
+            items: [
+              {
+                item_id: "monthly_access",
+                item_name: "Dostęp Premium 30 dni",
+                price: 49,
+                quantity: 1,
+              },
+            ],
+          });
+        } catch {}
         window.location.href = data.url;
       }
     },
@@ -201,6 +268,19 @@ export const SubscriptionDashboard: React.FC = () => {
     },
     onSuccess: (data) => {
       if (data.url) {
+        // GA4 begin_checkout
+        try {
+          window.gtag?.("event", "begin_checkout", {
+            currency: "PLN",
+            items: [
+              {
+                item_id: "points",
+                item_name: "Pakiet punktów AI",
+                quantity: 1,
+              },
+            ],
+          });
+        } catch {}
         window.location.href = data.url;
       }
     },
@@ -213,7 +293,7 @@ export const SubscriptionDashboard: React.FC = () => {
     mutationFn: () => api.post("/api/subscription/cancel"),
     onSuccess: () => {
       toast.success(
-        "Subskrypcja zostanie anulowana na koniec okresu rozliczeniowego"
+        "Subskrypcja zostanie anulowana na koniec okresu rozliczeniowego",
       );
       refetch();
     },
@@ -252,6 +332,21 @@ export const SubscriptionDashboard: React.FC = () => {
       }
 
       if (result.url) {
+        // GA4 begin_checkout
+        try {
+          window.gtag?.("event", "begin_checkout", {
+            currency: "PLN",
+            value: 39,
+            items: [
+              {
+                item_id: "subscription",
+                item_name: "Subskrypcja Premium",
+                price: 39,
+                quantity: 1,
+              },
+            ],
+          });
+        } catch {}
         window.location.href = result.url;
       }
     } catch (error) {
@@ -275,6 +370,26 @@ export const SubscriptionDashboard: React.FC = () => {
       const url = confirmModal.data?.url;
 
       if (url) {
+        // GA4 begin_checkout (from confirmation modal)
+        try {
+          const value = confirmModal.type === "subscription" ? 39 : 49;
+          const itemName =
+            confirmModal.type === "subscription"
+              ? "Subskrypcja Premium"
+              : "Dostęp Premium 30 dni";
+          window.gtag?.("event", "begin_checkout", {
+            currency: "PLN",
+            value,
+            items: [
+              {
+                item_id: confirmModal.type,
+                item_name: itemName,
+                price: value,
+                quantity: 1,
+              },
+            ],
+          });
+        } catch {}
         window.location.href = url;
       } else {
         console.error("No URL found in confirmModal.data");
@@ -308,8 +423,8 @@ export const SubscriptionDashboard: React.FC = () => {
         0,
         Math.ceil(
           (new Date(subscription.endDate).getTime() - Date.now()) /
-            (1000 * 60 * 60 * 24)
-        )
+            (1000 * 60 * 60 * 24),
+        ),
       )
     : null;
 
@@ -421,7 +536,7 @@ export const SubscriptionDashboard: React.FC = () => {
                   <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
                     Wygasa:{" "}
                     {new Date(subscription.endDate!).toLocaleDateString(
-                      "pl-PL"
+                      "pl-PL",
                     )}
                   </p>
                 </>
@@ -463,8 +578,8 @@ export const SubscriptionDashboard: React.FC = () => {
                   subscription.percentUsed > 90
                     ? "bg-red-500"
                     : subscription.percentUsed > 70
-                    ? "bg-orange-500"
-                    : "bg-green-500"
+                      ? "bg-orange-500"
+                      : "bg-green-500"
                 }`}
                 initial={{ width: 0 }}
                 animate={{ width: `${subscription.percentUsed}%` }}
@@ -484,7 +599,7 @@ export const SubscriptionDashboard: React.FC = () => {
                     Wygasa:{" "}
                     {subscription.endDate
                       ? new Date(subscription.endDate).toLocaleDateString(
-                          "pl-PL"
+                          "pl-PL",
                         )
                       : "Brak daty"}
                   </>
@@ -493,7 +608,7 @@ export const SubscriptionDashboard: React.FC = () => {
                   <>
                     Reset:{" "}
                     {new Date(subscription.resetDate).toLocaleDateString(
-                      "pl-PL"
+                      "pl-PL",
                     )}
                   </>
                 )}
@@ -570,7 +685,7 @@ export const SubscriptionDashboard: React.FC = () => {
                     Twoja subskrypcja miesięczna (39 zł/mies) aktywuje się
                     automatycznie{" "}
                     {new Date(
-                      subscription.metadata.pendingSubscription.willActivateAt
+                      subscription.metadata.pendingSubscription.willActivateAt,
                     ).toLocaleDateString("pl-PL", {
                       day: "numeric",
                       month: "long",
@@ -1149,23 +1264,23 @@ export const SubscriptionDashboard: React.FC = () => {
           confirmModal.type === "cancel-pending"
             ? "Anuluj zaplanowaną subskrypcję"
             : confirmModal.type === "cancel-subscription"
-            ? "Anuluj subskrypcję Premium"
-            : confirmModal.type === "subscription"
-            ? "Aktywny pakiet Premium"
-            : "Przedłuż dostęp Premium"
+              ? "Anuluj subskrypcję Premium"
+              : confirmModal.type === "subscription"
+                ? "Aktywny pakiet Premium"
+                : "Przedłuż dostęp Premium"
         }
         message={
           confirmModal.type === "cancel-pending"
             ? `Czy na pewno chcesz anulować zaplanowaną subskrypcję? Będziesz mógł nadal korzystać z obecnego pakietu do ${
                 confirmModal.data?.endDate
                   ? new Date(confirmModal.data.endDate).toLocaleDateString(
-                      "pl-PL"
+                      "pl-PL",
                     )
                   : ""
               }, ale po tym czasie stracisz dostęp Premium - chyba że przedłużysz plan lub wykupisz subskrypcję, do czego zachęcamy!`
             : confirmModal.type === "cancel-subscription"
-            ? "Czy na pewno chcesz anulować subskrypcję Premium? Zachowasz dostęp do końca obecnego okresu rozliczeniowego, ale subskrypcja nie odnowi się automatycznie. Będziesz mógł wznowić subskrypcję w każdej chwili."
-            : confirmModal.data?.message || ""
+              ? "Czy na pewno chcesz anulować subskrypcję Premium? Zachowasz dostęp do końca obecnego okresu rozliczeniowego, ale subskrypcja nie odnowi się automatycznie. Będziesz mógł wznowić subskrypcję w każdej chwili."
+              : confirmModal.data?.message || ""
         }
         currentEndDate={confirmModal.data?.currentEndDate}
         newEndDate={confirmModal.data?.newEndDate}
@@ -1173,8 +1288,8 @@ export const SubscriptionDashboard: React.FC = () => {
           confirmModal.type === "cancel-pending"
             ? "Tak, anuluj subskrypcję"
             : confirmModal.type === "cancel-subscription"
-            ? "Tak, anuluj subskrypcję"
-            : "Przejdź do płatności"
+              ? "Tak, anuluj subskrypcję"
+              : "Przejdź do płatności"
         }
         cancelText="Nie, zostaw"
         type={
@@ -1182,8 +1297,8 @@ export const SubscriptionDashboard: React.FC = () => {
           confirmModal.type === "cancel-subscription"
             ? "danger"
             : confirmModal.type === "subscription"
-            ? "warning"
-            : "info"
+              ? "warning"
+              : "info"
         }
       />
     </div>

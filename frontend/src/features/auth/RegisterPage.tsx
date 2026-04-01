@@ -108,6 +108,10 @@ export const RegisterPage: React.FC = () => {
       });
 
       toast.success("Konto utworzone! Sprawdź swoją skrzynkę email.");
+      // GA4 sign_up
+      try {
+        window.gtag?.("event", "sign_up", { method: "email" });
+      } catch {}
       navigate(`/check-email?email=${encodeURIComponent(data.email)}`);
     } catch (error: any) {
       console.error("Registration error:", error);

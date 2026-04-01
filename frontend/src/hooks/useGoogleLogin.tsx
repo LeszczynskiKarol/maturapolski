@@ -14,7 +14,7 @@ declare global {
           initialize: (config: GoogleInitConfig) => void;
           renderButton: (
             parent: HTMLElement,
-            options: GoogleButtonConfig
+            options: GoogleButtonConfig,
           ) => void;
           prompt: () => void;
         };
@@ -69,7 +69,10 @@ export const useGoogleLogin = () => {
           });
 
           toast.success("Zalogowano przez Google!");
-
+          try {
+            const eventName = result.data.isNewUser ? "sign_up" : "login";
+            window.gtag?.("event", eventName, { method: "google" });
+          } catch {}
           setTimeout(() => {
             if (result.data.user.role === "ADMIN") {
               navigate("/admin");
@@ -86,7 +89,7 @@ export const useGoogleLogin = () => {
         toast.error(errorMessage);
       }
     },
-    [navigate, setAuth]
+    [navigate, setAuth],
   );
 
   // Inicjalizacja Google Sign-In z retry logic
@@ -124,15 +127,15 @@ export const useGoogleLogin = () => {
         if (initAttempts.current < 10) {
           const delay = Math.min(
             1000 * Math.pow(1.5, initAttempts.current),
-            5000
+            5000,
           );
           console.log(
-            `Google API not ready, retrying in ${delay}ms (attempt ${initAttempts.current})`
+            `Google API not ready, retrying in ${delay}ms (attempt ${initAttempts.current})`,
           );
           setTimeout(initializeGoogleSignIn, delay);
         } else {
           console.error(
-            "Failed to load Google Sign-In after multiple attempts"
+            "Failed to load Google Sign-In after multiple attempts",
           );
         }
       }
@@ -183,7 +186,7 @@ export const useGoogleLogin = () => {
             setTimeout(tryRenderButton, 200);
           } else {
             console.error(
-              `Element #${elementId} not found after ${maxAttempts} attempts`
+              `Element #${elementId} not found after ${maxAttempts} attempts`,
             );
           }
           return;
@@ -192,12 +195,12 @@ export const useGoogleLogin = () => {
         if (!window.google?.accounts?.id || !isInitialized.current) {
           if (attempts < maxAttempts) {
             console.log(
-              `Google API not ready, retrying... (attempt ${attempts}/${maxAttempts})`
+              `Google API not ready, retrying... (attempt ${attempts}/${maxAttempts})`,
             );
             setTimeout(tryRenderButton, 200);
           } else {
             console.error(
-              "Google Sign-In not initialized after multiple attempts"
+              "Google Sign-In not initialized after multiple attempts",
             );
           }
           return;
@@ -239,7 +242,7 @@ export const useGoogleLogin = () => {
 
       tryRenderButton();
     },
-    []
+    [],
   );
 
   // Cleanup on unmount

@@ -65,7 +65,10 @@ export const LoginPage: React.FC = () => {
         });
 
         toast.success("Zalogowano pomyślnie!");
-
+        // GA4 login
+        try {
+          window.gtag?.("event", "login", { method: "email" });
+        } catch {}
         setTimeout(() => {
           if (response.data.user.role === "ADMIN") {
             navigate("/admin");
