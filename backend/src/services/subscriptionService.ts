@@ -4,6 +4,58 @@ import { prisma } from "../lib/prisma";
 import Stripe from "stripe";
 import { EmailService } from "./emailService";
 
+async function notifySeoPanelConversion() {
+  const url = process.env.SEO_PANEL_WEBHOOK_URL;
+  const apiKey = process.env.SEO_PANEL_WEBHOOK_KEY;
+  const integrationId = process.env.SEO_PANEL_INTEGRATION_ID;
+  if (!url || !apiKey || !integrationId) return;
+
+  try {
+    const dateStr = new Date().toISOString().split("T")[0];
+    const dayStart = new Date(dateStr);
+    const dayEnd = new Date(dateStr + "T23:59:59.999Z");
+
+    // Zlicz wszystkie udane płatności z tego dnia (Stripe events)
+    const todayEvents = await prisma.stripeEvent.findMany({
+      where: {
+        type: "checkout.session.completed",
+        processed: true,
+        createdAt: { gte: dayStart, lte: dayEnd },
+      },
+    });
+
+    // Policz revenue z sesji
+    let totalRevenue = 0;
+    let totalOrders = 0;
+    for (const ev of todayEvents) {
+      const session = (ev.data as any)?.object;
+      if (session?.payment_status === "paid" && session?.amount_total > 0) {
+        totalRevenue += (session.amount_total || 0) / 100;
+        totalOrders++;
+      }
+    }
+
+    if (totalOrders === 0) return;
+
+    await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        apiKey,
+        integrationId,
+        date: dateStr,
+        revenue: totalRevenue,
+        orders: totalOrders,
+      }),
+    });
+    console.log(
+      `[SEO Panel] Webhook: ${dateStr} → ${totalOrders} orders, ${totalRevenue} zł`,
+    );
+  } catch (e: any) {
+    console.error("[SEO Panel] Webhook failed:", e.message);
+  }
+}
+
 const emailService = new EmailService();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -619,6 +671,11 @@ export class SubscriptionService {
 
       default:
         console.log("⏭️ Unhandled event type:", event.type);
+    }
+
+    // ▶ Notify SEO Panel about conversion
+    if (event.type === "checkout.session.completed") {
+      notifySeoPanelConversion().catch(() => {});
     }
 
     // Oznacz jako przetworzone

@@ -1135,7 +1135,7 @@ export async function adminRoutes(fastify: FastifyInstance): Promise<void> {
         if (typeof item._count === "number") {
           count = item._count;
         } else if (item._count && typeof item._count === "object") {
-          count = "_all" in item._count ? item._count._all || 0 : 0;
+          count = "_all" in item._count ? (item._count as any)._all || 0 : 0;
         }
         levelDistributionMap[item.level] = count;
       });
