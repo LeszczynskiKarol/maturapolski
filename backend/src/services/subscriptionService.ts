@@ -5,9 +5,9 @@ import Stripe from "stripe";
 import { EmailService } from "./emailService";
 
 async function notifySeoPanelConversion() {
-  const url = process.env.SEO_PANEL_WEBHOOK_URL;
-  const apiKey = process.env.SEO_PANEL_WEBHOOK_KEY;
-  const integrationId = process.env.SEO_PANEL_INTEGRATION_ID;
+  const url = process.env.SEO_PANEL_WEBHOOK_URL; // https://seo.torweb.pl/api/webhook/conversion
+  const apiKey = process.env.SEO_PANEL_WEBHOOK_KEY; // ten sam co WEBHOOK_API_KEY w SEO panelu
+  const integrationId = process.env.SEO_PANEL_INTEGRATION_ID; // cmncbs3wn0001qrx8j3e6ktr7
   if (!url || !apiKey || !integrationId) return;
 
   try {
@@ -15,23 +15,45 @@ async function notifySeoPanelConversion() {
     const dayStart = new Date(dateStr);
     const dayEnd = new Date(dateStr + "T23:59:59.999Z");
 
-    // Zlicz wszystkie udane płatności z tego dnia (Stripe events)
     const todayEvents = await prisma.stripeEvent.findMany({
       where: {
-        type: "checkout.session.completed",
         processed: true,
         createdAt: { gte: dayStart, lte: dayEnd },
+        type: {
+          in: [
+            "checkout.session.completed", // nowe subskrypcje, monthly access, punkty
+            "invoice.payment_succeeded", // ← NOWE: odnowienia subskrypcji
+          ],
+        },
       },
     });
 
-    // Policz revenue z sesji
     let totalRevenue = 0;
     let totalOrders = 0;
+    const countedInvoiceSubs = new Set<string>();
+
     for (const ev of todayEvents) {
       const session = (ev.data as any)?.object;
-      if (session?.payment_status === "paid" && session?.amount_total > 0) {
-        totalRevenue += (session.amount_total || 0) / 100;
-        totalOrders++;
+      if (!session) continue;
+
+      if (ev.type === "checkout.session.completed") {
+        if (session.payment_status === "paid" && session.amount_total > 0) {
+          totalRevenue += (session.amount_total || 0) / 100;
+          totalOrders++;
+        }
+      } else if (ev.type === "invoice.payment_succeeded") {
+        // Tylko odnowienia — subscription_create jest pokryte przez checkout
+        if (
+          session.billing_reason === "subscription_cycle" &&
+          session.amount_paid > 0
+        ) {
+          const subId = session.subscription as string;
+          if (subId && !countedInvoiceSubs.has(subId)) {
+            countedInvoiceSubs.add(subId);
+            totalRevenue += (session.amount_paid || 0) / 100;
+            totalOrders++;
+          }
+        }
       }
     }
 
@@ -673,8 +695,11 @@ export class SubscriptionService {
         console.log("⏭️ Unhandled event type:", event.type);
     }
 
-    // ▶ Notify SEO Panel about conversion
-    if (event.type === "checkout.session.completed") {
+    // ▶ Notify SEO Panel about any revenue event
+    if (
+      event.type === "checkout.session.completed" ||
+      event.type === "invoice.payment_succeeded"
+    ) {
       notifySeoPanelConversion().catch(() => {});
     }
 
