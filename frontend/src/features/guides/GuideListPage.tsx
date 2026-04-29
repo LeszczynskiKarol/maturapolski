@@ -252,7 +252,7 @@ export function GuideListPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
-                  href="https://matury-online.pl/auth/register?from=maturapolski"
+                  href="https://www.matury-online.pl/auth/register?from=maturapolski"
                   className="px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors"
                 >
                   Załóż darmowe konto

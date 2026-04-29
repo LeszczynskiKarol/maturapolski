@@ -51,7 +51,7 @@ export async function authRoutes(fastify: FastifyInstance) {
       if (data.recaptchaToken && data.recaptchaToken !== "MOBILE_DEV") {
         const isHuman = await recaptchaService.verify(
           data.recaptchaToken,
-          "register"
+          "register",
         );
         if (!isHuman) {
           return reply.code(400).send({
@@ -241,7 +241,7 @@ export async function authRoutes(fastify: FastifyInstance) {
       if (recaptchaToken && recaptchaToken !== "MOBILE_DEV") {
         const isHuman = await recaptchaService.verify(
           recaptchaToken,
-          "password_reset"
+          "password_reset",
         );
 
         if (!isHuman) {
@@ -350,5 +350,28 @@ export async function authRoutes(fastify: FastifyInstance) {
           "Logowanie przez Google nie powiodło się",
       });
     }
+  });
+
+  fastify.get("/migration-token", async (request, reply) => {
+    try {
+      await request.jwtVerify();
+    } catch {
+      return reply.code(401).send({ error: "UNAUTHORIZED" });
+    }
+
+    const userId = (request.user as any).userId;
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true },
+    });
+
+    if (!user) return reply.code(404).send({ error: "USER_NOT_FOUND" });
+
+    const token = fastify.jwt.sign(
+      { email: user.email, purpose: "migration" },
+      { expiresIn: "10m" },
+    );
+
+    return { token };
   });
 }

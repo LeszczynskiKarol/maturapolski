@@ -15,6 +15,7 @@ import {
   RotateCcw,
   Target,
   Zap,
+  X,
   BarChart3,
   Clock,
 } from "lucide-react";
@@ -252,6 +253,18 @@ export const StudentDashboard: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* ── Banner migracji do Matury Online — tylko Premium ── */}
+      {isPremium && !localStorage.getItem("matury-online-banner-dismissed") && (
+        <MaturyOnlineBanner
+          onDismiss={() => {
+            localStorage.setItem("matury-online-banner-dismissed", "1");
+            // force re-render
+            window.dispatchEvent(new Event("storage"));
+          }}
+          email={user?.email || ""}
+        />
+      )}
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -756,6 +769,86 @@ export const StudentDashboard: React.FC = () => {
         onClose={() => setShowStatsModal(false)}
       />
     </div>
+  );
+};
+
+const MaturyOnlineBanner: React.FC<{
+  onDismiss: () => void;
+  email: string;
+}> = ({ onDismiss, email }) => {
+  const [visible, setVisible] = React.useState(
+    !localStorage.getItem("matury-online-banner-dismissed"),
+  );
+  const [loading, setLoading] = React.useState(false);
+
+  if (!visible) return null;
+
+  const handleDismiss = () => {
+    setVisible(false);
+    onDismiss();
+  };
+
+  const handleGoToMaturyOnline = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get("/api/auth/migration-token");
+      const { token } = res.data;
+      // Przekieruj z tokenem — auto-login na matury-online
+      window.location.href = `https://www.matury-online.pl/auth/login?migration_token=${token}`;
+    } catch {
+      // Fallback — pre-fill email
+      window.location.href = `https://www.matury-online.pl/auth/login?from=maturapolski&email=${encodeURIComponent(email)}`;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="relative bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-200 dark:border-indigo-700 rounded-2xl p-4 sm:p-5"
+    >
+      <button
+        onClick={handleDismiss}
+        className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+      >
+        <X className="w-4 h-4" />
+      </button>
+
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pr-6">
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+            M
+          </div>
+          <div>
+            <p className="font-bold text-gray-900 dark:text-white text-sm">
+              Matury Online — 10 przedmiotów
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              matury-online.pl
+            </p>
+          </div>
+        </div>
+
+        <p className="text-sm text-gray-700 dark:text-gray-300 flex-1">
+          Twoje konto i hasło działają na <strong>matury-online.pl</strong> bez
+          zmian — matematyka, angielski, biologia i{" "}
+          <strong>8 innych przedmiotów</strong> w jednej cenie.
+        </p>
+
+        <button
+          onClick={handleGoToMaturyOnline}
+          disabled={loading}
+          className="flex-shrink-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white text-sm font-semibold rounded-xl transition-colors whitespace-nowrap flex items-center gap-2"
+        >
+          {loading && (
+            <div className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+          )}
+          {loading ? "Przekierowuję..." : "Przejdź →"}
+        </button>
+      </div>
+    </motion.div>
   );
 };
 
