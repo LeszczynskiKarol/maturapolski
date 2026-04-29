@@ -1,7 +1,6 @@
 // frontend/src/components/FloatingTestButton.tsx
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Trophy, X } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 
@@ -16,7 +15,6 @@ export function FloatingTestButton({
   hubTitle,
   hubType,
 }: FloatingTestButtonProps) {
-  const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const isLoggedIn = !!user;
 
@@ -68,7 +66,8 @@ export function FloatingTestButton({
   };
 
   const handleClick = () => {
-    navigate("/register");
+    window.location.href =
+      "https://www.matury-online.pl/auth/register?from=maturapolski";
   };
 
   if (isDismissed) return null;

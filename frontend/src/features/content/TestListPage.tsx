@@ -451,13 +451,17 @@ export function TestListPage() {
                 ocena AI. Zacznij się uczyć już teraz.
               </p>
 
-              <Link
-                to={isLoggedIn ? "/learning" : "/register"}
+              <a
+                href={
+                  isLoggedIn
+                    ? "/learning"
+                    : "https://www.matury-online.pl/auth/register?from=maturapolski"
+                }
                 className="inline-flex items-center gap-3 px-12 py-6 bg-white text-blue-600 rounded-2xl hover:bg-blue-50 transition-all text-xl font-bold shadow-2xl hover:scale-105"
               >
                 {isLoggedIn ? "Rozpocznij naukę" : "Załóż darmowe konto"}
                 <ArrowRight className="w-6 h-6" />
-              </Link>
+              </a>
 
               <p className="text-blue-200 mt-6 text-sm">
                 Darmowa rejestracja · Bez zobowiązań · Dostęp 24/7

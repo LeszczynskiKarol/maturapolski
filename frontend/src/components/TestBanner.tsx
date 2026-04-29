@@ -1,6 +1,5 @@
 // frontend/src/components/TestBanner.tsx
 
-import { Link } from "react-router-dom";
 import { Trophy, ArrowRight, Zap, CheckCircle } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 
@@ -45,13 +44,13 @@ export function TestBanner({
               </p>
             </div>
           </div>
-          <Link
-            to={`/register`}
+          <a
+            href="https://www.matury-online.pl/auth/register?from=maturapolski"
             className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all flex items-center justify-center gap-2 text-center"
           >
             <span>Załóż darmowe konto i rozwiąż test</span>
             <ArrowRight className="w-4 h-4" />
-          </Link>
+          </a>
         </div>
       </div>
     );
@@ -100,8 +99,8 @@ export function TestBanner({
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
-              <Link
-                to={`/register`}
+              <a
+                href="https://www.matury-online.pl/auth/register?from=maturapolski"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-blue-600 rounded-xl font-bold hover:bg-blue-50 transition-all shadow-lg hover:shadow-xl hover:scale-105"
               >
                 <Trophy className="w-5 h-5" />
@@ -109,7 +108,7 @@ export function TestBanner({
                   ? "Wróć do panelu i rozpocznij test"
                   : "Załóż darmowe konto i rozpocznij test"}
                 <ArrowRight className="w-5 h-5" />
-              </Link>
+              </a>
             </div>
           </div>
         </div>

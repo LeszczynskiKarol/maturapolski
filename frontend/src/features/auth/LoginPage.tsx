@@ -223,12 +223,12 @@ export const LoginPage: React.FC = () => {
 
             <p className="text-center mt-6 text-sm">
               Nie masz konta?{" "}
-              <Link
-                to="/register"
+              <a
+                href="https://www.matury-online.pl/auth/register?from=maturapolski"
                 className="text-blue-600 hover:underline font-medium"
               >
                 Załóż darmowe konto
-              </Link>
+              </a>
             </p>
 
             <p className="text-xs text-center text-gray-500 mt-4">

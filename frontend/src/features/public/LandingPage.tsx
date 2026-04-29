@@ -147,13 +147,13 @@ export const LandingPage: React.FC = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-                <Link
-                  to="/register"
-                  className="group px-10 py-5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-2xl hover:scale-105 transition-all flex items-center justify-center gap-2 text-xl font-bold"
+                <a
+                  href="https://www.matury-online.pl/auth/register?from=maturapolski"
+                  className="group px-10 py-5 bg-gradient-to-r from-blue-600 to-purple-600 ..."
                 >
                   Zacznij naukę teraz
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Link>
+                </a>
                 <Link
                   to="/login"
                   className="group px-10 py-5 border-2 border-gray-300 rounded-xl hover:border-blue-600 hover:bg-blue-50 transition-all flex items-center justify-center gap-2 text-xl font-semibold"
@@ -243,12 +243,12 @@ export const LandingPage: React.FC = () => {
                   <SolutionItem text="Szczegółowe statystyki i analiza postępów" />
                   <SolutionItem text="System poziomów i nagród motywuje do nauki" />
                 </div>
-                <Link
-                  to="/register"
+                <a
+                  href="https://www.matury-online.pl/auth/register?from=maturapolski"
                   className="mt-8 block w-full text-center px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors"
                 >
                   Załóż darmowe konto
-                </Link>
+                </a>
               </motion.div>
             </div>
           </div>
@@ -989,12 +989,12 @@ export const LandingPage: React.FC = () => {
                   </p>
                 </div>
 
-                <Link
-                  to="/register"
+                <a
+                  href="https://www.matury-online.pl/auth/register?from=maturapolski"
                   className="block text-center py-4 rounded-xl font-bold text-lg transition-all bg-gray-100 text-gray-700 hover:bg-gray-200"
                 >
                   Zacznij za darmo
-                </Link>
+                </a>
               </motion.div>
 
               {/* PREMIUM Plan */}

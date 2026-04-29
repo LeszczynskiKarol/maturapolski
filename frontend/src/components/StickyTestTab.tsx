@@ -1,7 +1,6 @@
 // frontend/src/components/StickyTestTab.tsx
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Trophy, ChevronRight } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 
@@ -12,7 +11,6 @@ interface StickyTestTabProps {
 }
 
 export function StickyTestTab({ hubType }: StickyTestTabProps) {
-  const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const isLoggedIn = !!user;
 
@@ -38,7 +36,8 @@ export function StickyTestTab({ hubType }: StickyTestTabProps) {
   }, []);
 
   const handleClick = () => {
-    navigate("/register");
+    window.location.href =
+      "https://www.matury-online.pl/auth/register?from=maturapolski";
   };
 
   return (

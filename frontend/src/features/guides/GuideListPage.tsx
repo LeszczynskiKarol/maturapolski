@@ -251,12 +251,12 @@ export function GuideListPage() {
                 maturą. Tysiące pytań czeka na Ciebie!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  to="/register"
+                <a
+                  href="https://matury-online.pl/auth/register?from=maturapolski"
                   className="px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors"
                 >
                   Załóż darmowe konto
-                </Link>
+                </a>
                 <Link
                   to="/baza-wiedzy"
                   className="px-8 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-400 transition-colors"

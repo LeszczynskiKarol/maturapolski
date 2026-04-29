@@ -142,12 +142,12 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
                   >
                     Zaloguj się
                   </Link>
-                  <Link
-                    to="/register"
+                  <a
+                    href="https://www.matury-online.pl/auth/register?from=maturapolski"
                     className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all"
                   >
                     Załóż darmowe konto
-                  </Link>
+                  </a>
                 </>
               ) : (
                 <Link
@@ -210,13 +210,13 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
                     Zaloguj się
                   </Link>
 
-                  <Link
-                    to="/register"
+                  <a
+                    href="https://www.matury-online.pl/auth/register?from=maturapolski"
                     className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg text-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Załóż darmowe konto
-                  </Link>
+                  </a>
                 </div>
               ) : (
                 <Link
@@ -316,12 +316,12 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
                 </li>
 
                 <li>
-                  <Link
-                    to="/register"
+                  <a
+                    href="https://www.matury-online.pl/auth/register?from=maturapolski"
                     className="hover:text-white transition-colors"
                   >
                     Załóż darmowe konto
-                  </Link>
+                  </a>
                 </li>
 
                 <li>

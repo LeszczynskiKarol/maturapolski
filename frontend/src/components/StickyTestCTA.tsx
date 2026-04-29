@@ -1,7 +1,6 @@
 // frontend/src/components/StickyTestCTA.tsx
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Trophy, X, Sparkles } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 
@@ -16,7 +15,6 @@ export function StickyTestCTA({
   hubTitle,
   hubType,
 }: StickyTestCTAProps) {
-  const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const isLoggedIn = !!user;
 
@@ -56,7 +54,8 @@ export function StickyTestCTA({
   };
 
   const handleClick = () => {
-    navigate("/register");
+    window.location.href =
+      "https://www.matury-online.pl/auth/register?from=maturapolski";
   };
 
   if (isDismissed) return null;

@@ -144,7 +144,8 @@ export function HubTestLandingPage() {
     if (isLoggedIn) {
       navigate(`/learning?work=${encodeURIComponent(data?.work || "")}`);
     } else {
-      navigate("/register");
+      window.location.href =
+        "https://www.matury-online.pl/auth/register?from=maturapolski";
     }
   };
 

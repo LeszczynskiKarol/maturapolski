@@ -367,15 +367,19 @@ export function EpochLandingPage() {
                 </div>
               </div>
 
-              <Link
-                to={isLoggedIn ? "/learning" : "/register"}
+              <a
+                href={
+                  isLoggedIn
+                    ? "/learning"
+                    : "https://www.matury-online.pl/auth/register?from=maturapolski"
+                }
                 className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all font-bold text-lg"
               >
                 {isLoggedIn
                   ? "Rozpocznij test z tej epoki"
                   : "Załóż konto i zacznij test"}
                 <ArrowRight className="w-5 h-5" />
-              </Link>
+              </a>
             </motion.div>
           </div>
         </section>
@@ -545,12 +549,18 @@ export function EpochLandingPage() {
                   <p className="text-blue-100 text-sm mb-4">
                     {data.stats.exerciseCount} pytań z epoki {data.name}
                   </p>
-                  <Link
-                    to={isLoggedIn ? "/learning" : "/register"}
-                    className="block w-full py-3 bg-white text-purple-600 rounded-xl text-center font-bold hover:bg-purple-50 transition-colors"
+                  <a
+                    href={
+                      isLoggedIn
+                        ? "/learning"
+                        : "https://www.matury-online.pl/auth/register?from=maturapolski"
+                    }
+                    className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all font-bold text-lg"
                   >
-                    {isLoggedIn ? "Rozpocznij test" : "Załóż darmowe konto"}
-                  </Link>
+                    {isLoggedIn
+                      ? "Rozpocznij test z tej epoki"
+                      : "Załóż konto i zacznij test"}
+                  </a>
                 </div>
               </div>
             </div>
@@ -653,13 +663,19 @@ export function EpochLandingPage() {
                 {data.stats.workBreakdown.length} lektur, natychmiastowa ocena
                 AI.
               </p>
-              <Link
-                to={isLoggedIn ? "/learning" : "/register"}
-                className="inline-flex items-center gap-3 px-12 py-6 bg-white text-purple-600 rounded-2xl hover:bg-purple-50 transition-all text-xl font-bold shadow-2xl hover:scale-105"
+              <a
+                href={
+                  isLoggedIn
+                    ? "/learning"
+                    : "https://wwww.matury-online.pl/auth/register?from=maturapolski"
+                }
+                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all font-bold text-lg"
               >
-                {isLoggedIn ? "Rozpocznij test" : "Załóż darmowe konto"}
+                {isLoggedIn
+                  ? "Rozpocznij test z tej epoki"
+                  : "Załóż konto i zacznij test"}
                 <ArrowRight className="w-6 h-6" />
-              </Link>
+              </a>
             </motion.div>
           </div>
         </section>
