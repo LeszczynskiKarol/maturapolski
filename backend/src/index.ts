@@ -34,6 +34,7 @@ import jwt from "@fastify/jwt";
 import { registerActivityTracker } from "./middleware/activityTracker";
 import Fastify from "fastify";
 import { initializeAI } from "./ai/aiService";
+import voiceRoutes from "./routes/voice.js";
 import { resetStaleStreaks } from "./jobs/resetStaleStreaks";
 import { adminRoutes } from "./routes/admin.routes";
 import { checkExpiredAccess } from "./jobs/checkExpiredAccess";
@@ -255,6 +256,8 @@ console.log("✓ Materials routes registered at /api/materials/*");
 fastify.register(unsubscribeRoutes, { prefix: "/api/email" });
 
 fastify.register(sitemapRoutes);
+
+fastify.register(voiceRoutes);
 
 fastify.register(emailWebhookRoutes, { prefix: "/api/email" });
 
