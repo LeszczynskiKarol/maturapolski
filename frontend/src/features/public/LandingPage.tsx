@@ -870,7 +870,7 @@ export const LandingPage: React.FC = () => {
               />
               <FAQItem
                 question="Czy mogę anulować subskrypcję w dowolnym momencie?"
-                answer="Oczywiście! Możesz anulować subskrypcję w dowolnym momencie bez żadnych opłat. Zachowasz dostęp do końca opłaconego okresu. Dodatkowo oferujemy 30-dniową gwarancję zwrotu pieniędzy."
+                answer="Oczywiście! Możesz anulować subskrypcję w dowolnym momencie bez żadnych opłat. Zachowasz dostęp do końca opłaconego okresu."
                 isOpen={faqOpen === 3}
                 onClick={() => setFaqOpen(faqOpen === 3 ? null : 3)}
               />
@@ -1092,7 +1092,7 @@ export const LandingPage: React.FC = () => {
                 </Link>
 
                 <p className="text-center text-blue-100 text-sm mt-4">
-                  Anuluj w dowolnym momencie • 7 dni na zwrot
+                  Anuluj w dowolnym momencie
                 </p>
               </motion.div>
             </div>

@@ -45,12 +45,12 @@ import { emailWebhookRoutes } from "./routes/emailWebhook.routes";
 import { examStructureRoutes } from "./routes/examStructure.routes";
 import { unsubscribeRoutes } from "./routes/unsubscribe.routes";
 import { adminEmailRoutes } from "./routes/admin-email.routes";
-import {
-  runMorningEmailJobs,
-  runEveningEmailJobs,
-  runWeeklyEmailJobs,
-  runMonthlyEmailJobs,
-} from "./jobs/engagementMailerJob";
+//import {
+//  runMorningEmailJobs,
+//  runEveningEmailJobs,
+//  runWeeklyEmailJobs,
+//  runMonthlyEmailJobs,
+//} from "./jobs/engagementMailerJob";
 import { subscriptionRoutes } from "./routes/subscription.routes";
 import { authRoutes } from "./routes/auth.routes";
 import { exerciseRoutes } from "./routes/exercise.routes";
@@ -73,34 +73,12 @@ cron.schedule("0 0 * * *", async () => {
   }
 });
 
-cron.schedule("0 10 * * *", async () => {
-  try {
-    await runMorningEmailJobs();
-  } catch (e) {
-    console.error(e);
-  }
-});
-cron.schedule("0 19 * * *", async () => {
-  try {
-    await runEveningEmailJobs();
-  } catch (e) {
-    console.error(e);
-  }
-});
-cron.schedule("0 8 * * 1", async () => {
-  try {
-    await runWeeklyEmailJobs();
-  } catch (e) {
-    console.error(e);
-  }
-});
-cron.schedule("0 9 1 * *", async () => {
-  try {
-    await runMonthlyEmailJobs();
-  } catch (e) {
-    console.error(e);
-  }
-});
+/// ⛔ NEWSLETTER WYŁĄCZONY — engagement maile (morning/evening/weekly/monthly)
+// Wysyłka kodów, resetów hasła, transakcyjnych działa dalej (mailer.config.ts)
+// cron.schedule("0 10 * * *", async () => { try { await runMorningEmailJobs(); } catch (e) { console.error(e); } });
+// cron.schedule("0 19 * * *", async () => { try { await runEveningEmailJobs(); } catch (e) { console.error(e); } });
+// cron.schedule("0 8 * * 1", async () => { try { await runWeeklyEmailJobs(); } catch (e) { console.error(e); } });
+// cron.schedule("0 9 1 * *", async () => { try { await runMonthlyEmailJobs(); } catch (e) { console.error(e); } });
 cron.schedule("5 0 * * *", async () => {
   console.log("⏰ Running daily job: reset stale streaks");
   try {
