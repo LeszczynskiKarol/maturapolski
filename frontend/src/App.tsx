@@ -11,14 +11,9 @@ import { ScrollToTop } from "./components/ScrollToTop";
 import ContentManager from "./features/admin/ContentManager";
 import { ExamStructureManager } from "./features/admin/exams/ExamStructureManager";
 import { UserSessionsTable } from "./features/admin/UserSessionsTable";
-import { CheckEmailPage } from "./features/auth/CheckEmailPage";
-import { ForgotPasswordPage } from "./features/auth/ForgotPasswordPage";
-import { ResendVerificationPage } from "./features/auth/ResendVerificationPage";
 import { EpochListPage } from "./features/content/EpochListPage";
 import { EpochLandingPage } from "./features/content/EpochLandingPage";
 import EmailDashboard from "./features/admin/EmailDashboard";
-import { ResetPasswordPage } from "./features/auth/ResetPasswordPage";
-import { VerifyEmailCodePage } from "./features/auth/VerifyEmailCodePage";
 import { UnsubscribePage } from "./features/public/UnsubscribePage";
 import { SubscriptionManager } from "./features/admin/SubscriptionManager";
 import { HubDetailPage } from "./features/content/HubDetailPage";
@@ -49,9 +44,10 @@ import { Layout } from "./components/Layout";
 // Public
 import { LandingPage } from "./features/public/LandingPage";
 
-// Auth
+// Auth — cichy login tylko dla admina (brak rejestracji/reset/verify; te
+// route'y zostały zdjęte, bo użytkownicy z subskrypcją przeszli już na
+// matury-online.pl. Wszystkie publiczne CTA prowadzą tam.).
 import { LoginPage } from "./features/auth/LoginPage";
-import { RegisterPage } from "./features/auth/RegisterPage";
 
 // Student
 import { ExerciseList } from "./features/exercises/ExerciseList";
@@ -132,22 +128,13 @@ export const App: React.FC = () => {
               {/* Public routes */}
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
               <Route path="/cookies" element={<CookiePolicyPage />} />
               <Route path="/rodo" element={<RodoPage />} />
               <Route path="/terms" element={<TermsOfServicePage />} />
               <Route path="/privacy" element={<PrivacyPolicyPage />} />
-              <Route path="/verify-email" element={<VerifyEmailCodePage />} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-              <Route path="/reset-password" element={<ResetPasswordPage />} />
-              <Route path="/check-email" element={<CheckEmailPage />} />
               <Route path="/epoki" element={<EpochListPage />} />
               <Route path="/epoki/:slug" element={<EpochLandingPage />} />
               <Route path="/wypisz-sie" element={<UnsubscribePage />} />
-              <Route
-                path="/resend-verification"
-                element={<ResendVerificationPage />}
-              />
 
               {/* BAZA WIEDZY */}
               <Route path="/baza-wiedzy" element={<HubListPage />} />

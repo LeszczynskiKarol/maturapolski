@@ -3,7 +3,6 @@ import { PublicLayout } from "../../components/PublicLayout";
 import { FeaturedTestsSection } from "../../components/FeaturedTestsSection";
 import { FeaturedEpochsSection } from "../../components/FeaturedEpochsSection";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 
 import {
   ArrowRight,
@@ -154,12 +153,12 @@ export const LandingPage: React.FC = () => {
                   Zacznij naukę teraz
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </a>
-                <Link
-                  to="/login"
+                <a
+                  href="https://www.matury-online.pl/auth/register?from=maturapolski"
                   className="group px-10 py-5 border-2 border-gray-300 rounded-xl hover:border-blue-600 hover:bg-blue-50 transition-all flex items-center justify-center gap-2 text-xl font-semibold"
                 >
                   Mam już konto
-                </Link>
+                </a>
               </div>
 
               {/* Trust badges */}
@@ -1084,12 +1083,12 @@ export const LandingPage: React.FC = () => {
                   </li>
                 </ul>
 
-                <Link
-                  to="/register"
+                <a
+                  href="https://www.matury-online.pl/auth/register?from=maturapolski"
                   className="block text-center py-4 rounded-xl font-bold text-lg transition-all bg-white text-blue-600 hover:bg-blue-50 shadow-xl hover:shadow-2xl hover:scale-105"
                 >
                   Rozpocznij z Premium
-                </Link>
+                </a>
 
                 <p className="text-center text-blue-100 text-sm mt-4">
                   Anuluj w dowolnym momencie
@@ -1156,19 +1155,19 @@ export const LandingPage: React.FC = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-                <Link
-                  to="/register"
+                <a
+                  href="https://www.matury-online.pl/auth/register?from=maturapolski"
                   className="group px-10 py-5 bg-white text-blue-600 rounded-xl hover:bg-blue-50 transition-all flex items-center justify-center gap-2 text-lg font-bold shadow-2xl hover:scale-105"
                 >
                   Rozpocznij naukę teraz
                   <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                </Link>
-                <Link
-                  to="/login"
+                </a>
+                <a
+                  href="https://www.matury-online.pl/auth/register?from=maturapolski"
                   className="px-10 py-5 border-2 border-white/50 rounded-xl hover:bg-white/10 transition-all flex items-center justify-center gap-2 text-lg font-semibold backdrop-blur-sm"
                 >
                   Mam już konto
-                </Link>
+                </a>
               </div>
 
               <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-blue-100">

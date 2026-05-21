@@ -64,3 +64,6 @@ coverage/
 .nyc_output/
 
 backend/prisma/seed-exercises.ts
+
+tmp-export/
+indexing-result.json

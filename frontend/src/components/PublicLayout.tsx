@@ -136,12 +136,12 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
                     Cennik
                   </a>
 
-                  <Link
-                    to="/login"
+                  <a
+                    href="https://www.matury-online.pl/auth/register?from=maturapolski"
                     className="px-4 py-2 text-gray-700 hover:text-blue-600 transition-colors"
                   >
                     Zaloguj się
-                  </Link>
+                  </a>
                   <a
                     href="https://www.matury-online.pl/auth/register?from=maturapolski"
                     className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all"
@@ -202,13 +202,13 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({
                     Cennik
                   </a>
 
-                  <Link
-                    to="/login"
+                  <a
+                    href="https://www.matury-online.pl/auth/register?from=maturapolski"
                     className="text-gray-700 hover:text-blue-600 transition-colors py-2"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Zaloguj się
-                  </Link>
+                  </a>
 
                   <a
                     href="https://www.matury-online.pl/auth/register?from=maturapolski"

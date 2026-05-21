@@ -4,7 +4,7 @@ import { ArrowRight, Loader, Lock, Mail } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { PublicLayout } from "../../components/PublicLayout";
 import { useGoogleLogin } from "../../hooks/useGoogleLogin";
 import { api } from "../../services/api";
@@ -98,26 +98,8 @@ export const LoginPage: React.FC = () => {
       <div className="min-h-[calc(100vh-80px)] flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
         <div className="w-full max-w-md">
           {verificationError && (
-            <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <div className="flex items-start gap-3">
-                <Mail className="w-5 h-5 text-yellow-600 mt-0.5" />
-                <div className="flex-1">
-                  <h3 className="font-medium text-yellow-900 mb-1">
-                    Email niepotwierdzony
-                  </h3>
-                  <p className="text-sm text-yellow-800 mb-2">
-                    Musisz potwierdzić swój adres email przed zalogowaniem.
-                  </p>
-                  <Link
-                    to={`/resend-verification?email=${encodeURIComponent(
-                      verificationError,
-                    )}&auto=true`}
-                    className="text-sm text-yellow-900 underline font-medium"
-                  >
-                    Wyślij ponownie email weryfikacyjny →
-                  </Link>
-                </div>
-              </div>
+            <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-900">
+              Email niepotwierdzony. Skontaktuj się z administratorem.
             </div>
           )}
 
@@ -193,15 +175,6 @@ export const LoginPage: React.FC = () => {
                 )}
               </div>
 
-              <div className="flex items-center justify-between text-sm">
-                <Link
-                  to="/forgot-password"
-                  className="text-blue-600 hover:underline"
-                >
-                  Zapomniałeś hasła?
-                </Link>
-              </div>
-
               <button
                 type="submit"
                 disabled={isLoading}
@@ -220,16 +193,6 @@ export const LoginPage: React.FC = () => {
                 )}
               </button>
             </form>
-
-            <p className="text-center mt-6 text-sm">
-              Nie masz konta?{" "}
-              <a
-                href="https://www.matury-online.pl/auth/register?from=maturapolski"
-                className="text-blue-600 hover:underline font-medium"
-              >
-                Załóż darmowe konto
-              </a>
-            </p>
 
             <p className="text-xs text-center text-gray-500 mt-4">
               Ta strona jest chroniona przez reCAPTCHA. Obowiązują{" "}
