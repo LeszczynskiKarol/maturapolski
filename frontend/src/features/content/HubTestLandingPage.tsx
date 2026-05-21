@@ -25,6 +25,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { PublicLayout } from "../../components/PublicLayout";
+import { MaturyOnlinePromo } from "../../components/MaturyOnlinePromo";
 import { contentService } from "../../services/contentService";
 import { useAuthStore } from "../../store/authStore";
 
@@ -855,6 +856,13 @@ export function HubTestLandingPage() {
             </div>
           </section>
         )}
+
+        {/* Promo — kontekstowe linki do matury-online.pl */}
+        <section className="py-12 px-4">
+          <div className="max-w-4xl mx-auto">
+            <MaturyOnlinePromo context="test" lekturaTitle={data.title} />
+          </div>
+        </section>
 
         {/* ===================== FINAL CTA ===================== */}
         <section className="py-24 px-4 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 text-white relative overflow-hidden">

@@ -17,6 +17,7 @@ import { Helmet } from "react-helmet-async";
 import { Link, useParams } from "react-router-dom";
 import { PublicLayout } from "../../components/PublicLayout";
 import { RatingWidget } from "../../components/RatingWidget";
+import { MaturyOnlinePromo } from "../../components/MaturyOnlinePromo";
 import { contentService } from "../../services/contentService";
 
 interface ArticleData {
@@ -572,6 +573,9 @@ export function GuideArticlePage() {
                     </div>
                   </div>
                 )}
+
+                {/* Promo — kontekstowe linki do matury-online.pl */}
+                <MaturyOnlinePromo context="guide" />
               </div>
             </article>
 

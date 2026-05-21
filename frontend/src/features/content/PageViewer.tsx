@@ -16,6 +16,7 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import { PublicLayout } from "../../components/PublicLayout";
 import { RatingWidget } from "../../components/RatingWidget";
 import { RelatedPages } from "../../components/RelatedPages";
+import { MaturyOnlinePromo } from "../../components/MaturyOnlinePromo";
 import { contentService } from "../../services/contentService";
 import { StickyTestCTA } from "../../components/StickyTestCTA";
 // LUB
@@ -1417,6 +1418,12 @@ export function PageViewer() {
                 hubSlug={hubSlug!}
                 currentPageSlug={pageSlug!}
                 maxPages={3}
+              />
+
+              {/* Promo — kontekstowe linki do matury-online.pl */}
+              <MaturyOnlinePromo
+                context="page"
+                lekturaTitle={page.hub.title}
               />
             </article>
 

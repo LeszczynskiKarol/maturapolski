@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet-async";
 import { PublicLayout } from "../../components/PublicLayout";
 import { useState, useEffect } from "react";
 import { TestBanner } from "../../components/TestBanner";
+import { MaturyOnlinePromo } from "../../components/MaturyOnlinePromo";
 import { useParams, Link } from "react-router-dom";
 import { contentService } from "../../services/contentService";
 import { FileText } from "lucide-react";
@@ -171,6 +172,9 @@ export function HubDetailPage() {
             hubType={hub.type}
             variant="full"
           />
+
+          {/* Promo — kontekstowe linki do matury-online.pl */}
+          <MaturyOnlinePromo context="hub" lekturaTitle={hub.title} />
         </div>
       </div>
 

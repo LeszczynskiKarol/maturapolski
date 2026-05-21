@@ -667,7 +667,7 @@ export function EpochLandingPage() {
                 href={
                   isLoggedIn
                     ? "/learning"
-                    : "https://wwww.matury-online.pl/auth/register?from=maturapolski"
+                    : "https://www.matury-online.pl/auth/register?from=maturapolski"
                 }
                 className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all font-bold text-lg"
               >
